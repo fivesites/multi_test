@@ -1,8 +1,21 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+import path from "path";
+import type { NextConfig } from "next";
+
+const nextConfig: NextConfig = {
   images: {
-    domains: ["res.cloudinary.com"],
+    domains: ["res.cloudinary.com", "cdn.sanity.io"],
+  },
+  webpack(config, { isServer }) {
+    if (!isServer) {
+      // Next.js 15 aliases react to its own canary build which lacks useEffectEvent.
+      // Override to use the project's installed react@19.2.4 in client bundles.
+      config.resolve.alias["react"] = path.resolve("./node_modules/react");
+      config.resolve.alias["react-dom"] = path.resolve(
+        "./node_modules/react-dom",
+      );
+    }
+    return config;
   },
 };
 
-module.exports = nextConfig;
+export default nextConfig;

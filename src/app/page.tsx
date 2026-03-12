@@ -1,15 +1,21 @@
 import Link from "next/link";
 import HomeHero from "./components/HomeHero";
-import { Scroll } from "lucide-react";
-import ScrollGradientGrid from "./components/ScrollGradientGrid";
+import AboutSection from "./components/AboutSection";
+import WorkSection from "./components/WorkSection";
 
 export default function Page() {
   return (
     <main className="relative">
-      {/* Hero + About + Projects (sticky scroll) */}
+      {/* Hero — checkerboard + cycling text */}
       <HomeHero />
 
-      {/* Contact — 100vh */}
+      {/* About — sticky scroll text reveal */}
+      <AboutSection />
+
+      {/* Work — fetched from Sanity */}
+      <WorkSection />
+
+      {/* Contact */}
       <section
         id="contact"
         className="relative h-screen flex items-center justify-center overflow-hidden bg-foreground snap-start"

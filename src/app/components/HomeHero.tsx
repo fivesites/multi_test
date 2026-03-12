@@ -1,142 +1,83 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import ProjectSection from "./ProjectSection";
+import { useEffect, useRef } from "react";
 import HeroText from "./HeroText";
-import Carousel from "./Carousel";
 
-const ABOUT_TEXT =
-  "Multi2 is a creative design studio based in Stockholm built on a simple idea: multiplication beats addition. Multi2 works across branding, digital design, creative direction, visual systems and interactive experiences — always with the same goal: to multiply what matters. Because the best ideas are rarely linear.";
+const TOP_COLS = 12;
+const BOTTOM_COLS = 2;
+const TAPER_ROWS = 6;
+const BUFFER = 8;
+
+function colsForRow(row: number): number {
+  if (row >= TAPER_ROWS) return BOTTOM_COLS;
+  return Math.round(
+    TOP_COLS - ((TOP_COLS - BOTTOM_COLS) / (TAPER_ROWS - 1)) * row,
+  );
+}
 
 export default function HomeHero() {
-  const outerRef = useRef<HTMLDivElement>(null);
-  const stickyRef = useRef<HTMLDivElement>(null);
-  const [progress, setProgress] = useState(0);
-  const [mousePos, setMousePos] = useState<{ x: number; y: number } | null>(
-    null,
-  );
-  const [unblurred, setUnblurred] = useState(false);
+  const boardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
-      const el = outerRef.current;
-      if (!el) return;
-      const rect = el.getBoundingClientRect();
-      const scrolled = -rect.top;
-      const total = el.offsetHeight - window.innerHeight;
-      setProgress(Math.max(0, Math.min(1, scrolled / total)));
+      if (!boardRef.current) return;
+      const s = window.scrollY;
+      const t = Math.min(1, s / window.innerHeight);
+      boardRef.current.style.setProperty("--shift-r", `${s * 0.45}px`);
+      boardRef.current.style.setProperty("--shift-l", `${-s * 0.45}px`);
+      boardRef.current.style.setProperty("--t", `${t}`);
     };
     window.addEventListener("scroll", update, { passive: true });
-    update();
     return () => window.removeEventListener("scroll", update);
   }, []);
 
-  // Phase 1 (progress 0):    HeroText cycling (time-based)
-  // Transition (0.01–0.05):  HeroText fades out, about text fades in
-  // Phase 2 (0.03–0.88):     ABOUT_TEXT types out scroll-driven
-  // Phase 3 (0.88–1.0):      Fully typed, blurred carousel remains
-  const scrolled = progress > 0.01;
-  const heroTextOpacity = scrolled
-    ? Math.max(0, 1 - (progress - 0.01) / 0.04)
-    : 1;
-  const aboutTextOpacity = scrolled ? Math.min(1, (progress - 0.01) / 0.04) : 0;
-  const aboutCharsProgress = scrolled
-    ? Math.min(1, (progress - 0.03) / 0.85)
-    : 0;
-  const displayedAbout = ABOUT_TEXT.slice(
-    0,
-    Math.max(0, Math.round(aboutCharsProgress * ABOUT_TEXT.length)),
-  );
+  const lightBg = `color-mix(in oklch, var(--secondary) calc(100% * (1 - var(--t, 0))), var(--secondary-foreground))`;
+  const darkBg = `color-mix(in oklch, var(--secondary-foreground) calc(100% * (1 - var(--t, 0))), var(--secondary))`;
 
-  const blurPx = unblurred ? 0 : 14;
-
-  const lensMask = mousePos
-    ? `radial-gradient(circle at ${mousePos.x}px ${mousePos.y}px, transparent 80px, black 180px)`
-    : undefined;
+  const rowH = `calc(100vh / ${TAPER_ROWS})`;
 
   return (
-    <>
-      <div ref={outerRef} style={{ height: "350vh" }}>
-        <div
-          ref={stickyRef}
-          className="sticky top-0 h-screen overflow-hidden cursor-pointer"
-          onMouseMove={(e) => {
-            if (unblurred) return;
-            const rect = stickyRef.current?.getBoundingClientRect();
-            if (rect)
-              setMousePos({
-                x: e.clientX - rect.left,
-                y: e.clientY - rect.top,
-              });
-          }}
-          onMouseLeave={() => setMousePos(null)}
-          onClick={() => setUnblurred(true)}
-        >
-          {/* Carousel — autoplaying behind everything, blur managed here */}
-          <Carousel disableBlur />
-
-          {/* Blur overlay with cursor lens cutout — always on until clicked */}
-          {blurPx > 0 && (
+    <section className="snap-start relative h-screen overflow-hidden">
+      <div ref={boardRef} className="absolute inset-0 overflow-hidden">
+        {Array.from({ length: TAPER_ROWS }).map((_, row) => {
+          const cols = colsForRow(row);
+          const cellW = `calc(100vw / ${cols})`;
+          const offset = `calc(${BUFFER} * 100vw / ${cols})`;
+          const varName = row % 2 === 0 ? "--shift-r" : "--shift-l";
+          return (
             <div
-              className="absolute inset-0 z-[5] pointer-events-none"
+              key={row}
+              className="flex flex-none"
               style={{
-                backdropFilter: `blur(${blurPx}px)`,
-                WebkitBackdropFilter: `blur(${blurPx}px)`,
-                maskImage: lensMask,
-                WebkitMaskImage: lensMask,
+                height: rowH,
+                transform: `translateX(calc(var(${varName}, 0px) - ${offset}))`,
               }}
-            />
-          )}
-
-          {/* Phase 1: HeroText cycling — fades out when scroll starts */}
-          <div
-            className="absolute inset-0 z-20 flex items-center justify-start px-6 pointer-events-none  "
-            style={{ opacity: heroTextOpacity }}
-          >
-            <HeroText
-              className="text-white text-4xl lg:text-9xl mix-blend-difference   "
-              texts={["Multisquared", "multi2", "multisquared", "Multi2"]}
-            />
-          </div>
-
-          {/* Phase 2: ABOUT_TEXT scroll-driven — same HeroText component */}
-          <div
-            className="absolute inset-0 z-20 flex items-center justify-start px-6 pointer-events-none"
-            style={{ opacity: aboutTextOpacity }}
-          >
-            <HeroText
-              texts={[ABOUT_TEXT]}
-              displayedText={displayedAbout}
-              className="text-white text-4xl lg:text-5xl mix-blend-difference max-w-4xl leading-tight tracking-wide"
-            />
-          </div>
-
-          {/* Grid overlay — 3×4 mobile, 12×8 desktop */}
-          <div
-            className="md:hidden absolute inset-0 z-10 pointer-events-none grid grid-cols-6 p-6"
-            style={{ gridTemplateRows: "repeat(8, 1fr)" }}
-          >
-            {Array.from({ length: 48 }).map((_, i) => (
-              <div key={i} className="flex items-start justify-start">
-                <span className="bg-white select-none w-1 h-1"></span>
-              </div>
-            ))}
-          </div>
-          <div
-            className="hidden md:grid absolute inset-0 z-10 pointer-events-none grid-cols-12 p-6"
-            style={{ gridTemplateRows: "repeat(8, 1fr)" }}
-          >
-            {Array.from({ length: 96 }).map((_, i) => (
-              <div key={i} className="flex items-start justify-start">
-                <span className="bg-white select-none w-1 h-1"></span>
-              </div>
-            ))}
-          </div>
-        </div>
+            >
+              {Array.from({ length: cols + BUFFER * 2 }).map((_, j) => {
+                const isLight = (row + j) % 2 === 0;
+                return (
+                  <div
+                    key={j}
+                    className="flex-none h-full"
+                    style={{
+                      width: cellW,
+                      backgroundColor: isLight ? lightBg : darkBg,
+                    }}
+                  />
+                );
+              })}
+            </div>
+          );
+        })}
       </div>
 
-      {/* ProjectSection — snap target after hero sequence */}
-      <ProjectSection />
-    </>
+      {/* Hero text */}
+      <div className="absolute inset-0 z-10 flex items-center justify-center px-6 pointer-events-none mix-blend-difference ">
+        <HeroText
+          className="text-background text-4xl lg:text-8xl"
+          texts={["Multisquared", "multi2", "multisquared", "Multi2"]}
+        />
+      </div>
+    </section>
   );
 }

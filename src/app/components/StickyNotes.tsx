@@ -15,7 +15,7 @@ const noteBGs = [
   "/multi_notes_pink 1.png",
 ];
 
-const formulaCopy = [
+const FALLBACK_NOTES = [
   "2 × perspective",
   "2 × curiosity",
   "2 × creative thinking = more than the sum",
@@ -27,7 +27,9 @@ const NOTE_SIZE = 320;
 
 type Pos = { x: number; y: number; fixed: boolean };
 
-export default function StickyNotes() {
+export default function StickyNotes({ notes }: { notes?: string[] }) {
+  const formulaCopy = notes && notes.length > 0 ? notes : FALLBACK_NOTES;
+
   const [notesVisible, setNotesVisible] = useState(true);
   const [showConnect, setShowConnect] = useState(false);
   const [formulaCount, setFormulaCount] = useState(0);
@@ -36,7 +38,6 @@ export default function StickyNotes() {
   const [topIndex, setTopIndex] = useState(0);
   const triggered = useRef(false);
 
-  // Scroll-progress → trigger after text is fully typed
   useEffect(() => {
     const update = () => {
       if (triggered.current) return;
@@ -57,10 +58,8 @@ export default function StickyNotes() {
       const vw = window.innerWidth;
       const isDesktop = vw >= 1024;
 
-      // Generate positions at trigger time
       const positions: Pos[] = formulaCopy.map((_, i) => {
         if (isDesktop) {
-          // Fixed, inline left-to-right within the text column
           return {
             fixed: true,
             x:
@@ -71,7 +70,6 @@ export default function StickyNotes() {
             y: vh * 0.4 + (Math.random() - 0.5) * 40,
           };
         } else {
-          // Absolute (document coords), overlaid on the text
           return {
             fixed: false,
             x: 16 + NOTE_SIZE / 2 + Math.random() * (vw - NOTE_SIZE - 32),
@@ -82,14 +80,12 @@ export default function StickyNotes() {
 
       setFormulaPositions(positions);
 
-      // Connect note position (always fixed, random)
       setConnectPos({
         fixed: true,
         x: NOTE_SIZE / 2 + 16 + Math.random() * (vw - NOTE_SIZE - 32),
         y: NOTE_SIZE / 2 + 16 + Math.random() * (vh - NOTE_SIZE - 32),
       });
 
-      // Stagger reveal — typing rhythm
       formulaCopy.forEach((_, i) =>
         setTimeout(() => setFormulaCount(i + 1), i * 350),
       );
@@ -98,9 +94,9 @@ export default function StickyNotes() {
     window.addEventListener("scroll", update, { passive: true });
     update();
     return () => window.removeEventListener("scroll", update);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Connect note when contact section is in view
   useEffect(() => {
     const el = document.getElementById("contact");
     if (!el) return;
@@ -121,7 +117,6 @@ export default function StickyNotes() {
         {notesVisible ? "hide notes" : "show notes"}
       </button>
 
-      {/* Formula notes */}
       {notesVisible &&
         formulaCopy.slice(0, formulaCount).map((text, i) => {
           const pos = formulaPositions[i];
@@ -143,7 +138,6 @@ export default function StickyNotes() {
           );
         })}
 
-      {/* Connect note */}
       {notesVisible && showConnect && connectPos && (
         <DraggableNote
           pos={connectPos}
@@ -239,7 +233,6 @@ function DraggableNote({
         ) : (
           children
         )}
-        {/* logo placeholder — swap with <Image> later */}
         <div className="absolute bottom-5 left-0 right-0 flex justify-center font-absolution1 text-xs">
           {label}
         </div>
