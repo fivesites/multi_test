@@ -38,7 +38,7 @@ export default function Page() {
           className="h-screen flex items-center justify-center bg-secondary-foreground"
         >
           <span className="font-absolution1 text-6xl lg:text-8xl text-secondary">
-            Let's link up
+            Let&apos;s link up
           </span>
         </Link>
       </section>

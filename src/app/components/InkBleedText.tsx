@@ -45,7 +45,7 @@ export default function InkBleedText({
     }
 
     requestAnimationFrame(frame);
-  }, [duration, isStatic]);
+  }, [duration, isStatic, endBlur]);
 
   return (
     <>

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import React from "react";
 import { Tiny5 } from "next/font/google";
-import { Navbar1 } from "@/components/ui/navbar-1";
 import Nav from "@/components/Nav";
 
 import "./globals.css";
