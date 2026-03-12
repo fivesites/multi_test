@@ -48,10 +48,17 @@ export default async function WorkSection() {
 
   if (!works.length) return null;
 
+  const visible = works.slice(0, 3);
+
   return (
-    <section className="snap-start border-t border-border">
+    <section className="snap-start border-t border-border w-full">
+      <div className="h-[10vh] flex items-center justify-center">
+        <h2 className="font-absolution1 text-2xl text-center w-full">
+          See our work
+        </h2>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {works.map((work) => (
+        {visible.map((work) => (
           <WorkCard
             key={work._id}
             title={work.title}

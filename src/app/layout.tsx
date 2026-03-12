@@ -46,15 +46,29 @@ const metaOldFrench = localFont({
   variable: "--font-meta-old-french",
 });
 
-const nHaasGrotesk = localFont({
+const monumentGrotesk = localFont({
   src: [
-    { path: "./NHaasGroteskTXPro-55Rg.ttf", weight: "400", style: "normal" },
-    { path: "./NHaasGroteskTXPro-65Md.ttf", weight: "500", style: "normal" },
-    { path: "./NHaasGroteskTXPro-66MdIt.ttf", weight: "500", style: "italic" },
-    { path: "./NHaasGroteskTXPro-75Bd.ttf", weight: "700", style: "normal" },
-    { path: "./NHaasGroteskTXPro-76BdIt.ttf", weight: "700", style: "italic" },
+    { path: "./MonumentGrotesk-Regular.otf", weight: "400", style: "normal" },
+    { path: "./MonumentGrotesk-Italic.otf", weight: "400", style: "italic" },
+    { path: "./MonumentGrotesk-Medium.otf", weight: "500", style: "normal" },
+    {
+      path: "./MonumentGrotesk-MediumItalic.otf",
+      weight: "500",
+      style: "italic",
+    },
+    { path: "./MonumentGrotesk-Bold.otf", weight: "700", style: "normal" },
+    {
+      path: "./MonumentGrotesk-BoldItalic.otf",
+      weight: "700",
+      style: "italic",
+    },
   ],
-  variable: "--font-nhaas-grotesk",
+  variable: "--font-monument-grotesk",
+});
+
+const monumentGroteskMono = localFont({
+  src: "./MonumentGrotesk-Mono.otf",
+  variable: "--font-monument-grotesk-mono",
 });
 
 export default function RootLayout({
@@ -65,8 +79,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${nHaasGrotesk.variable} antialiased`}
+        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} antialiased`}
       >
+        <Nav />
         {children}
       </body>
     </html>

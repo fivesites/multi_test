@@ -16,12 +16,14 @@ function colsForRow(row: number): number {
 }
 
 export default function HomeHero() {
+  const sectionRef = useRef<HTMLElement>(null);
   const boardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const update = () => {
-      if (!boardRef.current) return;
-      const s = window.scrollY;
+      if (!boardRef.current || !sectionRef.current) return;
+      // s = how far the section has scrolled past the top of the viewport
+      const s = Math.max(0, -sectionRef.current.getBoundingClientRect().top);
       const t = Math.min(1, s / window.innerHeight);
       boardRef.current.style.setProperty("--shift-r", `${s * 0.45}px`);
       boardRef.current.style.setProperty("--shift-l", `${-s * 0.45}px`);
@@ -37,7 +39,7 @@ export default function HomeHero() {
   const rowH = `calc(100vh / ${TAPER_ROWS})`;
 
   return (
-    <section className="snap-start relative h-screen overflow-hidden">
+    <section ref={sectionRef} className="snap-start relative h-screen overflow-hidden">
       <div ref={boardRef} className="absolute inset-0 overflow-hidden">
         {Array.from({ length: TAPER_ROWS }).map((_, row) => {
           const cols = colsForRow(row);
@@ -71,11 +73,17 @@ export default function HomeHero() {
         })}
       </div>
 
-      {/* Hero text */}
-      <div className="absolute inset-0 z-10 flex items-center justify-center px-6 pointer-events-none mix-blend-difference ">
+      <div className="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
         <HeroText
-          className="text-background text-4xl lg:text-8xl"
-          texts={["Multisquared", "multi2", "multisquared", "Multi2"]}
+          className="text-white text-6xl lg:text-8xl [text-shadow:0_0_40px_rgba(0,0,0,0.6),0_2px_8px_rgba(0,0,0,0.8)]"
+          texts={[
+            "Multisquared",
+            "multi2",
+            "multisquared",
+            "Multi2",
+            "MULTISQUARED",
+            "MULTI2",
+          ]}
         />
       </div>
     </section>

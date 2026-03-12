@@ -7,21 +7,20 @@ import {
   allWorkSlugsQuery,
 } from "../../../../sanity/lib/queries";
 import { urlFor } from "../../../../sanity/lib/image";
-import { Button } from "@/components/ui/button";
 import HeroText from "@/app/components/HeroText";
+import { PageTransitionCurtain } from "@/app/components/PageTransitionCurtain";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 
 type MediaItem = {
   _key: string;
   _type: "image" | "videoUpload" | "videoUrl";
-  // image
   asset?: { _ref: string; url?: string };
   hotspot?: object;
   crop?: object;
   alt?: string;
   caption?: string;
-  // videoUpload
   file?: { asset?: { url: string } };
-  // videoUrl
   url?: string;
 };
 
@@ -56,54 +55,87 @@ export default async function WorkDetailPage({
 
   if (!work) notFound();
 
+  const bg = work.backgroundColor ?? "#111111";
+
+  // Group media into full-width or 2-col pairs
+  const media = work.media ?? [];
+  const groups: { items: MediaItem[]; cols: 1 | 2 }[] = [];
+  let i = 0;
+  while (i < media.length) {
+    const curr = media[i];
+    const next = media[i + 1];
+    if (curr._type === "image" && next?._type === "image") {
+      groups.push({ items: [curr, next], cols: 2 });
+      i += 2;
+    } else {
+      groups.push({ items: [curr], cols: 1 });
+      i += 1;
+    }
+  }
+
   return (
-    <main
-      className="min-h-screen"
-      style={{ backgroundColor: work.backgroundColor ?? "var(--background)" }}
-    >
-      {/* Header */}
-      <div className="px-6 pt-24 pb-12">
-        <Button variant="link" asChild>
-          <Link
-            href="/work"
-            className="text-xs uppercase tracking-widest text-muted-foreground hover:text-foreground transition-colors"
-          >
-            Back
-          </Link>
-        </Button>
-        <div className="h-[80vh] w-full flex items-center justify-center">
-          <h1 className="text-4xl lg:text-6xl font-absolution1">
-            <HeroText
-              triggerOnView
-              texts={[work.title]}
-              displayedText={work.title}
-            />
-          </h1>
-        </div>
+    <>
+      <PageTransitionCurtain color={bg} />
 
-        <div className="mt-8 flex flex-col md:flex-row md:items-end md:justify-between gap-4">
-          <div className="text-sm text-muted-foreground space-y-1 md:text-right font-mono">
-            {work.client && <p>{work.client}</p>}
-            {work.year && <p>{work.year}</p>}
-            {work.categories && work.categories.length > 0 && (
-              <p className="uppercase tracking-wider">
-                {work.categories.join(" · ")}
-              </p>
-            )}
+      <main className="min-h-screen bg-background">
+        {/* Hero */}
+        <section
+          className="relative h-screen flex flex-col items-center justify-center"
+          style={{ backgroundColor: bg }}
+        >
+          {/* Back link */}
+          <div className="absolute top-4 left-4 z-10">
+            <Button
+              variant="link"
+              asChild
+              className="text-white/60 hover:text-white px-0"
+            >
+              <Link href="/">← Back</Link>
+            </Button>
           </div>
-        </div>
+          <div className="flex flex-wrap items-center justify-center px-6 pb-6">
+            <div className="flex gap-2">
+              {work.client && (
+                <Badge variant="ghost" className="text-white/60">
+                  {work.client}
+                </Badge>
+              )}
+              {work.year && (
+                <Badge variant="ghost" className="text-white/60">
+                  {work.year}
+                </Badge>
+              )}
+            </div>
+            {/* Centered title */}
+            <div className="flex-col flex items-center justify-center px-6 h-full">
+              <h1 className="font-absolution1 text-5xl md:text-7xl lg:text-9xl text-background text-center leading-none">
+                <HeroText texts={[work.title]} />
+              </h1>
+            </div>
 
-        {work.description && (
-          <p className="mt-8 max-w-2xl text-muted-foreground leading-relaxed">
-            {work.description}
-          </p>
-        )}
-      </div>
+            {/* Metadata bar */}
 
-      {/* Cover image */}
-      {work.coverImage?.asset && (
-        <div className="px-6 mb-2">
-          <div className="aspect-video overflow-hidden">
+            <div className="flex flex-wrap items-center justify-center px-6 pb-6">
+              {work.categories && work.categories.length > 0 && (
+                <div className="flex gap-2">
+                  {work.categories.map((cat) => (
+                    <Badge
+                      key={cat}
+                      variant="ghost"
+                      className="text-white/60 uppercase tracking-wider"
+                    >
+                      {cat}
+                    </Badge>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+
+        {/* Cover image — full bleed */}
+        {work.coverImage?.asset && (
+          <div className="w-full aspect-video overflow-hidden">
             <Image
               src={urlFor(work.coverImage).width(1600).height(900).url()}
               alt={work.title}
@@ -113,82 +145,92 @@ export default async function WorkDetailPage({
               className="w-full h-full object-cover"
             />
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Media gallery */}
-      {work.media && work.media.length > 0 && (
-        <div className="px-6 mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
-          {work.media.map((item) => {
-            if (item._type === "image" && item.asset) {
-              return (
-                <figure key={item._key}>
-                  <Image
-                    src={urlFor(item).width(1200).url()}
-                    alt={item.alt ?? work.title}
-                    width={1200}
-                    height={800}
-                    className="w-full h-full object-cover"
-                  />
-                  {item.caption && (
-                    <figcaption className="mt-2 text-xs text-muted-foreground">
-                      {item.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            }
+        {/* Description */}
+        {work.description && (
+          <div className="px-6 py-16 max-w-2xl">
+            <p className="text-base leading-relaxed text-foreground/70">
+              {work.description}
+            </p>
+          </div>
+        )}
 
-            if (item._type === "videoUpload" && item.file?.asset?.url) {
-              return (
-                <figure key={item._key}>
-                  <video
-                    src={item.file.asset.url}
-                    controls
-                    className="w-full"
-                    playsInline
-                  />
-                  {item.caption && (
-                    <figcaption className="mt-2 text-xs text-muted-foreground">
-                      {item.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            }
+        {/* Media gallery */}
+        {groups.length > 0 && (
+          <div className="flex flex-col">
+            {groups.map((group, gi) =>
+              group.cols === 2 ? (
+                <div key={gi} className="grid grid-cols-2">
+                  {group.items.map((item) => (
+                    <div key={item._key} className="overflow-hidden">
+                      <Image
+                        src={urlFor(item).width(900).url()}
+                        alt={item.alt ?? work.title}
+                        width={900}
+                        height={900}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div key={gi} className="w-full overflow-hidden">
+                  {(() => {
+                    const item = group.items[0];
+                    if (item._type === "image" && item.asset) {
+                      return (
+                        <Image
+                          src={urlFor(item).width(1600).url()}
+                          alt={item.alt ?? work.title}
+                          width={1600}
+                          height={900}
+                          className="w-full object-cover"
+                        />
+                      );
+                    }
+                    if (item._type === "videoUpload" && item.file?.asset?.url) {
+                      return (
+                        <video
+                          src={item.file.asset.url}
+                          autoPlay
+                          muted
+                          loop
+                          playsInline
+                          className="w-full"
+                        />
+                      );
+                    }
+                    if (item._type === "videoUrl" && item.url) {
+                      return (
+                        <video
+                          src={item.url}
+                          controls
+                          playsInline
+                          className="w-full"
+                        />
+                      );
+                    }
+                    return null;
+                  })()}
+                </div>
+              ),
+            )}
+          </div>
+        )}
 
-            if (item._type === "videoUrl" && item.url) {
-              return (
-                <figure key={item._key}>
-                  <video
-                    src={item.url}
-                    controls
-                    className="w-full"
-                    playsInline
-                  />
-                  {item.caption && (
-                    <figcaption className="mt-2 text-xs text-muted-foreground">
-                      {item.caption}
-                    </figcaption>
-                  )}
-                </figure>
-              );
-            }
-
-            return null;
-          })}
-        </div>
-      )}
-
-      {/* Credits */}
-      {work.credits && (
-        <div className="px-6 mt-16 pb-24">
-          <h2 className="text-xs uppercase tracking-widest text-muted-foreground mb-3">
-            Credits
-          </h2>
-          <p className="text-sm whitespace-pre-line">{work.credits}</p>
-        </div>
-      )}
-    </main>
+        {/* Credits */}
+        {work.credits && (
+          <div className="px-6 py-16 pb-32">
+            <h2 className="font-absolution1 text-xs uppercase tracking-widest text-foreground/40 mb-4">
+              Credits
+            </h2>
+            <p className="text-sm font-mono text-foreground/60 whitespace-pre-line max-w-md leading-relaxed">
+              {work.credits}
+            </p>
+          </div>
+        )}
+      </main>
+    </>
   );
 }

@@ -24,10 +24,7 @@ export function WorkCard({
   // Autoplay carousel
   useEffect(() => {
     if (slides.length <= 1) return;
-    const id = setInterval(
-      () => setIdx((i) => (i + 1) % slides.length),
-      4000,
-    );
+    const id = setInterval(() => setIdx((i) => (i + 1) % slides.length), 4000);
     return () => clearInterval(id);
   }, [slides.length]);
 
@@ -36,23 +33,17 @@ export function WorkCard({
     videoRefs.current.forEach((v, i) => {
       if (!v) return;
       if (i === idx) v.play().catch(() => {});
-      else { v.pause(); v.currentTime = 0; }
+      else {
+        v.pause();
+        v.currentTime = 0;
+      }
     });
   }, [idx]);
-
-  const prev = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIdx((i) => (i - 1 + slides.length) % slides.length);
-  };
-  const next = (e: React.MouseEvent) => {
-    e.preventDefault();
-    setIdx((i) => (i + 1) % slides.length);
-  };
 
   return (
     <Link
       href={`/work/${slug}`}
-      className="relative block aspect-video overflow-hidden group"
+      className="relative block h-[90vh] overflow-hidden group"
       style={{ backgroundColor: backgroundColor ?? "#111" }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -70,9 +61,7 @@ export function WorkCard({
               alt=""
               fill
               sizes="(max-width: 768px) 100vw, 33vw"
-              className={`object-cover transition-[filter] duration-500 ${
-                hovered ? "blur-none" : "blur-[6px]"
-              }`}
+              className="object-cover"
             />
           </div>
         ) : (
@@ -82,48 +71,54 @@ export function WorkCard({
             style={{ opacity: i === idx ? 1 : 0 }}
           >
             <video
-              ref={(el) => { videoRefs.current[i] = el; }}
+              ref={(el) => {
+                videoRefs.current[i] = el;
+              }}
               src={slide.url}
               muted
               loop
               playsInline
-              className={`w-full h-full object-cover transition-[filter] duration-500 ${
-                hovered ? "blur-none" : "blur-[6px]"
-              }`}
+              className="w-full h-full object-cover"
             />
           </div>
         ),
       )}
 
-      {/* Title overlay */}
-      <div className="absolute inset-0 z-10 flex items-start p-4 pointer-events-none">
-        <span className="text-white text-sm font-medium drop-shadow-sm">
+      {/* Color overlay — fades out on hover to reveal media */}
+      <div
+        className="absolute inset-0 z-10 transition-opacity duration-500"
+        style={{
+          backgroundColor: backgroundColor ?? "#111",
+          opacity: hovered ? 0 : 1,
+        }}
+      />
+
+      {/* Title */}
+      <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none">
+        <span className="text-white font-absolution1 text-4xl drop-shadow-sm">
           {title}
         </span>
       </div>
 
-      {/* Prev / Next — only show when multiple slides */}
+      {/* Dot indicators */}
       {slides.length > 1 && (
-        <>
-          <button
-            onClick={prev}
-            className="absolute left-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-            aria-label="Previous"
-          >
-            ←
-          </button>
-          <button
-            onClick={next}
-            className="absolute right-3 top-1/2 -translate-y-1/2 z-20 w-8 h-8 flex items-center justify-center text-white/60 hover:text-white transition-colors opacity-0 group-hover:opacity-100"
-            aria-label="Next"
-          >
-            →
-          </button>
-          <span className="absolute bottom-3 right-3 z-10 text-white/40 text-xs font-mono pointer-events-none">
-            {String(idx + 1).padStart(2, "0")} /{" "}
-            {String(slides.length).padStart(2, "0")}
-          </span>
-        </>
+        <div className="absolute bottom-3 left-0 right-0 z-30 flex items-center justify-center gap-1.5">
+          {slides.map((_, i) => (
+            <button
+              key={i}
+              onClick={(e) => {
+                e.preventDefault();
+                setIdx(i);
+              }}
+              aria-label={`Go to slide ${i + 1}`}
+              className="w-1.5 h-1.5 rounded-full transition-all duration-300"
+              style={{
+                backgroundColor: i === idx ? "white" : "rgba(255,255,255,0.35)",
+                transform: i === idx ? "scale(1.3)" : "scale(1)",
+              }}
+            />
+          ))}
+        </div>
       )}
     </Link>
   );
