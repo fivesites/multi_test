@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import HeroText from "./HeroText";
 
 const ABOUT_TEXT =
-  "Multi2 is a creative design studio based in Stockholm built on a simple idea: multiplication beats addition. Multi2 works across branding, digital design, creative direction, visual systems and interactive experiences — always with the same goal: to multiply what matters. Because the best ideas are rarely linear.";
+  "Multi2 is not your typical company. It’s a multiplier. Bring the challenge. Leave with multiplied impact. Two creators x multiple roles = more than expected. Strategy and execution under one roof. Ideas don’t get diluted. They get sharper. Precision-crafted content. Built to deliver maximum impact per investment.";
 
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -38,7 +38,7 @@ export default function AboutSection() {
   return (
     <section
       ref={sectionRef}
-      className="snap-start relative h-screen bg-secondary flex items-center justify-center px-4 lg:px-8 overflow-hidden"
+      className="snap-start relative h-screen bg-secondary-foreground flex items-center justify-center px-4 lg:px-8 overflow-hidden"
     >
       {/* Grid overlay — 6×8 mobile, 12×8 desktop */}
       <div
@@ -72,7 +72,7 @@ export default function AboutSection() {
       <HeroText
         texts={[ABOUT_TEXT]}
         displayedText={displayedText}
-        className="relative z-20 text-secondary-foreground text-4xl lg:text-5xl max-w-md lg:max-w-5xl leading-tight text-center"
+        className="relative z-20 text-secondary text-4xl lg:text-5xl max-w-md lg:max-w-5xl leading-tight text-center"
       />
     </section>
   );
