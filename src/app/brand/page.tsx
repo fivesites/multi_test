@@ -84,6 +84,10 @@ export default function BrandPage() {
             <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Tiny5</span>
             <span className="font-[family-name:var(--font-tiny5)] text-4xl">Multi2</span>
           </div>
+          <div className="flex flex-col gap-1">
+            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">KarlST Ultra — font-rounded</span>
+            <span className="font-rounded text-4xl">Multi2</span>
+          </div>
         </div>
       </section>
 

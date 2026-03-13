@@ -70,6 +70,11 @@ const monumentGroteskMono = localFont({
   variable: "--font-monument-grotesk-mono",
 });
 
+const karlRounded = localFont({
+  src: "./KarlST_UltraBlack.woff2",
+  variable: "--font-rounded",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -78,7 +83,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} antialiased`}
+        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} ${karlRounded.variable} antialiased`}
       >
         <Nav />
         {children}
