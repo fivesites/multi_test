@@ -7,7 +7,6 @@ import {
   allWorkSlugsQuery,
 } from "../../../../sanity/lib/queries";
 import { urlFor } from "../../../../sanity/lib/image";
-import HeroText from "@/app/components/HeroText";
 import { PageTransitionCurtain } from "@/app/components/PageTransitionCurtain";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -80,11 +79,11 @@ export default async function WorkDetailPage({
       <main className="min-h-screen bg-background">
         {/* Hero */}
         <section
-          className="relative h-screen flex flex-col items-center justify-center"
+          className="relative h-screen flex flex-col justify-between py-6 px-6"
           style={{ backgroundColor: bg }}
         >
-          {/* Back link */}
-          <div className="absolute top-4 left-4 z-10">
+          {/* Top row: back link + client/year */}
+          <div className="flex items-center justify-between">
             <Button
               variant="link"
               asChild
@@ -92,8 +91,6 @@ export default async function WorkDetailPage({
             >
               <Link href="/">← Back</Link>
             </Button>
-          </div>
-          <div className="flex flex-wrap items-center justify-center px-6 pb-6">
             <div className="flex gap-2">
               {work.client && (
                 <Badge variant="ghost" className="text-white/60">
@@ -106,30 +103,28 @@ export default async function WorkDetailPage({
                 </Badge>
               )}
             </div>
-            {/* Centered title */}
-            <div className="flex-col flex items-center justify-center px-6 h-full">
-              <h1 className="font-absolution1 text-5xl md:text-7xl lg:text-9xl text-background text-center leading-none">
-                <HeroText texts={[work.title]} />
-              </h1>
-            </div>
+          </div>
 
-            {/* Metadata bar */}
+          {/* Center: title */}
+          <div className="flex items-center justify-center">
+            <h1 className="font-absolution1 text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-background text-center leading-none">
+              {work.title}
+            </h1>
+          </div>
 
-            <div className="flex flex-wrap items-center justify-center px-6 pb-6">
-              {work.categories && work.categories.length > 0 && (
-                <div className="flex gap-2">
-                  {work.categories.map((cat) => (
-                    <Badge
-                      key={cat}
-                      variant="ghost"
-                      className="text-white/60 uppercase tracking-wider"
-                    >
-                      {cat}
-                    </Badge>
-                  ))}
-                </div>
-              )}
-            </div>
+          {/* Bottom row: categories */}
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {work.categories && work.categories.length > 0 &&
+              work.categories.map((cat) => (
+                <Badge
+                  key={cat}
+                  variant="ghost"
+                  className="text-white/60 uppercase tracking-wider"
+                >
+                  {cat}
+                </Badge>
+              ))
+            }
           </div>
         </section>
 

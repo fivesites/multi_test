@@ -161,6 +161,30 @@
   }
 }
 
+/* ── Typography classes ─────────────────────────────────────────────────────
+   h1, h2  → Absolution Contextual (font-absolution1)
+   h3      → Monument Grotesk Mono (font-mono)
+   p       → Monument Grotesk (font-sans, default)
+   ────────────────────────────────────────────────────────────────────────── */
+@layer utilities {
+  .type-h1 {
+    font-family: var(--font-absolution1);
+    @apply text-5xl lg:text-8xl leading-none tracking-tight;
+  }
+  .type-h2 {
+    font-family: var(--font-absolution1);
+    @apply text-3xl lg:text-5xl leading-tight;
+  }
+  .type-h3 {
+    font-family: var(--font-monument-grotesk-mono);
+    @apply text-xl leading-snug;
+  }
+  .type-p {
+    font-family: var(--font-monument-grotesk);
+    @apply text-base leading-relaxed;
+  }
+}
+
 /* Philosophy page checkerboard — 2-col mobile, 4-col desktop */
 .philosophy-cell {
   background-color: var(--secondary);

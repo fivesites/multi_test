@@ -3,19 +3,21 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type Slide = { type: "image"; url: string } | { type: "video"; url: string };
 
 export function WorkCard({
   title,
   slug,
-  backgroundColor,
   slides,
+  className,
 }: {
   title: string;
   slug: string;
   backgroundColor?: string;
   slides: Slide[];
+  className?: string;
 }) {
   const [idx, setIdx] = useState(0);
   const [hovered, setHovered] = useState(false);
@@ -43,66 +45,70 @@ export function WorkCard({
   return (
     <Link
       href={`/work/${slug}`}
-      className="relative block h-[90vh] overflow-hidden group"
-      style={{ backgroundColor: backgroundColor ?? "#111" }}
+      className={cn("relative block overflow-hidden group bg-black", className ?? "h-[90vh]")}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Media slides */}
-      {slides.map((slide, i) =>
-        slide.type === "image" ? (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-700"
-            style={{ opacity: i === idx ? 1 : 0 }}
-          >
-            <Image
-              src={slide.url}
-              alt=""
-              fill
-              sizes="(max-width: 768px) 100vw, 33vw"
-              className="object-cover"
-            />
-          </div>
-        ) : (
-          <div
-            key={i}
-            className="absolute inset-0 transition-opacity duration-700"
-            style={{ opacity: i === idx ? 1 : 0 }}
-          >
-            <video
-              ref={(el) => {
-                videoRefs.current[i] = el;
-              }}
-              src={slide.url}
-              muted
-              loop
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ),
-      )}
-
-      {/* Color overlay — fades out on hover to reveal media */}
+      {/* Media slides — blurred until hover */}
       <div
-        className="absolute inset-0 z-10 transition-opacity duration-500"
-        style={{
-          backgroundColor: backgroundColor ?? "#111",
-          opacity: hovered ? 0 : 1,
-        }}
-      />
+        className="absolute inset-0 transition-all duration-500"
+        style={{ filter: hovered ? "blur(0px)" : "blur(12px)", transform: hovered ? "scale(1)" : "scale(1.05)" }}
+      >
+        {slides.map((slide, i) =>
+          slide.type === "image" ? (
+            <div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-700"
+              style={{ opacity: i === idx ? 1 : 0 }}
+            >
+              <Image
+                src={slide.url}
+                alt=""
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover"
+              />
+            </div>
+          ) : (
+            <div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-700"
+              style={{ opacity: i === idx ? 1 : 0 }}
+            >
+              <video
+                ref={(el) => {
+                  videoRefs.current[i] = el;
+                }}
+                src={slide.url}
+                muted
+                loop
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ),
+        )}
+      </div>
 
-      {/* Title */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none">
-        <span className="text-white font-absolution1 text-4xl drop-shadow-sm">
+      {/* Title — blurs and fades on hover */}
+      <div className="absolute inset-0 z-20 flex items-start justify-start p-4 pointer-events-none">
+        <span
+          className="text-white font-absolution1 text-2xl drop-shadow-sm transition-all duration-500"
+          style={{
+            opacity: hovered ? 0 : 1,
+            filter: hovered ? "blur(8px)" : "blur(0px)",
+          }}
+        >
           {title}
         </span>
       </div>
 
-      {/* Dot indicators */}
+      {/* Dot indicators — only visible on hover */}
       {slides.length > 1 && (
-        <div className="absolute bottom-3 left-0 right-0 z-30 flex items-center justify-center gap-1.5">
+        <div
+          className="absolute bottom-3 left-0 right-0 z-30 flex items-center justify-center gap-1.5 transition-opacity duration-300"
+          style={{ opacity: hovered ? 1 : 0 }}
+        >
           {slides.map((_, i) => (
             <button
               key={i}

@@ -2,6 +2,8 @@ import { client } from "../../../sanity/lib/client";
 import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
 import { WorkCard } from "./WorkCard";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
@@ -48,16 +50,17 @@ export default async function WorkSection() {
 
   if (!works.length) return null;
 
-  const visible = works.slice(0, 3);
+  const visible = works.slice(0, 4);
 
   return (
-    <section className="snap-start border-t border-border w-full">
-      <div className="h-[10vh] flex items-center justify-center">
-        <h2 className="font-absolution1 text-2xl text-center w-full">
-          See our work
-        </h2>
+    <section className="snap-start w-full relative">
+      {/* Button floats over the grid */}
+      <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
+        <Button variant="ghost" size="lg" asChild className="pointer-events-auto">
+          <Link href="/work">See our work</Link>
+        </Button>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-2 lg:grid-cols-4">
         {visible.map((work) => (
           <WorkCard
             key={work._id}
@@ -65,6 +68,7 @@ export default async function WorkSection() {
             slug={work.slug}
             backgroundColor={work.backgroundColor}
             slides={buildSlides(work)}
+            className="aspect-square"
           />
         ))}
       </div>
