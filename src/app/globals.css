@@ -7,7 +7,7 @@
 @theme inline {
   --font-sans: var(--font-monument-grotesk);
   --font-serif: var(--font-meta-old-french);
-  --font-mono: var(--font-monument-grotesk-mono);
+  --font-mono: var(--font-ft88);
   --font-tiny5: var(--font-tiny5);
   --font-absolution1: var(--font-absolution1);
   --font-rounded: var(--font-rounded);
@@ -169,20 +169,20 @@
    ────────────────────────────────────────────────────────────────────────── */
 @layer utilities {
   .type-h1 {
-    font-family: var(--font-absolution1);
+    font-family: var(--font-rounded);
     @apply text-5xl lg:text-8xl leading-none tracking-tight;
   }
   .type-h2 {
-    font-family: var(--font-absolution1);
+    font-family: var(--font-tiny5);
     @apply text-3xl lg:text-5xl leading-tight;
   }
   .type-h3 {
-    font-family: var(--font-monument-grotesk-mono);
+    font-family: var(--font-mono);
     @apply text-xl leading-snug;
   }
   .type-p {
-    font-family: var(--font-monument-grotesk);
-    @apply text-base leading-relaxed;
+    font-family: var(--font-serif);
+    @apply text-base leading-loose;
   }
 }
 
@@ -192,22 +192,22 @@
   color: var(--secondary-foreground);
 }
 /* 2-col: positions 4n+2 and 4n+3 are dark */
-.philosophy-cell:nth-child(4n+2),
-.philosophy-cell:nth-child(4n+3) {
+.philosophy-cell:nth-child(4n + 2),
+.philosophy-cell:nth-child(4n + 3) {
   background-color: var(--secondary-foreground);
   color: var(--secondary);
 }
 @media (min-width: 1024px) {
   /* 4-col: positions 8n+2, 8n+4, 8n+5, 8n+7 are dark */
-  .philosophy-cell:nth-child(4n+2),
-  .philosophy-cell:nth-child(4n+3) {
+  .philosophy-cell:nth-child(4n + 2),
+  .philosophy-cell:nth-child(4n + 3) {
     background-color: var(--secondary);
     color: var(--secondary-foreground);
   }
-  .philosophy-cell:nth-child(8n+2),
-  .philosophy-cell:nth-child(8n+4),
-  .philosophy-cell:nth-child(8n+5),
-  .philosophy-cell:nth-child(8n+7) {
+  .philosophy-cell:nth-child(8n + 2),
+  .philosophy-cell:nth-child(8n + 4),
+  .philosophy-cell:nth-child(8n + 5),
+  .philosophy-cell:nth-child(8n + 7) {
     background-color: var(--secondary-foreground);
     color: var(--secondary);
   }

@@ -153,13 +153,13 @@ export default function HeroText({
       className={`inline-flex items-baseline  font-absolution1 justify-start  ${className ?? ""}`}
     >
       {effectiveText}
-      {!hideCursor && (
+      {/* {!hideCursor && (
         <motion.span
           animate={{ opacity: [1, 1, 0, 0] }}
           transition={{ duration: 1, repeat: Infinity, times: [0, 0.5, 0.5, 1] }}
           className="ml-[2px] inline-block w-[2px] h-[1em] bg-current align-middle"
         />
-      )}
+      )} */}
     </span>
   );
 }

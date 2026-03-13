@@ -2,8 +2,6 @@ import { client } from "../../../sanity/lib/client";
 import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
 import { WorkCard } from "./WorkCard";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
 
 type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
@@ -16,9 +14,11 @@ type MediaItem = {
 type WorkCardData = {
   _id: string;
   title: string;
+  client?: string;
+  categories?: string[];
   slug: string;
   backgroundColor?: string;
-  coverImage?: { asset: { _ref: string } };
+  coverImage?: { asset: { _ref: string }; aspectRatio?: number };
   media?: MediaItem[];
 };
 
@@ -55,22 +55,24 @@ export default async function WorkSection() {
   return (
     <section className="snap-start w-full relative">
       {/* Button floats over the grid */}
-      <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none">
-        <Button variant="ghost" size="lg" asChild className="pointer-events-auto">
-          <Link href="/work">See our work</Link>
-        </Button>
-      </div>
-      <div className="grid grid-cols-2 lg:grid-cols-4">
-        {visible.map((work) => (
-          <WorkCard
-            key={work._id}
-            title={work.title}
-            slug={work.slug}
-            backgroundColor={work.backgroundColor}
-            slides={buildSlides(work)}
-            className="aspect-square"
-          />
-        ))}
+      <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"></div>
+      <div className="grid grid-cols-2 lg:grid-cols-3">
+        {visible.map((work) => {
+          const ar = work.coverImage?.aspectRatio ?? 0;
+          const isLandscape = ar > 1;
+          return (
+            <WorkCard
+              key={work._id}
+              title={work.title}
+              client={work.client}
+              categories={work.categories}
+              slug={work.slug}
+              backgroundColor={work.backgroundColor}
+              slides={buildSlides(work)}
+              className={isLandscape ? "h-[80vh] lg:col-span-2" : "h-[80vh]"}
+            />
+          );
+        })}
       </div>
     </section>
   );

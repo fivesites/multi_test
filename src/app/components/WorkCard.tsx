@@ -4,16 +4,29 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 
 type Slide = { type: "image"; url: string } | { type: "video"; url: string };
 
+const CATEGORY_LABELS: Record<string, string> = {
+  photo: "Photo",
+  video: "Video",
+  production: "Production",
+  "art-direction": "Art Direction",
+  concept: "Concept",
+};
+
 export function WorkCard({
   title,
+  client,
+  categories,
   slug,
   slides,
   className,
 }: {
   title: string;
+  client?: string;
+  categories?: string[];
   slug: string;
   backgroundColor?: string;
   slides: Slide[];
@@ -45,14 +58,20 @@ export function WorkCard({
   return (
     <Link
       href={`/work/${slug}`}
-      className={cn("relative block overflow-hidden group bg-black", className ?? "h-[90vh]")}
+      className={cn(
+        "relative block overflow-hidden group bg-black",
+        className ?? "h-[90vh]",
+      )}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Media slides — blurred until hover */}
+      {/* Media slides — unblurred, blur on hover */}
       <div
         className="absolute inset-0 transition-all duration-500"
-        style={{ filter: hovered ? "blur(0px)" : "blur(12px)", transform: hovered ? "scale(1)" : "scale(1.05)" }}
+        style={{
+          filter: hovered ? "blur(12px)" : "blur(0px)",
+          transform: hovered ? "scale(1.05)" : "scale(1)",
+        }}
       >
         {slides.map((slide, i) =>
           slide.type === "image" ? (
@@ -90,42 +109,34 @@ export function WorkCard({
         )}
       </div>
 
-      {/* Title — blurs and fades on hover */}
-      <div className="absolute inset-0 z-20 flex items-start justify-start p-4 pointer-events-none">
-        <span
-          className="text-white font-absolution1 text-2xl drop-shadow-sm transition-all duration-500"
-          style={{
-            opacity: hovered ? 0 : 1,
-            filter: hovered ? "blur(8px)" : "blur(0px)",
-          }}
-        >
+      {/* Title — bottom left, visible by default, fades on hover */}
+      <div
+        className="absolute bottom-4 left-4 z-20 pointer-events-none transition-all duration-500"
+        style={{
+          opacity: hovered ? 0 : 1,
+          filter: hovered ? "blur(8px)" : "blur(0px)",
+        }}
+      >
+        <Button variant="ghost" size="lg" tabIndex={-1}>
           {title}
-        </span>
+        </Button>
       </div>
 
-      {/* Dot indicators — only visible on hover */}
-      {slides.length > 1 && (
-        <div
-          className="absolute bottom-3 left-0 right-0 z-30 flex items-center justify-center gap-1.5 transition-opacity duration-300"
-          style={{ opacity: hovered ? 1 : 0 }}
-        >
-          {slides.map((_, i) => (
-            <button
-              key={i}
-              onClick={(e) => {
-                e.preventDefault();
-                setIdx(i);
-              }}
-              aria-label={`Go to slide ${i + 1}`}
-              className="w-1.5 h-1.5 rounded-full transition-all duration-300"
-              style={{
-                backgroundColor: i === idx ? "white" : "rgba(255,255,255,0.35)",
-                transform: i === idx ? "scale(1.3)" : "scale(1)",
-              }}
-            />
-          ))}
-        </div>
-      )}
+      {/* Hover info — top left: title, client, categories */}
+      <div
+        className="absolute top-4 left-4 z-20 pointer-events-none flex flex-col gap-1 transition-all duration-500 font-rounded text-xl text-white"
+        style={{
+          opacity: hovered ? 1 : 0,
+          filter: hovered ? "blur(0px)" : "blur(8px)",
+        }}
+      >
+        <span className="">{title}</span>
+        {client && <span>{client}</span>}
+        {categories && categories.length > 0 && (
+          <span>{categories.map((cat) => CATEGORY_LABELS[cat] ?? cat).join(", ")}</span>
+        )}
+  
+      </div>
     </Link>
   );
 }

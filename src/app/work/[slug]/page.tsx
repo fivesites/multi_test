@@ -8,8 +8,8 @@ import {
 } from "../../../../sanity/lib/queries";
 import { urlFor } from "../../../../sanity/lib/image";
 import { PageTransitionCurtain } from "@/app/components/PageTransitionCurtain";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import WorkDetailHeader from "./WorkDetailHeader";
 
 type MediaItem = {
   _key: string;
@@ -77,67 +77,35 @@ export default async function WorkDetailPage({
       <PageTransitionCurtain color={bg} />
 
       <main className="min-h-screen bg-background">
-        {/* Hero */}
-        <section
-          className="relative h-screen flex flex-col justify-between py-6 px-6"
-          style={{ backgroundColor: bg }}
-        >
-          {/* Top row: back link + client/year */}
-          <div className="flex items-center justify-between">
-            <Button
-              variant="link"
-              asChild
-              className="text-white/60 hover:text-white px-0"
-            >
-              <Link href="/">← Back</Link>
-            </Button>
-            <div className="flex gap-2">
-              {work.client && (
-                <Badge variant="ghost" className="text-white/60">
-                  {work.client}
-                </Badge>
-              )}
-              {work.year && (
-                <Badge variant="ghost" className="text-white/60">
-                  {work.year}
-                </Badge>
-              )}
-            </div>
-          </div>
+        {/* Back link */}
+        <div className="absolute top-0 left-0 px-6 pt-3">
+          <Button
+            variant="link"
+            asChild
+            className="text-foreground/40 hover:text-foreground px-0"
+          >
+            <Link href="/">← Back</Link>
+          </Button>
+        </div>
 
-          {/* Center: title */}
-          <div className="flex items-center justify-center">
-            <h1 className="font-absolution1 text-4xl sm:text-6xl md:text-7xl lg:text-8xl text-background text-center leading-none">
-              {work.title}
-            </h1>
-          </div>
-
-          {/* Bottom row: categories */}
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {work.categories && work.categories.length > 0 &&
-              work.categories.map((cat) => (
-                <Badge
-                  key={cat}
-                  variant="ghost"
-                  className="text-white/60 uppercase tracking-wider"
-                >
-                  {cat}
-                </Badge>
-              ))
-            }
-          </div>
-        </section>
+        {/* 3-col header */}
+        <WorkDetailHeader
+          title={work.title}
+          client={work.client}
+          year={work.year}
+          categories={work.categories}
+        />
 
         {/* Cover image — full bleed */}
         {work.coverImage?.asset && (
-          <div className="w-full aspect-video overflow-hidden">
+          <div className="w-full aspect-video h-[80vh] overflow-hidden">
             <Image
               src={urlFor(work.coverImage).width(1600).height(900).url()}
               alt={work.title}
               width={1600}
               height={900}
               priority
-              className="w-full h-full object-cover"
+              className="w-full h-full object-contain"
             />
           </div>
         )}

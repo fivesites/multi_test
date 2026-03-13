@@ -56,9 +56,11 @@ export const workCardsQuery = groq`
   *[_type == "work"] | order(year desc) {
     _id,
     title,
+    client,
+    categories,
     "slug": slug.current,
     "backgroundColor": backgroundColor.hex,
-    coverImage { asset-> },
+    coverImage { asset, "aspectRatio": asset->metadata.dimensions.aspectRatio },
     media[] {
       _type,
       _key,

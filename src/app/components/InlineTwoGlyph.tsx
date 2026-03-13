@@ -47,7 +47,7 @@ export default function InlineTwoGlyph({ xHeight }: { xHeight: number }) {
         style={{
           position: "absolute",
           bottom: xHeight,
-          left: 0,
+          left: 2,
         }}
       >
         <path d={TWO_PATH} />

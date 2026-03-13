@@ -92,13 +92,13 @@ export default function Nav() {
         {open && (
           <motion.div
             key="nav-overlay"
-            className="fixed inset-0 z-40 bg-background flex flex-col items-center justify-center"
+            className="fixed inset-0 z-40  flex flex-col items-center justify-center p-3 h-min w-full"
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 24 }}
             transition={{ duration: 0.35, ease: [0.32, 0, 0.67, 0] }}
           >
-            <nav className="flex flex-col items-center gap-6">
+            <nav className="flex flex-col items-center gap-6 rounded-3xl h-min w-full bg-background p-12">
               {links.map((link, i) => (
                 <motion.div
                   key={link.href}

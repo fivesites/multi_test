@@ -14,7 +14,7 @@ export default function HomeHero() {
       {/* Hidden measurer — same font/size as HeroText */}
       <span
         ref={measureRef}
-        className="absolute invisible font-absolution1 text-6xl lg:text-8xl"
+        className="absolute invisible font-rounded font-black text-6xl lg:text-8xl"
         aria-hidden="true"
       >
         x
@@ -22,7 +22,7 @@ export default function HomeHero() {
 
       <div className="flex items-baseline justify-center pointer-events-none">
         <HeroText
-          className="text-secondary-foreground text-6xl font-rounded lg:text-8xl"
+          className="text-secondary-foreground text-6xl tracking-normal font-rounded font-black lg:text-8xl"
           texts={["Multi", "Jureskog", "Ikea", "ATG"]}
         />
 
