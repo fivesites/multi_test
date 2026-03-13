@@ -23,7 +23,7 @@ export default function Page() {
           className="h-screen flex items-center justify-center bg-secondary"
         >
           <span className="font-rounded font-black text-6xl lg:text-8xl text-secondary-foreground">
-            Let&apos;s link up
+            Connect
           </span>
         </Link>
       </section>

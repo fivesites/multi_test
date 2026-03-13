@@ -124,18 +124,19 @@ export function WorkCard({
 
       {/* Hover info — top left: title, client, categories */}
       <div
-        className="absolute top-4 left-4 z-20 pointer-events-none flex flex-col gap-1 transition-all duration-500 font-rounded text-xl text-white"
+        className="absolute top-4 left-4 z-20 pointer-events-none flex flex-col gap-1 transition-all duration-500 font-rounded font-normal text-xl text-white"
         style={{
           opacity: hovered ? 1 : 0,
           filter: hovered ? "blur(0px)" : "blur(8px)",
         }}
       >
         <span className="">{title}</span>
-        {client && <span>{client}</span>}
+        {client && <span className="">{client}</span>}
         {categories && categories.length > 0 && (
-          <span>{categories.map((cat) => CATEGORY_LABELS[cat] ?? cat).join(", ")}</span>
+          <span className="font-mono text-sm mt-2">
+            {categories.map((cat) => CATEGORY_LABELS[cat] ?? cat).join(", ")}
+          </span>
         )}
-  
       </div>
     </Link>
   );
