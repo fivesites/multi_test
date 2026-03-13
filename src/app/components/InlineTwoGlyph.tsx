@@ -16,23 +16,42 @@ const TWO_PATH =
  *   that shares the same font and size as the surrounding text.
  * - Uses `fill="currentColor"` so it inherits the text color.
  */
+const glyphWidth = (xHeight: number) => xHeight * GLYPH_ASPECT;
+
+/**
+ * Zero-height inline wrapper so the glyph takes no vertical space in the
+ * line box. The SVG is absolutely positioned inside:
+ *   bottom: xHeight  → SVG bottom sits xHeight above the wrapper's baseline
+ *                       = x-height line of the surrounding text (superscript)
+ */
 export default function InlineTwoGlyph({ xHeight }: { xHeight: number }) {
+  const w = glyphWidth(xHeight);
   return (
-    <svg
-      width={xHeight * GLYPH_ASPECT}
-      height={xHeight}
-      viewBox={`0 0 ${GLYPH_W} ${GLYPH_H}`}
-      fill="currentColor"
-      xmlns="http://www.w3.org/2000/svg"
+    <span
       aria-hidden="true"
-      className="inline-block flex-none"
       style={{
-        // items-baseline puts the SVG bottom at the text baseline.
-        // translateY(-xHeight) lifts it so the glyph bottom sits on the x-height line.
-        transform: `translateY(${-xHeight}px)`,
+        display: "inline-block",
+        position: "relative",
+        width: w,
+        height: 0,
+        overflow: "visible",
+        verticalAlign: "baseline",
       }}
     >
-      <path d={TWO_PATH} />
-    </svg>
+      <svg
+        width={w}
+        height={xHeight}
+        viewBox={`0 0 ${GLYPH_W} ${GLYPH_H}`}
+        fill="currentColor"
+        xmlns="http://www.w3.org/2000/svg"
+        style={{
+          position: "absolute",
+          bottom: xHeight,
+          left: 0,
+        }}
+      >
+        <path d={TWO_PATH} />
+      </svg>
+    </span>
   );
 }
