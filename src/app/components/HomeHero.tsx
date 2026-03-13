@@ -120,11 +120,12 @@ export default function HomeHero() {
             className="text-white flex-none"
             aria-hidden="true"
             style={{
-              // marginBottom shifts the flex baseline reference up by xHeight,
-              // so the visual bottom of the glyph lands on the x-height line
-              // (xHeight above the text baseline) rather than the baseline itself.
-              marginBottom: xHeight,
-              filter: "drop-shadow(0 0 40px rgba(0,0,0,0.6)) drop-shadow(0 2px 8px rgba(0,0,0,0.8))",
+              // items-baseline puts SVG bottom at the text baseline.
+              // translateY(-xHeight) then lifts it up by one x-height,
+              // so the glyph bottom lands exactly on the x-height line (superscript).
+              transform: `translateY(${-xHeight}px)`,
+              filter:
+                "drop-shadow(0 0 40px rgba(0,0,0,0.6)) drop-shadow(0 2px 8px rgba(0,0,0,0.8))",
             }}
           >
             <path d={TWO_PATH} />
