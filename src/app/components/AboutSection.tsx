@@ -1,41 +1,8 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useXHeightSync } from "@/app/hooks/useXHeightSync";
-import InlineTwoGlyph from "./InlineTwoGlyph";
 import Image from "next/image";
 
-/**
- * Renders a string, replacing every "word(2)" with a styled span around
- * "word" (using `className`) followed by an inline superscript-2 glyph.
- * Falls back to plain "2" until xHeight is available.
- */
-function TextWithTwoGlyph({
-  text,
-  xHeight,
-  className,
-}: {
-  text: string;
-  xHeight: number | null;
-  className?: string;
-}) {
-  // Split captures the word immediately before each (2) as its own segment
-  const segments = text.split(/(\w+)\(2\)/);
-  return (
-    <>
-      {segments.map((seg, i) => {
-        const isClientName = i % 2 === 1;
-        return (
-          <span key={i} className={isClientName ? className : undefined}>
-            {seg}
-            {isClientName &&
-              (xHeight !== null ? <InlineTwoGlyph xHeight={xHeight} /> : "2")}
-          </span>
-        );
-      })}
-    </>
-  );
-}
 
 const ABOUT_TEXT =
   "Multi² is not your typical company. It’s a multiplier. Bring the challenge. Leave with multiplied impact. Two creators × multiple roles = more than expected. Strategy and execution under one roof. Ideas don’t get diluted. They get sharper. Precision-crafted content, built to deliver maximum impact per investment. From sharpening the brand at IKEA² to crafting bold work with Jureskog² and ATG², we help brands move faster, think clearer, and create more with less. Small team. Multiplied output.";
@@ -43,7 +10,6 @@ const ABOUT_TEXT =
 export default function AboutSection() {
   const sectionRef = useRef<HTMLElement>(null);
   const measureRef = useRef<HTMLSpanElement>(null);
-  const xHeight = useXHeightSync(measureRef);
 
   useEffect(() => {
     const update = () => {

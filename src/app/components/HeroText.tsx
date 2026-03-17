@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
+
 
 const TYPING_SPEED = 55;
 const DELETING_SPEED = 30;
@@ -144,9 +144,6 @@ export default function HeroText({
   }, [displayed, phase, textIndex, texts, inView, scrollDriven, timeTyping]);
 
   const effectiveText = displayedText ?? displayed;
-  const hideCursor =
-    displayedText !== undefined && displayedText.length >= texts[0]?.length;
-
   return (
     <span
       ref={ref}
