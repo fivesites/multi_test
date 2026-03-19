@@ -21,7 +21,7 @@ export default function AboutSection() {
     );
 
   return (
-    <section className="snap-start w-full bg-background">
+    <section className="lg:snap-start w-full bg-background">
       <HorizontalBorder size="s" />
 
       <div className="relative grid grid-cols-1 lg:grid-cols-3 min-h-screen">

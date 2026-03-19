@@ -15,9 +15,10 @@ interface Props {
   className?: string;
   currentIndex?: number;
   paused?: boolean;
+  frozen?: boolean; // stays at "M", no animation
 }
 
-export default function MultiText({ className, currentIndex, paused }: Props) {
+export default function MultiText({ className, currentIndex, paused, frozen }: Props) {
   const measureRef = useRef<HTMLSpanElement>(null);
   const xHeight = useXHeightSync(measureRef);
   const { saved: allAssets } = useSavedAssets();
@@ -36,8 +37,9 @@ export default function MultiText({ className, currentIndex, paused }: Props) {
     setTwoIdx(currentIndex % (glyphs.length + 1));
   }, [currentIndex, glyphs.length, paused]);
 
-  // Typing animation loop — runs always
+  // Typing animation loop — disabled when frozen
   useEffect(() => {
+    if (frozen) return;
     let delay: number;
     if (forward && textStep === STEPS.length - 1) {
       delay = PAUSE_FULL_MS;
@@ -67,7 +69,7 @@ export default function MultiText({ className, currentIndex, paused }: Props) {
     }, delay);
 
     return () => clearTimeout(id);
-  }, [textStep, forward, glyphs.length]);
+  }, [textStep, forward, glyphs.length, frozen]);
 
   const rawAsset =
     glyphs.length > 0 && twoIdx > 0 ? glyphs[twoIdx - 1] : undefined;

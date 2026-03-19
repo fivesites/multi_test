@@ -9,6 +9,7 @@ import { client } from "../../sanity/lib/client";
 import { workCardsQuery } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 import Nav from "./components/Nav";
+import MultiText from "./components/MultiText";
 
 type HeroImage = { label: string; slug: string; url: string };
 
@@ -61,11 +62,16 @@ export default async function Page() {
     }));
 
   return (
-    <main className="relative h-screen overflow-y-scroll snap-y snap-mandatory">
+    <main className="relative h-screen overflow-y-scroll lg:snap-y lg:snap-mandatory">
       <Nav />
       <CheckerboardBg />
 
-      {/* Hero — h-screen, borders managed inside HomeHero */}
+      {/* Mobile sticky M² header — sticks to top for the full scroll duration */}
+      <div className="lg:hidden sticky top-0 z-30 bg-primary h-12 flex items-center justify-center">
+        <MultiText className="text-primary-foreground" frozen />
+      </div>
+
+      {/* Hero */}
       <HomeHero portraitImages={portraitImages} landscapeImages={landscapeImages} />
 
       {/* About — 288px (9 × 32px grid units) */}
@@ -79,7 +85,7 @@ export default async function Page() {
       <SavedHorizontalBorder size="m" />
 
       {/* Contact */}
-      <section id="contact" className="relative flex flex-col snap-start">
+      <section id="contact" className="relative flex flex-col lg:snap-start">
         <Link
           href="/connect"
           className="h-screen flex items-center justify-center bg-secondary"

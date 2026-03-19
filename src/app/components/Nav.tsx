@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -12,35 +12,39 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [scrollState, setScrollState] = useState<"top" | "middle" | "bottom">(
-    "top",
-  );
+  const [scrollState, setScrollState] = useState<"top" | "middle" | "bottom">("top");
+  const mainRef = useRef<Element | null>(null);
 
   useEffect(() => {
+    mainRef.current = document.querySelector("main");
+    const el = mainRef.current;
+    if (!el) return;
+
     const update = () => {
-      const scrolled = window.scrollY;
-      const maxScroll =
-        document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = el.scrollTop;
+      const maxScroll = el.scrollHeight - el.clientHeight;
       if (maxScroll <= 0) return;
-      if (scrolled < 50) setScrollState("top");
+      if (scrolled < 1) setScrollState("top");
       else if (scrolled >= maxScroll - 50) setScrollState("bottom");
       else setScrollState("middle");
     };
-    window.addEventListener("scroll", update, { passive: true });
+
+    el.addEventListener("scroll", update, { passive: true });
     update();
-    return () => window.removeEventListener("scroll", update);
+    return () => el.removeEventListener("scroll", update);
   }, []);
 
-  // Close menu when scrolling away from middle
+  // Close menu when leaving middle state
   useEffect(() => {
     if (scrollState !== "middle") setOpen(false);
   }, [scrollState]);
 
   const handleClick = () => {
+    const el = mainRef.current;
     if (scrollState === "top") {
-      window.scrollBy({ top: window.innerHeight, behavior: "smooth" });
+      el?.scrollBy({ top: el.clientHeight, behavior: "smooth" });
     } else if (scrollState === "bottom") {
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      el?.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       setOpen((o) => !o);
     }

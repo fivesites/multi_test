@@ -52,7 +52,7 @@ export default async function WorkSection() {
   const visible = works.slice(0, 3);
 
   return (
-    <section className="snap-start w-full relative">
+    <section className="lg:snap-start w-full relative">
       <div className="grid grid-cols-1 lg:grid-cols-3">
         {visible.flatMap((work, i) => [
           i > 0 && (

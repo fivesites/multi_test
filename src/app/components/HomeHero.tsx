@@ -68,13 +68,8 @@ function HeroCell({
 
 function MobileHero({ images }: { images: HeroImage[] }) {
   return (
-    <div className="lg:hidden grid grid-cols-1">
-      <div className="relative bg-primary h-[50vh] flex items-center justify-center">
-        <MultiText className="text-primary-foreground" />
-      </div>
-      <div className="h-[50vh]">
-        <HeroCell images={images} offset={0} priority />
-      </div>
+    <div className="lg:hidden h-screen">
+      <HeroCell images={images} offset={0} priority />
     </div>
   );
 }
@@ -123,7 +118,7 @@ export default function HomeHero({
   landscapeImages?: HeroImage[];
 }) {
   return (
-    <section className="snap-start w-full">
+    <section className="lg:snap-start w-full">
       <MobileHero images={landscapeImages} />
       <DesktopHero images={portraitImages} />
     </section>
