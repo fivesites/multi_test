@@ -1,54 +1,59 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import Image from "next/image";
-
+import Link from "next/link";
+import { useSavedAssets } from "@/app/hooks/useSavedAssets";
+import HorizontalBorder from "./HorizontalBorder";
+import { Button } from "@/components/ui/button";
 
 const ABOUT_TEXT =
-  "Multi² is not your typical company. It’s a multiplier. Bring the challenge. Leave with multiplied impact. Two creators × multiple roles = more than expected. Strategy and execution under one roof. Ideas don’t get diluted. They get sharper. Precision-crafted content, built to deliver maximum impact per investment. From sharpening the brand at IKEA² to crafting bold work with Jureskog² and ATG², we help brands move faster, think clearer, and create more with less. Small team. Multiplied output.";
+  "Multi² is not your typical company. It's a multiplier. Bring the challenge. Leave with multiplied impact. Two creators × multiple roles = more than expected. Strategy and execution under one roof. Ideas don't get diluted. They get sharper. Precision-crafted content, built to deliver maximum impact per investment. From sharpening the brand at Ikea to crafting bold work with Jureskog and ATG, we help brands move faster, think clearer, and create more with less. Small team. Multiplied output.";
 
 export default function AboutSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const measureRef = useRef<HTMLSpanElement>(null);
+  const { saved } = useSavedAssets();
 
-  useEffect(() => {
-    const update = () => {
-      const el = sectionRef.current;
-      if (!el) return;
-      const rot =
-        (1 - el.getBoundingClientRect().top / window.innerHeight) * 45;
-      el.style.setProperty("--rot", `${rot}deg`);
-    };
-    window.addEventListener("scroll", update, { passive: true });
-    update();
-    return () => window.removeEventListener("scroll", update);
-  }, []);
+  const illustration = [...saved]
+    .reverse()
+    .find((a) => a.type === "composition" && a.label.includes("9:16"));
 
   return (
-    <section
-      ref={sectionRef}
-      className="snap-start relative min-h-[75vh] grid grid-cols-1 lg:grid-cols-3 items-start justify-start overflow-hidden bg-background w-full"
-    >
-      {/* Hidden measurer — same font/size as the paragraph */}
-      <span
-        ref={measureRef}
-        className="absolute invisible font-rounded text-2xl lg:text-3xl"
-        aria-hidden="true"
-      >
-        x
-      </span>
+    <section className="snap-start w-full bg-background">
+      <HorizontalBorder size="s" />
 
-      <p className="relative z-20 col-span-1 text-foreground font-rounded font-normal leading-tight text-2xl lg:text-2xl inline-flex flex-wrap items-baseline justify-start p-3">
-        {ABOUT_TEXT}
-      </p>
-      <div className="hidden lg:block lg:col-span-2 relative h-full">
-        <Image
-          src="/jureskogs/reklam_dokumentation_2503_Jureskogs_237_TUSCH.jpg"
-          alt=""
-          fill
-          className="object-cover object-right"
-        />
+      <div className="relative grid grid-cols-1 lg:grid-cols-3 min-h-screen">
+        {/* Philosophy button — desktop top-left */}
+        <div className="hidden lg:block absolute top-0 left-0 z-10">
+          <Button variant="default" asChild>
+            <Link href="/philosophy">Philosophy</Link>
+          </Button>
+        </div>
+
+        {/* Col 1: text */}
+        <div className="lg:col-span-2 flex items-center justify-start p-8 lg:p-16">
+          <p className="text-foreground font-normal leading-tight text-2xl lg:text-3xl max-w-3xl font-rounded">
+            {ABOUT_TEXT}
+          </p>
+        </div>
+
+        {/* Col 3: 9:16 illustration */}
+        <div className="relative overflow-hidden bg-secondary min-h-[60vw] lg:min-h-0">
+          {illustration?.uploadedAsset ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={illustration.uploadedAsset}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div className="absolute inset-0 flex items-center justify-center">
+              <span className="font-mono text-xs text-muted-foreground">
+                9:16
+              </span>
+            </div>
+          )}
+        </div>
       </div>
+
+      <HorizontalBorder size="xs" />
     </section>
   );
 }

@@ -2,6 +2,7 @@ import { client } from "../../../sanity/lib/client";
 import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
 import { WorkCard } from "./WorkCard";
+import HorizontalBorder from "./HorizontalBorder";
 
 type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
@@ -28,13 +29,13 @@ function buildSlides(work: WorkCardData) {
   if (work.coverImage?.asset) {
     slides.push({
       type: "image",
-      url: urlFor(work.coverImage).width(900).height(506).url(),
+      url: urlFor(work.coverImage).width(600).height(1067).url(),
     });
   }
 
   for (const item of work.media ?? []) {
     if (item._type === "image" && item.asset) {
-      const url = urlFor(item).width(900).height(506).url();
+      const url = urlFor(item).width(600).height(1067).url();
       slides.push({ type: "image", url });
     } else if (item._type === "videoUpload" && item.file?.asset?.url) {
       slides.push({ type: "video", url: item.file.asset.url });
@@ -50,29 +51,28 @@ export default async function WorkSection() {
 
   if (!works.length) return null;
 
-  const visible = works.slice(0, 4);
+  const visible = works.slice(0, 3);
 
   return (
     <section className="snap-start w-full relative">
-      {/* Button floats over the grid */}
-      <div className="absolute inset-0 z-40 flex items-center justify-center pointer-events-none"></div>
-      <div className="grid grid-cols-2 lg:grid-cols-3">
-        {visible.map((work) => {
-          const ar = work.coverImage?.aspectRatio ?? 0;
-          const isLandscape = ar > 1;
-          return (
-            <WorkCard
-              key={work._id}
-              title={work.title}
-              client={work.client}
-              categories={work.categories}
-              slug={work.slug}
-              backgroundColor={work.backgroundColor}
-              slides={buildSlides(work)}
-              className={isLandscape ? "h-[80vh] lg:col-span-2" : "h-[80vh]"}
-            />
-          );
-        })}
+      <div className="grid grid-cols-1 lg:grid-cols-3">
+        {visible.flatMap((work, i) => [
+          i > 0 && (
+            <div key={`border-${work._id}`} className="lg:hidden">
+              <HorizontalBorder size="xs" />
+            </div>
+          ),
+          <WorkCard
+            key={work._id}
+            title={work.title}
+            client={work.client}
+            categories={work.categories}
+            slug={work.slug}
+            backgroundColor={work.backgroundColor}
+            slides={buildSlides(work)}
+            className="h-screen"
+          />,
+        ])}
       </div>
     </section>
   );

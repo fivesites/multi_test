@@ -2,9 +2,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import React from "react";
 import { Tiny5 } from "next/font/google";
-import Nav from "@/components/Nav";
 
 import "./globals.css";
+import { cookies } from "next/headers";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -88,22 +88,31 @@ const karlRounded = localFont({
     { path: "./KarlSTTrial-BoldItalic.woff2", weight: "700", style: "italic" },
     { path: "./KarlSTTrial-Black.woff2", weight: "800", style: "normal" },
     { path: "./KarlSTTrial-BlackItalic.woff2", weight: "800", style: "italic" },
-    { path: "./KarlSTTrial-UltraBlack.woff2", weight: "900", style: "normal" },
+    { path: "./KarlST_UltraBlack.woff2", weight: "900", style: "normal" },
   ],
   variable: "--font-rounded",
 });
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const raw = cookieStore.get("theme-overrides")?.value;
+  let themeStyle: React.CSSProperties = {};
+  if (raw) {
+    try {
+      const overrides: Record<string, string> = JSON.parse(decodeURIComponent(raw));
+      themeStyle = overrides as React.CSSProperties;
+    } catch {}
+  }
+
   return (
-    <html lang="en">
+    <html lang="en" style={themeStyle}>
       <body
         className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} ${karlRounded.variable} antialiased`}
       >
-        <Nav />
         {children}
       </body>
     </html>

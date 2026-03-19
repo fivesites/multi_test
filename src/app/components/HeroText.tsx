@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-
 const TYPING_SPEED = 55;
 const DELETING_SPEED = 30;
 const HOLD_DELAY = 1800;
@@ -16,6 +15,7 @@ export default function HeroText({
   truncateAt,
   unlocked,
   onTruncateReached,
+  onWordChange,
   className,
 }: {
   texts: string[];
@@ -26,6 +26,7 @@ export default function HeroText({
   truncateAt?: number;
   unlocked?: boolean;
   onTruncateReached?: () => void;
+  onWordChange?: () => void;
   className?: string;
 }) {
   const [textIndex, setTextIndex] = useState(0);
@@ -37,6 +38,15 @@ export default function HeroText({
   const [timeTyping, setTimeTyping] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
   const truncateReachedRef = useRef(false);
+  const prevTextIndexRef = useRef(textIndex);
+
+  // Fire onWordChange each time a new word starts
+  useEffect(() => {
+    if (textIndex !== prevTextIndexRef.current) {
+      prevTextIndexRef.current = textIndex;
+      onWordChange?.();
+    }
+  }, [textIndex, onWordChange]);
 
   // When unlocked, switch from scroll-driven to time-based typing
   useEffect(() => {
@@ -147,7 +157,7 @@ export default function HeroText({
   return (
     <span
       ref={ref}
-      className={`inline-flex items-baseline  font-absolution1 justify-start  ${className ?? ""}`}
+      className={`inline-flex items-baseline   justify-start  ${className ?? ""}`}
     >
       {effectiveText}
       {/* {!hideCursor && (

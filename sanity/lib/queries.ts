@@ -34,6 +34,7 @@ export const workBySlugQuery = groq`
       _key,
       // image
       asset->,
+      "aspectRatio": asset->metadata.dimensions.aspectRatio,
       hotspot,
       crop,
       alt,
@@ -76,6 +77,38 @@ export const stickyNotesQuery = groq`
   *[_type == "stickyNote"] | order(order asc) {
     _id,
     text
+  }
+`;
+
+// All saved two designs, ordered
+export const twoDesignsQuery = groq`
+  *[_type == "twoDesign"] | order(order asc) {
+    _id,
+    label,
+    cells,
+    style,
+    noGap,
+    cols,
+    rows,
+    asset
+  }
+`;
+
+// All multi assets, ordered
+export const multiAssetsQuery = groq`
+  *[_type == "multiAsset"] | order(order asc) {
+    _id,
+    label,
+    type,
+    cells,
+    glyphStyle,
+    noGap,
+    cols,
+    rows,
+    uploadedAsset,
+    colorA,
+    colorB,
+    checkerStripCount
   }
 `;
 

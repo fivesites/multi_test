@@ -1,6 +1,5 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import Link from "next/link";
 import { client } from "../../../../sanity/lib/client";
 import {
   workBySlugQuery,
@@ -8,13 +7,13 @@ import {
 } from "../../../../sanity/lib/queries";
 import { urlFor } from "../../../../sanity/lib/image";
 import { PageTransitionCurtain } from "@/app/components/PageTransitionCurtain";
-import { Button } from "@/components/ui/button";
-import WorkDetailHeader from "./WorkDetailHeader";
+import WorkDetailHero from "./WorkDetailHero";
 
 type MediaItem = {
   _key: string;
   _type: "image" | "videoUpload" | "videoUrl";
   asset?: { _ref: string; url?: string };
+  aspectRatio?: number;
   hotspot?: object;
   crop?: object;
   alt?: string;
@@ -56,20 +55,14 @@ export default async function WorkDetailPage({
 
   const bg = work.backgroundColor ?? "#111111";
 
-  // Group media into full-width or 2-col pairs
   const media = work.media ?? [];
-  const groups: { items: MediaItem[]; cols: 1 | 2 }[] = [];
-  let i = 0;
-  while (i < media.length) {
-    const curr = media[i];
-    const next = media[i + 1];
-    if (curr._type === "image" && next?._type === "image") {
-      groups.push({ items: [curr, next], cols: 2 });
-      i += 2;
-    } else {
-      groups.push({ items: [curr], cols: 1 });
-      i += 1;
-    }
+
+  function colSpan(item: MediaItem): 1 | 2 | 3 {
+    if (item._type !== "image") return 3;
+    const ar = item.aspectRatio ?? 1;
+    if (ar < 0.8) return 1; // portrait
+    if (ar < 1.6) return 2; // landscape
+    return 3; // wide / panoramic
   }
 
   return (
@@ -77,108 +70,119 @@ export default async function WorkDetailPage({
       <PageTransitionCurtain color={bg} />
 
       <main className="min-h-screen bg-background">
-        {/* Back link */}
-        <div className="absolute top-0 left-0 px-6 pt-3">
-          <Button
-            variant="link"
-            asChild
-            className="text-foreground/40 hover:text-foreground px-0"
-          >
-            <Link href="/">← Back</Link>
-          </Button>
-        </div>
+        {/* Hero — mobile: 2 rows (info + image) | desktop: h-screen cover */}
 
-        {/* 3-col header */}
-        <WorkDetailHeader
-          title={work.title}
+        <WorkDetailHero
           client={work.client}
-          year={work.year}
+          title={work.title}
           categories={work.categories}
+          coverImageUrl={work.coverImage?.asset ? urlFor(work.coverImage).width(1920).url() : undefined}
         />
 
-        {/* Cover image — full bleed */}
-        {work.coverImage?.asset && (
-          <div className="w-full aspect-video h-[80vh] overflow-hidden">
-            <Image
-              src={urlFor(work.coverImage).width(1600).height(900).url()}
-              alt={work.title}
-              width={1600}
-              height={900}
-              priority
-              className="w-full h-full object-contain"
-            />
-          </div>
-        )}
+        {/* 3-col section: description + two 9:16 images */}
+        {(() => {
+          const portraits = (work.media ?? []).filter(
+            (m) => m._type === "image" && m.asset,
+          );
+          const img1 = portraits[0];
+          const img2 = portraits[1];
+          return (
+            <div className="grid grid-cols-2 lg:grid-cols-3 h-auto lg:h-screen">
+              {/* Col 1: description */}
+              <div className="col-span-2 lg:col-span-1 flex items-center p-8 lg:p-16">
+                <p className="font-rounded text-foreground text-xl lg:text-2xl leading-snug">
+                  {work.description ??
+                    "A creative project built with precision and intent. Strategy and execution, multiplied."}
+                </p>
+              </div>
+              {/* Col 2: first portrait image */}
+              <div className="relative overflow-hidden aspect-[9/16] lg:aspect-auto bg-muted">
+                {img1?.asset && (
+                  <Image
+                    src={urlFor(img1).width(600).height(1067).url()}
+                    alt={img1.alt ?? work.title}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
+              {/* Col 3: second portrait image */}
+              <div className="relative overflow-hidden aspect-[9/16] lg:aspect-auto bg-muted">
+                {img2?.asset && (
+                  <Image
+                    src={urlFor(img2).width(600).height(1067).url()}
+                    alt={img2.alt ?? work.title}
+                    fill
+                    className="object-cover"
+                  />
+                )}
+              </div>
+            </div>
+          );
+        })()}
 
-        {/* Description */}
-        {work.description && (
-          <div className="px-6 py-16 max-w-2xl">
-            <p className="text-base leading-relaxed text-foreground/70">
-              {work.description}
-            </p>
-          </div>
-        )}
+        {/* Media gallery — 3-col grid */}
+        {media.length > 0 && (
+          <div className="grid grid-cols-3">
+            {media.map((item) => {
+              const span = colSpan(item);
+              const colClass =
+                span === 1
+                  ? "col-span-1"
+                  : span === 2
+                    ? "col-span-2"
+                    : "col-span-3";
 
-        {/* Media gallery */}
-        {groups.length > 0 && (
-          <div className="flex flex-col">
-            {groups.map((group, gi) =>
-              group.cols === 2 ? (
-                <div key={gi} className="grid grid-cols-2">
-                  {group.items.map((item) => (
-                    <div key={item._key} className="overflow-hidden">
-                      <Image
-                        src={urlFor(item).width(900).url()}
-                        alt={item.alt ?? work.title}
-                        width={900}
-                        height={900}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div key={gi} className="w-full overflow-hidden">
-                  {(() => {
-                    const item = group.items[0];
-                    if (item._type === "image" && item.asset) {
-                      return (
-                        <Image
-                          src={urlFor(item).width(1600).url()}
-                          alt={item.alt ?? work.title}
-                          width={1600}
-                          height={900}
-                          className="w-full object-cover"
-                        />
-                      );
-                    }
-                    if (item._type === "videoUpload" && item.file?.asset?.url) {
-                      return (
-                        <video
-                          src={item.file.asset.url}
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          className="w-full"
-                        />
-                      );
-                    }
-                    if (item._type === "videoUrl" && item.url) {
-                      return (
-                        <video
-                          src={item.url}
-                          controls
-                          playsInline
-                          className="w-full"
-                        />
-                      );
-                    }
-                    return null;
-                  })()}
-                </div>
-              ),
-            )}
+              if (item._type === "image" && item.asset) {
+                const ar = item.aspectRatio ?? 1;
+                return (
+                  <div
+                    key={item._key}
+                    className={`${colClass} relative overflow-hidden`}
+                    style={{ aspectRatio: ar }}
+                  >
+                    <Image
+                      src={urlFor(item)
+                        .width(span === 1 ? 600 : span === 2 ? 1200 : 1800)
+                        .url()}
+                      alt={item.alt ?? work.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                );
+              }
+
+              if (item._type === "videoUpload" && item.file?.asset?.url) {
+                return (
+                  <div key={item._key} className={`${colClass} aspect-video`}>
+                    <video
+                      src={item.file.asset.url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                );
+              }
+
+              if (item._type === "videoUrl" && item.url) {
+                return (
+                  <div key={item._key} className={`${colClass} aspect-video`}>
+                    <video
+                      src={item.url}
+                      controls
+                      playsInline
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                );
+              }
+
+              return null;
+            })}
           </div>
         )}
 

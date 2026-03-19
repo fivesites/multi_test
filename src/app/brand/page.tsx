@@ -1,3 +1,5 @@
+import ThemePicker from "./ThemePicker";
+
 export default function BrandPage() {
   const colors = [
     { name: "background", var: "--background", label: "Background" },
@@ -18,6 +20,14 @@ export default function BrandPage() {
     <main className="min-h-screen bg-background text-foreground px-6 py-16 max-w-5xl mx-auto">
       <h1 className="font-absolution1 text-6xl lg:text-9xl mb-2 leading-none">Brand</h1>
       <p className="font-mono text-muted-foreground mb-16">Multi2 visual identity reference</p>
+
+      {/* Theme Colors */}
+      <section className="mb-20">
+        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-8 border-b border-border pb-2">
+          Theme Colors
+        </h2>
+        <ThemePicker />
+      </section>
 
       {/* Typography scale */}
       <section className="mb-20">
