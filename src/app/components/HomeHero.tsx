@@ -58,7 +58,7 @@ function HeroCell({
           style={{ opacity: hovered ? 1 : 0 }}
         >
           <Button variant="default" size="default" asChild>
-            <Link href={`/work/${images[idx].slug}`}>{images[idx].label}</Link>
+            <Link href={`/work/${images[idx].slug}`}>{images[idx].label || null}</Link>
           </Button>
         </div>
       )}

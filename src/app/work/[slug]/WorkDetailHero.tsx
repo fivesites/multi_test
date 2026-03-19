@@ -79,7 +79,7 @@ export default function WorkDetailHero({
               {title}
             </p>
             <p className="font-rounded text-primary-foreground/60 text-sm">
-              {categories?.join(", ")}
+              {categories?.join(", ") || null}
             </p>
           </div>
         }

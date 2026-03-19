@@ -159,7 +159,7 @@ export default function HeroText({
       ref={ref}
       className={`inline-flex items-baseline   justify-start  ${className ?? ""}`}
     >
-      {effectiveText}
+      {effectiveText || null}
       {/* {!hideCursor && (
         <motion.span
           animate={{ opacity: [1, 1, 0, 0] }}
