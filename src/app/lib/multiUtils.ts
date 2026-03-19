@@ -9,6 +9,7 @@ export type AssetMode   = "glyph" | "pattern" | "strip-h" | "strip-v" | "composi
 export type SavedAsset = {
   id: string;
   label: string;
+  role?: string;
   type: AssetMode;
   // drawing — always present
   cells: boolean[][];

@@ -10,16 +10,48 @@ import { workCardsQuery } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 import Nav from "./components/Nav";
 
+type HeroImage = { label: string; slug: string; url: string };
+
 type WorkCardData = {
   _id: string;
   title: string;
   client?: string;
   slug: string;
-  coverImage?: { asset: { _ref: string } };
+  coverImage?: { asset: { _ref: string }; aspectRatio?: number };
+  media?: { _type: string; asset?: unknown; aspectRatio?: number }[];
 };
 
 export default async function Page() {
   const works: WorkCardData[] = await client.fetch(workCardsQuery);
+
+  const portraitImages: HeroImage[] = [];
+  const landscapeImages: HeroImage[] = [];
+
+  for (const w of works) {
+    const label = w.client || w.title;
+    for (const item of w.media ?? []) {
+      if (item._type !== "image" || !item.asset) continue;
+      const ar = item.aspectRatio ?? 1;
+      if (ar < 0.75) {
+        portraitImages.push({ label, slug: w.slug, url: urlFor(item as Parameters<typeof urlFor>[0]).width(800).url() });
+      } else if (ar > 1.3) {
+        landscapeImages.push({ label, slug: w.slug, url: urlFor(item as Parameters<typeof urlFor>[0]).width(1200).url() });
+      }
+    }
+  }
+
+  // Fallback: if one pool is empty, use cover images
+  if (portraitImages.length === 0) {
+    works.filter((w) => w.coverImage?.asset).forEach((w) => {
+      portraitImages.push({ label: w.client || w.title, slug: w.slug, url: urlFor(w.coverImage).width(800).url() });
+    });
+  }
+  if (landscapeImages.length === 0) {
+    works.filter((w) => w.coverImage?.asset).forEach((w) => {
+      landscapeImages.push({ label: w.client || w.title, slug: w.slug, url: urlFor(w.coverImage).width(1200).url() });
+    });
+  }
+
   const heroWorks = works
     .filter((w) => w.coverImage?.asset)
     .map((w) => ({
@@ -34,7 +66,7 @@ export default async function Page() {
       <CheckerboardBg />
 
       {/* Hero — h-screen, borders managed inside HomeHero */}
-      <HomeHero works={heroWorks} />
+      <HomeHero portraitImages={portraitImages} landscapeImages={landscapeImages} />
 
       {/* About — 288px (9 × 32px grid units) */}
       <AboutSection />

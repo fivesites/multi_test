@@ -13,7 +13,12 @@ export default function AboutSection() {
 
   const illustration = [...saved]
     .reverse()
-    .find((a) => a.type === "composition" && (a.label.includes("16:9") || a.label.includes("9:16")));
+    .find(
+      (a) =>
+        a.role === "Landing_About" ||
+        (a.type === "composition" &&
+          (a.label.includes("16:9") || a.label.includes("9:16"))),
+    );
 
   return (
     <section className="snap-start w-full bg-background">
@@ -28,7 +33,7 @@ export default function AboutSection() {
         </div>
 
         {/* Col 1: text */}
-        <div className="lg:col-span-2 flex items-center justify-start p-8 lg:p-16">
+        <div className="lg:col-span-2 flex items-center justify-start p-4 lg:p-16">
           <p className="text-foreground font-normal leading-tight text-2xl lg:text-3xl max-w-3xl font-rounded">
             {ABOUT_TEXT}
           </p>

@@ -13,6 +13,7 @@ function fromApi(raw: Record<string, unknown>): SavedAsset {
   return {
     id:                raw._id as string,
     label:             raw.label as string,
+    role:              (raw.role as string) ?? undefined,
     type:              raw.type as SavedAsset["type"],
     cells,
     glyphStyle:        (raw.glyphStyle as SavedAsset["glyphStyle"]) ?? "square",
@@ -63,10 +64,21 @@ export function useSavedAssets() {
     setSaved((prev) => prev.map((a) => (a.id === id ? { ...a, label } : a)));
   }, []);
 
+  const setRole = useCallback(async (id: string, role: string) => {
+    try {
+      await fetch(`/api/multi-assets?id=${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ role }),
+      });
+    } catch {}
+    setSaved((prev) => prev.map((a) => (a.id === id ? { ...a, role } : a)));
+  }, []);
+
   const remove = useCallback(async (id: string) => {
     await fetch(`/api/multi-assets?id=${id}`, { method: "DELETE" });
     setSaved((prev) => prev.filter((a) => a.id !== id));
   }, []);
 
-  return { saved, save, rename, remove };
+  return { saved, save, rename, setRole, remove };
 }

@@ -7,25 +7,25 @@ import { Button } from "@/components/ui/button";
 import { useScroll, useTransform, motion } from "framer-motion";
 import MultiText from "./MultiText";
 
-type HeroWork = { label: string; slug: string; coverImageUrl: string };
+type HeroImage = { label: string; slug: string; url: string };
 
 function HeroCell({
-  works,
+  images,
   offset,
   priority,
 }: {
-  works: HeroWork[];
+  images: HeroImage[];
   offset: number;
   priority?: boolean;
 }) {
-  const [idx, setIdx] = useState(offset % Math.max(works.length, 1));
+  const [idx, setIdx] = useState(offset % Math.max(images.length, 1));
   const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    if (hovered || works.length < 2) return;
-    const id = setInterval(() => setIdx((i) => (i + 1) % works.length), 500);
+    if (hovered || images.length < 2) return;
+    const id = setInterval(() => setIdx((i) => (i + 1) % images.length), 500);
     return () => clearInterval(id);
-  }, [hovered, works.length]);
+  }, [hovered, images.length]);
 
   return (
     <div
@@ -33,10 +33,10 @@ function HeroCell({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {works.map((work, i) => (
+      {images.map((img, i) => (
         <Image
-          key={work.coverImageUrl}
-          src={work.coverImageUrl}
+          key={img.url}
+          src={img.url}
           alt=""
           fill
           sizes="33vw"
@@ -52,13 +52,13 @@ function HeroCell({
         className="absolute inset-0 bg-primary/30 mix-blend-multiply pointer-events-none transition-opacity duration-700"
         style={{ opacity: hovered ? 0 : 1 }}
       />
-      {works[idx]?.slug && (
+      {images[idx]?.slug && (
         <div
           className="absolute inset-0 z-10 flex items-start justify-start p-0 transition-opacity duration-300"
           style={{ opacity: hovered ? 1 : 0 }}
         >
           <Button variant="default" size="default" asChild>
-            <Link href={`/work/${works[idx].slug}`}>{works[idx].label}</Link>
+            <Link href={`/work/${images[idx].slug}`}>{images[idx].label}</Link>
           </Button>
         </div>
       )}
@@ -66,20 +66,20 @@ function HeroCell({
   );
 }
 
-function MobileHero({ works }: { works: HeroWork[] }) {
+function MobileHero({ images }: { images: HeroImage[] }) {
   return (
     <div className="lg:hidden grid grid-cols-1">
       <div className="relative bg-primary h-[50vh] flex items-center justify-center">
         <MultiText className="text-primary-foreground" />
       </div>
       <div className="h-[50vh]">
-        <HeroCell works={works} offset={0} priority />
+        <HeroCell images={images} offset={0} priority />
       </div>
     </div>
   );
 }
 
-function DesktopHero({ works }: { works: HeroWork[] }) {
+function DesktopHero({ images }: { images: HeroImage[] }) {
   const containerRef = useRef(null);
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -94,7 +94,7 @@ function DesktopHero({ works }: { works: HeroWork[] }) {
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="grid grid-cols-3 h-full">
           <div className="h-full">
-            <HeroCell works={works} offset={0} priority />
+            <HeroCell images={images} offset={0} priority />
           </div>
 
           <motion.div
@@ -107,7 +107,7 @@ function DesktopHero({ works }: { works: HeroWork[] }) {
           </motion.div>
 
           <div className="h-full">
-            <HeroCell works={works} offset={1} />
+            <HeroCell images={images} offset={1} />
           </div>
         </div>
       </div>
@@ -115,11 +115,17 @@ function DesktopHero({ works }: { works: HeroWork[] }) {
   );
 }
 
-export default function HomeHero({ works = [] }: { works?: HeroWork[] }) {
+export default function HomeHero({
+  portraitImages = [],
+  landscapeImages = [],
+}: {
+  portraitImages?: HeroImage[];
+  landscapeImages?: HeroImage[];
+}) {
   return (
     <section className="snap-start w-full">
-      <MobileHero works={works} />
-      <DesktopHero works={works} />
+      <MobileHero images={landscapeImages} />
+      <DesktopHero images={portraitImages} />
     </section>
   );
 }

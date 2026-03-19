@@ -42,8 +42,11 @@ export async function PATCH(req: Request) {
   const { searchParams } = new URL(req.url);
   const id = searchParams.get("id");
   if (!id) return NextResponse.json({ error: "missing id" }, { status: 400 });
-  const { label } = await req.json();
-  await writeClient.patch(id).set({ label }).commit();
+  const body = await req.json();
+  const patch: Record<string, unknown> = {};
+  if (body.label !== undefined) patch.label = body.label;
+  if (body.role  !== undefined) patch.role  = body.role;
+  await writeClient.patch(id).set(patch).commit();
   return NextResponse.json({ ok: true });
 }
 

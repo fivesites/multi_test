@@ -6,6 +6,7 @@ export const multiAsset = defineType({
   type: "document",
   fields: [
     defineField({ name: "label",          title: "Label",              type: "string"  }),
+    defineField({ name: "role",           title: "Role",               type: "string"  }),
     defineField({ name: "type",           title: "Type",               type: "string"  }), // "m" | "2" | "checkerboard"
     defineField({ name: "order",          title: "Order",              type: "number"  }),
     // glyph

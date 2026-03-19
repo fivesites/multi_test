@@ -90,9 +90,9 @@ export function WorkCard({
 
       {/* Client name */}
       {client && (
-        <div className="relative z-20 pointer-events-none w-full p-0 flex justify-center lg:justify-start">
+        <div className="relative z-20 pointer-events-none w-full h-full p-0 flex justify-center items-center lg:justify-start">
           <Button
-            className="w-full lg:w-min group-hover:bg-background group-hover:text-foreground"
+            className="w-min group-hover:bg-background group-hover:text-foreground"
             variant="default"
             size="default"
             tabIndex={-1}

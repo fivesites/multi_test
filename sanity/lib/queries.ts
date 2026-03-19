@@ -66,6 +66,7 @@ export const workCardsQuery = groq`
       _type,
       _key,
       asset->,
+      "aspectRatio": asset->metadata.dimensions.aspectRatio,
       file { asset-> },
       url
     }
@@ -99,6 +100,7 @@ export const multiAssetsQuery = groq`
   *[_type == "multiAsset"] | order(order asc) {
     _id,
     label,
+    role,
     type,
     cells,
     glyphStyle,

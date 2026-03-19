@@ -8,6 +8,7 @@ type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
   _key: string;
   asset?: { url?: string };
+  aspectRatio?: number;
   file?: { asset?: { url?: string } };
   url?: string;
 };
@@ -24,26 +25,23 @@ type WorkCardData = {
 };
 
 function buildSlides(work: WorkCardData) {
-  const slides: { type: "image" | "video"; url: string }[] = [];
+  const portraitMedia = (work.media ?? []).filter(
+    (item) => item._type === "image" && item.asset && (item.aspectRatio ?? 0) < 0.75,
+  );
 
+  if (portraitMedia.length > 0) {
+    return portraitMedia.map((item) => ({
+      type: "image" as const,
+      url: urlFor(item).width(600).height(1067).url(),
+    }));
+  }
+
+  // Fallback: cover image only
   if (work.coverImage?.asset) {
-    slides.push({
-      type: "image",
-      url: urlFor(work.coverImage).width(600).height(1067).url(),
-    });
+    return [{ type: "image" as const, url: urlFor(work.coverImage).width(600).height(1067).url() }];
   }
 
-  for (const item of work.media ?? []) {
-    if (item._type === "image" && item.asset) {
-      const url = urlFor(item).width(600).height(1067).url();
-      slides.push({ type: "image", url });
-    } else if (item._type === "videoUpload" && item.file?.asset?.url) {
-      slides.push({ type: "video", url: item.file.asset.url });
-    }
-    // videoUrl (YouTube/Vimeo) — skip; not embeddable in <video>
-  }
-
-  return slides;
+  return [];
 }
 
 export default async function WorkSection() {
