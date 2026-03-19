@@ -52,6 +52,7 @@ export default function MultiText({ className, currentIndex, paused }: Props) {
         if (textStep === STEPS.length - 1) {
           setForward(false);
           setTextStep(STEPS.length - 2);
+          if (glyphs.length > 0) setTwoIdx((i) => (i + 1) % (glyphs.length + 1));
         } else {
           setTextStep((s) => s + 1);
         }
@@ -66,7 +67,7 @@ export default function MultiText({ className, currentIndex, paused }: Props) {
     }, delay);
 
     return () => clearTimeout(id);
-  }, [textStep, forward]);
+  }, [textStep, forward, glyphs.length]);
 
   const rawAsset =
     glyphs.length > 0 && twoIdx > 0 ? glyphs[twoIdx - 1] : undefined;

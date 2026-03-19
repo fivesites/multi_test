@@ -13,7 +13,7 @@ export default function AboutSection() {
 
   const illustration = [...saved]
     .reverse()
-    .find((a) => a.type === "composition" && a.label.includes("9:16"));
+    .find((a) => a.type === "composition" && (a.label.includes("16:9") || a.label.includes("9:16")));
 
   return (
     <section className="snap-start w-full bg-background">
