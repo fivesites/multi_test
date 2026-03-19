@@ -114,7 +114,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {themeCSS && <style dangerouslySetInnerHTML={{ __html: themeCSS }} />}
+        {themeCSS ? <style dangerouslySetInnerHTML={{ __html: themeCSS }} /> : null}
       </head>
       <body
         className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} ${karlRounded.variable} antialiased`}
