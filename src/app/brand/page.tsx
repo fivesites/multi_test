@@ -18,7 +18,7 @@ export default function BrandPage() {
 
   return (
     <main className="min-h-screen bg-background text-foreground px-6 py-16 max-w-5xl mx-auto">
-      <h1 className="font-absolution1 text-6xl lg:text-9xl mb-2 leading-none">Brand</h1>
+      <h1 className="font-rounded font-black text-6xl lg:text-9xl mb-2 leading-none">Brand</h1>
       <p className="font-mono text-muted-foreground mb-16">Multi2 visual identity reference</p>
 
       {/* Theme Colors */}

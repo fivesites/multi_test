@@ -90,7 +90,7 @@ export function WorkCard({
 
       {/* Client name */}
       {client && (
-        <div className="relative z-20 pointer-events-none w-full h-full p-0 flex justify-center items-center lg:justify-start">
+        <div className="relative z-20 pointer-events-none w-full h-full p-4 flex justify-center items-center lg:justify-start lg:items-start">
           <Button
             className="w-min group-hover:bg-background group-hover:text-foreground"
             variant="default"

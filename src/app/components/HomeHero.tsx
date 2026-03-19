@@ -48,10 +48,6 @@ function HeroCell({
           priority={priority && i === 0}
         />
       ))}
-      <div
-        className="absolute inset-0 bg-primary/30 mix-blend-multiply pointer-events-none transition-opacity duration-700"
-        style={{ opacity: hovered ? 0 : 1 }}
-      />
       {images[idx]?.slug && (
         <div
           className="absolute inset-0 z-10 flex items-start justify-start p-0 transition-opacity duration-300"
@@ -113,14 +109,13 @@ function DesktopHero({ images }: { images: HeroImage[] }) {
 
 export default function HomeHero({
   portraitImages = [],
-  landscapeImages = [],
 }: {
   portraitImages?: HeroImage[];
   landscapeImages?: HeroImage[];
 }) {
   return (
     <section className="lg:snap-start w-full">
-      <MobileHero images={landscapeImages} />
+      <MobileHero images={portraitImages} />
       <DesktopHero images={portraitImages} />
     </section>
   );

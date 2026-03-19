@@ -21,7 +21,7 @@ import {
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 
-const AW = 480;
+const AW = 720;
 const SIDEBAR_RECENT = 8;
 
 const FORMATS = [
@@ -39,12 +39,34 @@ const TILE_SIZES = [
   { label: "15rem", px: 240 },
 ] as const;
 
-
+const THEME_VARS = [
+  "--background",
+  "--foreground",
+  "--primary",
+  "--primary-foreground",
+  "--secondary",
+  "--secondary-foreground",
+  "--muted",
+  "--muted-foreground",
+  "--accent",
+];
 
 type FormatLabel = (typeof FORMATS)[number]["label"];
 type CompGrid = string[][][];
+type CellTransform = { rotate: number; scale: number };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
+
+function resolveColor(varName: string): string {
+  const el = document.createElement("div");
+  el.style.color = `var(${varName})`;
+  document.body.appendChild(el);
+  const rgb = getComputedStyle(el).color;
+  document.body.removeChild(el);
+  const m = rgb.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)/);
+  if (!m) return "#000000";
+  return "#" + [m[1], m[2], m[3]].map((n) => parseInt(n).toString(16).padStart(2, "0")).join("");
+}
 
 function getGridDims(ratioW: number, ratioH: number, tilePx: number) {
   const nomH = Math.round(AW * ratioH / ratioW);
@@ -74,7 +96,6 @@ function svgToPng(svgStr: string, w: number, h: number, blur: number): Promise<s
       canvas.width  = w;
       canvas.height = h;
       const ctx = canvas.getContext("2d")!;
-      // Apply gooey effect via canvas filter
       ctx.filter = `blur(${blur}px) contrast(20)`;
       ctx.drawImage(img, 0, 0, w, h);
       URL.revokeObjectURL(url);
@@ -137,7 +158,7 @@ function AssetLayer({ asset, tilePx }: { asset: SavedAsset; tilePx: number }) {
   );
 }
 
-// ── Asset thumbnail (reused in sidebar + library) ─────────────────────────────
+// ── Asset thumbnail ───────────────────────────────────────────────────────────
 
 function AssetThumb({
   asset,
@@ -178,21 +199,15 @@ export default function MultiComposer() {
   const [inkBleed, setInkBleed]       = useState(0);
   const [brushSize, setBrushSize]     = useState<1 | 2>(1);
 
-  // Resolve theme colors from CSS variables after mount
+  // Transform mode
+  const [mode, setMode]                   = useState<"paint" | "select">("paint");
+  const [selectedCell, setSelectedCell]   = useState<string | null>(null);
+  const [cellTransforms, setCellTransforms] = useState<Record<string, CellTransform>>({});
+
+  // Theme color swatches
   const [themeSwatches, setThemeSwatches] = useState<string[]>([]);
   useEffect(() => {
-    const cs = getComputedStyle(document.documentElement);
-    const hsl = (v: string) => `hsl(${cs.getPropertyValue(v).trim()})`;
-    setThemeSwatches([
-      hsl("--background"),
-      hsl("--foreground"),
-      hsl("--primary"),
-      hsl("--primary-foreground"),
-      hsl("--secondary"),
-      hsl("--secondary-foreground"),
-      hsl("--muted"),
-      hsl("--muted-foreground"),
-    ]);
+    setThemeSwatches(THEME_VARS.map(resolveColor));
   }, []);
 
   const format = FORMATS.find((f) => f.label === formatLabel)!;
@@ -251,6 +266,14 @@ export default function MultiComposer() {
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
+    if (mode === "select") {
+      const cell = cellFromPointer(e);
+      if (cell) {
+        const key = `${cell[0]}-${cell[1]}`;
+        setSelectedCell((prev) => prev === key ? null : key);
+      }
+      return;
+    }
     if (e.button !== 0 && e.button !== 2) return;
     e.preventDefault();
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
@@ -268,6 +291,20 @@ export default function MultiComposer() {
 
   const onPointerUp = () => { isPainting.current = false; };
 
+  // ── Cell transform helpers ─────────────────────────────────────────────────
+
+  const getTransform = (key: string): CellTransform =>
+    cellTransforms[key] ?? { rotate: 0, scale: 1 };
+
+  const setTransform = (key: string, patch: Partial<CellTransform>) => {
+    setCellTransforms((prev) => ({
+      ...prev,
+      [key]: { ...getTransform(key), ...patch },
+    }));
+  };
+
+  const selTransform = selectedCell ? getTransform(selectedCell) : null;
+
   // ── SVG builder ───────────────────────────────────────────────────────────
 
   const buildSvg = () => {
@@ -281,9 +318,15 @@ export default function MultiComposer() {
         stack.forEach((assetId) => {
           const asset = saved.find((a) => a.id === assetId);
           if (!asset) return;
+          const t = cellTransforms[`${r}-${c}`];
+          const cx = c * eTile + eTile / 2;
+          const cy = r * eTile + eTile / 2;
           const encoded = encodeURIComponent(exportAssetSvg(asset, eTile));
+          const transform = t
+            ? `rotate(${t.rotate}, ${cx}, ${cy}) scale(${t.scale})`
+            : "";
           const x = c * eTile, y = r * eTile;
-          pieces += `<image x="${x}" y="${y}" width="${eTile}" height="${eTile}" preserveAspectRatio="xMidYMid meet" href="data:image/svg+xml,${encoded}"/>`;
+          pieces += `<image x="${x}" y="${y}" width="${eTile}" height="${eTile}" preserveAspectRatio="xMidYMid meet"${transform ? ` transform="${transform}"` : ""} href="data:image/svg+xml,${encoded}"/>`;
         });
       });
     });
@@ -370,6 +413,7 @@ export default function MultiComposer() {
 
         <div className="w-px h-5 bg-border" />
 
+        {/* BG color */}
         <label className="flex items-center gap-1.5 font-rounded text-xs text-muted-foreground">
           BG
           <div className="flex items-center gap-0.5">
@@ -397,44 +441,65 @@ export default function MultiComposer() {
 
         <div className="w-px h-5 bg-border" />
 
-        {/* Brush size */}
-        <div className="flex items-center gap-1">
-          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground">Brush</span>
-          <Button
-            size="sm"
-            variant={brushSize === 1 ? "default" : "outline"}
-            onClick={() => setBrushSize(1)}
-            className="font-rounded text-xs uppercase tracking-widest h-7 w-7 p-0"
-          >S</Button>
-          <Button
-            size="sm"
-            variant={brushSize === 2 ? "default" : "outline"}
-            onClick={() => setBrushSize(2)}
-            className="font-rounded text-xs uppercase tracking-widest h-7 w-7 p-0"
-          >L</Button>
-        </div>
+        {/* Mode toggle */}
+        <Button
+          size="sm"
+          variant={mode === "select" ? "default" : "outline"}
+          onClick={() => { setMode((m) => m === "paint" ? "select" : "paint"); setSelectedCell(null); }}
+          className="font-rounded text-xs uppercase tracking-widest h-7 px-2"
+          title="Transform mode"
+        >
+          ↻
+        </Button>
 
-        <div className="w-px h-5 bg-border" />
+        {/* Transform controls — only when in select mode with a cell selected */}
+        {mode === "select" && selTransform && selectedCell && (
+          <>
+            <span className="font-rounded text-xs text-muted-foreground">Rot</span>
+            <Slider
+              min={0} max={360} step={5}
+              value={[selTransform.rotate]}
+              onValueChange={([v]) => setTransform(selectedCell, { rotate: v })}
+              className="w-20"
+            />
+            <span className="font-mono text-xs text-muted-foreground w-8">{selTransform.rotate}°</span>
 
-        {selectedAsset && (
-          <span className="font-mono text-xs text-muted-foreground">{selectedAsset.label}</span>
+            <span className="font-rounded text-xs text-muted-foreground">Scale</span>
+            <Slider
+              min={25} max={200} step={5}
+              value={[Math.round(selTransform.scale * 100)]}
+              onValueChange={([v]) => setTransform(selectedCell, { scale: v / 100 })}
+              className="w-20"
+            />
+            <span className="font-mono text-xs text-muted-foreground w-8">{Math.round(selTransform.scale * 100)}%</span>
+          </>
         )}
 
-        <div className="w-px h-5 bg-border" />
+        {mode === "paint" && (
+          <>
+            {/* Brush size */}
+            <div className="flex items-center gap-1">
+              <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground">Brush</span>
+              <Button size="sm" variant={brushSize === 1 ? "default" : "outline"} onClick={() => setBrushSize(1)} className="font-rounded text-xs h-7 w-7 p-0">S</Button>
+              <Button size="sm" variant={brushSize === 2 ? "default" : "outline"} onClick={() => setBrushSize(2)} className="font-rounded text-xs h-7 w-7 p-0">L</Button>
+            </div>
 
-        {/* Ink Bleed */}
-        <div className="flex items-center gap-2">
-          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
-          <Slider
-            min={0}
-            max={15}
-            step={1}
-            value={[inkBleed]}
-            onValueChange={([v]) => setInkBleed(v)}
-            className="w-24"
-          />
-          <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
-        </div>
+            <div className="w-px h-5 bg-border" />
+
+            {selectedAsset && (
+              <span className="font-mono text-xs text-muted-foreground">{selectedAsset.label}</span>
+            )}
+
+            <div className="w-px h-5 bg-border" />
+
+            {/* Ink Bleed */}
+            <div className="flex items-center gap-2">
+              <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
+              <Slider min={0} max={15} step={1} value={[inkBleed]} onValueChange={([v]) => setInkBleed(v)} className="w-24" />
+              <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
+            </div>
+          </>
+        )}
 
         <div className="flex-1" />
         <Button size="sm" variant="outline" onClick={() => setGrid(makeGrid(rows, cols))} className="font-rounded text-xs uppercase tracking-widest">Clear</Button>
@@ -444,7 +509,7 @@ export default function MultiComposer() {
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
       <div className="flex flex-1">
-        {/* Asset sidebar — recent only */}
+        {/* Asset sidebar */}
         <div
           className="border-r border-border overflow-y-auto shrink-0 flex flex-col"
           style={{ width: 56 }}
@@ -457,7 +522,7 @@ export default function MultiComposer() {
             return (
               <button
                 key={asset.id}
-                onClick={() => setSelectedId((p) => p === asset.id ? null : asset.id)}
+                onClick={() => { setSelectedId((p) => p === asset.id ? null : asset.id); setMode("paint"); }}
                 className={`shrink-0 flex items-center justify-center border-b border-border transition-colors ${
                   isActive ? "bg-foreground" : "hover:bg-muted"
                 }`}
@@ -468,15 +533,13 @@ export default function MultiComposer() {
               </button>
             );
           })}
-
         </div>
 
         {/* Canvas */}
         <div
-          className="flex-1 overflow-auto flex items-center justify-center p-8"
+          className="flex-1 overflow-auto flex items-center justify-center p-3"
           style={{ background: "hsl(var(--muted) / 0.3)" }}
         >
-          {/* overflow:hidden clips ink bleed at canvas boundary */}
           <div
             style={{
               width: canvasW,
@@ -486,48 +549,64 @@ export default function MultiComposer() {
               flexShrink: 0,
             }}
           >
-          <div
-            ref={canvasRef}
-            onPointerDown={onPointerDown}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-            onContextMenu={(e) => e.preventDefault()}
-            style={{
-              width:    canvasW,
-              height:   canvasH,
-              background: bgColor,
-              display:  "grid",
-              gridTemplateColumns: `repeat(${cols}, ${tilePx}px)`,
-              gridTemplateRows:    `repeat(${rows}, ${tilePx}px)`,
-              cursor:      selectedId ? "crosshair" : "default",
-              userSelect:  "none",
-              touchAction: "none",
-              filter: inkBleed > 0 ? `blur(${inkBleed * 0.5}px) contrast(20)` : undefined,
-            }}
-          >
-            {Array.from({ length: rows }, (_, r) =>
-              Array.from({ length: cols }, (_, c) => {
-                const stack = grid[r]?.[c] ?? [];
-                return (
-                  <div
-                    key={`${r}-${c}`}
-                    style={{
-                      width: tilePx, height: tilePx,
-                      position: "relative",
-                      outline: "0.5px solid rgba(128,128,128,0.12)",
-                    }}
-                  >
-                    {stack.map((assetId, i) => {
-                      const asset = saved.find((a) => a.id === assetId);
-                      return asset ? <AssetLayer key={`${assetId}-${i}`} asset={asset} tilePx={tilePx} /> : null;
-                    })}
-                  </div>
-                );
-              })
-            )}
+            <div
+              ref={canvasRef}
+              onPointerDown={onPointerDown}
+              onPointerMove={onPointerMove}
+              onPointerUp={onPointerUp}
+              onPointerCancel={onPointerUp}
+              onContextMenu={(e) => e.preventDefault()}
+              style={{
+                width:    canvasW,
+                height:   canvasH,
+                background: bgColor,
+                display:  "grid",
+                gridTemplateColumns: `repeat(${cols}, ${tilePx}px)`,
+                gridTemplateRows:    `repeat(${rows}, ${tilePx}px)`,
+                cursor:      mode === "select" ? "pointer" : (selectedId ? "crosshair" : "default"),
+                userSelect:  "none",
+                touchAction: "none",
+                filter: inkBleed > 0 ? `blur(${inkBleed * 0.5}px) contrast(20)` : undefined,
+              }}
+            >
+              {Array.from({ length: rows }, (_, r) =>
+                Array.from({ length: cols }, (_, c) => {
+                  const stack = grid[r]?.[c] ?? [];
+                  const cellKey = `${r}-${c}`;
+                  const t = cellTransforms[cellKey];
+                  const isSelected = mode === "select" && selectedCell === cellKey;
+                  return (
+                    <div
+                      key={cellKey}
+                      style={{
+                        width: tilePx, height: tilePx,
+                        position: "relative",
+                        outline: isSelected
+                          ? "2px solid var(--primary)"
+                          : "0.5px solid rgba(128,128,128,0.12)",
+                        overflow: "hidden",
+                      }}
+                    >
+                      <div
+                        style={{
+                          width: "100%",
+                          height: "100%",
+                          position: "relative",
+                          transform: t ? `rotate(${t.rotate}deg) scale(${t.scale})` : undefined,
+                          transformOrigin: "center center",
+                        }}
+                      >
+                        {stack.map((assetId, i) => {
+                          const asset = saved.find((a) => a.id === assetId);
+                          return asset ? <AssetLayer key={`${assetId}-${i}`} asset={asset} tilePx={tilePx} /> : null;
+                        })}
+                      </div>
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
-          </div>{/* /overflow:hidden clip wrapper */}
         </div>
       </div>
 

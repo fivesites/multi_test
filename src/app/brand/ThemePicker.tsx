@@ -22,7 +22,7 @@ function getComputedHex(varName: string): string {
   document.body.appendChild(el);
   const rgb = getComputedStyle(el).color;
   document.body.removeChild(el);
-  const match = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  const match = rgb.match(/rgba?\((\d+)[,\s]+(\d+)[,\s]+(\d+)/);
   if (!match) return "#000000";
   return (
     "#" +
@@ -69,6 +69,14 @@ export default function ThemePicker() {
     setColors(reset);
   };
 
+  const handleWriteToCSS = async () => {
+    await fetch("/api/theme", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ vars: colors }),
+    });
+  };
+
   return (
     <div className="flex flex-wrap gap-8 items-end">
       {VARS.map(({ label, key }) => (
@@ -85,9 +93,14 @@ export default function ThemePicker() {
           <span className="font-mono text-xs text-muted-foreground">{key}</span>
         </div>
       ))}
-      <Button variant="ghost" size="sm" onClick={handleReset} className="mb-1">
-        Reset
-      </Button>
+      <div className="flex flex-col gap-2 mb-1">
+        <Button variant="default" size="sm" onClick={handleWriteToCSS}>
+          Write to globals.css
+        </Button>
+        <Button variant="ghost" size="sm" onClick={handleReset}>
+          Reset
+        </Button>
+      </div>
     </div>
   );
 }
