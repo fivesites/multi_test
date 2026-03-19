@@ -8,7 +8,7 @@ import type { SavedAsset } from "@/app/lib/multiUtils";
 const NAV_LINKS = [
   { label: "Work", href: "/work" },
   { label: "About", href: "/about" },
-  { label: "Connect", href: "/connect" },
+  { label: "Contact", href: "/contact" },
 ];
 
 function LogoAsset({ asset, size }: { asset: SavedAsset; size: number }) {

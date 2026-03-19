@@ -76,7 +76,7 @@ export default async function Page() {
       {/* Contact */}
       <section id="contact" className="relative flex flex-col lg:snap-start">
         <Link
-          href="/connect"
+          href="/contact"
           className="h-screen flex items-center justify-center bg-secondary"
         >
           <span className="font-rounded font-black text-6xl lg:text-8xl text-secondary-foreground">
