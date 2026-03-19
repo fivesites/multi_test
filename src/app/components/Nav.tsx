@@ -68,8 +68,8 @@ export default function Nav() {
         </div>
       )}
       <Button
-        variant="default"
-        className={`w-full rounded-none shadow ${scrollState === "top" ? "bg-transparent animate-pulse" : ""} ${open ? "bg-background text-foreground" : ""}`}
+        variant="ghost"
+        className={`w-full rounded-none ${open ? "bg-background text-foreground hover:bg-background" : "bg-transparent text-foreground hover:bg-transparent"}`}
         onClick={handleClick}
       >
         {scrollState === "top" && "Scroll down"}

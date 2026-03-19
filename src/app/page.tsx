@@ -1,6 +1,5 @@
 import Link from "next/link";
 import HomeHero from "./components/HomeHero";
-import ClientSquared from "./components/ClientSquared";
 import AboutSection from "./components/AboutSection";
 import WorkSection from "./components/WorkSection";
 import CheckerboardBg from "./components/CheckerboardBg";
@@ -9,7 +8,8 @@ import { client } from "../../sanity/lib/client";
 import { workCardsQuery } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 import Nav from "./components/Nav";
-import MultiText from "./components/MultiText";
+import MobileMultiTextHeader from "./components/MobileMultiTextHeader";
+import HomeFooter from "./components/HomeFooter";
 
 type HeroImage = { label: string; slug: string; url: string };
 
@@ -53,23 +53,12 @@ export default async function Page() {
     });
   }
 
-  const heroWorks = works
-    .filter((w) => w.coverImage?.asset)
-    .map((w) => ({
-      label: w.client || w.title,
-      slug: w.slug,
-      coverImageUrl: urlFor(w.coverImage).width(800).url(),
-    }));
-
   return (
     <main className="relative h-screen overflow-y-scroll lg:snap-y lg:snap-mandatory">
       <Nav />
       <CheckerboardBg />
 
-      {/* Mobile sticky M² header — sticks to top for the full scroll duration */}
-      <div className="lg:hidden sticky top-0 z-30 bg-primary h-12 flex items-center justify-center">
-        <MultiText className="text-primary-foreground" frozen />
-      </div>
+      <MobileMultiTextHeader />
 
       {/* Hero */}
       <HomeHero portraitImages={portraitImages} landscapeImages={landscapeImages} />
@@ -96,18 +85,7 @@ export default async function Page() {
         </Link>
       </section>
 
-      <SavedHorizontalBorder size="l" />
-
-      <footer className="flex items-center justify-center py-8 h-[50vh]">
-        <ClientSquared
-          texts={
-            heroWorks.map((w) => w.label).filter(Boolean).length > 0
-              ? heroWorks.map((w) => w.label)
-              : ["Multi", "Jureskog", "Ikea", "ATG"]
-          }
-          className="text-foreground text-6xl tracking-normal font-rounded font-black lg:text-8xl"
-        />
-      </footer>
+      <HomeFooter />
     </main>
   );
 }

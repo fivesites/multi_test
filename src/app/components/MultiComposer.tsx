@@ -1,7 +1,9 @@
 "use client";
 
-import { useState, useRef, useCallback, useId } from "react";
+import { useState, useRef, useCallback, useId, useEffect } from "react";
 import { useSavedAssets } from "@/app/hooks/useSavedAssets";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import {
   renderGlyphShapes,
   glyphDims,
@@ -30,26 +32,14 @@ const FORMATS = [
 ] as const;
 
 const TILE_SIZES = [
+  { label: "1rem",  px: 16  },
   { label: "2rem",  px: 32  },
   { label: "3rem",  px: 48  },
   { label: "6rem",  px: 96  },
   { label: "15rem", px: 240 },
 ] as const;
 
-const PALETTE = [
-  "#000000", "#1a1a1a", "#333333", "#666666",
-  "#999999", "#cccccc", "#e8e8e8", "#ffffff",
-  "#e8d5c4", "#c9a87c", "#a67c52", "#6b4c2a",
-  "#c4d5e8", "#7ca8c9", "#3a7cb8", "#1a3a6b",
-];
 
-const ROLES = [
-  { value: "",                label: "— no role —"      },
-  { value: "squared2",        label: "squared²"         },
-  { value: "LOGO_square",     label: "Logo (square)"    },
-  { value: "LOGO_horizontal", label: "Logo (horizontal)"},
-  { value: "Landing_About",   label: "Landing: About"   },
-];
 
 type FormatLabel = (typeof FORMATS)[number]["label"];
 type CompGrid = string[][][];
@@ -175,206 +165,35 @@ function AssetThumb({
   );
 }
 
-// ── Library modal ─────────────────────────────────────────────────────────────
-
-function LibraryModal({
-  assets,
-  selectedId,
-  onSelect,
-  onRename,
-  onSetRole,
-  onRemove,
-  onClose,
-}: {
-  assets: SavedAsset[];
-  selectedId: string | null;
-  onSelect: (id: string) => void;
-  onRename: (id: string, label: string) => void;
-  onSetRole: (id: string, role: string) => void;
-  onRemove: (id: string) => void;
-  onClose: () => void;
-}) {
-  return (
-    <div
-      className="fixed inset-0 z-50 bg-background overflow-auto"
-      onKeyDown={(e) => e.key === "Escape" && onClose()}
-      tabIndex={-1}
-    >
-      {/* Header */}
-      <div className="sticky top-0 z-10 flex items-center justify-between px-4 border-b border-border bg-background" style={{ height: 40 }}>
-        <span className="font-rounded text-xs uppercase tracking-widest">Asset Library</span>
-        <button
-          onClick={onClose}
-          className="font-rounded text-xs uppercase tracking-widest px-3 h-7 border border-border hover:bg-muted"
-        >
-          Close
-        </button>
-      </div>
-
-      {/* Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-px p-px bg-border">
-        {assets.map((asset) => (
-          <LibraryCard
-            key={asset.id}
-            asset={asset}
-            isSelected={selectedId === asset.id}
-            onSelect={() => { onSelect(asset.id); onClose(); }}
-            onRename={(label) => onRename(asset.id, label)}
-            onSetRole={(role) => onSetRole(asset.id, role)}
-            onRemove={() => onRemove(asset.id)}
-          />
-        ))}
-        {assets.length === 0 && (
-          <div className="col-span-full p-8 text-center font-mono text-xs text-muted-foreground">
-            No assets saved yet.
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function LibraryCard({
-  asset,
-  isSelected,
-  onSelect,
-  onRename,
-  onSetRole,
-  onRemove,
-}: {
-  asset: SavedAsset;
-  isSelected: boolean;
-  onSelect: () => void;
-  onRename: (label: string) => void;
-  onSetRole: (role: string) => void;
-  onRemove: () => void;
-}) {
-  const [editing, setEditing] = useState(false);
-  const [draft, setDraft] = useState(asset.label);
-
-  const commitRename = () => {
-    setEditing(false);
-    if (draft !== asset.label) onRename(draft);
-  };
-
-  return (
-    <div className={`bg-background flex flex-col ${isSelected ? "ring-2 ring-foreground ring-inset" : ""}`}>
-      {/* Thumbnail */}
-      <button
-        onClick={onSelect}
-        className="flex items-center justify-center hover:bg-muted transition-colors"
-        style={{ height: 120 }}
-        title="Use this asset"
-      >
-        {asset.uploadedAsset ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={asset.uploadedAsset}
-            alt=""
-            style={{ width: 100, height: 100, objectFit: "contain" }}
-          />
-        ) : (
-          <AssetThumb asset={asset} size={80} active={isSelected} />
-        )}
-      </button>
-
-      {/* Controls */}
-      <div className="flex flex-col gap-1 p-2 border-t border-border">
-        {/* Label */}
-        {editing ? (
-          <input
-            autoFocus
-            className="font-mono text-xs w-full border border-border px-1 py-0.5 bg-background"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onBlur={commitRename}
-            onKeyDown={(e) => { if (e.key === "Enter") commitRename(); if (e.key === "Escape") { setDraft(asset.label); setEditing(false); } }}
-          />
-        ) : (
-          <button
-            className="font-mono text-xs text-left truncate hover:text-foreground text-muted-foreground"
-            onClick={() => { setDraft(asset.label); setEditing(true); }}
-            title="Click to rename"
-          >
-            {asset.label || "unnamed"}
-          </button>
-        )}
-
-        {/* Role selector */}
-        <select
-          value={asset.role ?? ""}
-          onChange={(e) => onSetRole(e.target.value)}
-          className="font-rounded text-[10px] uppercase tracking-wider border border-border bg-background px-1 py-0.5 w-full"
-        >
-          {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>{r.label}</option>
-          ))}
-        </select>
-
-        {/* Delete */}
-        <button
-          onClick={onRemove}
-          className="font-rounded text-[10px] uppercase tracking-wider text-destructive hover:bg-destructive/10 border border-destructive/30 px-1 py-0.5"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  );
-}
-
-// ── Save panel (ink bleed) ────────────────────────────────────────────────────
-
-function SavePanel({
-  onConfirm,
-  onCancel,
-}: {
-  onConfirm: (inkBleed: number) => void;
-  onCancel: () => void;
-}) {
-  const [inkBleed, setInkBleed] = useState(0);
-
-  return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-background flex items-center gap-4 px-4" style={{ height: 52 }}>
-      <span className="font-rounded text-xs uppercase tracking-widest shrink-0">Ink Bleed</span>
-      <input
-        type="range"
-        min={0}
-        max={15}
-        step={1}
-        value={inkBleed}
-        onChange={(e) => setInkBleed(Number(e.target.value))}
-        className="flex-1 max-w-xs"
-      />
-      <span className="font-mono text-xs w-6 text-right">{inkBleed}</span>
-      <div className="w-px h-5 bg-border" />
-      <button
-        onClick={() => onConfirm(inkBleed)}
-        className="font-rounded text-xs uppercase tracking-widest px-3 h-7 border border-border hover:bg-muted"
-      >
-        Save
-      </button>
-      <button
-        onClick={onCancel}
-        className="font-rounded text-xs uppercase tracking-widest px-3 h-7 text-muted-foreground hover:bg-muted"
-      >
-        Cancel
-      </button>
-    </div>
-  );
-}
 
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function MultiComposer() {
-  const { saved, save, rename, setRole, remove } = useSavedAssets();
+  const { saved, save } = useSavedAssets();
 
   const [formatLabel, setFormatLabel] = useState<FormatLabel>("1:1");
   const [tilePx, setTilePx]           = useState(96);
   const [selectedId, setSelectedId]   = useState<string | null>(null);
   const [bgColor, setBgColor]         = useState("#ffffff");
-  const [libraryOpen, setLibraryOpen] = useState(false);
-  const [showSavePanel, setShowSavePanel] = useState(false);
+  const [inkBleed, setInkBleed]       = useState(0);
+  const [brushSize, setBrushSize]     = useState<1 | 2>(1);
+
+  // Resolve theme colors from CSS variables after mount
+  const [themeSwatches, setThemeSwatches] = useState<string[]>([]);
+  useEffect(() => {
+    const cs = getComputedStyle(document.documentElement);
+    const hsl = (v: string) => `hsl(${cs.getPropertyValue(v).trim()})`;
+    setThemeSwatches([
+      hsl("--background"),
+      hsl("--foreground"),
+      hsl("--primary"),
+      hsl("--primary-foreground"),
+      hsl("--secondary"),
+      hsl("--secondary-foreground"),
+      hsl("--muted"),
+      hsl("--muted-foreground"),
+    ]);
+  }, []);
 
   const format = FORMATS.find((f) => f.label === formatLabel)!;
   const { cols, rows } = getGridDims(format.ratioW, format.ratioH, tilePx);
@@ -404,19 +223,23 @@ export default function MultiComposer() {
 
   // ── Painting ──────────────────────────────────────────────────────────────
 
-  const paintCell = useCallback((r: number, c: number, erase: boolean) => {
+  const paintAt = useCallback((baseR: number, baseC: number, erase: boolean) => {
     setGrid((prev) => {
       const next = prev.map((row) => row.map((cell) => [...cell]));
-      const cell = next[r]?.[c];
-      if (!cell) return prev;
-      if (erase) {
-        cell.pop();
-      } else if (selectedId) {
-        cell.push(selectedId);
+      for (let dr = 0; dr < brushSize; dr++) {
+        for (let dc = 0; dc < brushSize; dc++) {
+          const cell = next[baseR + dr]?.[baseC + dc];
+          if (!cell) continue;
+          if (erase) {
+            cell.pop();
+          } else if (selectedId) {
+            cell.push(selectedId);
+          }
+        }
       }
       return next;
     });
-  }, [selectedId]);
+  }, [selectedId, brushSize]);
 
   const cellFromPointer = (e: React.PointerEvent): [number, number] | null => {
     const rect = canvasRef.current?.getBoundingClientRect();
@@ -434,13 +257,13 @@ export default function MultiComposer() {
     isPainting.current = true;
     erasing.current    = e.button === 2 || e.shiftKey;
     const cell = cellFromPointer(e);
-    if (cell) paintCell(cell[0], cell[1], erasing.current);
+    if (cell) paintAt(cell[0], cell[1], erasing.current);
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
     if (!isPainting.current) return;
     const cell = cellFromPointer(e);
-    if (cell) paintCell(cell[0], cell[1], erasing.current);
+    if (cell) paintAt(cell[0], cell[1], erasing.current);
   };
 
   const onPointerUp = () => { isPainting.current = false; };
@@ -484,8 +307,7 @@ export default function MultiComposer() {
     URL.revokeObjectURL(url);
   };
 
-  const handleConfirmSave = async (inkBleed: number) => {
-    setShowSavePanel(false);
+  const handleSave = async () => {
     const svg = buildSvg();
     let dataUrl: string;
     if (inkBleed > 0) {
@@ -509,16 +331,6 @@ export default function MultiComposer() {
   };
 
   // ── UI ────────────────────────────────────────────────────────────────────
-
-  const Btn = ({ onClick, children }: { onClick: () => void; children: React.ReactNode }) => (
-    <button
-      onClick={onClick}
-      style={{ height: 28 }}
-      className="px-2 font-rounded text-xs uppercase tracking-widest border border-border hover:bg-muted transition-colors"
-    >
-      {children}
-    </button>
-  );
 
   const selectedAsset = saved.find((a) => a.id === selectedId);
   const recentAssets  = saved.slice(-SIDEBAR_RECENT);
@@ -561,15 +373,15 @@ export default function MultiComposer() {
         <label className="flex items-center gap-1.5 font-rounded text-xs text-muted-foreground">
           BG
           <div className="flex items-center gap-0.5">
-            {PALETTE.map((hex) => (
+            {themeSwatches.map((color, i) => (
               <button
-                key={hex}
-                onClick={() => setBgColor(hex)}
-                title={hex}
+                key={i}
+                onClick={() => setBgColor(color)}
+                title={color}
                 style={{
                   width: 14, height: 14,
-                  background: hex,
-                  border: bgColor === hex ? "2px solid var(--foreground)" : "1px solid var(--border)",
+                  background: color,
+                  border: bgColor === color ? "2px solid var(--foreground)" : "1px solid var(--border)",
                   flexShrink: 0,
                 }}
               />
@@ -579,9 +391,28 @@ export default function MultiComposer() {
             type="color"
             value={bgColor}
             onChange={(e) => setBgColor(e.target.value)}
-            className="w-5 h-5 cursor-pointer border border-border"
+            className="w-7 h-7 cursor-pointer border border-border rounded-none p-0"
           />
         </label>
+
+        <div className="w-px h-5 bg-border" />
+
+        {/* Brush size */}
+        <div className="flex items-center gap-1">
+          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground">Brush</span>
+          <Button
+            size="sm"
+            variant={brushSize === 1 ? "default" : "outline"}
+            onClick={() => setBrushSize(1)}
+            className="font-rounded text-xs uppercase tracking-widest h-7 w-7 p-0"
+          >S</Button>
+          <Button
+            size="sm"
+            variant={brushSize === 2 ? "default" : "outline"}
+            onClick={() => setBrushSize(2)}
+            className="font-rounded text-xs uppercase tracking-widest h-7 w-7 p-0"
+          >L</Button>
+        </div>
 
         <div className="w-px h-5 bg-border" />
 
@@ -589,10 +420,26 @@ export default function MultiComposer() {
           <span className="font-mono text-xs text-muted-foreground">{selectedAsset.label}</span>
         )}
 
+        <div className="w-px h-5 bg-border" />
+
+        {/* Ink Bleed */}
+        <div className="flex items-center gap-2">
+          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
+          <Slider
+            min={0}
+            max={15}
+            step={1}
+            value={[inkBleed]}
+            onValueChange={([v]) => setInkBleed(v)}
+            className="w-24"
+          />
+          <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
+        </div>
+
         <div className="flex-1" />
-        <Btn onClick={() => setGrid(makeGrid(rows, cols))}>Clear</Btn>
-        <Btn onClick={handleExport}>Export</Btn>
-        <Btn onClick={() => setShowSavePanel(true)}>Save…</Btn>
+        <Button size="sm" variant="outline" onClick={() => setGrid(makeGrid(rows, cols))} className="font-rounded text-xs uppercase tracking-widest">Clear</Button>
+        <Button size="sm" variant="outline" onClick={handleExport} className="font-rounded text-xs uppercase tracking-widest">Export</Button>
+        <Button size="sm" variant="default" onClick={handleSave} className="font-rounded text-xs uppercase tracking-widest">Save</Button>
       </div>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
@@ -622,23 +469,23 @@ export default function MultiComposer() {
             );
           })}
 
-          {/* Library button */}
-          <button
-            onClick={() => setLibraryOpen(true)}
-            className="mt-auto shrink-0 flex flex-col items-center justify-center gap-0.5 border-t border-border hover:bg-muted transition-colors font-rounded text-[9px] uppercase tracking-widest text-muted-foreground"
-            style={{ width: 56, height: 48 }}
-            title="Open asset library"
-          >
-            <span>All</span>
-            <span>({saved.length})</span>
-          </button>
         </div>
 
         {/* Canvas */}
         <div
-          className="flex-1 overflow-auto flex items-start justify-center p-8"
+          className="flex-1 overflow-auto flex items-center justify-center p-8"
           style={{ background: "hsl(var(--muted) / 0.3)" }}
         >
+          {/* overflow:hidden clips ink bleed at canvas boundary */}
+          <div
+            style={{
+              width: canvasW,
+              height: canvasH,
+              overflow: "hidden",
+              boxShadow: "0 2px 16px rgba(0,0,0,0.12)",
+              flexShrink: 0,
+            }}
+          >
           <div
             ref={canvasRef}
             onPointerDown={onPointerDown}
@@ -656,7 +503,7 @@ export default function MultiComposer() {
               cursor:      selectedId ? "crosshair" : "default",
               userSelect:  "none",
               touchAction: "none",
-              boxShadow:   "0 2px 16px rgba(0,0,0,0.12)",
+              filter: inkBleed > 0 ? `blur(${inkBleed * 0.5}px) contrast(20)` : undefined,
             }}
           >
             {Array.from({ length: rows }, (_, r) =>
@@ -680,29 +527,10 @@ export default function MultiComposer() {
               })
             )}
           </div>
+          </div>{/* /overflow:hidden clip wrapper */}
         </div>
       </div>
 
-      {/* ── Library modal ────────────────────────────────────────────────── */}
-      {libraryOpen && (
-        <LibraryModal
-          assets={saved}
-          selectedId={selectedId}
-          onSelect={(id) => setSelectedId(id)}
-          onRename={rename}
-          onSetRole={setRole}
-          onRemove={remove}
-          onClose={() => setLibraryOpen(false)}
-        />
-      )}
-
-      {/* ── Save panel ───────────────────────────────────────────────────── */}
-      {showSavePanel && (
-        <SavePanel
-          onConfirm={handleConfirmSave}
-          onCancel={() => setShowSavePanel(false)}
-        />
-      )}
     </div>
   );
 }

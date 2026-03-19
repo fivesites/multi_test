@@ -18,7 +18,12 @@ interface Props {
   frozen?: boolean; // stays at "M", no animation
 }
 
-export default function MultiText({ className, currentIndex, paused, frozen }: Props) {
+export default function MultiText({
+  className,
+  currentIndex,
+  paused,
+  frozen,
+}: Props) {
   const measureRef = useRef<HTMLSpanElement>(null);
   const xHeight = useXHeightSync(measureRef);
   const { saved: allAssets } = useSavedAssets();
@@ -28,7 +33,8 @@ export default function MultiText({ className, currentIndex, paused, frozen }: P
   const [textStep, setTextStep] = useState(0);
   const [forward, setForward] = useState(true);
 
-  const glyphs = allAssets.filter((a) => a.type === "glyph");
+  const squared2 = allAssets.filter((a) => a.role === "squared2");
+  const glyphs = squared2.length > 0 ? squared2 : allAssets.filter((a) => a.type === "glyph");
 
   // Sync glyph index from parent carousel — freeze when paused
   useEffect(() => {
@@ -54,7 +60,8 @@ export default function MultiText({ className, currentIndex, paused, frozen }: P
         if (textStep === STEPS.length - 1) {
           setForward(false);
           setTextStep(STEPS.length - 2);
-          if (glyphs.length > 0) setTwoIdx((i) => (i + 1) % (glyphs.length + 1));
+          if (glyphs.length > 0)
+            setTwoIdx((i) => (i + 1) % (glyphs.length + 1));
         } else {
           setTextStep((s) => s + 1);
         }
@@ -99,7 +106,7 @@ export default function MultiText({ className, currentIndex, paused, frozen }: P
         className={`flex items-baseline justify-center gap-0 pointer-events-none ${className ?? ""}`}
       >
         <span className="  font-rounded font-black text-4xl lg:text-6xl lg:tracking-tight">
-          {STEPS[textStep]}
+          {frozen ? STEPS[4] : STEPS[textStep]}
         </span>
         {xHeight !== null && (
           <InlineTwoGlyph xHeight={xHeight} custom={customTwo} />

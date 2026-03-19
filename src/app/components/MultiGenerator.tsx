@@ -8,6 +8,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 import {
   type GlyphStyle,
   type CheckerMode,
@@ -27,11 +29,31 @@ import { getCellDimensions } from "@/app/lib/twoUtils";
 import { useSavedAssets } from "@/app/hooks/useSavedAssets";
 
 const ARTBOARD_PX = 480;
-const GALLERY_PX = 24;
 const MAX_PREVIEW = 128;
+
+function svgToPng(svgStr: string, w: number, h: number, blur: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([svgStr], { type: "image/svg+xml" });
+    const url  = URL.createObjectURL(blob);
+    const img  = new window.Image(w, h);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width  = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.filter = `blur(${blur}px) contrast(60)`;
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
+}
 
 // Rem values that divide evenly into 480px
 const CELL_SIZES = [
+  { label: "1rem", px: 16 }, // 30×30
   { label: "2rem", px: 32 }, // 15×15
   { label: "3rem", px: 48 }, // 10×10
   { label: "6rem", px: 96 }, //  5×5
@@ -86,16 +108,14 @@ function Btn({
   children: React.ReactNode;
 }) {
   return (
-    <button
+    <Button
+      size="sm"
+      variant={active ? "default" : "outline"}
       onClick={onClick}
-      className={`font-rounded text-xs uppercase tracking-widest px-3 h-8 border transition-colors whitespace-nowrap ${
-        active
-          ? "border-foreground bg-foreground text-background"
-          : "border-border text-muted-foreground hover:border-foreground hover:text-foreground"
-      }`}
+      className="font-rounded text-xs uppercase tracking-widest h-8 whitespace-nowrap"
     >
       {children}
-    </button>
+    </Button>
   );
 }
 
@@ -195,11 +215,14 @@ export default function MultiGenerator() {
   const [colorA, setColorA] = useState("#000000");
   const [checkerStripCount, setCheckerStripCount] = useState(2);
 
+  const [inkBleed, setInkBleed] = useState(0);
+  const [brushSize, setBrushSize] = useState<1 | 2>(1);
+
   const paintingRef = useRef<boolean | null>(null);
   const imgInputRef = useRef<HTMLInputElement>(null);
   const svgInputRef = useRef<HTMLInputElement>(null);
 
-  const { saved, save, rename, remove } = useSavedAssets();
+  const { save } = useSavedAssets();
 
   const count = cellCount(cellSizePx);
   const colorB = invertHex(colorA);
@@ -236,14 +259,21 @@ export default function MultiGenerator() {
     );
   };
 
-  const toggleCell = useCallback((r: number, c: number, val?: boolean) => {
+  const paintBrush = useCallback((r: number, c: number, val?: boolean) => {
     setCells((prev) => {
       const next = prev.map((row) => [...row]);
-      next[r][c] = val !== undefined ? val : !prev[r][c];
+      const paintVal = val !== undefined ? val : !prev[r]?.[c];
+      for (let dr = 0; dr < brushSize; dr++) {
+        for (let dc = 0; dc < brushSize; dc++) {
+          if (next[r + dr]?.[c + dc] !== undefined) {
+            next[r + dr][c + dc] = paintVal;
+          }
+        }
+      }
       return next;
     });
     setPrefillId(null);
-  }, []);
+  }, [brushSize]);
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -274,19 +304,30 @@ export default function MultiGenerator() {
     [uploadedAsset],
   );
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const baseName = prefillId ?? "asset";
     const suffix = assetMode !== "glyph" ? `-${assetMode}` : "";
-    const label = `${baseName}${suffix}.svg`;
-    const base = {
+    const label = `${baseName}${suffix}${inkBleed > 0 ? "-ink" : ""}.svg`;
+    const draft: SavedAsset = {
+      id: "_",
       label,
+      type: isPattern ? assetMode : "glyph",
       cells,
       glyphStyle,
       noGap,
       cols: count,
       rows: count,
       uploadedAsset: uploadedAsset ?? undefined,
+      colorA,
+      colorB,
+      ...(isPattern && { checkerStripCount }),
     };
+    let bakedUpload = uploadedAsset ?? undefined;
+    if (inkBleed > 0) {
+      const svgStr = exportAssetSvg(draft, ARTBOARD_PX);
+      bakedUpload = await svgToPng(svgStr, ARTBOARD_PX, ARTBOARD_PX, inkBleed * 2);
+    }
+    const base = { label, cells, glyphStyle, noGap, cols: count, rows: count, uploadedAsset: bakedUpload };
     if (isPattern) {
       save({ ...base, type: assetMode, colorA, colorB, checkerStripCount });
     } else {
@@ -337,6 +378,14 @@ export default function MultiGenerator() {
         className="flex flex-wrap items-center gap-x-3 px-4 border-b border-border bg-background"
         style={{ minHeight: 32 }}
       >
+        {/* Brush size */}
+        <div className="flex gap-1 py-1">
+          <Btn active={brushSize === 1} onClick={() => setBrushSize(1)}>S</Btn>
+          <Btn active={brushSize === 2} onClick={() => setBrushSize(2)}>L</Btn>
+        </div>
+
+        <Sep />
+
         {/* Prefills */}
         <div className="flex gap-1 py-1">
           <Btn
@@ -438,17 +487,22 @@ export default function MultiGenerator() {
 
         <Sep />
 
-        {/* Asset mode buttons */}
-        <div className="flex gap-1 py-1">
-          {ASSET_MODES.map(({ id, label }) => (
-            <Btn
-              key={id}
-              active={assetMode === id}
-              onClick={() => setAssetMode(id)}
-            >
-              {label}
-            </Btn>
-          ))}
+        {/* Asset mode */}
+        <div className="py-1">
+          <ToolSelect
+            value={assetMode}
+            onValueChange={(v) => setAssetMode(v as AssetMode)}
+          >
+            {ASSET_MODES.map(({ id, label }) => (
+              <SelectItem
+                key={id}
+                value={id}
+                className="font-rounded text-xs uppercase tracking-widest"
+              >
+                {label}
+              </SelectItem>
+            ))}
+          </ToolSelect>
         </div>
 
         {/* Strip size buttons (when strip mode) */}
@@ -478,6 +532,22 @@ export default function MultiGenerator() {
             />
           </label>
         )}
+
+        <Sep />
+
+        {/* Ink Bleed */}
+        <div className="flex items-center gap-2 py-1">
+          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
+          <Slider
+            min={0}
+            max={20}
+            step={1}
+            value={[inkBleed]}
+            onValueChange={([v]) => setInkBleed(v)}
+            className="w-24"
+          />
+          <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
+        </div>
 
         {/* Actions */}
         <div className="flex gap-1 py-1 ml-auto">
@@ -518,9 +588,18 @@ export default function MultiGenerator() {
       <div className="flex flex-1 min-h-0 divide-x divide-border overflow-hidden">
         {/* Left — 480px artboard ────────────────────────────────────────────── */}
         <div className="w-1/2 overflow-auto flex items-start justify-start p-6">
+          {/* Overflow-hidden wrapper clips ink bleed at artboard boundary */}
           <div
-            className="relative select-none cursor-crosshair border border-border shrink-0"
+            className="border border-border shrink-0 overflow-hidden"
             style={{ width: ARTBOARD_PX, height: ARTBOARD_PX }}
+          >
+          <div
+            className="relative select-none cursor-crosshair"
+            style={{
+              width: ARTBOARD_PX,
+              height: ARTBOARD_PX,
+              filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined,
+            }}
             onMouseLeave={() => {
               paintingRef.current = null;
             }}
@@ -547,17 +626,18 @@ export default function MultiGenerator() {
                     onMouseDown={() => {
                       const v = !active;
                       paintingRef.current = v;
-                      toggleCell(r, c, v);
+                      paintBrush(r, c, v);
                     }}
                     onMouseEnter={() => {
                       if (paintingRef.current !== null)
-                        toggleCell(r, c, paintingRef.current);
+                        paintBrush(r, c, paintingRef.current);
                     }}
                   />
                 ))}
               </div>
             ))}
           </div>
+          </div>{/* /overflow-hidden wrapper */}
         </div>
 
         {/* Right — size preview ─────────────────────────────────────────────── */}
@@ -637,6 +717,7 @@ export default function MultiGenerator() {
                       style={{ width: d, height: d }}
                       className="border border-border overflow-hidden"
                     >
+                      <div style={{ filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined }}>
                       <svg width={d} height={d} viewBox={`0 0 ${d} ${d}`}>
                         <PatternContent
                           cells={cells}
@@ -653,6 +734,7 @@ export default function MultiGenerator() {
                         <rect width={d} height={d} fill="url(#pg)" />
                         <title>{label}</title>
                       </svg>
+                      </div>{/* /filter */}
                     </div>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {label}
@@ -678,9 +760,10 @@ export default function MultiGenerator() {
                 return (
                   <div key={label} className="flex flex-col items-center gap-1">
                     <div
-                      style={{ width: svgW, height: svgH }}
+                      style={{ width: svgW, height: svgH, overflow: "hidden" }}
                       className="border border-border"
                     >
+                      <div style={{ filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined }}>
                       <svg
                         width={svgW}
                         height={svgH}
@@ -698,6 +781,7 @@ export default function MultiGenerator() {
                           scaledCell,
                         )}
                       </svg>
+                      </div>{/* /filter */}
                     </div>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {label}
@@ -713,80 +797,6 @@ export default function MultiGenerator() {
         </div>
       </div>
 
-      {/* ── Asset library ────────────────────────────────────────────────────── */}
-      <div className="border-t border-border">
-        <div
-          className="flex items-center px-4 border-b border-border"
-          style={{ height: 32 }}
-        >
-          <span className="font-rounded text-xs text-muted-foreground uppercase tracking-widest">
-            Asset library — {saved.length}
-          </span>
-        </div>
-
-        {saved.length === 0 ? (
-          <p className="px-4 py-4 font-rounded text-xs text-muted-foreground">
-            No assets yet. Draw something and hit Save.
-          </p>
-        ) : (
-          <div className="flex flex-wrap gap-4 p-4">
-            {saved.map((asset) => {
-              const c = asset.cols ?? count;
-              const scaledCell = GALLERY_PX / c;
-              const { cellW, cellH } = getCellDimensions(
-                asset.glyphStyle,
-                scaledCell,
-              );
-              const thumbW = c * cellW;
-              const thumbH = (asset.rows ?? c) * cellH;
-              return (
-                <div key={asset.id} className="flex flex-col gap-1 items-start">
-                  <div
-                    className="border border-border overflow-hidden"
-                    style={{
-                      width: Math.max(thumbW, 4),
-                      height: Math.max(thumbH, 4),
-                    }}
-                  >
-                    <svg
-                      width={thumbW}
-                      height={thumbH}
-                      viewBox={`0 0 ${thumbW} ${thumbH}`}
-                      xmlns="http://www.w3.org/2000/svg"
-                      className="text-foreground"
-                    >
-                      {renderGlyphShapes(asset, scaledCell)}
-                    </svg>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <input
-                      defaultValue={asset.label}
-                      onBlur={(e) => {
-                        const val = e.currentTarget.value.trim();
-                        if (val && val !== asset.label) rename(asset.id, val);
-                      }}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") e.currentTarget.blur();
-                        if (e.key === "Escape") { e.currentTarget.value = asset.label; e.currentTarget.blur(); }
-                      }}
-                      className="font-rounded text-[10px] text-muted-foreground leading-none uppercase bg-transparent border-none outline-none focus:underline w-20 truncate"
-                    />
-                    {asset.type !== "glyph" && (
-                      <span className="font-rounded text-[10px] opacity-40 leading-none">{asset.type}</span>
-                    )}
-                    <button
-                      onClick={() => remove(asset.id)}
-                      className="font-rounded text-xs text-muted-foreground hover:text-foreground transition-colors leading-none"
-                    >
-                      ×
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
     </div>
   );
 }

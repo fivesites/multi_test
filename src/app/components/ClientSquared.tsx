@@ -19,8 +19,9 @@ export default function ClientSquared({ texts, className, currentIndex }: Props)
   const { saved: allAssets } = useSavedAssets();
   const [twoIdx, setTwoIdx] = useState(0);
 
-  // Use all glyph-type assets as cycling "2" designs
-  const glyphs = allAssets.filter((a) => a.type === "glyph");
+  // Prefer assets with role "squared2", fall back to all glyphs
+  const squared2 = allAssets.filter((a) => a.role === "squared2");
+  const glyphs = squared2.length > 0 ? squared2 : allAssets.filter((a) => a.type === "glyph");
 
   // Sync glyph to external currentIndex when provided
   useEffect(() => {

@@ -100,16 +100,22 @@ export default async function RootLayout({
 }>) {
   const cookieStore = await cookies();
   const raw = cookieStore.get("theme-overrides")?.value;
-  let themeStyle: React.CSSProperties = {};
+  let themeCSS = "";
   if (raw) {
     try {
       const overrides: Record<string, string> = JSON.parse(decodeURIComponent(raw));
-      themeStyle = overrides as React.CSSProperties;
+      const vars = Object.entries(overrides)
+        .map(([k, v]) => `${k}:${v}`)
+        .join(";");
+      themeCSS = `:root{${vars}}`;
     } catch {}
   }
 
   return (
-    <html lang="en" style={themeStyle}>
+    <html lang="en">
+      <head>
+        {themeCSS && <style dangerouslySetInnerHTML={{ __html: themeCSS }} />}
+      </head>
       <body
         className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} ${karlRounded.variable} antialiased`}
       >

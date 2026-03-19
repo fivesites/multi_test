@@ -1,79 +1,154 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import MultiGenerator from "@/app/components/MultiGenerator";
 import MultiComposer from "@/app/components/MultiComposer";
+import AssetLibrary from "@/app/components/AssetLibrary";
+import ClientSquared from "@/app/components/ClientSquared";
+import HeroHeader from "@/app/components/HeroHeader";
 import { Button } from "@/components/ui/button";
 
-type Tab = "studio" | "compose";
+type Tab = "studio" | "compose" | "library";
 
 export default function AdminPage() {
   const [tab, setTab] = useState<Tab>("studio");
+  const mainRef  = useRef<HTMLDivElement>(null);
+  const toolsRef = useRef<HTMLElement>(null);
+
+  const scrollToTools = () => {
+    if (!mainRef.current || !toolsRef.current) return;
+    mainRef.current.scrollTo({ top: toolsRef.current.offsetTop, behavior: "smooth" });
+  };
 
   return (
-    <main className="min-h-screen flex flex-col overflow-hidden bg-background text-foreground">
-      {/* Header grid — 6 equal columns */}
-      <div className="absolute top-0 left-0 flex   p-8 z-20   ">
-        {" "}
-        <h1 className="text-4xl font-normal text-background font-rounded">
-          Dashboard²
-        </h1>
-      </div>
-      <div className="flex flex-col lg:grid lg:grid-cols-3 border-b border-border     h-screen">
-        <div className="flex flex-col justify-end h-screen col-span-1 ">
-          <Button
-            className="w-full h-full justify-start items-end p-8"
-            variant="default"
-            asChild
-          >
-            <Link href="/studio">CMS</Link>
-          </Button>
-        </div>
-        <div className="flex flex-col justify-end h-screen col-span-1 ">
-          <Button
-            className="w-full h-full justify-start items-end p-8 uppercase"
-            variant="secondary"
-            asChild
-          >
-            <Link href="/brand">The Brand</Link>
-          </Button>
-        </div>
-        <div className="flex flex-col justify-end h-screen col-span-1 ">
-          <Button
-            className="w-full h-full justify-start items-end p-8 uppercase"
-            variant="destructive"
-          >
-            TOOLS
-          </Button>
-        </div>
+    <div
+      ref={mainRef}
+      className="h-screen overflow-y-scroll snap-y snap-mandatory bg-background text-foreground"
+    >
+      {/* ── Hero ──────────────────────────────────────────────────────────── */}
+      <div className="snap-start">
+        <HeroHeader
+          primary={
+            <ClientSquared
+              texts={["Dashboard", "Studio", "Compose", "Brand", "Assets"]}
+              className="font-rounded font-black text-4xl lg:text-5xl text-primary-foreground"
+            />
+          }
+          primaryMeta={
+            <div className="p-6">
+              <p className="font-rounded text-primary-foreground/50 text-xs uppercase tracking-widest">
+                Multi² Dashboard
+              </p>
+            </div>
+          }
+          col2={
+            /* Mobile: 3-button row stacked; Desktop: split CMS / Brand */
+            <>
+              {/* Mobile */}
+              <div className="lg:hidden flex flex-col justify-center gap-3 p-6 h-full">
+                <Button
+                  variant="default"
+                  className="w-full h-14 font-rounded text-sm uppercase tracking-widest"
+                  asChild
+                >
+                  <Link href="/studio">CMS →</Link>
+                </Button>
+                <Button
+                  variant="secondary"
+                  className="w-full h-14 font-rounded text-sm uppercase tracking-widest"
+                  asChild
+                >
+                  <Link href="/brand">Brand →</Link>
+                </Button>
+                <Button
+                  variant="destructive"
+                  className="w-full h-14 font-rounded text-sm uppercase tracking-widest"
+                  onClick={scrollToTools}
+                >
+                  Tools →
+                </Button>
+              </div>
+
+              {/* Desktop: split CMS (top-half) / Brand (bottom-half) */}
+              <div className="hidden lg:flex flex-col h-full">
+                <div className="flex-1 flex flex-col justify-end p-8 border-b border-border">
+                  <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
+                    Content Management
+                  </p>
+                  <Button
+                    variant="default"
+                    size="lg"
+                    className="w-full justify-start font-rounded text-xl uppercase tracking-widest h-16"
+                    asChild
+                  >
+                    <Link href="/studio">CMS →</Link>
+                  </Button>
+                </div>
+                <div className="flex-1 flex flex-col justify-end p-8">
+                  <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
+                    Visual Identity
+                  </p>
+                  <Button
+                    variant="secondary"
+                    size="lg"
+                    className="w-full justify-start font-rounded text-xl uppercase tracking-widest h-16"
+                    asChild
+                  >
+                    <Link href="/brand">Brand →</Link>
+                  </Button>
+                </div>
+              </div>
+            </>
+          }
+          col3={
+            <div className="hidden lg:flex flex-col justify-end p-8 h-full">
+              <p className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-4">
+                Asset Tools
+              </p>
+              <Button
+                variant="destructive"
+                size="lg"
+                className="w-full justify-start font-rounded text-xl uppercase tracking-widest h-16"
+                onClick={scrollToTools}
+              >
+                Tools →
+              </Button>
+            </div>
+          }
+        />
       </div>
 
-      {/* Tab bar */}
-      <div
-        className="flex border-b border-border shrink-0"
-        style={{ height: 36 }}
+      {/* ── Tools section ─────────────────────────────────────────────────── */}
+      <section
+        ref={toolsRef}
+        id="tools"
+        className="snap-start h-screen flex flex-col"
       >
-        {(["studio", "compose"] as Tab[]).map((t) => (
-          <button
-            key={t}
-            onClick={() => setTab(t)}
-            className={`px-6 font-rounded text-xs uppercase tracking-widest border-r border-border transition-colors h-full ${
-              tab === t
-                ? "bg-foreground text-background"
-                : "hover:bg-muted text-muted-foreground"
-            }`}
-          >
-            {t}
-          </button>
-        ))}
-      </div>
+        {/* Tool — scrolls within the h-screen section */}
+        <div className="flex-1 overflow-auto min-h-0">
+          {tab === "studio"  && <MultiGenerator />}
+          {tab === "compose" && <MultiComposer />}
+          {tab === "library" && <AssetLibrary />}
+        </div>
 
-      {/* Tool — fills remaining height */}
-      <div className="flex-1 overflow-hidden">
-        {tab === "studio" && <MultiGenerator />}
-        {tab === "compose" && <MultiComposer />}
-      </div>
-    </main>
+        {/* Tab bar — pinned to bottom */}
+        <div className="flex border-t border-border shrink-0" style={{ height: 40 }}>
+          {(["studio", "compose", "library"] as Tab[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => setTab(t)}
+              className={`flex-1 font-rounded text-xs uppercase tracking-widest border-r border-border last:border-r-0 transition-colors h-full ${
+                tab === t
+                  ? "bg-foreground text-background"
+                  : "hover:bg-muted text-muted-foreground"
+              }`}
+            >
+              {t}
+            </button>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
