@@ -88,19 +88,19 @@ function DesktopHero({ images }: { images: HeroImage[] }) {
     <div ref={containerRef} className="hidden lg:block h-[250vh]">
       <div className="sticky top-0 h-screen overflow-hidden">
         <div className="grid grid-cols-3 h-full">
-          {/* LEFT: bg-primary + MultiText — scales on scroll */}
+          <div className="h-full">
+            <HeroCell images={images} offset={0} priority />
+          </div>
+
+          {/* CENTER: bg-primary + MultiText — scales on scroll */}
           <motion.div
-            className="relative z-10 bg-primary h-full flex items-center justify-center origin-left"
+            className="relative z-10 bg-primary h-full flex items-center justify-center origin-center"
             style={{ scale: middleScale }}
           >
             <motion.div style={{ scale: textScale }}>
               <MultiText className="text-primary-foreground" />
             </motion.div>
           </motion.div>
-
-          <div className="h-full">
-            <HeroCell images={images} offset={0} priority />
-          </div>
 
           <div className="h-full">
             <HeroCell images={images} offset={1} />
