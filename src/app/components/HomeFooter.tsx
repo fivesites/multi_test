@@ -1,15 +1,8 @@
 "use client";
 
-import Link from "next/link";
 import { useSavedAssets } from "@/app/hooks/useSavedAssets";
 import { renderGlyphShapes, glyphDims } from "@/app/lib/multiUtils";
 import type { SavedAsset } from "@/app/lib/multiUtils";
-
-const NAV_LINKS = [
-  { label: "Work", href: "/work" },
-  { label: "About", href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
 
 function LogoAsset({ asset, size }: { asset: SavedAsset; size: number }) {
   if (asset.uploadedAsset) {
