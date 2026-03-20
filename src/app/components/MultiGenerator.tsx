@@ -123,7 +123,7 @@ function Btn({
   );
 }
 
-const Sep = () => <div className="w-px h-6 bg-border shrink-0" />;
+const Sep = () => <div className="w-px h-10 bg-border shrink-0" />;
 
 function Section({ children, className }: { children: React.ReactNode; className?: string }) {
   return <div className={`flex items-center ${className ?? ""}`}>{children}</div>;
@@ -140,10 +140,10 @@ function ToolSelect({
 }) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="h-9 font-rounded text-xs uppercase tracking-widest border-border px-3 min-w-[100px] focus:ring-0 focus:ring-offset-0 rounded-none">
+      <SelectTrigger className="h-[3rem] font-rounded text-xl px-6 border-border focus:ring-0 focus:ring-offset-0 rounded-none">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent className="font-rounded text-xs uppercase tracking-widest">
+      <SelectContent className="font-rounded text-xl">
         {children}
       </SelectContent>
     </Select>
@@ -424,7 +424,7 @@ export default function MultiGenerator() {
               <SelectItem
                 key={px}
                 value={String(px)}
-                className="font-rounded text-xs uppercase tracking-widest"
+                className="font-rounded text-xl"
               >
                 {label}&nbsp;
                 <span className="text-muted-foreground">
@@ -462,7 +462,7 @@ export default function MultiGenerator() {
               <SelectItem
                 key={id}
                 value={id}
-                className="font-rounded text-xs uppercase tracking-widest"
+                className="font-rounded text-xl"
               >
                 {label}
               </SelectItem>
