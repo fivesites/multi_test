@@ -11,9 +11,13 @@ interface Props {
   texts: string[];
   className?: string;
   currentIndex?: number;
+  /** Tailwind text-size class(es) applied to the hidden measure span — should match the rendered text size */
+  textSize?: string;
+  /** Tailwind text-color class applied to the InlineTwoGlyph so it matches the adjacent text */
+  textColor?: string;
 }
 
-export default function ClientSquared({ texts, className, currentIndex }: Props) {
+export default function ClientSquared({ texts, className, currentIndex, textSize, textColor }: Props) {
   const measureRef = useRef<HTMLSpanElement>(null);
   const xHeight    = useXHeightSync(measureRef);
   const { saved: allAssets } = useSavedAssets();
@@ -53,7 +57,7 @@ export default function ClientSquared({ texts, className, currentIndex }: Props)
     <>
       <span
         ref={measureRef}
-        className="absolute invisible font-rounded font-black text-6xl lg:text-8xl"
+        className={`absolute invisible font-rounded font-black ${textSize ?? "text-6xl lg:text-8xl"}`}
         aria-hidden="true"
       >
         x
@@ -66,7 +70,7 @@ export default function ClientSquared({ texts, className, currentIndex }: Props)
           onWordChange={handleWordChange}
         />
         {xHeight !== null && (
-          <span className="text-secondary-foreground">
+          <span className={textColor ?? "text-secondary-foreground"}>
             <InlineTwoGlyph xHeight={xHeight} custom={customTwo} />
           </span>
         )}

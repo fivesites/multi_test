@@ -9,6 +9,7 @@ type MediaItem = {
   _key: string;
   asset?: { url?: string };
   aspectRatio?: number;
+  aspectRatioType?: "portrait" | "cube" | "landscape";
   file?: { asset?: { url?: string } };
   url?: string;
 };
@@ -25,8 +26,9 @@ type WorkCardData = {
 };
 
 function buildSlides(work: WorkCardData) {
+  // Only portrait images for tall WorkCards
   const portraitMedia = (work.media ?? []).filter(
-    (item) => item._type === "image" && item.asset && (item.aspectRatio ?? 0) < 0.75,
+    (item) => item._type === "image" && item.asset && item.aspectRatioType === "portrait",
   );
 
   if (portraitMedia.length > 0) {
@@ -52,7 +54,7 @@ export default async function WorkSection() {
   const visible = works.slice(0, 3);
 
   return (
-    <section className="lg:snap-start w-full relative">
+    <section className="snap-start w-full relative">
       <div className="grid grid-cols-1 lg:grid-cols-3">
         {visible.flatMap((work, i) => [
           i > 0 && (
@@ -68,7 +70,7 @@ export default async function WorkSection() {
             slug={work.slug}
             backgroundColor={work.backgroundColor}
             slides={buildSlides(work)}
-            className="h-screen"
+            className="h-screen snap-start"
           />,
         ])}
       </div>

@@ -53,6 +53,7 @@ const THEME_VARS = [
 
 type FormatLabel = (typeof FORMATS)[number]["label"];
 type CompGrid = string[][][];
+// scale here means "how many grid cells wide/tall" — stored as multiplier of tilePx
 type CellTransform = { rotate: number; scale: number };
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -104,6 +105,58 @@ function svgToPng(svgStr: string, w: number, h: number, blur: number): Promise<s
     img.onerror = reject;
     img.src = url;
   });
+}
+
+// ── UI primitives (match MultiGenerator styling) ──────────────────────────────
+
+function Btn({
+  active,
+  onClick,
+  children,
+  title,
+}: {
+  active?: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+  title?: string;
+}) {
+  return (
+    <Button
+      variant={active ? "default" : "outline"}
+      onClick={onClick}
+      className="rounded-none"
+      title={title}
+    >
+      {children}
+    </Button>
+  );
+}
+
+const Sep = () => <div className="w-px h-6 bg-border shrink-0" />;
+
+function Section({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={`flex items-center ${className ?? ""}`}>{children}</div>;
+}
+
+function ToolSelect({
+  value,
+  onValueChange,
+  children,
+}: {
+  value: string;
+  onValueChange: (v: string) => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <Select value={value} onValueChange={onValueChange}>
+      <SelectTrigger className="h-9 font-rounded text-xs uppercase tracking-widest border-border px-3 min-w-[80px] focus:ring-0 focus:ring-offset-0 rounded-none">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="font-rounded text-xs uppercase tracking-widest">
+        {children}
+      </SelectContent>
+    </Select>
+  );
 }
 
 // ── Per-cell asset renderer ───────────────────────────────────────────────────
@@ -199,12 +252,10 @@ export default function MultiComposer() {
   const [inkBleed, setInkBleed]       = useState(0);
   const [brushSize, setBrushSize]     = useState<1 | 2>(1);
 
-  // Transform mode
-  const [mode, setMode]                   = useState<"paint" | "select">("paint");
-  const [selectedCell, setSelectedCell]   = useState<string | null>(null);
+  const [mode, setMode]                     = useState<"paint" | "select">("paint");
+  const [selectedCell, setSelectedCell]     = useState<string | null>(null);
   const [cellTransforms, setCellTransforms] = useState<Record<string, CellTransform>>({});
 
-  // Theme color swatches
   const [themeSwatches, setThemeSwatches] = useState<string[]>([]);
   useEffect(() => {
     setThemeSwatches(THEME_VARS.map(resolveColor));
@@ -381,130 +432,135 @@ export default function MultiComposer() {
   return (
     <div className="flex flex-col min-h-full">
       {/* ── Toolbar ──────────────────────────────────────────────────────── */}
-      <div
-        className="flex items-center gap-2 px-4 border-b border-border shrink-0 flex-wrap"
-        style={{ minHeight: 40 }}
-      >
-        <Select value={formatLabel} onValueChange={(v) => changeFormat(v as FormatLabel)}>
-          <SelectTrigger className="h-7 w-20 font-rounded text-xs uppercase tracking-widest">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
+      <div className="flex items-center border-b border-border bg-background overflow-x-auto shrink-0">
+
+        {/* Format */}
+        <Section>
+          <ToolSelect value={formatLabel} onValueChange={(v) => changeFormat(v as FormatLabel)}>
             {FORMATS.map((f) => (
               <SelectItem key={f.label} value={f.label} className="font-rounded text-xs uppercase">
                 {f.label}
               </SelectItem>
             ))}
-          </SelectContent>
-        </Select>
+          </ToolSelect>
+        </Section>
 
-        <Select value={String(tilePx)} onValueChange={(v) => changeTile(Number(v))}>
-          <SelectTrigger className="h-7 w-20 font-rounded text-xs uppercase tracking-widest">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
+        <Sep />
+
+        {/* Tile size */}
+        <Section>
+          <ToolSelect value={String(tilePx)} onValueChange={(v) => changeTile(Number(v))}>
             {TILE_SIZES.map((s) => (
               <SelectItem key={s.px} value={String(s.px)} className="font-rounded text-xs uppercase">
                 {s.label}
               </SelectItem>
             ))}
-          </SelectContent>
-        </Select>
+          </ToolSelect>
+        </Section>
 
-        <div className="w-px h-5 bg-border" />
+        <Sep />
 
-        {/* BG color */}
-        <label className="flex items-center gap-1.5 font-rounded text-xs text-muted-foreground">
-          BG
-          <div className="flex items-center gap-0.5">
-            {themeSwatches.map((color, i) => (
-              <button
-                key={i}
-                onClick={() => setBgColor(color)}
-                title={color}
-                style={{
-                  width: 14, height: 14,
-                  background: color,
-                  border: bgColor === color ? "2px solid var(--foreground)" : "1px solid var(--border)",
-                  flexShrink: 0,
-                }}
-              />
-            ))}
-          </div>
-          <input
-            type="color"
-            value={bgColor}
-            onChange={(e) => setBgColor(e.target.value)}
-            className="w-7 h-7 cursor-pointer border border-border rounded-none p-0"
-          />
-        </label>
+        {/* Mode toggle: rotate / select */}
+        <Section>
+          <Btn
+            active={mode === "select"}
+            onClick={() => { setMode((m) => m === "paint" ? "select" : "paint"); setSelectedCell(null); }}
+            title="Transform mode"
+          >
+            ↻
+          </Btn>
+        </Section>
 
-        <div className="w-px h-5 bg-border" />
+        <Sep />
 
-        {/* Mode toggle */}
-        <Button
-          size="sm"
-          variant={mode === "select" ? "default" : "outline"}
-          onClick={() => { setMode((m) => m === "paint" ? "select" : "paint"); setSelectedCell(null); }}
-          className="font-rounded text-xs uppercase tracking-widest h-7 px-2"
-          title="Transform mode"
-        >
-          ↻
-        </Button>
-
-        {/* Transform controls — only when in select mode with a cell selected */}
-        {mode === "select" && selTransform && selectedCell && (
-          <>
-            <span className="font-rounded text-xs text-muted-foreground">Rot</span>
+        {/* Context controls */}
+        {mode === "select" && selTransform && selectedCell ? (
+          <Section>
+            <span className="font-rounded text-xs text-muted-foreground px-2">Rot</span>
             <Slider
               min={0} max={360} step={5}
               value={[selTransform.rotate]}
               onValueChange={([v]) => setTransform(selectedCell, { rotate: v })}
-              className="w-20"
+              className="w-24"
             />
-            <span className="font-mono text-xs text-muted-foreground w-8">{selTransform.rotate}°</span>
+            <span className="font-mono text-xs text-muted-foreground w-8 px-1">{selTransform.rotate}°</span>
 
-            <span className="font-rounded text-xs text-muted-foreground">Scale</span>
+            <Sep />
+
+            <span className="font-rounded text-xs text-muted-foreground px-2">Scale</span>
             <Slider
-              min={25} max={200} step={5}
+              min={25} max={400} step={5}
               value={[Math.round(selTransform.scale * 100)]}
               onValueChange={([v]) => setTransform(selectedCell, { scale: v / 100 })}
-              className="w-20"
+              className="w-24"
             />
-            <span className="font-mono text-xs text-muted-foreground w-8">{Math.round(selTransform.scale * 100)}%</span>
-          </>
-        )}
-
-        {mode === "paint" && (
-          <>
+            <span className="font-mono text-xs text-muted-foreground w-10 px-1">{Math.round(selTransform.scale * 100)}%</span>
+          </Section>
+        ) : (
+          <Section>
             {/* Brush size */}
-            <div className="flex items-center gap-1">
-              <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground">Brush</span>
-              <Button size="sm" variant={brushSize === 1 ? "default" : "outline"} onClick={() => setBrushSize(1)} className="font-rounded text-xs h-7 w-7 p-0">S</Button>
-              <Button size="sm" variant={brushSize === 2 ? "default" : "outline"} onClick={() => setBrushSize(2)} className="font-rounded text-xs h-7 w-7 p-0">L</Button>
-            </div>
-
-            <div className="w-px h-5 bg-border" />
-
-            {selectedAsset && (
-              <span className="font-mono text-xs text-muted-foreground">{selectedAsset.label}</span>
-            )}
-
-            <div className="w-px h-5 bg-border" />
-
-            {/* Ink Bleed */}
-            <div className="flex items-center gap-2">
-              <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
-              <Slider min={0} max={15} step={1} value={[inkBleed]} onValueChange={([v]) => setInkBleed(v)} className="w-24" />
-              <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
-            </div>
-          </>
+            <Btn active={brushSize === 1} onClick={() => setBrushSize(1)}>S</Btn>
+            <Btn active={brushSize === 2} onClick={() => setBrushSize(2)}>L</Btn>
+          </Section>
         )}
 
-        <div className="flex-1" />
-        <Button size="sm" variant="outline" onClick={() => setGrid(makeGrid(rows, cols))} className="font-rounded text-xs uppercase tracking-widest">Clear</Button>
-        <Button size="sm" variant="outline" onClick={handleExport} className="font-rounded text-xs uppercase tracking-widest">Export</Button>
-        <Button size="sm" variant="default" onClick={handleSave} className="font-rounded text-xs uppercase tracking-widest">Save</Button>
+        <Sep />
+
+        {/* Effects: BG color + Roundness */}
+        <Section>
+          <label className="flex items-center gap-1.5 font-rounded text-xs text-muted-foreground px-3">
+            BG
+            <div className="flex items-center">
+              {themeSwatches.map((color, i) => (
+                <button
+                  key={i}
+                  onClick={() => setBgColor(color)}
+                  title={color}
+                  style={{
+                    width: 14, height: 14,
+                    background: color,
+                    border: bgColor === color ? "2px solid var(--foreground)" : "1px solid var(--border)",
+                    flexShrink: 0,
+                  }}
+                />
+              ))}
+            </div>
+            <input
+              type="color"
+              value={bgColor}
+              onChange={(e) => setBgColor(e.target.value)}
+              className="w-6 h-6 cursor-pointer border border-border rounded-none p-0"
+            />
+          </label>
+
+          <div className="flex items-center gap-2 px-3">
+            <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">
+              Roundness
+            </span>
+            <Slider
+              min={0} max={15} step={1}
+              value={[inkBleed]}
+              onValueChange={([v]) => setInkBleed(v)}
+              className="w-24"
+            />
+            <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
+          </div>
+        </Section>
+
+        <Sep />
+
+        {/* Save / Export / Clear */}
+        <Section className="ml-auto px-1">
+          {selectedAsset && mode === "paint" && (
+            <>
+              <span className="font-mono text-xs text-muted-foreground px-2">{selectedAsset.label}</span>
+              <Sep />
+            </>
+          )}
+          <Btn onClick={() => setGrid(makeGrid(rows, cols))}>Clear</Btn>
+          <Btn onClick={handleExport}>Export</Btn>
+          <Btn active onClick={handleSave}>Save</Btn>
+        </Section>
       </div>
 
       {/* ── Body ─────────────────────────────────────────────────────────── */}
@@ -584,7 +640,9 @@ export default function MultiComposer() {
                         outline: isSelected
                           ? "2px solid var(--primary)"
                           : "0.5px solid rgba(128,128,128,0.12)",
-                        overflow: "hidden",
+                        // overflow visible so scaled assets bleed into adjacent cells
+                        overflow: "visible",
+                        zIndex: t && t.scale > 1 ? 1 : undefined,
                       }}
                     >
                       <div
@@ -592,7 +650,9 @@ export default function MultiComposer() {
                           width: "100%",
                           height: "100%",
                           position: "relative",
-                          transform: t ? `rotate(${t.rotate}deg) scale(${t.scale})` : undefined,
+                          transform: t
+                            ? `rotate(${t.rotate}deg) scale(${t.scale})`
+                            : undefined,
                           transformOrigin: "center center",
                         }}
                       >

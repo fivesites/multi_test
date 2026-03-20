@@ -9,7 +9,6 @@ export const allWorkQuery = groq`
     client,
     year,
     categories,
-    "backgroundColor": backgroundColor.hex,
     description,
     featured,
     coverImage { asset->, hotspot, crop }
@@ -25,7 +24,6 @@ export const workBySlugQuery = groq`
     client,
     year,
     categories,
-    "backgroundColor": backgroundColor.hex,
     description,
     credits,
     coverImage { asset->, hotspot, crop },
@@ -35,6 +33,7 @@ export const workBySlugQuery = groq`
       // image
       asset->,
       "aspectRatio": asset->metadata.dimensions.aspectRatio,
+      aspectRatioType,
       hotspot,
       crop,
       alt,
@@ -60,13 +59,13 @@ export const workCardsQuery = groq`
     client,
     categories,
     "slug": slug.current,
-    "backgroundColor": backgroundColor.hex,
     coverImage { asset, "aspectRatio": asset->metadata.dimensions.aspectRatio },
     media[] {
       _type,
       _key,
       asset->,
       "aspectRatio": asset->metadata.dimensions.aspectRatio,
+      aspectRatioType,
       file { asset-> },
       url
     }

@@ -22,14 +22,14 @@ export default function WorkDetailHeader({
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 border-b border-foreground/10">
       {/* Col 1: title */}
-      <div className="flex items-end p-6 border-b lg:border-b-0 lg:border-r border-foreground/10 lg:col-span-2">
+      <div className="flex items-center p-6 border-b lg:border-b-0 lg:border-r border-foreground/10 lg:col-span-2">
         <h1 className="font-tiny5 text-4xl lg:text-6xl leading-none">
           {title}
         </h1>
       </div>
 
       {/* Col 2: categories + client + year */}
-      <div className="flex flex-col justify-end gap-3 p-6">
+      <div className="absolute bottom-0 left-0 w-full flex flex-col justify-end gap-3 p-6">
         {categories && categories.length > 0 && (
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (

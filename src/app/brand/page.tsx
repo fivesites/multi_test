@@ -1,4 +1,5 @@
 import ThemePicker from "./ThemePicker";
+import BrandAssets from "./BrandAssets";
 
 export default function BrandPage() {
   const colors = [
@@ -29,6 +30,9 @@ export default function BrandPage() {
         <ThemePicker />
       </section>
 
+      {/* Logo + 2 assets (dynamic) */}
+      <BrandAssets />
+
       {/* Typography scale */}
       <section className="mb-20">
         <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-8 border-b border-border pb-2">
@@ -36,7 +40,6 @@ export default function BrandPage() {
         </h2>
 
         <div className="space-y-10">
-          {/* .type-h1 */}
           <div className="flex flex-col gap-1">
             <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
               .type-h1 — KarlST Ultra (font-rounded) · 5xl / 8xl
@@ -44,7 +47,6 @@ export default function BrandPage() {
             <span className="type-h1">Heading One</span>
           </div>
 
-          {/* .type-h2 */}
           <div className="flex flex-col gap-1">
             <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
               .type-h2 — Tiny5 (font-tiny5) · 3xl / 5xl
@@ -52,68 +54,13 @@ export default function BrandPage() {
             <span className="type-h2">Heading Two</span>
           </div>
 
-          {/* .type-h3 */}
           <div className="flex flex-col gap-1">
             <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
-              .type-h3 — Monument Grotesk Mono (font-mono) · xl
+              .type-p — KarlST Ultra (font-rounded) · base
             </span>
-            <span className="type-h3">Heading Three</span>
-          </div>
-
-          {/* .type-p */}
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">
-              .type-p — Meta Old French (font-serif) · base
-            </span>
-            <p className="type-p max-w-xl">
-              Meta Old French is the primary body typeface. Used for running text, descriptions, and editorial copy across the site.
+            <p className="font-rounded text-base max-w-xl leading-relaxed">
+              KarlST Ultra is the primary body typeface. Used for running text, descriptions, and editorial copy across the site.
             </p>
-          </div>
-        </div>
-      </section>
-
-      {/* All available typefaces */}
-      <section className="mb-20">
-        <h2 className="font-mono text-xs uppercase tracking-widest text-muted-foreground mb-8 border-b border-border pb-2">
-          All Typefaces
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Absolution Contextual — font-absolution1</span>
-            <span className="font-absolution1 text-4xl">Multi2</span>
-          </div>
-          <div className="flex flex-col gap-8 md:col-span-2">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">KarlST — font-rounded</span>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-              {[
-                ["Regular", "font-normal"],
-                ["Medium", "font-medium"],
-                ["Bold", "font-bold"],
-                ["Black", "font-[800]"],
-                ["Ultra Black", "font-black"],
-              ].map(([label, cls]) => (
-                <div key={label} className="flex flex-col gap-1">
-                  <span className="font-mono text-xs text-muted-foreground">{label}</span>
-                  <span className={`font-rounded text-3xl ${cls}`}>Aa</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Meta Old French — font-serif</span>
-            <span className="font-serif text-4xl">Multi2</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Monument Grotesk — font-sans</span>
-            <span className="font-sans text-4xl">Multi2</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Monument Grotesk Mono — font-mono</span>
-            <span className="font-mono text-4xl">Multi2</span>
-          </div>
-          <div className="flex flex-col gap-1">
-            <span className="font-mono text-xs text-muted-foreground uppercase tracking-widest">Tiny5 — font-tiny5</span>
-            <span className="font-[family-name:var(--font-tiny5)] text-4xl">Multi2</span>
           </div>
         </div>
       </section>
@@ -148,8 +95,7 @@ export default function BrandPage() {
           {[
             [".type-h1", "font-rounded · text-5xl / text-8xl · leading-none tracking-tight"],
             [".type-h2", "font-tiny5 · text-3xl / text-5xl · leading-tight"],
-            [".type-h3", "font-mono · text-xl · leading-snug"],
-            [".type-p",  "font-serif · text-base · leading-loose"],
+            [".type-p",  "font-rounded · text-base · leading-relaxed"],
           ].map(([cls, desc]) => (
             <div key={cls} className="flex gap-4 py-2 border-b border-border">
               <span className="text-foreground w-24 shrink-0">{cls}</span>

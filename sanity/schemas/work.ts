@@ -50,12 +50,6 @@ export const work = defineType({
       },
     }),
     defineField({
-      name: "backgroundColor",
-      title: "Background color",
-      type: "color",
-      description: "Used on the project page and cards",
-    }),
-    defineField({
       name: "description",
       title: "Description",
       type: "text",
@@ -71,11 +65,26 @@ export const work = defineType({
       name: "media",
       title: "Media",
       type: "array",
+      options: { sortable: true },
       of: [
         {
           type: "image",
           options: { hotspot: true },
           fields: [
+            defineField({
+              name: "aspectRatioType",
+              title: "Aspect Ratio",
+              type: "string",
+              options: {
+                list: [
+                  { title: "Portrait (2:3)", value: "portrait" },
+                  { title: "Cube (1:1)", value: "cube" },
+                  { title: "Landscape (3:2)", value: "landscape" },
+                ],
+                layout: "radio",
+              },
+              validation: (r) => r.required(),
+            }),
             defineField({
               name: "alt",
               type: "string",
@@ -141,8 +150,9 @@ export const work = defineType({
     defineField({
       name: "credits",
       title: "Credits",
-      type: "text",
-      rows: 3,
+      type: "array",
+      of: [{ type: "block" }],
+      description: "Each block renders as a list item. Use line breaks to separate roles.",
     }),
     defineField({
       name: "featured",

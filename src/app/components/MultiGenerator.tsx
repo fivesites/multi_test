@@ -17,8 +17,6 @@ import {
   type SavedAsset,
   ASSET_SIZES,
   STRIP_SIZES,
-  DEFAULT_TWO_CELLS,
-  DEFAULT_M_CELLS,
   renderGlyphShapes,
   glyphDims,
   patternDims,
@@ -28,37 +26,17 @@ import {
 import { getCellDimensions } from "@/app/lib/twoUtils";
 import { useSavedAssets } from "@/app/hooks/useSavedAssets";
 
-const ARTBOARD_PX = 480;
+const ARTBOARD_LONG = 480;
 const MAX_PREVIEW = 128;
-
-function svgToPng(svgStr: string, w: number, h: number, blur: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const blob = new Blob([svgStr], { type: "image/svg+xml" });
-    const url  = URL.createObjectURL(blob);
-    const img  = new window.Image(w, h);
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      canvas.width  = w;
-      canvas.height = h;
-      const ctx = canvas.getContext("2d")!;
-      ctx.filter = `blur(${blur}px) contrast(60)`;
-      ctx.drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
-      resolve(canvas.toDataURL("image/png"));
-    };
-    img.onerror = reject;
-    img.src = url;
-  });
-}
 
 // Rem values that divide evenly into 480px
 const CELL_SIZES = [
-  { label: "1rem", px: 16 }, // 30×30
-  { label: "2rem", px: 32 }, // 15×15
-  { label: "3rem", px: 48 }, // 10×10
-  { label: "6rem", px: 96 }, //  5×5
-  { label: "15rem", px: 240 }, //  2×2
-  { label: "30rem", px: 480 }, //  1×1
+  { label: "1rem", px: 16 },
+  { label: "2rem", px: 32 },
+  { label: "3rem", px: 48 },
+  { label: "6rem", px: 96 },
+  { label: "15rem", px: 240 },
+  { label: "30rem", px: 480 },
 ] as const;
 
 const GLYPH_STYLES: { id: GlyphStyle; label: string }[] = [
@@ -77,15 +55,42 @@ const ASSET_MODES: { id: AssetMode; label: string }[] = [
   { id: "strip-v", label: "Border V" },
 ];
 
-type PrefillId = "2" | "m" | "square";
+type AspectRatioId = "landscape" | "square" | "portrait";
 
-function cellCount(px: number) {
-  return Math.floor(ARTBOARD_PX / px);
+const ASPECT_RATIOS: { id: AspectRatioId; label: string; w: number; h: number }[] = [
+  { id: "landscape", label: "Landscape", w: ARTBOARD_LONG, h: 320 },
+  { id: "square",    label: "1:1",       w: ARTBOARD_LONG, h: ARTBOARD_LONG },
+  { id: "portrait",  label: "Portrait",  w: 320,           h: ARTBOARD_LONG },
+];
+
+function svgToPng(
+  svgStr: string,
+  w: number,
+  h: number,
+  blur: number,
+): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const blob = new Blob([svgStr], { type: "image/svg+xml" });
+    const url = URL.createObjectURL(blob);
+    const img = new window.Image(w, h);
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = w;
+      canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.filter = `blur(${blur}px) contrast(60)`;
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      resolve(canvas.toDataURL("image/png"));
+    };
+    img.onerror = reject;
+    img.src = url;
+  });
 }
 
-function makeGrid(count: number, seed: boolean[][]): boolean[][] {
-  return Array.from({ length: count }, (_, r) =>
-    Array.from({ length: count }, (_, c) => seed[r]?.[c] ?? false),
+function makeGrid(rows: number, cols: number, seed: boolean[][]): boolean[][] {
+  return Array.from({ length: rows }, (_, r) =>
+    Array.from({ length: cols }, (_, c) => seed[r]?.[c] ?? false),
   );
 }
 
@@ -109,17 +114,20 @@ function Btn({
 }) {
   return (
     <Button
-      size="sm"
       variant={active ? "default" : "outline"}
       onClick={onClick}
-      className="font-rounded text-xs uppercase tracking-widest h-8 whitespace-nowrap"
+      className="rounded-none"
     >
       {children}
     </Button>
   );
 }
 
-const Sep = () => <div className="w-px h-5 bg-border shrink-0" />;
+const Sep = () => <div className="w-px h-6 bg-border shrink-0" />;
+
+function Section({ children, className }: { children: React.ReactNode; className?: string }) {
+  return <div className={`flex items-center ${className ?? ""}`}>{children}</div>;
+}
 
 function ToolSelect({
   value,
@@ -132,7 +140,7 @@ function ToolSelect({
 }) {
   return (
     <Select value={value} onValueChange={onValueChange}>
-      <SelectTrigger className="h-8 font-rounded text-xs uppercase tracking-widest border-border px-3 min-w-[100px] focus:ring-0 focus:ring-offset-0">
+      <SelectTrigger className="h-9 font-rounded text-xs uppercase tracking-widest border-border px-3 min-w-[100px] focus:ring-0 focus:ring-offset-0 rounded-none">
         <SelectValue />
       </SelectTrigger>
       <SelectContent className="font-rounded text-xs uppercase tracking-widest">
@@ -203,19 +211,27 @@ function PatternContent({
 // ── Main component ────────────────────────────────────────────────────────────
 export default function MultiGenerator() {
   const [cellSizePx, setCellSizePx] = useState(32);
+  const [aspectRatio, setAspectRatio] = useState<AspectRatioId>("square");
+
+  // Derived artboard dims
+  const ar = ASPECT_RATIOS.find((a) => a.id === aspectRatio)!;
+  const artboardW = ar.w;
+  const artboardH = ar.h;
+  const cols = Math.floor(artboardW / cellSizePx);
+  const rows = Math.floor(artboardH / cellSizePx);
+
   const [cells, setCells] = useState<boolean[][]>(() =>
-    Array.from({ length: cellCount(32) }, () => Array(cellCount(32)).fill(false)),
+    Array.from({ length: Math.floor(ARTBOARD_LONG / 32) }, () =>
+      Array(Math.floor(ARTBOARD_LONG / 32)).fill(false),
+    ),
   );
   const [glyphStyle, setGlyphStyle] = useState<GlyphStyle>("square");
   const [noGap, setNoGap] = useState(true);
   const [uploadedAsset, setUploadedAsset] = useState<string | null>(null);
-
   const [assetMode, setAssetMode] = useState<AssetMode>("glyph");
-  const [prefillId, setPrefillId] = useState<PrefillId | null>(null);
   const [colorA, setColorA] = useState("#000000");
   const [checkerStripCount, setCheckerStripCount] = useState(2);
-
-  const [inkBleed, setInkBleed] = useState(0);
+  const [roundness, setRoundness] = useState(0);
   const [brushSize, setBrushSize] = useState<1 | 2>(1);
 
   const paintingRef = useRef<boolean | null>(null);
@@ -224,10 +240,8 @@ export default function MultiGenerator() {
 
   const { save } = useSavedAssets();
 
-  const count = cellCount(cellSizePx);
   const colorB = invertHex(colorA);
 
-  // Derived checker mode from asset mode
   const checkerMode: CheckerMode =
     assetMode === "pattern"
       ? "square"
@@ -242,38 +256,36 @@ export default function MultiGenerator() {
 
   const changeCellSize = (px: number) => {
     setCellSizePx(px);
-    setCells((prev) => makeGrid(cellCount(px), prev));
+    const newCols = Math.floor(artboardW / px);
+    const newRows = Math.floor(artboardH / px);
+    setCells((prev) => makeGrid(newRows, newCols, prev));
   };
 
-  const prefill = (id: PrefillId, seed: boolean[][]) => {
-    setPrefillId(id);
-    setCells(makeGrid(count, seed));
+  const changeAspectRatio = (id: AspectRatioId) => {
+    setAspectRatio(id);
+    const ratio = ASPECT_RATIOS.find((a) => a.id === id)!;
+    const newCols = Math.floor(ratio.w / cellSizePx);
+    const newRows = Math.floor(ratio.h / cellSizePx);
+    setCells((prev) => makeGrid(newRows, newCols, prev));
   };
 
-  const prefillSquare = () => {
-    setPrefillId("square");
-    setCells(
-      Array.from({ length: count }, (_, r) =>
-        Array.from({ length: count }, (_, c) => (r + c) % 2 === 0),
-      ),
-    );
-  };
-
-  const paintBrush = useCallback((r: number, c: number, val?: boolean) => {
-    setCells((prev) => {
-      const next = prev.map((row) => [...row]);
-      const paintVal = val !== undefined ? val : !prev[r]?.[c];
-      for (let dr = 0; dr < brushSize; dr++) {
-        for (let dc = 0; dc < brushSize; dc++) {
-          if (next[r + dr]?.[c + dc] !== undefined) {
-            next[r + dr][c + dc] = paintVal;
+  const paintBrush = useCallback(
+    (r: number, c: number, val?: boolean) => {
+      setCells((prev) => {
+        const next = prev.map((row) => [...row]);
+        const paintVal = val !== undefined ? val : !prev[r]?.[c];
+        for (let dr = 0; dr < brushSize; dr++) {
+          for (let dc = 0; dc < brushSize; dc++) {
+            if (next[r + dr]?.[c + dc] !== undefined) {
+              next[r + dr][c + dc] = paintVal;
+            }
           }
         }
-      }
-      return next;
-    });
-    setPrefillId(null);
-  }, [brushSize]);
+        return next;
+      });
+    },
+    [brushSize],
+  );
 
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -305,9 +317,8 @@ export default function MultiGenerator() {
   );
 
   const handleSave = async () => {
-    const baseName = prefillId ?? "asset";
     const suffix = assetMode !== "glyph" ? `-${assetMode}` : "";
-    const label = `${baseName}${suffix}${inkBleed > 0 ? "-ink" : ""}.svg`;
+    const label = `asset${suffix}${roundness > 0 ? "-roundness" : ""}.svg`;
     const draft: SavedAsset = {
       id: "_",
       label,
@@ -315,19 +326,27 @@ export default function MultiGenerator() {
       cells,
       glyphStyle,
       noGap,
-      cols: count,
-      rows: count,
+      cols,
+      rows,
       uploadedAsset: uploadedAsset ?? undefined,
       colorA,
       colorB,
       ...(isPattern && { checkerStripCount }),
     };
     let bakedUpload = uploadedAsset ?? undefined;
-    if (inkBleed > 0) {
-      const svgStr = exportAssetSvg(draft, ARTBOARD_PX);
-      bakedUpload = await svgToPng(svgStr, ARTBOARD_PX, ARTBOARD_PX, inkBleed * 2);
+    if (roundness > 0) {
+      const svgStr = exportAssetSvg(draft, ARTBOARD_LONG);
+      bakedUpload = await svgToPng(svgStr, artboardW, artboardH, roundness * 2);
     }
-    const base = { label, cells, glyphStyle, noGap, cols: count, rows: count, uploadedAsset: bakedUpload };
+    const base = {
+      label,
+      cells,
+      glyphStyle,
+      noGap,
+      cols,
+      rows,
+      uploadedAsset: bakedUpload,
+    };
     if (isPattern) {
       save({ ...base, type: assetMode, colorA, colorB, checkerStripCount });
     } else {
@@ -343,8 +362,8 @@ export default function MultiGenerator() {
       cells,
       glyphStyle,
       noGap,
-      cols: count,
-      rows: count,
+      cols,
+      rows,
       uploadedAsset: uploadedAsset ?? undefined,
       ...(isPattern && { colorA, colorB, checkerStripCount }),
     };
@@ -353,9 +372,8 @@ export default function MultiGenerator() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    const baseName = prefillId ?? "asset";
     const suffix = assetMode !== "glyph" ? `-${assetMode}` : "";
-    a.download = `${baseName}${suffix}.svg`;
+    a.download = `asset${suffix}.svg`;
     a.click();
     URL.revokeObjectURL(url);
   };
@@ -364,51 +382,40 @@ export default function MultiGenerator() {
 
   // Pattern preview dims for left panel
   const pvCellPx = 16;
-  const { w: pvGlyphW, h: pvGlyphH } = glyphDims(
-    count,
-    count,
-    glyphStyle,
-    pvCellPx,
-  );
+  const { w: pvGlyphW, h: pvGlyphH } = glyphDims(cols, rows, glyphStyle, pvCellPx);
 
   return (
     <div className="flex flex-col min-h-screen">
       {/* ── Toolbar ─────────────────────────────────────────────────────────── */}
-      <div
-        className="flex flex-wrap items-center gap-x-3 px-4 border-b border-border bg-background"
-        style={{ minHeight: 32 }}
-      >
-        {/* Brush size */}
-        <div className="flex gap-1 py-1">
-          <Btn active={brushSize === 1} onClick={() => setBrushSize(1)}>S</Btn>
-          <Btn active={brushSize === 2} onClick={() => setBrushSize(2)}>L</Btn>
-        </div>
+      <div className="flex items-center border-b border-border bg-background overflow-x-auto shrink-0">
+
+        {/* 1. Asset type */}
+        <Section>
+          {ASSET_MODES.map(({ id, label }) => (
+            <Btn
+              key={id}
+              active={assetMode === id}
+              onClick={() => setAssetMode(id)}
+            >
+              {label}
+            </Btn>
+          ))}
+          {isStrip &&
+            STRIP_SIZES.map(({ label, count: c }) => (
+              <Btn
+                key={label}
+                active={checkerStripCount === c}
+                onClick={() => setCheckerStripCount(c)}
+              >
+                {label}
+              </Btn>
+            ))}
+        </Section>
 
         <Sep />
 
-        {/* Prefills */}
-        <div className="flex gap-1 py-1">
-          <Btn
-            active={prefillId === "2"}
-            onClick={() => prefill("2", DEFAULT_TWO_CELLS)}
-          >
-            2
-          </Btn>
-          <Btn
-            active={prefillId === "m"}
-            onClick={() => prefill("m", DEFAULT_M_CELLS)}
-          >
-            M
-          </Btn>
-          <Btn active={prefillId === "square"} onClick={prefillSquare}>
-            Square
-          </Btn>
-        </div>
-
-        <Sep />
-
-        {/* Grid size */}
-        <div className="py-1">
+        {/* 2. Cell size */}
+        <Section>
           <ToolSelect
             value={String(cellSizePx)}
             onValueChange={(v) => changeCellSize(Number(v))}
@@ -419,17 +426,34 @@ export default function MultiGenerator() {
                 value={String(px)}
                 className="font-rounded text-xs uppercase tracking-widest"
               >
-                {label} &nbsp;
+                {label}&nbsp;
                 <span className="text-muted-foreground">
-                  {cellCount(px)}×{cellCount(px)}
+                  {Math.floor(artboardW / px)}×{Math.floor(artboardH / px)}
                 </span>
               </SelectItem>
             ))}
           </ToolSelect>
-        </div>
+        </Section>
 
-        {/* Style */}
-        <div className="py-1">
+        <Sep />
+
+        {/* 3. Asset ratio */}
+        <Section>
+          {ASPECT_RATIOS.map(({ id, label }) => (
+            <Btn
+              key={id}
+              active={aspectRatio === id}
+              onClick={() => changeAspectRatio(id)}
+            >
+              {label}
+            </Btn>
+          ))}
+        </Section>
+
+        <Sep />
+
+        {/* 4. Style */}
+        <Section>
           <ToolSelect
             value={glyphStyle}
             onValueChange={(v) => setGlyphStyle(v as GlyphStyle)}
@@ -444,85 +468,64 @@ export default function MultiGenerator() {
               </SelectItem>
             ))}
           </ToolSelect>
-        </div>
-
-        <Btn active={noGap} onClick={() => setNoGap((v) => !v)}>
-          No Gap
-        </Btn>
-
-        {glyphStyle === "image" && (
-          <>
-            <input
-              ref={imgInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={handleImageUpload}
-            />
-            <Btn
-              active={!!uploadedAsset}
-              onClick={() => imgInputRef.current?.click()}
-            >
-              {uploadedAsset ? "Change Image" : "Upload Image"}
-            </Btn>
-          </>
-        )}
-        {glyphStyle === "svg" && (
-          <>
-            <input
-              ref={svgInputRef}
-              type="file"
-              accept=".svg,image/svg+xml"
-              className="hidden"
-              onChange={handleSvgUpload}
-            />
-            <Btn
-              active={!!uploadedAsset}
-              onClick={() => svgInputRef.current?.click()}
-            >
-              {uploadedAsset ? "Change SVG" : "Upload SVG"}
-            </Btn>
-          </>
-        )}
+          {glyphStyle === "image" && (
+            <>
+              <input
+                ref={imgInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+              />
+              <Btn
+                active={!!uploadedAsset}
+                onClick={() => imgInputRef.current?.click()}
+              >
+                {uploadedAsset ? "Change" : "Upload"}
+              </Btn>
+            </>
+          )}
+          {glyphStyle === "svg" && (
+            <>
+              <input
+                ref={svgInputRef}
+                type="file"
+                accept=".svg,image/svg+xml"
+                className="hidden"
+                onChange={handleSvgUpload}
+              />
+              <Btn
+                active={!!uploadedAsset}
+                onClick={() => svgInputRef.current?.click()}
+              >
+                {uploadedAsset ? "Change" : "Upload"}
+              </Btn>
+            </>
+          )}
+        </Section>
 
         <Sep />
 
-        {/* Asset mode */}
-        <div className="py-1">
-          <ToolSelect
-            value={assetMode}
-            onValueChange={(v) => setAssetMode(v as AssetMode)}
-          >
-            {ASSET_MODES.map(({ id, label }) => (
-              <SelectItem
-                key={id}
-                value={id}
-                className="font-rounded text-xs uppercase tracking-widest"
-              >
-                {label}
-              </SelectItem>
-            ))}
-          </ToolSelect>
-        </div>
+        {/* 5. Gap */}
+        <Section>
+          <Btn active={noGap} onClick={() => setNoGap((v) => !v)}>
+            No Gap
+          </Btn>
+        </Section>
 
-        {/* Strip size buttons (when strip mode) */}
-        {isStrip && (
-          <div className="flex gap-1 py-1">
-            {STRIP_SIZES.map(({ label, count: c }) => (
-              <Btn
-                key={label}
-                active={checkerStripCount === c}
-                onClick={() => setCheckerStripCount(c)}
-              >
-                {label}
-              </Btn>
-            ))}
-          </div>
-        )}
+        <Sep />
 
-        {/* Color A picker — all modes */}
-        {(
-          <label className="flex items-center gap-2 font-rounded text-xs text-muted-foreground py-1">
+        {/* 6. Stroke width */}
+        <Section>
+          <Btn active={brushSize === 1} onClick={() => setBrushSize(1)}>S</Btn>
+          <Btn active={brushSize === 2} onClick={() => setBrushSize(2)}>L</Btn>
+        </Section>
+
+        <Sep />
+
+        {/* 7. Effects */}
+        <Section>
+          <label className="flex items-center gap-1 font-rounded text-xs text-muted-foreground px-3">
             Color
             <input
               type="color"
@@ -531,30 +534,32 @@ export default function MultiGenerator() {
               className="w-6 h-6 cursor-pointer border border-border"
             />
           </label>
-        )}
+          <div className="flex items-center gap-2 px-3">
+            <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">
+              Roundness
+            </span>
+            <Slider
+              min={0}
+              max={20}
+              step={1}
+              value={[roundness]}
+              onValueChange={([v]) => setRoundness(v)}
+              className="w-24"
+            />
+            <span className="font-mono text-xs text-muted-foreground w-4 text-right">
+              {roundness}
+            </span>
+          </div>
+        </Section>
 
         <Sep />
 
-        {/* Ink Bleed */}
-        <div className="flex items-center gap-2 py-1">
-          <span className="font-rounded text-xs uppercase tracking-widest text-muted-foreground whitespace-nowrap">Ink</span>
-          <Slider
-            min={0}
-            max={20}
-            step={1}
-            value={[inkBleed]}
-            onValueChange={([v]) => setInkBleed(v)}
-            className="w-24"
-          />
-          <span className="font-mono text-xs text-muted-foreground w-4 text-right">{inkBleed}</span>
-        </div>
-
-        {/* Actions */}
-        <div className="flex gap-1 py-1 ml-auto">
+        {/* 8. Save / Export / Clear */}
+        <Section className="ml-auto px-1">
           <Btn
             onClick={() =>
               setCells(
-                Array.from({ length: count }, () => Array(count).fill(false)),
+                makeGrid(rows, cols, Array.from({ length: rows }, () => [])),
               )
             }
           >
@@ -581,63 +586,67 @@ export default function MultiGenerator() {
           <Btn active onClick={handleSave}>
             Save
           </Btn>
-        </div>
+        </Section>
       </div>
 
       {/* ── Artboard + Preview ───────────────────────────────────────────────── */}
       <div className="flex flex-1 min-h-0 divide-x divide-border overflow-hidden">
-        {/* Left — 480px artboard ────────────────────────────────────────────── */}
+        {/* Left — artboard ────────────────────────────────────────────── */}
         <div className="w-1/2 overflow-auto flex items-start justify-start p-6">
-          {/* Overflow-hidden wrapper clips ink bleed at artboard boundary */}
           <div
             className="border border-border shrink-0 overflow-hidden"
-            style={{ width: ARTBOARD_PX, height: ARTBOARD_PX }}
+            style={{ width: artboardW, height: artboardH }}
           >
-          <div
-            className="relative select-none cursor-crosshair"
-            style={{
-              width: ARTBOARD_PX,
-              height: ARTBOARD_PX,
-              filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined,
-            }}
-            onMouseLeave={() => {
-              paintingRef.current = null;
-            }}
-            onMouseUp={() => {
-              paintingRef.current = null;
-            }}
-          >
-            {needsUpload && !uploadedAsset && (
-              <div className="absolute inset-0 flex items-center justify-center bg-muted/60 pointer-events-none z-10">
-                <span className="font-rounded text-xs text-muted-foreground">
-                  Upload a file first
-                </span>
-              </div>
-            )}
-            {cells.map((row, r) => (
-              <div key={r} className="flex">
-                {row.map((active, c) => (
-                  <div
-                    key={c}
-                    style={{ width: cellSizePx, height: cellSizePx }}
-                    className={`border border-border/20 transition-colors ${
-                      active ? "bg-foreground" : "bg-background hover:bg-muted"
-                    }`}
-                    onMouseDown={() => {
-                      const v = !active;
-                      paintingRef.current = v;
-                      paintBrush(r, c, v);
-                    }}
-                    onMouseEnter={() => {
-                      if (paintingRef.current !== null)
-                        paintBrush(r, c, paintingRef.current);
-                    }}
-                  />
-                ))}
-              </div>
-            ))}
+            <div
+              className="relative select-none cursor-crosshair"
+              style={{
+                width: artboardW,
+                height: artboardH,
+                filter:
+                  roundness > 0
+                    ? `blur(${roundness * 2}px) contrast(60)`
+                    : undefined,
+              }}
+              onMouseLeave={() => {
+                paintingRef.current = null;
+              }}
+              onMouseUp={() => {
+                paintingRef.current = null;
+              }}
+            >
+              {needsUpload && !uploadedAsset && (
+                <div className="absolute inset-0 flex items-center justify-center bg-muted/60 pointer-events-none z-10">
+                  <span className="font-rounded text-xs text-muted-foreground">
+                    Upload a file first
+                  </span>
+                </div>
+              )}
+              {cells.map((row, r) => (
+                <div key={r} className="flex">
+                  {row.map((active, c) => (
+                    <div
+                      key={c}
+                      style={{ width: cellSizePx, height: cellSizePx }}
+                      className={`border border-border/20 transition-colors ${
+                        active
+                          ? "bg-foreground"
+                          : "bg-background hover:bg-muted"
+                      }`}
+                      onMouseDown={() => {
+                        const v = !active;
+                        paintingRef.current = v;
+                        paintBrush(r, c, v);
+                      }}
+                      onMouseEnter={() => {
+                        if (paintingRef.current !== null)
+                          paintBrush(r, c, paintingRef.current);
+                      }}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
           </div>
-          </div>{/* /overflow-hidden wrapper */}
         </div>
 
         {/* Right — size preview ─────────────────────────────────────────────── */}
@@ -647,7 +656,6 @@ export default function MultiGenerator() {
           </span>
 
           {isStrip ? (
-            /* Strip pattern size ladder */
             <div className="flex flex-col gap-4">
               {STRIP_SIZES.map(({ label, count: c }) => {
                 const dims = patternDims(checkerMode, pvGlyphW, pvGlyphH, c, 0);
@@ -680,8 +688,8 @@ export default function MultiGenerator() {
                           glyphStyle={glyphStyle}
                           noGap={noGap}
                           uploadedAsset={uploadedAsset ?? undefined}
-                          cols={count}
-                          rows={count}
+                          cols={cols}
+                          rows={rows}
                           cellPx={pvCellPx}
                           colorA={colorA}
                           colorB={colorB}
@@ -699,17 +707,11 @@ export default function MultiGenerator() {
               })}
             </div>
           ) : isPattern ? (
-            /* Square pattern size ladder */
             <div className="flex flex-wrap gap-4 items-end">
               {ASSET_SIZES.map(({ label, px }) => {
                 const d = Math.min(px, MAX_PREVIEW);
-                const cpx = d / count;
-                const { w: gW, h: gH } = glyphDims(
-                  count,
-                  count,
-                  glyphStyle,
-                  cpx,
-                );
+                const cpx = d / Math.max(cols, rows);
+                const { w: gW, h: gH } = glyphDims(cols, rows, glyphStyle, cpx);
                 patternTileDims(checkerMode, gW, gH);
                 return (
                   <div key={label} className="flex flex-col items-center gap-1">
@@ -717,24 +719,31 @@ export default function MultiGenerator() {
                       style={{ width: d, height: d }}
                       className="border border-border overflow-hidden"
                     >
-                      <div style={{ filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined }}>
-                      <svg width={d} height={d} viewBox={`0 0 ${d} ${d}`}>
-                        <PatternContent
-                          cells={cells}
-                          glyphStyle={glyphStyle}
-                          noGap={noGap}
-                          uploadedAsset={uploadedAsset ?? undefined}
-                          cols={count}
-                          rows={count}
-                          cellPx={cpx}
-                          colorA={colorA}
-                          colorB={colorB}
-                          mode={checkerMode}
-                        />
-                        <rect width={d} height={d} fill="url(#pg)" />
-                        <title>{label}</title>
-                      </svg>
-                      </div>{/* /filter */}
+                      <div
+                        style={{
+                          filter:
+                            roundness > 0
+                              ? `blur(${roundness * 2}px) contrast(60)`
+                              : undefined,
+                        }}
+                      >
+                        <svg width={d} height={d} viewBox={`0 0 ${d} ${d}`}>
+                          <PatternContent
+                            cells={cells}
+                            glyphStyle={glyphStyle}
+                            noGap={noGap}
+                            uploadedAsset={uploadedAsset ?? undefined}
+                            cols={cols}
+                            rows={rows}
+                            cellPx={cpx}
+                            colorA={colorA}
+                            colorB={colorB}
+                            mode={checkerMode}
+                          />
+                          <rect width={d} height={d} fill="url(#pg)" />
+                          <title>{label}</title>
+                        </svg>
+                      </div>
                     </div>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {label}
@@ -747,41 +756,44 @@ export default function MultiGenerator() {
               })}
             </div>
           ) : (
-            /* Plain glyph size ladder */
             <div className="flex flex-wrap gap-4 items-end">
               {ASSET_SIZES.map(({ label, px }) => {
-                const scaledCell = Math.min(px, MAX_PREVIEW) / count;
-                const { cellW, cellH } = getCellDimensions(
-                  glyphStyle,
-                  scaledCell,
-                );
-                const svgW = count * cellW;
-                const svgH = count * cellH;
+                const scaledCell = Math.min(px, MAX_PREVIEW) / Math.max(cols, rows);
+                const { cellW, cellH } = getCellDimensions(glyphStyle, scaledCell);
+                const svgW = cols * cellW;
+                const svgH = rows * cellH;
                 return (
                   <div key={label} className="flex flex-col items-center gap-1">
                     <div
                       style={{ width: svgW, height: svgH, overflow: "hidden" }}
                       className="border border-border"
                     >
-                      <div style={{ filter: inkBleed > 0 ? `blur(${inkBleed * 2}px) contrast(60)` : undefined }}>
-                      <svg
-                        width={svgW}
-                        height={svgH}
-                        viewBox={`0 0 ${svgW} ${svgH}`}
-                        xmlns="http://www.w3.org/2000/svg"
-                        className="text-foreground"
+                      <div
+                        style={{
+                          filter:
+                            roundness > 0
+                              ? `blur(${roundness * 2}px) contrast(60)`
+                              : undefined,
+                        }}
                       >
-                        {renderGlyphShapes(
-                          {
-                            cells,
-                            glyphStyle,
-                            noGap,
-                            uploadedAsset: uploadedAsset ?? undefined,
-                          },
-                          scaledCell,
-                        )}
-                      </svg>
-                      </div>{/* /filter */}
+                        <svg
+                          width={svgW}
+                          height={svgH}
+                          viewBox={`0 0 ${svgW} ${svgH}`}
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="text-foreground"
+                        >
+                          {renderGlyphShapes(
+                            {
+                              cells,
+                              glyphStyle,
+                              noGap,
+                              uploadedAsset: uploadedAsset ?? undefined,
+                            },
+                            scaledCell,
+                          )}
+                        </svg>
+                      </div>
                     </div>
                     <span className="font-mono text-[10px] text-muted-foreground">
                       {label}
@@ -796,7 +808,6 @@ export default function MultiGenerator() {
           )}
         </div>
       </div>
-
     </div>
   );
 }

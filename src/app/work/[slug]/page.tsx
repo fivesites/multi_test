@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import { PortableText, type PortableTextComponents } from "@portabletext/react";
 import { client } from "../../../../sanity/lib/client";
 import {
   workBySlugQuery,
@@ -14,6 +15,7 @@ type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
   asset?: { _ref: string; url?: string };
   aspectRatio?: number;
+  aspectRatioType?: "portrait" | "cube" | "landscape";
   hotspot?: object;
   crop?: object;
   alt?: string;
@@ -29,9 +31,9 @@ type WorkDetail = {
   client?: string;
   year?: number;
   categories?: string[];
-  backgroundColor?: string;
   description?: string;
-  credits?: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  credits?: any[];
   coverImage?: { asset: { _ref: string }; hotspot?: object; crop?: object };
   media?: MediaItem[];
 };
@@ -43,6 +45,14 @@ export async function generateStaticParams() {
   return slugs.map((s) => ({ slug: s.slug }));
 }
 
+const creditsComponents: PortableTextComponents = {
+  block: {
+    normal: ({ children }) => (
+      <li className="text-sm font-mono text-foreground/60 leading-relaxed">{children}</li>
+    ),
+  },
+};
+
 export default async function WorkDetailPage({
   params,
 }: {
@@ -53,39 +63,70 @@ export default async function WorkDetailPage({
 
   if (!work) notFound();
 
-  const bg = work.backgroundColor ?? "#111111";
-
   const media = work.media ?? [];
 
-  function colSpan(item: MediaItem): 1 | 2 | 3 {
+  // Portrait images for desktop hero columns
+  const portraitImages = media.filter(
+    (m) => m._type === "image" && m.asset && m.aspectRatioType === "portrait",
+  );
+  const portraitImageUrls: [string?, string?] = [
+    portraitImages[0]?.asset
+      ? urlFor(portraitImages[0]).width(600).url()
+      : undefined,
+    portraitImages[1]?.asset
+      ? urlFor(portraitImages[1]).width(600).url()
+      : undefined,
+  ];
+
+  // Mobile hero: prefer cube, fallback to landscape
+  const cubeImage = media.find(
+    (m) => m._type === "image" && m.asset && m.aspectRatioType === "cube",
+  );
+  const landscapeImage = media.find(
+    (m) => m._type === "image" && m.asset && m.aspectRatioType === "landscape",
+  );
+  const mobileHeroImage = cubeImage ?? landscapeImage;
+  const mobileImageUrl = mobileHeroImage?.asset
+    ? urlFor(mobileHeroImage).width(800).url()
+    : undefined;
+
+  // Desktop gallery: portrait = col-span-1, landscape = col-span-2, video = col-span-3
+  // Mobile gallery: cube = col-span-1, portrait/landscape = col-span-2
+  function desktopSpan(item: MediaItem): 1 | 2 | 3 {
     if (item._type !== "image") return 3;
+    if (item.aspectRatioType === "portrait") return 1;
+    if (item.aspectRatioType === "landscape") return 2;
+    if (item.aspectRatioType === "cube") return 2;
+    // fallback: use computed ratio
     const ar = item.aspectRatio ?? 1;
-    if (ar < 0.8) return 1; // portrait
-    if (ar < 1.6) return 2; // landscape
-    return 3; // wide / panoramic
+    if (ar < 0.8) return 1;
+    if (ar < 1.6) return 2;
+    return 3;
+  }
+
+  function mobileSpan(item: MediaItem): 1 | 2 {
+    if (item._type !== "image") return 2;
+    if (item.aspectRatioType === "cube") return 1;
+    return 2;
   }
 
   return (
     <>
-      <PageTransitionCurtain color={bg} />
+      <PageTransitionCurtain color="#111111" />
 
       <main className="min-h-screen bg-background">
-        {/* Hero — mobile: 2 rows (info + image) | desktop: h-screen cover */}
-
         <WorkDetailHero
           client={work.client}
           title={work.title}
           categories={work.categories}
-          coverImageUrl={work.coverImage?.asset ? urlFor(work.coverImage).width(1920).url() : undefined}
+          portraitImageUrls={portraitImageUrls}
+          mobileImageUrl={mobileImageUrl}
         />
 
-        {/* 3-col section: description + two 9:16 images */}
+        {/* 3-col section: description + two portrait images */}
         {(() => {
-          const portraits = (work.media ?? []).filter(
-            (m) => m._type === "image" && m.asset,
-          );
-          const img1 = portraits[0];
-          const img2 = portraits[1];
+          const img1 = portraitImages[0];
+          const img2 = portraitImages[1];
           return (
             <div className="grid grid-cols-2 lg:grid-cols-3 h-auto lg:h-screen">
               {/* Col 1: description */}
@@ -121,17 +162,21 @@ export default async function WorkDetailPage({
           );
         })()}
 
-        {/* Media gallery — 3-col grid */}
+        {/* Media gallery — 3-col desktop, 2-col mobile */}
         {media.length > 0 && (
-          <div className="grid grid-cols-3">
+          <div className="grid grid-cols-2 lg:grid-cols-3">
             {media.map((item) => {
-              const span = colSpan(item);
-              const colClass =
-                span === 1
-                  ? "col-span-1"
-                  : span === 2
-                    ? "col-span-2"
-                    : "col-span-3";
+              const dSpan = desktopSpan(item);
+              const mSpan = mobileSpan(item);
+
+              const colClass = [
+                mSpan === 1 ? "col-span-1" : "col-span-2",
+                dSpan === 1
+                  ? "lg:col-span-1"
+                  : dSpan === 2
+                    ? "lg:col-span-2"
+                    : "lg:col-span-3",
+              ].join(" ");
 
               if (item._type === "image" && item.asset) {
                 const ar = item.aspectRatio ?? 1;
@@ -143,7 +188,7 @@ export default async function WorkDetailPage({
                   >
                     <Image
                       src={urlFor(item)
-                        .width(span === 1 ? 600 : span === 2 ? 1200 : 1800)
+                        .width(dSpan === 1 ? 600 : dSpan === 2 ? 1200 : 1800)
                         .url()}
                       alt={item.alt ?? work.title}
                       fill
@@ -187,14 +232,14 @@ export default async function WorkDetailPage({
         )}
 
         {/* Credits */}
-        {work.credits && (
+        {work.credits && work.credits.length > 0 && (
           <div className="px-6 py-16 pb-32">
             <h2 className="font-absolution1 text-xs uppercase tracking-widest text-foreground/40 mb-4">
               Credits
             </h2>
-            <p className="text-sm font-mono text-foreground/60 whitespace-pre-line max-w-md leading-relaxed">
-              {work.credits}
-            </p>
+            <ul className="space-y-1 max-w-md">
+              <PortableText value={work.credits} components={creditsComponents} />
+            </ul>
           </div>
         )}
       </main>

@@ -2,8 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { useScroll, useTransform, motion } from "framer-motion";
 import MultiText from "./MultiText";
 
@@ -19,20 +17,15 @@ function HeroCell({
   priority?: boolean;
 }) {
   const [idx, setIdx] = useState(offset % Math.max(images.length, 1));
-  const [hovered, setHovered] = useState(false);
 
   useEffect(() => {
-    if (hovered || images.length < 2) return;
+    if (images.length < 2) return;
     const id = setInterval(() => setIdx((i) => (i + 1) % images.length), 500);
     return () => clearInterval(id);
-  }, [hovered, images.length]);
+  }, [images.length]);
 
   return (
-    <div
-      className="relative overflow-hidden h-full w-full"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-    >
+    <div className="relative overflow-hidden h-full w-full">
       {images.map((img, i) => (
         <Image
           key={img.url}
@@ -48,16 +41,6 @@ function HeroCell({
           priority={priority && i === 0}
         />
       ))}
-      {images[idx]?.slug && (
-        <div
-          className="absolute inset-0 z-10 flex items-start justify-start p-0 transition-opacity duration-300"
-          style={{ opacity: hovered ? 1 : 0 }}
-        >
-          <Button variant="default" size="default" asChild>
-            <Link href={`/work/${images[idx].slug}`}>{images[idx].label || null}</Link>
-          </Button>
-        </div>
-      )}
     </div>
   );
 }
@@ -65,7 +48,7 @@ function HeroCell({
 function MobileHero({ images }: { images: HeroImage[] }) {
   return (
     <div className="lg:hidden h-screen">
-      <HeroCell images={images} offset={0} priority />
+      <HeroCell images={images.length > 0 ? images : []} offset={0} priority />
     </div>
   );
 }
@@ -109,13 +92,14 @@ function DesktopHero({ images }: { images: HeroImage[] }) {
 
 export default function HomeHero({
   portraitImages = [],
+  mobileImages = [],
 }: {
   portraitImages?: HeroImage[];
-  landscapeImages?: HeroImage[];
+  mobileImages?: HeroImage[];
 }) {
   return (
-    <section className="lg:snap-start w-full">
-      <MobileHero images={portraitImages} />
+    <section className="snap-start w-full">
+      <MobileHero images={mobileImages.length > 0 ? mobileImages : portraitImages} />
       <DesktopHero images={portraitImages} />
     </section>
   );

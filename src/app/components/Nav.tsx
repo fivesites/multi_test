@@ -12,7 +12,9 @@ const links = [
 
 export default function Nav() {
   const [open, setOpen] = useState(false);
-  const [scrollState, setScrollState] = useState<"top" | "middle" | "bottom">("top");
+  const [scrollState, setScrollState] = useState<"top" | "middle" | "bottom">(
+    "top",
+  );
   const mainRef = useRef<Element | null>(null);
 
   useEffect(() => {
@@ -69,7 +71,7 @@ export default function Nav() {
       )}
       <Button
         variant="ghost"
-        className={`w-full rounded-none ${open ? "bg-background text-foreground hover:bg-background" : "bg-transparent text-foreground hover:bg-transparent"}`}
+        className={`w-full rounded-none ${open ? "bg-background text-foreground  hover:bg-background" : "bg-transparent text-background hover:bg-transparent"}`}
         onClick={handleClick}
       >
         {scrollState === "top" && "Scroll down"}

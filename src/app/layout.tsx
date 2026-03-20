@@ -29,47 +29,6 @@ const ft88 = localFont({
   variable: "--font-ft88",
 });
 
-const GTAmerica = localFont({
-  src: [
-    { path: "./GT-America-Light.woff", weight: "300" },
-    { path: "./GT-America-Regular.woff", weight: "400" },
-    { path: "./GT-America-Medium.woff", weight: "500" },
-    { path: "./GT-America-Bold.woff", weight: "700" },
-    { path: "./GT-America-Black.woff", weight: "900" },
-  ],
-  variable: "--font-gt-america",
-});
-
-const metaOldFrench = localFont({
-  src: "./meta-old-french.ttf",
-  variable: "--font-meta-old-french",
-});
-
-const monumentGrotesk = localFont({
-  src: [
-    { path: "./MonumentGrotesk-Regular.otf", weight: "400", style: "normal" },
-    { path: "./MonumentGrotesk-Italic.otf", weight: "400", style: "italic" },
-    { path: "./MonumentGrotesk-Medium.otf", weight: "500", style: "normal" },
-    {
-      path: "./MonumentGrotesk-MediumItalic.otf",
-      weight: "500",
-      style: "italic",
-    },
-    { path: "./MonumentGrotesk-Bold.otf", weight: "700", style: "normal" },
-    {
-      path: "./MonumentGrotesk-BoldItalic.otf",
-      weight: "700",
-      style: "italic",
-    },
-  ],
-  variable: "--font-monument-grotesk",
-});
-
-const monumentGroteskMono = localFont({
-  src: "./MonumentGrotesk-Mono.otf",
-  variable: "--font-monument-grotesk-mono",
-});
-
 const karlRounded = localFont({
   src: [
     { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
@@ -103,7 +62,9 @@ export default async function RootLayout({
   let themeCSS = "";
   if (raw) {
     try {
-      const overrides: Record<string, string> = JSON.parse(decodeURIComponent(raw));
+      const overrides: Record<string, string> = JSON.parse(
+        decodeURIComponent(raw),
+      );
       const vars = Object.entries(overrides)
         .map(([k, v]) => `${k}:${v}`)
         .join(";");
@@ -114,10 +75,12 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
-        {themeCSS ? <style dangerouslySetInnerHTML={{ __html: themeCSS }} /> : null}
+        {themeCSS ? (
+          <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
+        ) : null}
       </head>
       <body
-        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${GTAmerica.variable} ${metaOldFrench.variable} ${monumentGrotesk.variable} ${monumentGroteskMono.variable} ${karlRounded.variable} antialiased`}
+        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable}  ${karlRounded.variable} antialiased`}
       >
         {children}
       </body>
