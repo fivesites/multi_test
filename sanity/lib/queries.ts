@@ -25,6 +25,7 @@ export const workBySlugQuery = groq`
     year,
     categories,
     description,
+    imagesPerPage,
     credits,
     coverImage { asset->, hotspot, crop },
     media[] {
@@ -120,6 +121,7 @@ export const copyByKeyQuery = groq`
     key,
     title,
     body,
-    plainText
+    plainText,
+    image { asset-> }
   }
 `;

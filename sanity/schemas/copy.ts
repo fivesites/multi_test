@@ -31,6 +31,12 @@ export const copy = defineType({
       rows: 3,
       description: "Use for short strings like headlines or CTAs",
     }),
+    defineField({
+      name: "image",
+      title: "Image",
+      type: "image",
+      options: { hotspot: true },
+    }),
   ],
   preview: {
     select: { title: "title", key: "key.current" },

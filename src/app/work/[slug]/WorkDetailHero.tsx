@@ -25,40 +25,14 @@ interface Props {
   client?: string;
   title: string;
   categories?: string[];
-  portraitImageUrls?: [string?, string?];
-  mobileImageUrl?: string;
-}
-
-function ImageCol({
-  imageUrl,
-  title,
-  priority,
-}: {
-  imageUrl?: string;
-  title: string;
-  priority?: boolean;
-}) {
-  return (
-    <div className="relative h-full overflow-hidden">
-      {imageUrl && (
-        <Image
-          src={imageUrl}
-          alt={title}
-          fill
-          className="object-cover"
-          priority={priority}
-        />
-      )}
-    </div>
-  );
+  coverImageUrl?: string;
 }
 
 export default function WorkDetailHero({
   client,
   title,
   categories,
-  portraitImageUrls,
-  mobileImageUrl,
+  coverImageUrl,
 }: Props) {
   const router = useRouter();
   const [isExiting, setIsExiting] = useState(false);
@@ -69,84 +43,53 @@ export default function WorkDetailHero({
   };
 
   return (
-    <div className="relative h-screen">
-      {/* Back button — ghost with X icon */}
+    <div className="relative h-screen snap-start">
+      {/* Full-width background image */}
+      {coverImageUrl && (
+        <Image
+          src={coverImageUrl}
+          alt={title}
+          fill
+          sizes="100vw"
+          className="object-cover"
+          priority
+        />
+      )}
+
+      {/* Dark gradient over bottom 40% for readability */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+
+      {/* Back button */}
       <div className="absolute top-0 left-0 z-20 p-4">
-        <Button variant="ghost" size="icon" onClick={handleBack}>
+        <Button variant="ghost" size="icon" onClick={handleBack} className="text-white hover:bg-white/10">
           <X className="w-4 h-4" />
         </Button>
       </div>
 
-      {/* Mobile: bg-primary top, image bottom */}
-      <div className="lg:hidden flex flex-col h-full">
-        <div className="bg-primary h-[50vh] flex flex-col items-center justify-center px-6 gap-2 relative">
-          <ClientSquared
-            texts={[client ?? title]}
-            className="font-rounded font-black text-4xl text-primary-foreground"
-            textSize="text-4xl"
-            textColor="text-primary-foreground"
-          />
-          {categories && categories.length > 0 && (
-            <div className="absolute bottom-0 left-0 flex flex-wrap justify-center w-full gap-2 p-8 ">
-              {categories.map((cat) => (
-                <Badge
-                  key={cat}
-                  variant="ghost"
-                  className="text-primary-foreground/70 border-primary-foreground/30"
-                >
-                  {CATEGORY_LABELS[cat] ?? cat}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="flex-1 overflow-hidden">
-          {mobileImageUrl ? (
-            <div className="relative w-full aspect-square">
-              <Image
-                src={mobileImageUrl}
-                alt={title}
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-          ) : (
-            <div className="h-full bg-muted" />
-          )}
-        </div>
+      {/* Bottom 20% info area */}
+      <div className="absolute bottom-0 left-0 right-0 h-[20%] z-10 flex flex-col justify-center px-6 lg:px-12 gap-2">
+        <ClientSquared
+          texts={[client ?? title]}
+          className="font-rounded font-black text-3xl lg:text-5xl text-white"
+          textSize="text-3xl lg:text-5xl"
+          textColor="text-white"
+        />
+        {categories && categories.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <Badge
+                key={cat}
+                variant="ghost"
+                className="text-white/70 border-white/30"
+              >
+                {CATEGORY_LABELS[cat] ?? cat}
+              </Badge>
+            ))}
+          </div>
+        )}
       </div>
 
-      {/* Desktop: portrait | bg-primary (center) | portrait */}
-      <div className="hidden lg:grid grid-cols-3 h-full">
-        <ImageCol imageUrl={portraitImageUrls?.[0]} title={title} priority />
-
-        <div className="bg-primary h-full flex flex-col items-center justify-center px-8 gap-3 relative">
-          <ClientSquared
-            texts={[client ?? title]}
-            className="font-rounded font-black text-5xl text-primary-foreground text-center"
-            textSize="text-5xl"
-            textColor="text-primary-foreground"
-          />
-          {categories && categories.length > 0 && (
-            <div className="absolute bottom-0 left-0 flex flex-wrap justify-center w-full gap-2 p-8">
-              {categories.map((cat) => (
-                <Badge
-                  key={cat}
-                  variant="ghost"
-                  className="text-primary-foreground/70 border-primary-foreground/30"
-                >
-                  {CATEGORY_LABELS[cat] ?? cat}
-                </Badge>
-              ))}
-            </div>
-          )}
-        </div>
-
-        <ImageCol imageUrl={portraitImageUrls?.[1]} title={title} />
-      </div>
-
-      {/* Exit curtain — slides down over the page, then navigates back */}
+      {/* Exit curtain */}
       <AnimatePresence>
         {isExiting && (
           <motion.div

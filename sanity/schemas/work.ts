@@ -155,6 +155,12 @@ export const work = defineType({
       description: "Each block renders as a list item. Use line breaks to separate roles.",
     }),
     defineField({
+      name: "imagesPerPage",
+      title: "Images per page",
+      type: "number",
+      description: "Limit how many media items appear in the gallery (leave blank to show all)",
+    }),
+    defineField({
       name: "featured",
       title: "Featured on homepage",
       type: "boolean",

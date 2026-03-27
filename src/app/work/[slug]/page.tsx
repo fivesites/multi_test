@@ -32,6 +32,7 @@ type WorkDetail = {
   year?: number;
   categories?: string[];
   description?: string;
+  imagesPerPage?: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   credits?: any[];
   coverImage?: { asset: { _ref: string }; hotspot?: object; crop?: object };
@@ -64,31 +65,19 @@ export default async function WorkDetailPage({
   if (!work) notFound();
 
   const media = work.media ?? [];
+  const imagesPerPage = work.imagesPerPage ?? media.length;
+  const visibleMedia = media.slice(0, imagesPerPage);
 
-  // Portrait images for desktop hero columns
-  const portraitImages = media.filter(
-    (m) => m._type === "image" && m.asset && m.aspectRatioType === "portrait",
-  );
-  const portraitImageUrls: [string?, string?] = [
-    portraitImages[0]?.asset
-      ? urlFor(portraitImages[0]).width(600).url()
-      : undefined,
-    portraitImages[1]?.asset
-      ? urlFor(portraitImages[1]).width(600).url()
-      : undefined,
-  ];
-
-  // Mobile hero: prefer cube, fallback to landscape
-  const cubeImage = media.find(
-    (m) => m._type === "image" && m.asset && m.aspectRatioType === "cube",
-  );
-  const landscapeImage = media.find(
-    (m) => m._type === "image" && m.asset && m.aspectRatioType === "landscape",
-  );
-  const mobileHeroImage = cubeImage ?? landscapeImage;
-  const mobileImageUrl = mobileHeroImage?.asset
-    ? urlFor(mobileHeroImage).width(800).url()
-    : undefined;
+  // Hero: prefer a landscape image, fallback to first image
+  const heroImage =
+    media.find((m) => m._type === "image" && m.asset && m.aspectRatioType === "landscape") ??
+    media.find((m) => m._type === "image" && m.asset) ??
+    (work.coverImage?.asset ? work.coverImage : undefined);
+  const coverImageUrl = heroImage?.asset
+    ? urlFor(heroImage).width(1920).url()
+    : work.coverImage?.asset
+      ? urlFor(work.coverImage).width(1920).url()
+      : undefined;
 
   // Desktop gallery: portrait = col-span-1, landscape = col-span-2, video = col-span-3
   // Mobile gallery: cube = col-span-1, portrait/landscape = col-span-2
@@ -114,58 +103,26 @@ export default async function WorkDetailPage({
     <>
       <PageTransitionCurtain color="#111111" />
 
-      <main className="min-h-screen bg-background">
+      <main className="min-h-screen bg-background overflow-y-scroll snap-y snap-mandatory">
         <WorkDetailHero
           client={work.client}
           title={work.title}
           categories={work.categories}
-          portraitImageUrls={portraitImageUrls}
-          mobileImageUrl={mobileImageUrl}
+          coverImageUrl={coverImageUrl}
         />
 
-        {/* 3-col section: description + two portrait images */}
-        {(() => {
-          const img1 = portraitImages[0];
-          const img2 = portraitImages[1];
-          return (
-            <div className="grid grid-cols-2 lg:grid-cols-3 h-auto lg:h-screen">
-              {/* Col 1: description */}
-              <div className="col-span-2 lg:col-span-1 flex items-center p-8 lg:p-16">
-                <p className="font-rounded text-foreground text-xl lg:text-2xl leading-snug">
-                  {work.description ??
-                    "A creative project built with precision and intent. Strategy and execution, multiplied."}
-                </p>
-              </div>
-              {/* Col 2: first portrait image */}
-              <div className="relative overflow-hidden aspect-[9/16] lg:aspect-auto bg-muted">
-                {img1?.asset && (
-                  <Image
-                    src={urlFor(img1).width(600).height(1067).url()}
-                    alt={img1.alt ?? work.title}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-              </div>
-              {/* Col 3: second portrait image */}
-              <div className="relative overflow-hidden aspect-[9/16] lg:aspect-auto bg-muted">
-                {img2?.asset && (
-                  <Image
-                    src={urlFor(img2).width(600).height(1067).url()}
-                    alt={img2.alt ?? work.title}
-                    fill
-                    className="object-cover"
-                  />
-                )}
-              </div>
-            </div>
-          );
-        })()}
+        {/* Description section */}
+        <div className="snap-start flex items-center p-8 lg:p-16 min-h-[50vh]">
+          <p className="font-rounded text-foreground text-xl lg:text-2xl leading-snug max-w-2xl">
+            {work.description ??
+              "A creative project built with precision and intent. Strategy and execution, multiplied."}
+          </p>
+        </div>
 
         {/* Media gallery — 3-col desktop, 2-col mobile */}
-        {media.length > 0 && (
-          <div className="grid grid-cols-2 lg:grid-cols-3">
-            {media.map((item) => {
+        {visibleMedia.length > 0 && (
+          <div className="snap-start grid grid-cols-2 lg:grid-cols-3">
+            {visibleMedia.map((item) => {
               const dSpan = desktopSpan(item);
               const mSpan = mobileSpan(item);
 
@@ -188,10 +145,17 @@ export default async function WorkDetailPage({
                   >
                     <Image
                       src={urlFor(item)
-                        .width(dSpan === 1 ? 600 : dSpan === 2 ? 1200 : 1800)
+                        .width(dSpan === 1 ? 900 : dSpan === 2 ? 1600 : 2400)
                         .url()}
                       alt={item.alt ?? work.title}
                       fill
+                      sizes={
+                        dSpan === 1
+                          ? "(max-width: 1024px) 50vw, 33vw"
+                          : dSpan === 2
+                            ? "(max-width: 1024px) 100vw, 66vw"
+                            : "100vw"
+                      }
                       className="object-cover"
                     />
                   </div>
@@ -233,7 +197,7 @@ export default async function WorkDetailPage({
 
         {/* Credits */}
         {work.credits && work.credits.length > 0 && (
-          <div className="px-6 py-16 pb-32">
+          <div className="snap-start px-6 py-16 pb-32">
             <h2 className="font-absolution1 text-xs uppercase tracking-widest text-foreground/40 mb-4">
               Credits
             </h2>

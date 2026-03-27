@@ -16,6 +16,7 @@ interface Props {
   currentIndex?: number;
   paused?: boolean;
   frozen?: boolean; // stays at "M", no animation
+  frozenFull?: boolean; // stays at "Multi", cycles glyphs only
 }
 
 export default function MultiText({
@@ -23,6 +24,7 @@ export default function MultiText({
   currentIndex,
   paused,
   frozen,
+  frozenFull,
 }: Props) {
   const measureRef = useRef<HTMLSpanElement>(null);
   const xHeight = useXHeightSync(measureRef);
@@ -43,9 +45,19 @@ export default function MultiText({
     setTwoIdx(currentIndex % (glyphs.length + 1));
   }, [currentIndex, glyphs.length, paused]);
 
-  // Typing animation loop — disabled when frozen
+  // Glyph-only cycle when frozenFull — independent timer
   useEffect(() => {
-    if (frozen) return;
+    if (!frozenFull || glyphs.length === 0) return;
+    const id = setInterval(
+      () => setTwoIdx((i) => (i + 1) % (glyphs.length + 1)),
+      1200,
+    );
+    return () => clearInterval(id);
+  }, [frozenFull, glyphs.length]);
+
+  // Typing animation loop — disabled when frozen or frozenFull
+  useEffect(() => {
+    if (frozen || frozenFull) return;
     let delay: number;
     if (forward && textStep === STEPS.length - 1) {
       delay = PAUSE_FULL_MS;
@@ -105,8 +117,8 @@ export default function MultiText({
       <div
         className={`flex items-baseline justify-center gap-0 pointer-events-none ${className ?? ""}`}
       >
-        <span className="  font-rounded font-black text-4xl lg:text-6xl lg:tracking-tight">
-          {frozen ? STEPS[4] : STEPS[textStep]}
+        <span className="font-rounded font-black text-4xl lg:text-6xl lg:tracking-tight">
+          {frozen || frozenFull ? STEPS[4] : STEPS[textStep]}
         </span>
         {xHeight !== null && (
           <InlineTwoGlyph xHeight={xHeight} custom={customTwo} />

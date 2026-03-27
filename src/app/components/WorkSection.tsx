@@ -2,7 +2,6 @@ import { client } from "../../../sanity/lib/client";
 import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
 import { WorkCard } from "./WorkCard";
-import HorizontalBorder from "./HorizontalBorder";
 
 type MediaItem = {
   _type: "image" | "videoUpload" | "videoUrl";
@@ -28,7 +27,10 @@ type WorkCardData = {
 function buildSlides(work: WorkCardData) {
   // Only portrait images for tall WorkCards
   const portraitMedia = (work.media ?? []).filter(
-    (item) => item._type === "image" && item.asset && item.aspectRatioType === "portrait",
+    (item) =>
+      item._type === "image" &&
+      item.asset &&
+      item.aspectRatioType === "portrait",
   );
 
   if (portraitMedia.length > 0) {
@@ -40,7 +42,12 @@ function buildSlides(work: WorkCardData) {
 
   // Fallback: cover image only
   if (work.coverImage?.asset) {
-    return [{ type: "image" as const, url: urlFor(work.coverImage).width(600).height(1067).url() }];
+    return [
+      {
+        type: "image" as const,
+        url: urlFor(work.coverImage).width(600).height(1067).url(),
+      },
+    ];
   }
 
   return [];
@@ -56,12 +63,7 @@ export default async function WorkSection() {
   return (
     <section className="snap-start w-full relative">
       <div className="grid grid-cols-1 lg:grid-cols-3">
-        {visible.flatMap((work, i) => [
-          i > 0 && (
-            <div key={`border-${work._id}`} className="lg:hidden">
-              <HorizontalBorder size="xs" />
-            </div>
-          ),
+        {visible.map((work) => (
           <WorkCard
             key={work._id}
             title={work.title}
@@ -71,8 +73,8 @@ export default async function WorkSection() {
             backgroundColor={work.backgroundColor}
             slides={buildSlides(work)}
             className="h-screen snap-start"
-          />,
-        ])}
+          />
+        ))}
       </div>
     </section>
   );

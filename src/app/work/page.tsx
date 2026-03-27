@@ -1,7 +1,7 @@
 import { client } from "../../../sanity/lib/client";
 import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
-import { WorkCard } from "@/app/components/WorkCard";
+import { WorkCarousel } from "./WorkCarousel";
 
 export const revalidate = 60;
 
@@ -28,13 +28,13 @@ function buildSlides(work: WorkCardData) {
   if (work.coverImage?.asset) {
     slides.push({
       type: "image",
-      url: urlFor(work.coverImage).width(900).height(506).url(),
+      url: urlFor(work.coverImage).width(1400).url(),
     });
   }
 
   for (const item of work.media ?? []) {
     if (item._type === "image" && item.asset) {
-      slides.push({ type: "image", url: urlFor(item).width(900).height(506).url() });
+      slides.push({ type: "image", url: urlFor(item).width(1400).url() });
     } else if (item._type === "videoUpload" && item.file?.asset?.url) {
       slides.push({ type: "video", url: item.file.asset.url });
     }
@@ -48,19 +48,17 @@ export default async function WorkPage() {
 
   if (!works.length) return null;
 
+  const carouselWorks = works.map((work) => ({
+    _id: work._id,
+    title: work.title,
+    slug: work.slug,
+    backgroundColor: work.backgroundColor,
+    slides: buildSlides(work),
+  }));
+
   return (
     <main className="min-h-screen">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-        {works.map((work) => (
-          <WorkCard
-            key={work._id}
-            title={work.title}
-            slug={work.slug}
-            backgroundColor={work.backgroundColor}
-            slides={buildSlides(work)}
-          />
-        ))}
-      </div>
+      <WorkCarousel works={carouselWorks} />
     </main>
   );
 }

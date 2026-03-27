@@ -1,8 +1,16 @@
 "use client";
 
+import Link from "next/link";
 import { useSavedAssets } from "@/app/hooks/useSavedAssets";
 import { renderGlyphShapes, glyphDims } from "@/app/lib/multiUtils";
 import type { SavedAsset } from "@/app/lib/multiUtils";
+
+const NAV_LINKS = [
+  { label: "Work", href: "/work" },
+  { label: "About", href: "/about" },
+  { label: "Contact", href: "/contact" },
+  { label: "Privacy Policy", href: "/privacy-policy" },
+];
 
 function LogoAsset({ asset, size }: { asset: SavedAsset; size: number }) {
   if (asset.uploadedAsset) {
@@ -45,17 +53,30 @@ export default function HomeFooter() {
     saved.find((a) => a.role === "squared2");
 
   return (
-    <footer className="h-screen  bg-background flex flex-col ">
-      {/* ── Center: Logo ── */}
-      <div className="flex-1 flex items-center justify-center p-8 ">
+    <footer className="min-h-[25vh] bg-background flex flex-col items-center lg:items-start px-8 py-6 gap-6">
+      {/* Logo */}
+      <div className="flex items-center justify-center lg:justify-start">
         {logo ? (
-          <LogoAsset asset={logo} size={160} />
+          <LogoAsset asset={logo} size={48} />
         ) : (
-          <span className="font-rounded font-black text-4xl text-foreground">
+          <span className="font-rounded font-black text-2xl text-foreground">
             M²
           </span>
         )}
       </div>
+
+      {/* Nav links */}
+      <nav className="flex flex-wrap justify-center lg:justify-start gap-x-6 gap-y-2">
+        {NAV_LINKS.map((l) => (
+          <Link
+            key={l.href}
+            href={l.href}
+            className="text-sm text-foreground/60 hover:text-foreground transition-colors"
+          >
+            {l.label}
+          </Link>
+        ))}
+      </nav>
     </footer>
   );
 }

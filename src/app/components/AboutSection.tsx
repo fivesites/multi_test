@@ -1,6 +1,7 @@
-import HorizontalBorder from "./HorizontalBorder";
+import Image from "next/image";
 import { client } from "../../../sanity/lib/client";
 import { copyByKeyQuery } from "../../../sanity/lib/queries";
+import { urlFor } from "../../../sanity/lib/image";
 
 export default async function AboutSection() {
   const copy = await client.fetch(copyByKeyQuery, { key: "about-intro" });
@@ -8,6 +9,9 @@ export default async function AboutSection() {
     copy?.plainText ??
     (copy?.body?.[0]?.children?.[0]?.text as string | undefined) ??
     "";
+  const imageUrl = copy?.image?.asset
+    ? urlFor(copy.image).width(1200).url()
+    : null;
 
   return (
     <section className="snap-start w-full bg-background">
@@ -17,9 +21,19 @@ export default async function AboutSection() {
             {text}
           </p>
         </div>
-      </div>
 
-      <HorizontalBorder size="xs" />
+        {imageUrl && (
+          <div className="relative overflow-hidden min-h-[50vw] lg:min-h-0">
+            <Image
+              src={imageUrl}
+              alt=""
+              fill
+              sizes="(max-width: 1024px) 100vw, 33vw"
+              className="object-cover"
+            />
+          </div>
+        )}
+      </div>
     </section>
   );
 }
