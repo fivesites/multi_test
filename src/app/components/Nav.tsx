@@ -74,7 +74,7 @@ export default function Nav() {
         className={`w-full rounded-none ${open ? "bg-background text-foreground  hover:bg-background" : "bg-transparent text-background hover:bg-transparent"}`}
         onClick={handleClick}
       >
-        {scrollState === "top" && "Scroll down"}
+        {scrollState === "top" && ""}
         {scrollState === "middle" && (open ? "Close" : "Menu")}
         {scrollState === "bottom" && "Back to top"}
       </Button>

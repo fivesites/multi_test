@@ -60,6 +60,7 @@ export default function InlineTwoGlyph({
       aria-hidden="true"
       style={{
         marginLeft: 2,
+
         display: "inline-block",
         position: "relative",
         width: w,

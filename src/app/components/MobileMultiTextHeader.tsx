@@ -19,14 +19,11 @@ export default function MobileMultiTextHeader() {
 
   return (
     <div
-      className={`lg:hidden sticky top-0 z-30 bg-primary flex items-center justify-center transition-all duration-500 ease-out ${
-        scrolled ? "h-16 bg-transparent" : "bg-primary h-[50vh]"
+      className={`hidden sticky top-0 z-30  items-center justify-center transition-all duration-500 ease-out ${
+        scrolled ? "h-16" : "h-0"
       }`}
     >
-      <MultiText
-        className={`${scrolled ? "text-primary" : "text-primary-foreground"}`}
-        frozen={scrolled}
-      />
+      <MultiText className="text-primary" textSize="text-4xl" frozen />
     </div>
   );
 }

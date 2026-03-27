@@ -13,6 +13,7 @@ const PAUSE_SHORT_MS = 350;
 
 interface Props {
   className?: string;
+  textSize?: string; // overrides default text size for both measure span and display span
   currentIndex?: number;
   paused?: boolean;
   frozen?: boolean; // stays at "M", no animation
@@ -21,6 +22,7 @@ interface Props {
 
 export default function MultiText({
   className,
+  textSize = "text-6xl lg:text-8xl",
   currentIndex,
   paused,
   frozen,
@@ -36,7 +38,10 @@ export default function MultiText({
   const [forward, setForward] = useState(true);
 
   const squared2 = allAssets.filter((a) => a.role === "squared2");
-  const glyphs = squared2.length > 0 ? squared2 : allAssets.filter((a) => a.type === "glyph");
+  const glyphs =
+    squared2.length > 0
+      ? squared2
+      : allAssets.filter((a) => a.type === "glyph");
 
   // Sync glyph index from parent carousel — freeze when paused
   useEffect(() => {
@@ -109,7 +114,7 @@ export default function MultiText({
     <>
       <span
         ref={measureRef}
-        className={`absolute invisible font-rounded font-black text-4xl lg:text-6xl`}
+        className={`absolute invisible font-rounded font-black ${textSize}`}
         aria-hidden="true"
       >
         x
@@ -117,7 +122,7 @@ export default function MultiText({
       <div
         className={`flex items-baseline justify-center gap-0 pointer-events-none ${className ?? ""}`}
       >
-        <span className="font-rounded font-black text-4xl lg:text-6xl lg:tracking-tight">
+        <span className={`font-rounded font-black ${textSize} lg:tracking-tight`}>
           {frozen || frozenFull ? STEPS[4] : STEPS[textStep]}
         </span>
         {xHeight !== null && (
