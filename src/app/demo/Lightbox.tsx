@@ -51,7 +51,7 @@ export default function Lightbox({
         size="icon"
         aria-label="Close lightbox"
         className="absolute top-4 right-4 z-10 text-white hover:bg-white/10"
-        onClick={onClose}
+        onClick={(e) => { e.stopPropagation(); onClose(); }}
       >
         <X className="h-5 w-5" />
       </Button>
