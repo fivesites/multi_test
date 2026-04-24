@@ -83,16 +83,18 @@ export default function ImageCarousel({
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Previous image"
             className="absolute left-1 top-1/2 -translate-y-1/2 z-10 bg-background/60 hover:bg-background/80"
-            onClick={scrollPrev}
+            onClick={(e) => { e.stopPropagation(); scrollPrev(); }}
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
           <Button
             variant="ghost"
             size="icon"
+            aria-label="Next image"
             className="absolute right-1 top-1/2 -translate-y-1/2 z-10 bg-background/60 hover:bg-background/80"
-            onClick={scrollNext}
+            onClick={(e) => { e.stopPropagation(); scrollNext(); }}
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
