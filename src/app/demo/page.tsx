@@ -3,6 +3,8 @@ import { workCardsQuery } from "../../../sanity/lib/queries";
 import { urlFor } from "../../../sanity/lib/image";
 import DemoClient, { type GridItem } from "./DemoClient";
 
+export const revalidate = 60;
+
 type MediaItem = {
   _type: string;
   _key: string;
