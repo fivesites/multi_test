@@ -150,7 +150,15 @@ export default function DemoClient({
           </span>
         ))}
       </div>
-      {showProjects && (
+      {view === "showreel" && (
+        <div className="px-2 pt-2">
+          <ImageCarousel
+            images={showreelImages}
+            onImageClick={() => {}}
+          />
+        </div>
+      )}
+      {view === "projects" && (
         <>
           {/* Masonry grid — CSS columns */}
           <div className="columns-2 md:columns-3 gap-2 px-2 pt-1">
