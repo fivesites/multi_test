@@ -135,12 +135,13 @@ export default function DemoClient({
         {["all", ...categories].map((cat, i) => (
           <span key={cat}>
             <Button
-              variant={showProjects && active === cat ? "glow" : "link"}
-              onClick={() => handleFilterChange(cat)}
+              variant={view === "projects" && active === cat ? "glow" : "link"}
+              onClick={view === "projects" ? () => handleFilterChange(cat) : undefined}
               className={cn(
                 "font-rounded transition-colors inline px-0",
-                (!showProjects || active !== cat) &&
+                (view !== "projects" || active !== cat) &&
                   "text-red-200 hover:text-red-500 no-underline hover:no-underline",
+                view !== "projects" && "pointer-events-none opacity-50",
               )}
             >
               {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
