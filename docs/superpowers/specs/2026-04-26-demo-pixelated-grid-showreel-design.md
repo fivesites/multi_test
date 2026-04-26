@@ -52,7 +52,7 @@ A new `ShowreelSlideshow` component replaces the `ImageCarousel` in the showreel
 
 ### Crossfade + de-pixelation
 
-Each slide transition uses Framer Motion `AnimatePresence` (mode `"crossfade"` via absolute positioning). The entering image uses the same two-layer technique:
+Each slide transition uses Framer Motion `AnimatePresence` (default sync mode) with slides absolutely positioned inside a fixed-height container so enter and exit animate simultaneously. The entering image uses the same two-layer technique:
 
 - Full-res layer: fades in (opacity 0→1, duration ~0.8s)
 - Pixelated overlay layer: starts at opacity 1, fades to 0 simultaneously
