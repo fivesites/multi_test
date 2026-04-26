@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
-import ImageCarousel from "./ImageCarousel";
+import ShowreelSlideshow from "./ShowreelSlideshow";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
@@ -71,7 +71,7 @@ export default function DemoClient({
         <Button
           variant={showAbout ? "glow" : "link"}
           className={cn(
-            "font-rounded text-2xl tracking-wider gap-0 transition-colors",
+            "font-rounded  text-2xl tracking-wider gap-0 transition-colors",
             !showAbout &&
               "text-red-200 hover:text-red-500 no-underline hover:no-underline",
           )}
@@ -136,7 +136,9 @@ export default function DemoClient({
           <span key={cat}>
             <Button
               variant={view === "projects" && active === cat ? "glow" : "link"}
-              onClick={view === "projects" ? () => handleFilterChange(cat) : undefined}
+              onClick={
+                view === "projects" ? () => handleFilterChange(cat) : undefined
+              }
               className={cn(
                 "font-rounded transition-colors inline px-0",
                 (view !== "projects" || active !== cat) &&
@@ -152,10 +154,7 @@ export default function DemoClient({
       </div>
       {view === "showreel" && (
         <div className="px-2 pt-2">
-          <ImageCarousel
-            images={showreelImages}
-            onImageClick={() => {}}
-          />
+          <ShowreelSlideshow images={showreelImages} />
         </div>
       )}
       {view === "projects" && (
