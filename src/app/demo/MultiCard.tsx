@@ -14,14 +14,13 @@ type ProjectImage = { key: string; url: string; aspectRatio: number };
 export default function MultiCard({
   title,
   client,
-  categories,
   slug,
   projectImages,
   onClose,
 }: {
   title: string;
   client?: string;
-  categories: string[];
+  categories?: string[];
   slug: string;
   projectImages: ProjectImage[];
   onClose: () => void;
