@@ -12,9 +12,11 @@ import { motion } from "framer-motion";
 export default function TextBlock({
   text,
   size = "text-2xl",
+  delay = 0,
 }: {
   text: string;
   size?: string;
+  delay?: number;
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [state, setState] = useState<{
@@ -40,7 +42,7 @@ export default function TextBlock({
   return (
     <p
       ref={ref}
-      className={`${size} font-rounded leading-tight px-0 tracking-wide text-red-500  max-w-6xl`}
+      className={`${size} font-rounded leading-tight px-0 tracking-wide text-red-500  `}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>
@@ -50,7 +52,7 @@ export default function TextBlock({
           animate="show"
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.08 } },
+            show: { transition: { staggerChildren: 0.08, delayChildren: delay } },
           }}
         >
           {state.lines.map((line, i) => {

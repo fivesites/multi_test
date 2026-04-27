@@ -8,6 +8,7 @@ import ShowreelSlideshow from "./ShowreelSlideshow";
 import { Button } from "@/components/ui/button";
 import TextBlock from "./TextBlock";
 import { cn } from "@/lib/utils";
+import Loader from "./Loader";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -63,6 +64,8 @@ export default function DemoClient({
   const [active, setActive] = useState("all");
   const [search, setSearch] = useState("");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
+  const [navExpanded, setNavExpanded] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const openCardRef = useRef<HTMLDivElement>(null);
 
@@ -77,6 +80,7 @@ export default function DemoClient({
 
   function handleNavClick(p: Panel) {
     setPanel(p);
+    setNavExpanded(true);
   }
 
   const slugsSeen = new Set<string>();
@@ -116,26 +120,43 @@ export default function DemoClient({
 
   return (
     <div className="min-h-screen">
-      <div className="sticky z-20 left-0 top-0  w-full  bg-background  px-4  h-16 ">
-        <div className="flex flex-row justify-between items-center  font-rounded text-2xl text-red-200  max-w-6xl h-full">
-          <Button
-            variant="link"
-            className="font-rounded   text-red-500 hover:text-red-300 cursor-pointer gap-0 flex leading-tight"
-            onClick={() => handleNavClick("showreel")}
+      <AnimatePresence>
+        {!loaded && <Loader onDone={() => setLoaded(true)} />}
+      </AnimatePresence>
+      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-4 h-">
+        <div
+          className={cn(
+            "flex flex-row items-center font-rounded text-2xl text-red-200 h-full",
+            navExpanded ? "justify-between" : "justify-center gap-x-4",
+          )}
+        >
+          <motion.div
+            layout
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           >
-            Multi
-            <span
-              className="font-ft88-gothique text-base pr-1.5"
-              style={{
-                transform: "scaleX(1.75)",
-                display: "inline-block",
-                transformOrigin: "left",
-              }}
+            <Button
+              variant="link"
+              className="font-rounded   text-red-500 hover:text-red-300 cursor-pointer gap-0 flex leading-tight"
+              onClick={() => handleNavClick("showreel")}
             >
-              2
-            </span>
-          </Button>
-          <div className="flex items-baseline justify-start leading-tight ">
+              Multi
+              <span
+                className="font-ft88-gothique text-base pr-1.5"
+                style={{
+                  transform: "scaleX(1.75)",
+                  display: "inline-block",
+                  transformOrigin: "left",
+                }}
+              >
+                2
+              </span>
+            </Button>
+          </motion.div>
+          <motion.div
+            layout
+            className="flex items-baseline justify-start leading-tight"
+            transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          >
             <Button
               variant="link"
               className={cn(
@@ -168,7 +189,7 @@ export default function DemoClient({
             >
               Connect
             </Button>
-          </div>
+          </motion.div>
         </div>
       </div>
 
@@ -181,7 +202,7 @@ export default function DemoClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <div className="px-3 mb-3  max-w-xl">
+            <div className="px-4 mb-4 mx-auto max-w-xl">
               <ShowreelSlideshow images={showreelImages} />
             </div>
           </motion.div>
@@ -196,7 +217,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-4 pb-2 pt-4 text-2xl max-w-7xl  font-rounded text-red-200 leading-tight w-full"
+              className="px-4  pb-0 pt-4 text-2xl flex flex-wrap justify-start  font-rounded text-red-200 leading-tight w-full"
               initial="hidden"
               animate="show"
               variants={{
@@ -237,7 +258,7 @@ export default function DemoClient({
 
             <div className="columns-2 lg:columns-3 gap-2 px-2 pt-2">
               <AnimatePresence mode="popLayout" initial={false}>
-                {displayed.map((item) => {
+                {displayed.map((item, i) => {
                   const isOpen = item.slug === openSlug;
 
                   if (isOpen) {
@@ -251,7 +272,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-2 max-w-6xl scroll-mt-16"
+                        className="mb-2 mt-2 max-w-5xl mx-auto scroll-mt-[64px]"
                       >
                         <MultiCard
                           title={item.title}
@@ -270,10 +291,14 @@ export default function DemoClient({
                     <motion.div
                       key={item.key}
                       layout
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.2 }}
+                      transition={{
+                        duration: 0.35,
+                        delay: Math.min(i * 0.05, 0.4),
+                        ease: "easeOut",
+                      }}
                       className="relative break-inside-avoid mb-2 cursor-pointer group"
                       style={{
                         paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
@@ -304,7 +329,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 scroll-mt-16"
+            className="px-4 pt-4 max-w-4xl mx-auto scroll-mt-[64px]"
           >
             <TextBlock text={ABOUT_TEXT} size="text-2xl" />
           </motion.div>
