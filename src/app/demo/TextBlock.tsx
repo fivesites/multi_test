@@ -40,7 +40,7 @@ export default function TextBlock({
   return (
     <p
       ref={ref}
-      className={`${size} font-rounded leading-tight tracking-normal text-red-500  max-w-7xl`}
+      className={`${size} font-rounded leading-tight tracking-wide text-red-500  max-w-7xl`}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>
