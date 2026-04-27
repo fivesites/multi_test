@@ -8,8 +8,6 @@ import ShowreelSlideshow from "./ShowreelSlideshow";
 import { Button } from "@/components/ui/button";
 import TextBlock from "./TextBlock";
 import { cn } from "@/lib/utils";
-import { layoutWithLines } from "@chenglou/pretext";
-import { prepareWithSegments } from "./knuth-plass";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
