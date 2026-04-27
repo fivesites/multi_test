@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
@@ -45,6 +45,14 @@ export default function DemoClient({
   const [active, setActive] = useState("all");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [showAbout, setShowAbout] = useState(true);
+
+  const openCardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (openSlug && openCardRef.current) {
+      openCardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [openSlug]);
 
   function toggleView(v: "showreel" | "projects") {
     setView((current) => (current === v ? null : v));
@@ -168,6 +176,7 @@ export default function DemoClient({
                 if (isOpen) {
                   return (
                     <motion.div
+                      ref={openCardRef}
                       key={`card-${item.slug}`}
                       layout
                       initial={{ opacity: 0 }}
