@@ -52,58 +52,6 @@ export type GridItem = {
   projectImages: { key: string; url: string; aspectRatio: number }[];
 };
 
-function ClientOverlay({ client }: { client: string }) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const measureRef = useRef<HTMLSpanElement>(null);
-  const [lines, setLines] = useState<string[] | null>(null);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    const span = measureRef.current;
-    if (!container || !span) return;
-    const font = getComputedStyle(span).font;
-    const width = container.offsetWidth;
-    const lh = parseFloat(getComputedStyle(span).lineHeight) || 40;
-    const prepared = prepareWithSegments(client, font);
-    const { lines: ll } = layoutWithLines(prepared, width, lh);
-    setLines(ll.map((l) => l.text.trim()).filter(Boolean));
-  }, [client]);
-
-  return (
-    <div
-      ref={containerRef}
-      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-background"
-    >
-      <span
-        ref={measureRef}
-        className="font-rounded text-4xl text-red-500"
-        style={{ visibility: "hidden", position: "absolute" }}
-      >
-        {client}
-      </span>
-      {lines !== null && (
-        <div className="w-full h-full flex flex-col justify-between p-1">
-          {lines.map((line, i) => (
-            <div key={i} className="flex justify-between w-full">
-              {line
-                .replace(/\s/g, "")
-                .split("")
-                .map((char, j) => (
-                  <span
-                    key={j}
-                    className="font-rounded text-4xl text-red-100 leading-none"
-                  >
-                    {char}
-                  </span>
-                ))}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
 type Panel = "showreel" | "projects" | "about" | "connect";
 
 export default function DemoClient({
@@ -329,7 +277,6 @@ export default function DemoClient({
                           className="object-cover"
                           sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                         />
-                        {/* {item.client && <ClientOverlay client={item.client} />} */}
                       </div>
                     </motion.div>
                   );

@@ -93,7 +93,7 @@ export default function MultiText({
     }, delay);
 
     return () => clearTimeout(id);
-  }, [textStep, forward, glyphs.length, frozen]);
+  }, [textStep, forward, glyphs.length, frozen, frozenFull]);
 
   const rawAsset =
     glyphs.length > 0 && twoIdx > 0 ? glyphs[twoIdx - 1] : undefined;
@@ -122,7 +122,9 @@ export default function MultiText({
       <div
         className={`flex items-baseline justify-center gap-0 pointer-events-none ${className ?? ""}`}
       >
-        <span className={`font-rounded font-black ${textSize} lg:tracking-tight`}>
+        <span
+          className={`font-rounded font-black ${textSize} lg:tracking-tight`}
+        >
           {frozen || frozenFull ? STEPS[4] : STEPS[textStep]}
         </span>
         {xHeight !== null && (

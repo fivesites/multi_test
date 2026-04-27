@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
+
 import Image from "next/image";
-import { X, ExternalLink } from "lucide-react";
+import { X } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -16,7 +16,7 @@ export default function MultiCard({
   title,
   client,
   credits,
-  slug,
+
   projectImages,
   onClose,
 }: {

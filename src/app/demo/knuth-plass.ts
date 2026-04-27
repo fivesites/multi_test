@@ -1,4 +1,7 @@
-import { prepareWithSegments, type PreparedTextWithSegments } from "@chenglou/pretext";
+import {
+  prepareWithSegments,
+  type PreparedTextWithSegments,
+} from "@chenglou/pretext";
 
 export { prepareWithSegments };
 
@@ -7,7 +10,6 @@ const HUGE_BADNESS = 1e8;
 const RIVER_THRESHOLD = 1.5;
 const INFEASIBLE_SPACE_RATIO = 0.4;
 const TIGHT_SPACE_RATIO = 0.65;
-const SHORT_LINE_RATIO = 0.6;
 
 export type LineSegment =
   | { kind: "text"; text: string; width: number }
@@ -54,7 +56,10 @@ function getLineStats(
   for (let i = from; i < to; i++) {
     const t = segments[i]!;
     if (t === SOFT_HYPHEN) continue;
-    if (isSpace(t)) { spaceCount++; continue; }
+    if (isSpace(t)) {
+      spaceCount++;
+      continue;
+    }
     wordWidth += widths[i]!;
   }
   if (to > from && isSpace(segments[to - 1]!)) spaceCount--;
@@ -80,11 +85,13 @@ function badness(
   }
   const justifiedSpace = (maxWidth - stats.wordWidth) / stats.spaceCount;
   if (justifiedSpace < 0) return HUGE_BADNESS;
-  if (justifiedSpace < normalSpaceWidth * INFEASIBLE_SPACE_RATIO) return HUGE_BADNESS;
+  if (justifiedSpace < normalSpaceWidth * INFEASIBLE_SPACE_RATIO)
+    return HUGE_BADNESS;
   const r = Math.abs((justifiedSpace - normalSpaceWidth) / normalSpaceWidth);
   const lineBad = r * r * r * 1000;
   const riverExcess = justifiedSpace / normalSpaceWidth - RIVER_THRESHOLD;
-  const riverPenalty = riverExcess > 0 ? 5000 + riverExcess * riverExcess * 10000 : 0;
+  const riverPenalty =
+    riverExcess > 0 ? 5000 + riverExcess * riverExcess * 10000 : 0;
   const tight = normalSpaceWidth * TIGHT_SPACE_RATIO;
   const tightPenalty =
     justifiedSpace < tight ? 3000 + (tight - justifiedSpace) ** 2 * 10000 : 0;
@@ -102,7 +109,8 @@ function buildLine(
 ): MeasuredLine {
   const from = candidates[fromC]!.segIndex;
   const to = candidates[toC]!.segIndex;
-  const ending = candidates[toC]!.kind === "end" ? "paragraph-end" : ("wrap" as const);
+  const ending =
+    candidates[toC]!.kind === "end" ? "paragraph-end" : ("wrap" as const);
   const trailingMarker =
     candidates[toC]!.kind === "soft-hyphen" ? "soft-hyphen" : ("none" as const);
   const widths = prepared.widths;
@@ -120,13 +128,23 @@ function buildLine(
     segs.push({ kind: "text", text: "-", width: hyphenWidth });
   }
   while (segs.length > 0 && segs[segs.length - 1]!.kind === "space") segs.pop();
-  let wordWidth = 0, spaceCount = 0, naturalWidth = 0;
+  let wordWidth = 0,
+    spaceCount = 0,
+    naturalWidth = 0;
   for (const seg of segs) {
     naturalWidth += seg.width;
     if (seg.kind === "space") spaceCount++;
     else wordWidth += seg.width;
   }
-  return { segments: segs, wordWidth, spaceCount, naturalWidth, maxWidth, ending, trailingMarker };
+  return {
+    segments: segs,
+    wordWidth,
+    spaceCount,
+    naturalWidth,
+    maxWidth,
+    ending,
+    trailingMarker,
+  };
 }
 
 export function layoutOptimal(
@@ -161,9 +179,18 @@ export function layoutOptimal(
     const isLastLine = candidates[toC]!.kind === "end";
     for (let fromC = toC - 1; fromC >= 0; fromC--) {
       if (dp[fromC] === Infinity) continue;
-      const stats = getLineStats(segments, widths, candidates, fromC, toC, hyphenWidth, normalSpaceWidth);
+      const stats = getLineStats(
+        segments,
+        widths,
+        candidates,
+        fromC,
+        toC,
+        hyphenWidth,
+        normalSpaceWidth,
+      );
       if (stats.naturalWidth > maxWidth * 2) break;
-      const total = dp[fromC]! + badness(stats, maxWidth, normalSpaceWidth, isLastLine);
+      const total =
+        dp[fromC]! + badness(stats, maxWidth, normalSpaceWidth, isLastLine);
       if (total < dp[toC]!) {
         dp[toC] = total;
         prev[toC] = fromC;
@@ -174,7 +201,10 @@ export function layoutOptimal(
   const breakIndices: number[] = [];
   let cur = c - 1;
   while (cur > 0) {
-    if (prev[cur] === -1) { cur--; continue; }
+    if (prev[cur] === -1) {
+      cur--;
+      continue;
+    }
     breakIndices.push(cur);
     cur = prev[cur]!;
   }
@@ -183,7 +213,9 @@ export function layoutOptimal(
   const lines: MeasuredLine[] = [];
   let fromC = 0;
   for (const toC of breakIndices) {
-    lines.push(buildLine(prepared, candidates, fromC, toC, maxWidth, hyphenWidth));
+    lines.push(
+      buildLine(prepared, candidates, fromC, toC, maxWidth, hyphenWidth),
+    );
     fromC = toC;
   }
   return lines;
@@ -192,13 +224,45 @@ export function layoutOptimal(
 // ── Hyphenation ───────────────────────────────────────────────────────────────
 
 const PREFIXES = [
-  "multi", "extra", "inter", "intra", "micro", "macro", "ultra", "super",
-  "trans", "anti", "auto", "semi", "over", "under", "mis", "dis", "non",
-  "out", "pre", "pro", "sub", "re", "un", "co", "de",
+  "multi",
+  "extra",
+  "inter",
+  "intra",
+  "micro",
+  "macro",
+  "ultra",
+  "super",
+  "trans",
+  "anti",
+  "auto",
+  "semi",
+  "over",
+  "under",
+  "mis",
+  "dis",
+  "non",
+  "out",
+  "pre",
+  "pro",
+  "sub",
+  "re",
+  "un",
+  "co",
+  "de",
 ];
 const SUFFIXES = [
-  "tions", "tion", "ally", "ment", "ness", "less", "able", "ible",
-  "ical", "ing", "ful", "ity",
+  "tions",
+  "tion",
+  "ally",
+  "ment",
+  "ness",
+  "less",
+  "able",
+  "ible",
+  "ical",
+  "ing",
+  "ful",
+  "ity",
 ];
 
 function hyphenateWord(word: string): string[] {

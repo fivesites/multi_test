@@ -18,7 +18,7 @@ export default function TextBlock({ text }: { text: string }) {
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !text) return;
     const font = getComputedStyle(el).font;
     const width = el.getBoundingClientRect().width;
     const canvas = document.createElement("canvas");
@@ -29,7 +29,7 @@ export default function TextBlock({ text }: { text: string }) {
     const prepared = prepareWithSegments(hyphenateText(text), font);
     const lines = layoutOptimal(prepared, width, normalSpaceWidth, hyphenWidth);
     setState({ lines, normalSpaceWidth });
-  }, []);
+  }, [text]);
 
   return (
     <p
