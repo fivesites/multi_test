@@ -139,18 +139,18 @@ export default function DemoClient({
             <Button
               variant="link"
               className={cn(
-                "font-rounded",
+                "font-rounded tracking-normal",
                 panel === "projects" && "text-red-500",
               )}
               onClick={() => handleNavClick("projects")}
             >
-              Projects
+              Work
             </Button>
             ,
             <Button
               variant="link"
               className={cn(
-                "font-rounded ml-1",
+                "font-rounded ml-1 tracking-normal",
                 panel === "about" && "text-red-500",
               )}
               onClick={() => handleNavClick("about")}
@@ -161,7 +161,7 @@ export default function DemoClient({
             <Button
               variant="link"
               className={cn(
-                "font-rounded ml-1",
+                "font-rounded ml-1 tracking-normal",
                 panel === "connect" && "text-red-500",
               )}
               onClick={() => handleNavClick("connect")}
@@ -196,7 +196,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-4 pb-2 pt-2 text-2xl max-w-7xl  font-rounded text-red-200 leading-tight w-full"
+              className="px-4 pb-2 pt-4 text-2xl max-w-7xl  font-rounded text-red-200 leading-tight w-full"
               initial="hidden"
               animate="show"
               variants={{
@@ -213,7 +213,7 @@ export default function DemoClient({
                       variant="link"
                       onClick={() => handleFilterChange(cat)}
                       className={cn(
-                        "font-rounded tracking-wide inline px-0 text-red-300 leading-tight  hover:text-red-500",
+                        "font-rounded tracking-normal inline px-0 text-red-300 leading-tight  hover:text-red-500",
                         active === cat && "text-red-500",
                       )}
                     >
@@ -251,7 +251,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-2 max-w-6xl scroll-mt-[56px]"
+                        className="mb-2 max-w-6xl scroll-mt-16"
                       >
                         <MultiCard
                           title={item.title}
@@ -304,7 +304,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-0 scroll-mt-[56px]"
+            className="px-4 pt-4 scroll-mt-16"
           >
             <TextBlock text={ABOUT_TEXT} size="text-2xl" />
           </motion.div>
@@ -317,7 +317,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-0 scroll-mt-[56px]"
+            className="px-4 pt-4 scroll-mt-[56px]"
           >
             <motion.p
               className="text-2xl font-rounded text-red-500"
