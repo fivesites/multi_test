@@ -40,7 +40,7 @@ export default function TextBlock({
   return (
     <p
       ref={ref}
-      className={`${size} font-rounded leading-tight tracking-wide text-red-500  max-w-7xl`}
+      className={`${size} font-rounded leading-tight px-0 tracking-wide text-red-500  max-w-6xl`}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>
@@ -61,7 +61,7 @@ export default function TextBlock({
             const spaceW =
               (isJustified
                 ? (line.maxWidth - line.wordWidth) / line.spaceCount
-                : state.normalSpaceWidth) * 0.75;
+                : state.normalSpaceWidth) * 1;
             return (
               <motion.span
                 key={i}

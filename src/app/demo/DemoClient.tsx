@@ -116,6 +116,62 @@ export default function DemoClient({
 
   return (
     <div className="min-h-screen">
+      <div className="sticky z-20 left-0 top-0  w-full  bg-background  px-4  h-16 ">
+        <div className="flex flex-row justify-between items-center  font-rounded text-2xl text-red-200  max-w-6xl h-full">
+          <Button
+            variant="link"
+            className="font-rounded   text-red-500 hover:text-red-300 cursor-pointer gap-0 flex leading-tight"
+            onClick={() => handleNavClick("showreel")}
+          >
+            Multi
+            <span
+              className="font-ft88-gothique text-base pr-1.5"
+              style={{
+                transform: "scaleX(1.75)",
+                display: "inline-block",
+                transformOrigin: "left",
+              }}
+            >
+              2
+            </span>
+          </Button>
+          <div className="flex items-baseline justify-start leading-tight ">
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded",
+                panel === "projects" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("projects")}
+            >
+              Projects
+            </Button>
+            ,
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded ml-1",
+                panel === "about" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("about")}
+            >
+              About
+            </Button>
+            ,
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded ml-1",
+                panel === "connect" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("connect")}
+            >
+              Connect
+            </Button>
+          </div>
+        </div>
+      </div>
+
       <AnimatePresence mode="wait">
         {panel === "showreel" && (
           <motion.div
@@ -125,66 +181,11 @@ export default function DemoClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <div className="px-2 mb-2 h-[calc(100dvh-4.5rem)]  max-w-xl">
+            <div className="px-3 mb-3  max-w-xl">
               <ShowreelSlideshow images={showreelImages} />
             </div>
           </motion.div>
         )}
-        <div className="sticky z-20 left-0 top-0  w-full  bg-background pt-4 px-4 pb-2 h-auto  ">
-          <div className="flex flex-row justify-between  font-rounded text-2xl text-red-200 items-baseline max-w-7xl">
-            <Button
-              variant="link"
-              className="font-rounded   text-red-500 cursor-pointer gap-0 flex leading-tight"
-              onClick={() => handleNavClick("showreel")}
-            >
-              Multi
-              <span
-                className="font-ft88-gothique text-base"
-                style={{
-                  transform: "scaleX(1.75)",
-                  display: "inline-block",
-                  transformOrigin: "left",
-                }}
-              >
-                2
-              </span>
-            </Button>
-            <div className="flex items-baseline justify-start leading-tight ">
-              <Button
-                variant="link"
-                className={cn(
-                  "font-rounded",
-                  panel === "projects" && "text-red-500",
-                )}
-                onClick={() => handleNavClick("projects")}
-              >
-                Projects
-              </Button>
-              ,
-              <Button
-                variant="link"
-                className={cn(
-                  "font-rounded ml-1",
-                  panel === "about" && "text-red-500",
-                )}
-                onClick={() => handleNavClick("about")}
-              >
-                About
-              </Button>
-              ,
-              <Button
-                variant="link"
-                className={cn(
-                  "font-rounded ml-1",
-                  panel === "connect" && "text-red-500",
-                )}
-                onClick={() => handleNavClick("connect")}
-              >
-                Connect
-              </Button>
-            </div>
-          </div>
-        </div>
 
         {panel === "projects" && (
           <motion.div
@@ -195,7 +196,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-4 pb-2 text-2xl max-w-7xl font-rounded text-red-200 leading-tight w-full"
+              className="px-4 pb-2 pt-2 text-2xl max-w-7xl  font-rounded text-red-200 leading-tight w-full"
               initial="hidden"
               animate="show"
               variants={{
@@ -205,33 +206,36 @@ export default function DemoClient({
                 },
               }}
             >
-              {["all", ...categories].map((cat, i) => (
-                <motion.span key={cat} variants={filterItemVariants}>
-                  <Button
-                    variant="link"
-                    onClick={() => handleFilterChange(cat)}
-                    className={cn(
-                      "font-rounded tracking-wide inline px-0 text-red-300 leading-tight  hover:text-red-500",
-                      active === cat && "text-red-500",
-                    )}
-                  >
-                    {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
-                  </Button>
-                  {i !== categories.length && ","}{" "}
+              <div className="  text-red-300 rounded-2xl">
+                {["all", ...categories].map((cat, i) => (
+                  <motion.span key={cat} variants={filterItemVariants}>
+                    <Button
+                      variant="link"
+                      onClick={() => handleFilterChange(cat)}
+                      className={cn(
+                        "font-rounded tracking-wide inline px-0 text-red-300 leading-tight  hover:text-red-500",
+                        active === cat && "text-red-500",
+                      )}
+                    >
+                      {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                    </Button>
+                    {i !== categories.length && ","}{" "}
+                  </motion.span>
+                ))}
+
+                <motion.span variants={filterItemVariants}>
+                  ,{" "}
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search..."
+                    className="bg-transparent outline-none font-rounded text-2xl text-red-500 placeholder:text-red-300 w-32"
+                  />
                 </motion.span>
-              ))}
-              <motion.span variants={filterItemVariants}>
-                ,{" "}
-                <input
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  placeholder="Search..."
-                  className="bg-transparent outline-none font-rounded text-2xl text-red-500 placeholder:text-red-300 w-32"
-                />
-              </motion.span>
+              </div>
             </motion.div>
 
-            <div className="columns-2 lg:columns-3 gap-4 px-4 pt-2">
+            <div className="columns-2 lg:columns-3 gap-2 px-2 pt-2">
               <AnimatePresence mode="popLayout" initial={false}>
                 {displayed.map((item) => {
                   const isOpen = item.slug === openSlug;
@@ -247,7 +251,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-4 max-w-7xl scroll-mt-[56px]"
+                        className="mb-2 max-w-6xl scroll-mt-[56px]"
                       >
                         <MultiCard
                           title={item.title}
@@ -270,7 +274,7 @@ export default function DemoClient({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="relative break-inside-avoid mb-4 cursor-pointer group"
+                      className="relative break-inside-avoid mb-2 cursor-pointer group"
                       style={{
                         paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
                       }}

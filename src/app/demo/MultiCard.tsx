@@ -36,7 +36,7 @@ export default function MultiCard({
   return (
     <>
       <Card className="w-full text-red-500 rounded-none  pb-0 ">
-        <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-2 pt-4 pb-2 ">
+        <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-1 pt-3 pb-3 ">
           <div className="flex flex-col gap-0">
             <p className="text-2xl font-rounded leading-tight flex items-center   ">
               {client ?? title}
@@ -55,7 +55,7 @@ export default function MultiCard({
           </div>
         </CardHeader>
         <CardContent className="pt-0 ">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2 px-2">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2 px-1">
             <TextBlock text={placeholderText} />
 
             <p className="hidden lg:block text-2xl leading-tight font-rounded max-w-3xl ">
@@ -64,7 +64,7 @@ export default function MultiCard({
           </div>
 
           <motion.div
-            className="columns-2 gap-2 pt-2 px-0 bg-background"
+            className="columns-2 gap-2 pt-2 px-1 bg-background"
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
