@@ -2,29 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { X, ExternalLink } from "lucide-react";
 import { AnimatePresence } from "motion/react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import ImageCarousel from "./ImageCarousel";
 import Lightbox from "./Lightbox";
-
-const CATEGORY_LABELS: Record<string, string> = {
-  photo: "Photo",
-  video: "Video",
-  production: "Production",
-  "art-direction": "Art Direction",
-  concept: "Concept",
-  "sound-design": "Sound Design",
-  vax: "Vax",
-  dop: "DOP",
-  "post-processing": "Post-processing",
-};
 
 type ProjectImage = { key: string; url: string; aspectRatio: number };
 
@@ -34,7 +17,6 @@ export default function MultiCard({
   categories,
   slug,
   projectImages,
-  thumbKey,
   onClose,
 }: {
   title: string;
@@ -42,44 +24,64 @@ export default function MultiCard({
   categories: string[];
   slug: string;
   projectImages: ProjectImage[];
-  thumbKey: string;
   onClose: () => void;
 }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   return (
     <>
-      <Card className="w-full">
-        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-3">
-          <div className="flex flex-col gap-2">
-            <p className="text-xl font-semibold leading-tight">
-              {client ?? title}
+      <Card className="w-full text-red-600">
+        <CardHeader className="flex flex-row items-start justify-between gap-4 pb-0">
+          <div className="flex flex-col gap-0">
+            <p className="text-2xl font-rounded leading-tight">
+              {client ?? title}, 2024
             </p>
-            <div className="flex flex-wrap gap-1">
-              {categories.map((cat) => (
-                <Badge key={cat} variant="secondary">
-                  {CATEGORY_LABELS[cat] ?? cat}
-                </Badge>
-              ))}
-            </div>
           </div>
-          <div className="flex items-center gap-1 shrink-0">
+          <div className="flex items-center gap-0 shrink-0">
             <Button variant="ghost" size="icon" asChild>
               <Link href={`/work/${slug}`}>
                 <ExternalLink className="h-4 w-4" />
               </Link>
             </Button>
-            <Button variant="ghost" size="icon" onClick={onClose}>
+            <Button
+              variant="ghost"
+              size="icon"
+              aria-label="Close"
+              onClick={onClose}
+              className="text-red-600"
+            >
               <X className="h-4 w-4" />
             </Button>
           </div>
         </CardHeader>
         <CardContent className="pt-0">
-          <ImageCarousel
-            images={projectImages}
-            thumbKey={thumbKey}
-            onImageClick={setLightboxIndex}
-          />
+          <p className="text-2xl leading-tight font-rounded max-w-3xl mb-2">
+            Multi² is not your typical company. It&apos;s a multiplier. This is the
+            story of Adam and Daniel who found each other through a shared
+            multidisciplinary mindset. Together, they don&apos;t just double the
+            output — they multiply it, exponentially. From global brands like
+            IKEA to bold collaborations with Jureskog and ATG, we help brands
+            move faster, think clearer, and create more with less.
+          </p>
+
+          <div className="columns-2 gap-2">
+            {projectImages.map((img, i) => (
+              <div
+                key={img.key}
+                className="relative break-inside-avoid mb-2 cursor-zoom-in"
+                style={{ paddingBottom: `${(1 / (img.aspectRatio || 1)) * 100}%` }}
+                onClick={() => setLightboxIndex(i)}
+              >
+                <Image
+                  src={img.url}
+                  alt=""
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 768px) 50vw, 33vw"
+                />
+              </div>
+            ))}
+          </div>
         </CardContent>
       </Card>
 

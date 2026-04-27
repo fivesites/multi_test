@@ -192,7 +192,6 @@ export default function DemoClient({
                         categories={item.categories}
                         slug={item.slug}
                         projectImages={item.projectImages}
-                        thumbKey={`thumb-${item.key}`}
                         onClose={() => setOpenSlug(null)}
                       />
                     </motion.div>
