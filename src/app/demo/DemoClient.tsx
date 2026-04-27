@@ -204,18 +204,26 @@ export default function DemoClient({
                     }}
                     onClick={() => setOpenSlug(item.slug)}
                   >
-                    <motion.div
-                      layoutId={`thumb-${item.key}`}
-                      className="absolute inset-0"
-                    >
+                    <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-70">
+                      {/* Full-res — pre-loads for instant reveal when card opens */}
                       <Image
                         src={item.url}
                         alt={item.alt}
                         fill
-                        className="object-cover transition-opacity duration-300 group-hover:opacity-70"
+                        className="object-cover"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       />
-                    </motion.div>
+                      {/* Pixelated overlay — tiny image scaled up with square pixels */}
+                      <Image
+                        src={item.url}
+                        alt=""
+                        width={16}
+                        height={Math.round(16 / (item.aspectRatio || 1))}
+                        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                        style={{ imageRendering: "pixelated" }}
+                        aria-hidden={true}
+                      />
+                    </div>
                   </motion.div>
                 );
               })}
