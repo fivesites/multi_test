@@ -48,7 +48,7 @@ export default function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-black"
+      className="fixed inset-0 z-50 bg-background"
       onClick={onClose}
     >
       <Button
@@ -56,13 +56,16 @@ export default function Lightbox({
         size="icon"
         aria-label="Close lightbox"
         className="absolute top-4 right-4 z-10 text-white hover:bg-white/10"
-        onClick={(e) => { e.stopPropagation(); onClose(); }}
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
       >
         <X className="h-5 w-5" />
       </Button>
 
       <div
-        className="w-full h-full overflow-hidden"
+        className="w-full h-dvh overflow-hidden"
         ref={emblaRef}
         onClick={(e) => e.stopPropagation()}
       >
@@ -77,7 +80,7 @@ export default function Lightbox({
                   src={img.url}
                   alt=""
                   fill
-                  className="object-contain"
+                  className="object-contain object-top"
                   sizes="100vw"
                 />
               </div>

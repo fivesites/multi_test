@@ -22,7 +22,8 @@ const buttonVariants = cva(
         glow: "bg-transparent text-red-600 [text-shadow:0_0_4px_rgba(220,38,38,0.6),0_0_12px_rgba(220,38,38,0.4)]",
       },
       size: {
-        default: "h-auto px-0 py-0 has-[>svg]:px-3 tracking-wider text-2xl",
+        default:
+          "h-auto px-0 py-0 has-[>svg]:px-3 leading-tight tracking-tight text-2xl",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-[2rem] gap-1.5  px-3 has-[>svg]:px-2.5 text-sm",
         lg: "h-[4rem] lg:h-auto lg:py-4 text-xl lg:text-2xl rounded-md px-6 has-[>svg]:px-4 ",

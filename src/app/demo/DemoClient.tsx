@@ -6,28 +6,10 @@ import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
 import ShowreelSlideshow from "./ShowreelSlideshow";
 import { Button } from "@/components/ui/button";
+import TextBlock from "./TextBlock";
 import { cn } from "@/lib/utils";
-import { X } from "lucide-react";
-
-const RED_SHADES = [
-  "#fef2f2",
-  "#fee2e2",
-  "#fecaca",
-  "#fca5a5",
-  "#f87171",
-  "#ef4444",
-  "#dc2626",
-  "#b91c1c",
-  "#991b1b",
-  "#7f1d1d",
-];
-
-function redShadeForKey(key: string) {
-  const idx =
-    key.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) %
-    RED_SHADES.length;
-  return RED_SHADES[idx];
-}
+import { layoutWithLines } from "@chenglou/pretext";
+import { prepareWithSegments } from "./knuth-plass";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -41,6 +23,21 @@ const CATEGORY_LABELS: Record<string, string> = {
   "post-processing": "Post-processing",
 };
 
+const ABOUT_TEXT =
+  "Multi² is not your typical company. It’s a multiplier. This is the story of Adam and Daniel who found each other through a shared multidisciplinary mindset. Together, they don’t just double the output — they multiply it, exponentially. From global brands like IKEA to bold collaborations with Jureskog and ATG, we help brands move faster, think clearer, and create more with less.";
+
+const CONNECT_EMAIL = "hello@multi2.co";
+
+const charVariants = {
+  hidden: { opacity: 0 },
+  show: { opacity: 1 },
+};
+
+const filterItemVariants = {
+  hidden: { opacity: 0, y: -6 },
+  show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+};
+
 export type GridItem = {
   key: string;
   url: string;
@@ -48,11 +45,66 @@ export type GridItem = {
   slug: string;
   title: string;
   client?: string;
+  credits?: string;
   categories: string[];
   aspectRatio: number;
   isPrimary: boolean;
   projectImages: { key: string; url: string; aspectRatio: number }[];
 };
+
+function ClientOverlay({ client }: { client: string }) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const measureRef = useRef<HTMLSpanElement>(null);
+  const [lines, setLines] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    const span = measureRef.current;
+    if (!container || !span) return;
+    const font = getComputedStyle(span).font;
+    const width = container.offsetWidth;
+    const lh = parseFloat(getComputedStyle(span).lineHeight) || 40;
+    const prepared = prepareWithSegments(client, font);
+    const { lines: ll } = layoutWithLines(prepared, width, lh);
+    setLines(ll.map((l) => l.text.trim()).filter(Boolean));
+  }, [client]);
+
+  return (
+    <div
+      ref={containerRef}
+      className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none bg-background"
+    >
+      <span
+        ref={measureRef}
+        className="font-rounded text-4xl text-red-500"
+        style={{ visibility: "hidden", position: "absolute" }}
+      >
+        {client}
+      </span>
+      {lines !== null && (
+        <div className="w-full h-full flex flex-col justify-between p-1">
+          {lines.map((line, i) => (
+            <div key={i} className="flex justify-between w-full">
+              {line
+                .replace(/\s/g, "")
+                .split("")
+                .map((char, j) => (
+                  <span
+                    key={j}
+                    className="font-rounded text-4xl text-red-100 leading-none"
+                  >
+                    {char}
+                  </span>
+                ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+type Panel = "showreel" | "projects" | "about" | "connect";
 
 export default function DemoClient({
   items,
@@ -61,17 +113,10 @@ export default function DemoClient({
   items: GridItem[];
   categories: string[];
 }) {
-  const [view, setView] = useState<null | "showreel" | "projects">("showreel");
+  const [panel, setPanel] = useState<Panel>("showreel");
   const [active, setActive] = useState("all");
+  const [search, setSearch] = useState("");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
-  const [showAbout, setShowAbout] = useState(true);
-  const [loadPhase, setLoadPhase] = useState<"loading" | "done">("loading");
-  const [loaderKey, setLoaderKey] = useState(0);
-
-  function restartLoader() {
-    setLoaderKey((k) => k + 1);
-    setLoadPhase("loading");
-  }
 
   const openCardRef = useRef<HTMLDivElement>(null);
 
@@ -84,21 +129,32 @@ export default function DemoClient({
     }
   }, [openSlug]);
 
-  function toggleView(v: "showreel" | "projects") {
-    setView((current) => (current === v ? null : v));
-    if (v === "projects") restartLoader();
+  function handleNavClick(p: Panel) {
+    setPanel(p);
   }
 
   const slugsSeen = new Set<string>();
+  const query = search.toLowerCase().trim();
   const displayed = (
     active === "all"
       ? items.filter((i) => i.isPrimary)
       : items.filter((i) => i.categories.includes(active))
-  ).filter((i) => {
-    if (slugsSeen.has(i.slug)) return false;
-    slugsSeen.add(i.slug);
-    return true;
-  });
+  )
+    .filter((i) => {
+      if (slugsSeen.has(i.slug)) return false;
+      slugsSeen.add(i.slug);
+      return true;
+    })
+    .filter((i) => {
+      if (!query) return true;
+      return (
+        i.title.toLowerCase().includes(query) ||
+        (i.client ?? "").toLowerCase().includes(query) ||
+        i.categories.some((c) =>
+          (CATEGORY_LABELS[c] ?? c).toLowerCase().includes(query),
+        )
+      );
+    });
 
   const showreelImages = items
     .filter((i) => i.isPrimary)
@@ -106,186 +162,223 @@ export default function DemoClient({
     .map((i) => ({ key: i.key, url: i.url, aspectRatio: i.aspectRatio }));
 
   function handleFilterChange(cat: string) {
-    setView("projects");
+    setPanel("projects");
     setActive(cat);
+    setSearch("");
     setOpenSlug(null);
-    restartLoader();
   }
 
   return (
     <div className="min-h-screen">
-      <div className="flex flex-row justify-between w-full font-rounded text-2xl text-red-200 px-2 pt-1 items-baseline">
+      <div className="sticky z-20 left-0 top-0 flex flex-row justify-between w-full font-rounded text-2xl text-red-200 px-2 items-baseline max-w-7xl h-8  ">
         <Button
           variant="link"
-          className="font-rounded text-2xl tracking-wider gap-0 text-red-500 hover:text-red-500"
-          onClick={() => setShowAbout(!showAbout)}
+          className="font-rounded font-normal   text-red-500 cursor-pointer gap-0 flex leading-tight"
+          onClick={() => handleNavClick("showreel")}
         >
-          Multi <span className="font-ft88-gothique text-base ml-0">2</span>
+          Multi<span className="font-ft88-gothique text-base">2</span>
         </Button>
-        <div className="flex-1 mx-2 h-5 self-center bg-red-100 overflow-hidden rounded-full">
-          <motion.div
-            key={loaderKey}
-            className="h-full bg-red-500 rounded-full"
-            initial={{ width: "0%", opacity: 1 }}
-            animate={
-              loadPhase === "loading"
-                ? { width: "100%", opacity: 1 }
-                : { width: "100%", opacity: 0 }
-            }
-            transition={
-              loadPhase === "loading"
-                ? { duration: 1.5, ease: [0.4, 0, 0.2, 1] }
-                : { duration: 0.4 }
-            }
-            onAnimationComplete={() => {
-              if (loadPhase === "loading") setLoadPhase("done");
-            }}
-          />
-        </div>
-        <div className="flex items-baseline">
+        <div className="flex items-baseline justify-start leading-tight ">
           <Button
             variant="link"
             className={cn(
               "font-rounded",
-              view === "showreel" && "text-red-600",
+              panel === "projects" && "text-red-500",
             )}
-            onClick={() => toggleView("showreel")}
+            onClick={() => handleNavClick("projects")}
           >
-            Showreel
+            Projects
           </Button>
           ,
           <Button
             variant="link"
             className={cn(
               "font-rounded ml-1",
-              view === "projects" && "text-red-600 font-medium",
+              panel === "about" && "text-red-500",
             )}
-            onClick={() => toggleView("projects")}
+            onClick={() => handleNavClick("about")}
           >
-            Projects
+            About
           </Button>
           ,
-          <Button variant="link" className="ml-1">
+          <Button
+            variant="link"
+            className={cn(
+              "font-rounded ml-1",
+              panel === "connect" && "text-red-500",
+            )}
+            onClick={() => handleNavClick("connect")}
+          >
             Connect
           </Button>
         </div>
       </div>
-      {!showAbout && (
-        <div className="absolute z-[50] top-2 left-2 px-2 pt-1 pb-2 text-2xl font-rounded leading-none mt-8 bg-red-600 max-w-4xl shadow">
-          <p className="text-2xl leading-tight text-background">
-            Multi² is not your typical company. It&apos;s a multiplier. This is
-            the story of Adam and Daniel who found each other through a shared
-            multidisciplinary mindset. Together, they don&apos;t just double the
-            output — they multiply it, exponentially. From global brands like
-            IKEA to bold collaborations with Jureskog and ATG, we help brands
-            move faster, think clearer, and create more with less.
-          </p>
-          <button
-            className="absolute top-2 right-2 cursor-pointer text-background leading-none"
-            onClick={() => setShowAbout(true)}
+
+      <AnimatePresence mode="wait">
+        {panel === "showreel" && (
+          <motion.div
+            key="showreel"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
           >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
+            <div className="px-2 mb-2  max-w-xl">
+              <ShowreelSlideshow images={showreelImages} />
+            </div>
+          </motion.div>
+        )}
 
-      <div className="px-2 text-2xl font-rounded text-red-200 leading-none">
-        {["all", ...categories].map((cat, i) => (
-          <span key={cat}>
-            <Button
-              variant="link"
-              onClick={() => handleFilterChange(cat)}
-              className={cn(
-                "font-rounded inline px-0",
-                view === "projects" &&
-                  active === cat &&
-                  "text-red-600 font-medium",
-                view !== "projects" && "opacity-50",
-              )}
+        {panel === "projects" && (
+          <motion.div
+            key="projects"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.25 }}
+          >
+            <motion.div
+              className="px-2 text-2xl max-w-7xl font-rounded text-red-200 leading-tight w-full"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: {
+                  transition: { staggerChildren: 0.06, delayChildren: 0.05 },
+                },
+              }}
             >
-              {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
-            </Button>
-            {i !== categories.length && ","}{" "}
-          </span>
-        ))}
-        {/* <Button variant="link">Search...</Button> */}
-      </div>
-      {view === "showreel" && (
-        <div className="px-2 pt-2 max-w-xl">
-          <ShowreelSlideshow images={showreelImages} />
-        </div>
-      )}
-      {view === "projects" && (
-        <>
-          {/* Masonry grid — CSS columns */}
-          <div className="columns-2 md:columns-3 gap-2 px-2 pt-2 ">
-            <AnimatePresence mode="popLayout" initial={false}>
-              {displayed.map((item) => {
-                const isOpen = item.slug === openSlug;
+              {["all", ...categories].map((cat, i) => (
+                <motion.span key={cat} variants={filterItemVariants}>
+                  <Button
+                    variant="link"
+                    onClick={() => handleFilterChange(cat)}
+                    className={cn(
+                      "font-rounded inline px-0 text-red-300 leading-tight  hover:text-red-500",
+                      active === cat && "text-red-500",
+                    )}
+                  >
+                    {cat === "all"
+                      ? "All Categories"
+                      : (CATEGORY_LABELS[cat] ?? cat)}
+                  </Button>
+                  {i !== categories.length && ","}{" "}
+                </motion.span>
+              ))}
+              <motion.span variants={filterItemVariants}>
+                ,{" "}
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search..."
+                  className="bg-transparent outline-none font-rounded text-2xl text-red-500 placeholder:text-red-300 w-32"
+                />
+              </motion.span>
+            </motion.div>
 
-                if (isOpen) {
+            <div className="columns-2 md:columns-3 gap-2 px-2 pt-0">
+              <AnimatePresence mode="popLayout" initial={false}>
+                {displayed.map((item) => {
+                  const isOpen = item.slug === openSlug;
+
+                  if (isOpen) {
+                    return (
+                      <motion.div
+                        ref={openCardRef}
+                        key={`card-${item.slug}`}
+                        layout
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.3 }}
+                        style={{ columnSpan: "all" } as React.CSSProperties}
+                        className="mb-2 scroll-mt-16"
+                      >
+                        <MultiCard
+                          title={item.title}
+                          client={item.client}
+                          credits={item.credits}
+                          categories={item.categories}
+                          slug={item.slug}
+                          projectImages={item.projectImages}
+                          onClose={() => setOpenSlug(null)}
+                        />
+                      </motion.div>
+                    );
+                  }
+
                   return (
                     <motion.div
-                      ref={openCardRef}
-                      key={`card-${item.slug}`}
+                      key={item.key}
                       layout
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      transition={{ duration: 0.3 }}
-                      style={{ columnSpan: "all" } as React.CSSProperties}
-                      className="mb-2"
+                      transition={{ duration: 0.2 }}
+                      className="relative break-inside-avoid mb-2 cursor-pointer group"
+                      style={{
+                        paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
+                      }}
+                      onClick={() => setOpenSlug(item.slug)}
                     >
-                      <MultiCard
-                        title={item.title}
-                        client={item.client}
-                        categories={item.categories}
-                        slug={item.slug}
-                        projectImages={item.projectImages}
-                        onClose={() => setOpenSlug(null)}
-                      />
+                      <div className="absolute inset-0">
+                        <Image
+                          src={item.url}
+                          alt={item.alt}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                        />
+                        {/* {item.client && <ClientOverlay client={item.client} />} */}
+                      </div>
                     </motion.div>
                   );
-                }
+                })}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+        )}
 
-                return (
-                  <motion.div
-                    key={item.key}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="relative break-inside-avoid mb-2 cursor-pointer group"
-                    style={{
-                      paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
-                    }}
-                    onClick={() => setOpenSlug(item.slug)}
-                  >
-                    <div className="absolute inset-0">
-                      <Image
-                        src={item.url}
-                        alt={item.alt}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                      />
-                      <div className="absolute inset-0 group-hover:opacity-0 transition-opacity duration-300 flex items-center justify-center pointer-events-none bg-red-500">
-                        <div className="flex gap-0 items-center justify-center text-red-100">
-                          <span className=" font-rounded text-2xl">M</span>
-                          <span className="font-ft88-gothique text-base">
-                            2
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                );
-              })}
-            </AnimatePresence>
-          </div>
-        </>
-      )}
+        {panel === "about" && (
+          <motion.div
+            key="about"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="px-2 pt-0"
+          >
+            <TextBlock text={ABOUT_TEXT} />
+          </motion.div>
+        )}
+
+        {panel === "connect" && (
+          <motion.div
+            key="connect"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="px-2 pt-0"
+          >
+            <motion.p
+              className="text-2xl font-rounded text-red-500"
+              initial="hidden"
+              animate="show"
+              variants={{
+                hidden: {},
+                show: { transition: { staggerChildren: 0.07 } },
+              }}
+            >
+              {CONNECT_EMAIL.split("").map((char, i) => (
+                <motion.span key={i} variants={charVariants}>
+                  {char}
+                </motion.span>
+              ))}
+            </motion.p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
