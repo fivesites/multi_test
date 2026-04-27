@@ -9,7 +9,13 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-export default function TextBlock({ text }: { text: string }) {
+export default function TextBlock({
+  text,
+  size = "text-2xl",
+}: {
+  text: string;
+  size?: string;
+}) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [state, setState] = useState<{
     lines: MeasuredLine[];
@@ -34,7 +40,7 @@ export default function TextBlock({ text }: { text: string }) {
   return (
     <p
       ref={ref}
-      className="text-2xl font-rounded leading-tight tracking-normal text-red-500  max-w-7xl"
+      className={`${size} font-rounded leading-tight tracking-normal text-red-500  max-w-7xl`}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>

@@ -35,11 +35,11 @@ export default function MultiCard({
 
   return (
     <>
-      <Card className="w-full text-red-500 rounded-none bg-red-950 pb-0 ">
-        <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-4 pt-4 pb-4 ">
+      <Card className="w-full text-red-500 rounded-none  pb-0 ">
+        <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-2 pt-4 pb-2 ">
           <div className="flex flex-col gap-0">
-            <p className="text-2xl font-rounded leading-tight  ">
-              {client ?? title}, 2024
+            <p className="text-2xl font-rounded leading-tight flex items-center   ">
+              {client ?? title}
             </p>
           </div>
           <div className="flex items-center gap-0 shrink-0">
@@ -55,7 +55,7 @@ export default function MultiCard({
           </div>
         </CardHeader>
         <CardContent className="pt-0 ">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-4 px-4">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 mb-2 px-2">
             <TextBlock text={placeholderText} />
 
             <p className="hidden lg:block text-2xl leading-tight font-rounded max-w-3xl ">

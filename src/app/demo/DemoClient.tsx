@@ -116,47 +116,59 @@ export default function DemoClient({
 
   return (
     <div className="min-h-screen">
-      <div className="sticky z-20 left-0 top-0 flex flex-row justify-between w-full font-rounded text-2xl text-red-200 px-2 items-baseline max-w-7xl h-8  ">
-        <Button
-          variant="link"
-          className="font-rounded font-normal   text-red-500 cursor-pointer gap-0 flex leading-tight"
-          onClick={() => handleNavClick("showreel")}
-        >
-          Multi<span className="font-ft88-gothique text-base">2</span>
-        </Button>
-        <div className="flex items-baseline justify-start leading-tight ">
+      <div className="sticky z-20 left-0 top-0  w-full  bg-background pt-4 px-4 pb-2 h-auto  ">
+        <div className="flex flex-row justify-between  font-rounded text-2xl text-red-200 items-baseline max-w-7xl">
           <Button
             variant="link"
-            className={cn(
-              "font-rounded",
-              panel === "projects" && "text-red-500",
-            )}
-            onClick={() => handleNavClick("projects")}
+            className="font-rounded   text-red-500 cursor-pointer gap-0 flex leading-tight"
+            onClick={() => handleNavClick("showreel")}
           >
-            Projects
+            Multi
+            <span
+              className="font-ft88-gothique text-base"
+              style={{
+                transform: "scaleX(1.75)",
+                display: "inline-block",
+                transformOrigin: "left",
+              }}
+            >
+              2
+            </span>
           </Button>
-          ,
-          <Button
-            variant="link"
-            className={cn(
-              "font-rounded ml-1",
-              panel === "about" && "text-red-500",
-            )}
-            onClick={() => handleNavClick("about")}
-          >
-            About
-          </Button>
-          ,
-          <Button
-            variant="link"
-            className={cn(
-              "font-rounded ml-1",
-              panel === "connect" && "text-red-500",
-            )}
-            onClick={() => handleNavClick("connect")}
-          >
-            Connect
-          </Button>
+          <div className="flex items-baseline justify-start leading-tight ">
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded",
+                panel === "projects" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("projects")}
+            >
+              Projects
+            </Button>
+            ,
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded ml-1",
+                panel === "about" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("about")}
+            >
+              About
+            </Button>
+            ,
+            <Button
+              variant="link"
+              className={cn(
+                "font-rounded ml-1",
+                panel === "connect" && "text-red-500",
+              )}
+              onClick={() => handleNavClick("connect")}
+            >
+              Connect
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -184,7 +196,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-2 text-2xl max-w-7xl font-rounded text-red-200 leading-tight w-full"
+              className="px-4 pb-2 text-2xl max-w-7xl font-rounded text-red-200 leading-tight w-full"
               initial="hidden"
               animate="show"
               variants={{
@@ -204,9 +216,7 @@ export default function DemoClient({
                       active === cat && "text-red-500",
                     )}
                   >
-                    {cat === "all"
-                      ? "All Categories"
-                      : (CATEGORY_LABELS[cat] ?? cat)}
+                    {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
                   </Button>
                   {i !== categories.length && ","}{" "}
                 </motion.span>
@@ -222,7 +232,7 @@ export default function DemoClient({
               </motion.span>
             </motion.div>
 
-            <div className="columns-2 md:columns-3 gap-2 px-2 pt-0">
+            <div className="columns-2 lg:columns-3 gap-4 px-4 pt-2">
               <AnimatePresence mode="popLayout" initial={false}>
                 {displayed.map((item) => {
                   const isOpen = item.slug === openSlug;
@@ -238,7 +248,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-2 scroll-mt-16"
+                        className="mb-4 max-w-7xl scroll-mt-[56px]"
                       >
                         <MultiCard
                           title={item.title}
@@ -261,7 +271,7 @@ export default function DemoClient({
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{ duration: 0.2 }}
-                      className="relative break-inside-avoid mb-2 cursor-pointer group"
+                      className="relative break-inside-avoid mb-4 cursor-pointer group"
                       style={{
                         paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
                       }}
@@ -291,9 +301,9 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-2 pt-0"
+            className="px-4 pt-0 scroll-mt-[56px]"
           >
-            <TextBlock text={ABOUT_TEXT} />
+            <TextBlock text={ABOUT_TEXT} size="text-2xl" />
           </motion.div>
         )}
 
@@ -304,7 +314,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-2 pt-0"
+            className="px-4 pt-0 scroll-mt-[56px]"
           >
             <motion.p
               className="text-2xl font-rounded text-red-500"
