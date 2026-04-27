@@ -28,13 +28,18 @@ export default function Lightbox({
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
       if (e.key === "ArrowRight") emblaApi?.scrollNext();
     };
     window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", handler);
+    };
   }, [emblaApi, onClose]);
 
   return createPortal(

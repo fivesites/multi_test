@@ -18,10 +18,11 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "bg-transparent  hover:backdrop-blur-lg text-background hover:bg-foreground/10 hover:text-foreground/80 ",
-        link: "text-primary underline-offset-4 hover:underline",
+        link: "text-red-200 no-underline hover:no-underline hover:text-red-500 transition-colors",
+        glow: "bg-transparent text-red-600 [text-shadow:0_0_4px_rgba(220,38,38,0.6),0_0_12px_rgba(220,38,38,0.4)]",
       },
       size: {
-        default: "h-[3rem] px-6 py-2 has-[>svg]:px-3 text-xl",
+        default: "h-auto px-0 py-0 has-[>svg]:px-3 tracking-wider text-2xl",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-[2rem] gap-1.5  px-3 has-[>svg]:px-2.5 text-sm",
         lg: "h-[4rem] lg:h-auto lg:py-4 text-xl lg:text-2xl rounded-md px-6 has-[>svg]:px-4 ",

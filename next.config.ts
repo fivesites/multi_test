@@ -3,7 +3,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
-    domains: ["res.cloudinary.com", "cdn.sanity.io"],
+    remotePatterns: [{ protocol: "https", hostname: "cdn.sanity.io" }],
+    unoptimized: true,
   },
   webpack(config, { isServer }) {
     if (!isServer) {

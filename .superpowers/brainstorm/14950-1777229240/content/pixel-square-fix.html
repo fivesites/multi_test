@@ -1,0 +1,77 @@
+<h2>Square pixels — corrected approach</h2>
+<p class="subtitle">Tiny image dimensions must match the container's aspect ratio so each pixel cell is square when scaled up.</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">❌ Before (stretched)</div>
+    <div class="mockup-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <!-- portrait card, pixels stretched vertically -->
+        <div style="position:relative;padding-top:130%;background:#111;border-radius:2px;overflow:hidden">
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr)">
+            <div style="background:#7a2020"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#5c1818"></div>
+            <div style="background:#6b1f1f"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#8b2929"></div>
+            <div style="background:#8b2929"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#7a2020"></div>
+            <div style="background:#5c1818"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#6b1f1f"></div>
+          </div>
+          <div style="position:absolute;bottom:2px;right:2px;font-size:8px;color:#555">16×4 stretched tall → rect pixels</div>
+        </div>
+        <!-- landscape card, pixels stretched horizontally -->
+        <div style="position:relative;padding-top:60%;background:#111;border-radius:2px;overflow:hidden">
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr)">
+            <div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div>
+            <div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div>
+            <div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div>
+            <div style="background:#0a2a4c"></div><div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div>
+          </div>
+          <div style="position:absolute;bottom:2px;right:2px;font-size:8px;color:#555">16×4 stretched wide → rect pixels</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">✅ After (square pixels)</div>
+    <div class="mockup-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <!-- portrait card: 16×21 image (≈ 0.77 ratio) -->
+        <div style="position:relative;padding-top:130%;background:#111;border-radius:2px;overflow:hidden">
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(8,1fr)">
+            <div style="background:#7a2020"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#5c1818"></div>
+            <div style="background:#6b1f1f"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#8b2929"></div>
+            <div style="background:#8b2929"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#7a2020"></div>
+            <div style="background:#5c1818"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#6b1f1f"></div>
+            <div style="background:#7a2020"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#5c1818"></div>
+            <div style="background:#6b1f1f"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#8b2929"></div>
+            <div style="background:#8b2929"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#7a2020"></div>
+            <div style="background:#5c1818"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#6b1f1f"></div>
+          </div>
+          <div style="position:absolute;bottom:2px;right:2px;font-size:8px;color:#666">16×21 → square pixels ✓</div>
+        </div>
+        <!-- landscape card: 16×10 image -->
+        <div style="position:relative;padding-top:60%;background:#111;border-radius:2px;overflow:hidden">
+          <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(4,1fr)">
+            <div style="background:#1a3a5c;aspect-ratio:1"></div><div style="background:#2a4a6c;aspect-ratio:1"></div><div style="background:#1a3a5c;aspect-ratio:1"></div><div style="background:#0a2a4c;aspect-ratio:1"></div><div style="background:#2a4a6c;aspect-ratio:1"></div><div style="background:#1a3a5c;aspect-ratio:1"></div>
+            <div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div>
+            <div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div>
+            <div style="background:#0a2a4c"></div><div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div>
+          </div>
+          <div style="position:absolute;bottom:2px;right:2px;font-size:8px;color:#666">16×10 → square pixels ✓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section" style="margin-top:20px">
+  <h3>Implementation</h3>
+  <div style="background:#1a1a1a;padding:12px;border-radius:4px;font-family:monospace;font-size:11px;color:#aaa;line-height:1.8">
+    <span style="color:#888">// compute tiny dimensions that preserve aspect ratio</span><br>
+    const tinyW = 16<br>
+    const tinyH = Math.round(16 / item.aspectRatio)<br>
+    <br>
+    <span style="color:#888">// e.g. 3:2 image → 16×11   portrait 2:3 → 16×24   1:1 → 16×16</span><br>
+    <span style="color:#888">// when scaled up to fill container → each pixel cell is square</span>
+  </div>
+  <p style="font-size:11px;color:#666;margin-top:8px">Same logic applies to the showreel slides. The tiny image always has the same ratio as its container → no stretching.</p>
+</div>

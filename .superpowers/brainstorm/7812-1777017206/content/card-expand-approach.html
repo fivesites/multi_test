@@ -1,0 +1,110 @@
+<h2>How should MultiCard open inside the grid?</h2>
+<p class="subtitle">When you click an image, what happens to the rest of the grid?</p>
+
+<div class="cards">
+
+  <!-- Option A: Full-width insert -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;font-family:monospace;font-size:11px;border-radius:6px;">
+        <!-- Mockup: full-width card inserted above grid -->
+        <div style="background:#1a1a1a;border:1px solid #333;border-radius:4px;padding:10px;margin-bottom:8px;">
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;">
+            <div style="background:#444;height:8px;width:60px;border-radius:2px;"></div>
+            <div style="background:#555;height:6px;width:40px;border-radius:2px;"></div>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <div style="background:#2a2a2a;height:90px;flex:1;border-radius:3px;position:relative;overflow:hidden;">
+              <div style="position:absolute;inset:0;background:linear-gradient(135deg,#333,#222);"></div>
+              <div style="position:absolute;bottom:4px;left:4px;right:4px;display:flex;gap:3px;">
+                <div style="height:3px;background:#555;flex:1;border-radius:1px;"></div>
+                <div style="height:3px;background:#666;flex:1;border-radius:1px;"></div>
+                <div style="height:3px;background:#444;flex:1;border-radius:1px;"></div>
+              </div>
+            </div>
+          </div>
+          <div style="margin-top:6px;font-size:10px;color:#666;">← MultiCard (full-width) with carousel + metadata</div>
+        </div>
+        <!-- Grid below -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;">
+          <div style="background:#1c1c1c;height:40px;border-radius:3px;border:1px solid #2a2a2a;"></div>
+          <div style="background:#1c1c1c;height:55px;border-radius:3px;border:1px solid #2a2a2a;"></div>
+          <div style="background:#333;height:45px;border-radius:3px;border:1px solid #444;box-shadow:0 0 0 1px #666;">
+            <div style="font-size:8px;color:#888;padding:3px;text-align:center;margin-top:8px;">selected</div>
+          </div>
+          <div style="background:#1c1c1c;height:50px;border-radius:3px;border:1px solid #2a2a2a;"></div>
+          <div style="background:#1c1c1c;height:35px;border-radius:3px;border:1px solid #2a2a2a;"></div>
+          <div style="background:#1c1c1c;height:60px;border-radius:3px;border:1px solid #2a2a2a;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Full-width card, grid stays below</h3>
+      <p>Clicking an image scrolls up and inserts a full-width MultiCard at the top. The masonry grid continues below with the selected image highlighted. Clean separation — card and grid coexist.</p>
+    </div>
+  </div>
+
+  <!-- Option B: In-place inline expansion -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;font-family:monospace;font-size:11px;border-radius:6px;">
+        <!-- Masonry with one item expanded inline -->
+        <div style="column-count:3;column-gap:4px;">
+          <div style="background:#1c1c1c;height:40px;border-radius:3px;border:1px solid #2a2a2a;margin-bottom:4px;break-inside:avoid;"></div>
+          <!-- expanded card spans full width -->
+          <div style="column-span:all;background:#1a1a1a;border:1px solid #444;border-radius:4px;padding:8px;margin-bottom:4px;">
+            <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px;">
+              <div style="background:#444;height:7px;width:50px;border-radius:2px;"></div>
+              <div style="background:#555;height:5px;width:35px;border-radius:2px;"></div>
+            </div>
+            <div style="background:#2a2a2a;height:70px;border-radius:3px;"></div>
+            <div style="font-size:9px;color:#555;margin-top:4px;text-align:center;">expanded inline — pushes content below</div>
+          </div>
+          <div style="background:#1c1c1c;height:55px;border-radius:3px;border:1px solid #2a2a2a;margin-bottom:4px;break-inside:avoid;"></div>
+          <div style="background:#1c1c1c;height:35px;border-radius:3px;border:1px solid #2a2a2a;margin-bottom:4px;break-inside:avoid;"></div>
+          <div style="background:#1c1c1c;height:50px;border-radius:3px;border:1px solid #2a2a2a;margin-bottom:4px;break-inside:avoid;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Inline expansion, grid reflows</h3>
+      <p>The card expands in-place using <code>column-span: all</code> in the CSS columns masonry. The clicked item disappears and the card appears in the flow. Other items reflow around it. Most "in-grid" feeling but complex to animate.</p>
+    </div>
+  </div>
+
+  <!-- Option C: Overlay within grid bounds -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;font-family:monospace;font-size:11px;border-radius:6px;position:relative;">
+        <!-- Grid with overlay -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:4px;opacity:0.35;">
+          <div style="background:#1c1c1c;height:45px;border-radius:3px;"></div>
+          <div style="background:#1c1c1c;height:55px;border-radius:3px;"></div>
+          <div style="background:#1c1c1c;height:40px;border-radius:3px;"></div>
+          <div style="background:#1c1c1c;height:50px;border-radius:3px;"></div>
+          <div style="background:#1c1c1c;height:35px;border-radius:3px;"></div>
+          <div style="background:#1c1c1c;height:60px;border-radius:3px;"></div>
+        </div>
+        <!-- Overlay card -->
+        <div style="position:absolute;top:12px;left:12px;right:12px;background:#1a1a1a;border:1px solid #444;border-radius:6px;padding:10px;box-shadow:0 8px 32px rgba(0,0,0,0.7);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="display:flex;gap:6px;align-items:center;">
+              <div style="background:#444;height:7px;width:50px;border-radius:2px;"></div>
+              <div style="background:#333;height:5px;width:35px;border-radius:2px;"></div>
+            </div>
+            <div style="color:#555;font-size:10px;">✕</div>
+          </div>
+          <div style="background:#2a2a2a;height:65px;border-radius:3px;"></div>
+          <div style="font-size:9px;color:#555;margin-top:4px;text-align:center;">card overlays grid (dimmed behind)</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Overlay card, grid dims behind</h3>
+      <p>The card appears as a modal-like overlay that covers the grid (within its container — not full screen). The grid dims behind it. Easiest to animate with Framer Motion layoutId. Similar to Apple's app store expand pattern.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;">Click your preferred approach, then let me know in the terminal.</p>

@@ -9,6 +9,26 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { X } from "lucide-react";
 
+const RED_SHADES = [
+  "#fef2f2",
+  "#fee2e2",
+  "#fecaca",
+  "#fca5a5",
+  "#f87171",
+  "#ef4444",
+  "#dc2626",
+  "#b91c1c",
+  "#991b1b",
+  "#7f1d1d",
+];
+
+function redShadeForKey(key: string) {
+  const idx =
+    key.split("").reduce((acc, c) => acc + c.charCodeAt(0), 0) %
+    RED_SHADES.length;
+  return RED_SHADES[idx];
+}
+
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
   video: "Video",
@@ -41,27 +61,44 @@ export default function DemoClient({
   items: GridItem[];
   categories: string[];
 }) {
-  const [view, setView] = useState<null | "showreel" | "projects">(null);
+  const [view, setView] = useState<null | "showreel" | "projects">("showreel");
   const [active, setActive] = useState("all");
   const [openSlug, setOpenSlug] = useState<string | null>(null);
   const [showAbout, setShowAbout] = useState(true);
+  const [loadPhase, setLoadPhase] = useState<"loading" | "done">("loading");
+  const [loaderKey, setLoaderKey] = useState(0);
+
+  function restartLoader() {
+    setLoaderKey((k) => k + 1);
+    setLoadPhase("loading");
+  }
 
   const openCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (openSlug && openCardRef.current) {
-      openCardRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+      openCardRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
     }
   }, [openSlug]);
 
   function toggleView(v: "showreel" | "projects") {
     setView((current) => (current === v ? null : v));
+    if (v === "projects") restartLoader();
   }
 
-  const displayed =
+  const slugsSeen = new Set<string>();
+  const displayed = (
     active === "all"
       ? items.filter((i) => i.isPrimary)
-      : items.filter((i) => i.categories.includes(active));
+      : items.filter((i) => i.categories.includes(active))
+  ).filter((i) => {
+    if (slugsSeen.has(i.slug)) return false;
+    slugsSeen.add(i.slug);
+    return true;
+  });
 
   const showreelImages = items
     .filter((i) => i.isPrimary)
@@ -69,31 +106,48 @@ export default function DemoClient({
     .map((i) => ({ key: i.key, url: i.url, aspectRatio: i.aspectRatio }));
 
   function handleFilterChange(cat: string) {
+    setView("projects");
     setActive(cat);
     setOpenSlug(null);
+    restartLoader();
   }
 
   return (
     <div className="min-h-screen">
-      <div className="flex flex-row justify-between w-full lg:justify-start lg:gap-x-16 font-rounded text-2xl text-red-200 px-2 pt-1 items-baseline">
+      <div className="flex flex-row justify-between w-full font-rounded text-2xl text-red-200 px-2 pt-1 items-baseline">
         <Button
-          variant={showAbout ? "glow" : "link"}
-          className={cn(
-            "font-rounded  text-2xl tracking-wider gap-0 transition-colors",
-            !showAbout &&
-              "text-red-200 hover:text-red-500 no-underline hover:no-underline",
-          )}
+          variant="link"
+          className="font-rounded text-2xl tracking-wider gap-0 text-red-500 hover:text-red-500"
           onClick={() => setShowAbout(!showAbout)}
         >
           Multi <span className="font-ft88-gothique text-base ml-0">2</span>
         </Button>
+        <div className="flex-1 mx-2 h-5 self-center bg-red-100 overflow-hidden rounded-full">
+          <motion.div
+            key={loaderKey}
+            className="h-full bg-red-500 rounded-full"
+            initial={{ width: "0%", opacity: 1 }}
+            animate={
+              loadPhase === "loading"
+                ? { width: "100%", opacity: 1 }
+                : { width: "100%", opacity: 0 }
+            }
+            transition={
+              loadPhase === "loading"
+                ? { duration: 1.5, ease: [0.4, 0, 0.2, 1] }
+                : { duration: 0.4 }
+            }
+            onAnimationComplete={() => {
+              if (loadPhase === "loading") setLoadPhase("done");
+            }}
+          />
+        </div>
         <div className="flex items-baseline">
           <Button
-            variant={view === "showreel" ? "glow" : "link"}
+            variant="link"
             className={cn(
-              "font-rounded transition-colors",
-              view !== "showreel" &&
-                "text-red-200 hover:text-red-500 no-underline hover:no-underline",
+              "font-rounded",
+              view === "showreel" && "text-red-600",
             )}
             onClick={() => toggleView("showreel")}
           >
@@ -101,21 +155,17 @@ export default function DemoClient({
           </Button>
           ,
           <Button
-            variant={view === "projects" ? "glow" : "link"}
+            variant="link"
             className={cn(
-              "font-rounded transition-colors ml-1",
-              view !== "projects" &&
-                "text-red-200 hover:text-red-500 no-underline hover:no-underline",
+              "font-rounded ml-1",
+              view === "projects" && "text-red-600 font-medium",
             )}
             onClick={() => toggleView("projects")}
           >
             Projects
           </Button>
           ,
-          <Button
-            variant="link"
-            className="ml-1 text-red-200 hover:text-red-500 no-underline hover:no-underline"
-          >
+          <Button variant="link" className="ml-1">
             Connect
           </Button>
         </div>
@@ -143,15 +193,14 @@ export default function DemoClient({
         {["all", ...categories].map((cat, i) => (
           <span key={cat}>
             <Button
-              variant={view === "projects" && active === cat ? "glow" : "link"}
-              onClick={
-                view === "projects" ? () => handleFilterChange(cat) : undefined
-              }
+              variant="link"
+              onClick={() => handleFilterChange(cat)}
               className={cn(
-                "font-rounded transition-colors inline px-0",
-                (view !== "projects" || active !== cat) &&
-                  "text-red-200 hover:text-red-500 no-underline hover:no-underline",
-                view !== "projects" && "pointer-events-none opacity-50",
+                "font-rounded inline px-0",
+                view === "projects" &&
+                  active === cat &&
+                  "text-red-600 font-medium",
+                view !== "projects" && "opacity-50",
               )}
             >
               {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
@@ -159,16 +208,17 @@ export default function DemoClient({
             {i !== categories.length && ","}{" "}
           </span>
         ))}
+        {/* <Button variant="link">Search...</Button> */}
       </div>
       {view === "showreel" && (
-        <div className="px-2 pt-2">
+        <div className="px-2 pt-2 max-w-xl">
           <ShowreelSlideshow images={showreelImages} />
         </div>
       )}
       {view === "projects" && (
         <>
           {/* Masonry grid — CSS columns */}
-          <div className="columns-2 md:columns-3 gap-2 px-2 pt-1">
+          <div className="columns-2 md:columns-3 gap-2 px-2 pt-2 ">
             <AnimatePresence mode="popLayout" initial={false}>
               {displayed.map((item) => {
                 const isOpen = item.slug === openSlug;
@@ -212,8 +262,7 @@ export default function DemoClient({
                     }}
                     onClick={() => setOpenSlug(item.slug)}
                   >
-                    <div className="absolute inset-0 transition-opacity duration-300 group-hover:opacity-70">
-                      {/* Full-res — pre-loads for instant reveal when card opens */}
+                    <div className="absolute inset-0">
                       <Image
                         src={item.url}
                         alt={item.alt}
@@ -221,16 +270,14 @@ export default function DemoClient({
                         className="object-cover"
                         sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                       />
-                      {/* Pixelated overlay — tiny image scaled up with square pixels */}
-                      <Image
-                        src={item.url}
-                        alt=""
-                        width={16}
-                        height={Math.round(16 / (item.aspectRatio || 1))}
-                        className="absolute inset-0 w-full h-full object-cover pointer-events-none"
-                        style={{ imageRendering: "pixelated" }}
-                        aria-hidden={true}
-                      />
+                      <div className="absolute inset-0 group-hover:opacity-0 transition-opacity duration-300 flex items-center justify-center pointer-events-none bg-red-500">
+                        <div className="flex gap-0 items-center justify-center text-red-100">
+                          <span className=" font-rounded text-2xl">M</span>
+                          <span className="font-ft88-gothique text-base">
+                            2
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </motion.div>
                 );

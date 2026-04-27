@@ -29,6 +29,11 @@ const ft88 = localFont({
   variable: "--font-ft88",
 });
 
+const ft88Gothique = localFont({
+  src: "./FT88-Gothique.woff",
+  variable: "--font-ft88-gothique",
+});
+
 const karlRounded = localFont({
   src: [
     { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
@@ -80,7 +85,7 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable}  ${karlRounded.variable} antialiased`}
+        className={` ${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${ft88Gothique.variable} ${karlRounded.variable} antialiased`}
       >
         {children}
       </body>

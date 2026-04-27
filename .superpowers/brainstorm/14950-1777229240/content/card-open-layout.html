@@ -1,0 +1,65 @@
+<h2>When a card opens — what does the masonry grid look like inside?</h2>
+<p class="subtitle">Currently the opened card shows a horizontal carousel. We're replacing that with a masonry grid. Which layout feels right?</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;color:#888">
+        <div style="color:#ccc;margin-bottom:8px;font-size:11px">IKEA, 2024 ✕</div>
+        <!-- header strip -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+          <div style="background:#333;padding-top:75%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:120%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:60%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:90%;border-radius:2px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 2-column masonry inside card</h3>
+      <p>Compact, fills the card width. Feels like a gallery within the gallery.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;color:#888">
+        <div style="color:#ccc;margin-bottom:8px;font-size:11px">IKEA, 2024 ✕</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px">
+          <div style="background:#333;padding-top:75%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:110%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:65%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:90%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:80%;border-radius:2px"></div>
+          <div style="background:#333;padding-top:55%;border-radius:2px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 3-column masonry inside card</h3>
+      <p>Denser, shows more images at once. Matches the outer grid feel.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div style="background:#111;padding:12px;border-radius:4px;font-family:monospace;font-size:12px;color:#888">
+        <div style="color:#ccc;margin-bottom:8px;font-size:11px">IKEA, 2024 ✕</div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <div style="background:#333;padding-top:45%;border-radius:2px;width:100%"></div>
+          <div style="display:flex;gap:4px">
+            <div style="background:#333;padding-top:60%;border-radius:2px;flex:1"></div>
+            <div style="background:#333;padding-top:60%;border-radius:2px;flex:1"></div>
+          </div>
+          <div style="background:#333;padding-top:40%;border-radius:2px;width:100%"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Editorial mixed (hero + grid)</h3>
+      <p>First image full-width hero, rest in 2-col grid. Gives the lead image prominence.</p>
+    </div>
+  </div>
+
+</div>

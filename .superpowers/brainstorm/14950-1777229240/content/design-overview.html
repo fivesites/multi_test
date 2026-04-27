@@ -1,0 +1,93 @@
+<h2>Full design overview</h2>
+<p class="subtitle">Two features, three components touched. Review each section and confirm.</p>
+
+<div class="section">
+  <h3>1 — Projects grid: pixelated thumbnails</h3>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin:12px 0">
+    <!-- pixelated card mockups -->
+    <div style="position:relative;padding-top:130%;background:#1a1a1a;border-radius:2px;overflow:hidden">
+      <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(8,1fr)">
+        <div style="background:#7a2020"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#5c1818"></div>
+        <div style="background:#6b1f1f"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#8b2929"></div>
+        <div style="background:#8b2929"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#7a2020"></div>
+        <div style="background:#5c1818"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#6b1f1f"></div>
+        <div style="background:#7a2020"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#5c1818"></div>
+        <div style="background:#6b1f1f"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#8b2929"></div>
+        <div style="background:#8b2929"></div><div style="background:#7a2020"></div><div style="background:#6b1f1f"></div><div style="background:#5c1818"></div><div style="background:#8b2929"></div><div style="background:#7a2020"></div>
+        <div style="background:#5c1818"></div><div style="background:#6b1f1f"></div><div style="background:#7a2020"></div><div style="background:#8b2929"></div><div style="background:#5c1818"></div><div style="background:#6b1f1f"></div>
+      </div>
+    </div>
+    <div style="position:relative;padding-top:80%;background:#1a1a1a;border-radius:2px;overflow:hidden">
+      <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(5,1fr)">
+        <div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div>
+        <div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div>
+        <div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div><div style="background:#0a2a4c"></div>
+        <div style="background:#0a2a4c"></div><div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#2a4a6c"></div><div style="background:#1a3a5c"></div>
+        <div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#1a3a5c"></div><div style="background:#2a4a6c"></div><div style="background:#0a2a4c"></div><div style="background:#1a3a5c"></div>
+      </div>
+    </div>
+    <div style="position:relative;padding-top:110%;background:#1a1a1a;border-radius:2px;overflow:hidden">
+      <div style="position:absolute;inset:0;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(7,1fr)">
+        <div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div>
+        <div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div>
+        <div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div>
+        <div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div>
+        <div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div>
+        <div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div>
+        <div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div><div style="background:#3a3020"></div><div style="background:#4a4030"></div><div style="background:#2a2010"></div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#666;margin:4px 0 0">Each thumbnail: 16px-wide Next.js Image with <code>image-rendering: pixelated</code>, stretched to fill. Full-res image pre-loads beneath (invisible until card opens).</p>
+</div>
+
+<div class="section">
+  <h3>2 — Card opens: 2-col masonry + snap to top</h3>
+  <div style="background:#1a1a1a;padding:12px;border-radius:4px;margin:12px 0">
+    <div style="color:#e55;font-size:12px;margin-bottom:8px;display:flex;justify-content:space-between">
+      <span>IKEA, 2024</span><span style="color:#555">✕  ↗</span>
+    </div>
+    <div style="font-size:10px;color:#555;margin-bottom:8px;line-height:1.4">Multi² is not your typical company...</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">
+      <div style="background:#2a2a2a;padding-top:130%;border-radius:2px"></div>
+      <div style="background:#2a2a2a;padding-top:70%;border-radius:2px"></div>
+      <div style="background:#2a2a2a;padding-top:60%;border-radius:2px"></div>
+      <div style="background:#2a2a2a;padding-top:110%;border-radius:2px"></div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#666">Card opens (opacity animation). Page scrolls so opened card sits at top of viewport. Images inside are clear (full-res). Clicking an image still opens the Lightbox.</p>
+</div>
+
+<div class="section">
+  <h3>3 — Showreel: single image, 3s crossfade with de-pixelation</h3>
+  <div style="background:#1a1a1a;padding:12px;border-radius:4px;margin:12px 0;position:relative;overflow:hidden'>
+    <div style="display:flex;align-items:center;gap:8px;font-size:10px;color:#555;margin-bottom:8px">
+      <span>Image 1 (visible, clear)</span>
+      <span style="color:#333">—3s—</span>
+      <span>crossfade starts →</span>
+      <span>Image 2 (enters pixelated) →</span>
+      <span style="color:#e55">Image 2 (de-pixelates, settles clear)</span>
+    </div>
+    <!-- mockup showing single image at 16:9-ish -->
+    <div style="position:relative;padding-top:55%;background:#2a2a2a;border-radius:2px;overflow:hidden">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="text-align:center">
+          <div style="font-size:10px;color:#555">Full-width single image</div>
+          <div style="font-size:10px;color:#444;margin-top:4px">No prev/next arrows · no scrubbing</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p style="font-size:11px;color:#666">New <code>ShowreelSlideshow</code> component. AnimatePresence crossfade. Each entering image: full-res beneath + pixelated overlay fading out simultaneously (~0.8s). Auto-advances every 3s, loops.</p>
+</div>
+
+<div class="section">
+  <h3>Components summary</h3>
+  <div style="font-size:11px;color:#666;font-family:monospace;line-height:2">
+    <div><span style="color:#e55">MODIFIED</span>  DemoClient.tsx — pixelated thumbnails in grid, scroll-to-top on open</div>
+    <div><span style="color:#e55">MODIFIED</span>  MultiCard.tsx — ImageCarousel → 2-col masonry grid</div>
+    <div><span style="color:#6a9">NEW     </span>  ShowreelSlideshow.tsx — replaces ImageCarousel in showreel</div>
+    <div><span style="color:#888">DELETED </span>  ImageCarousel.tsx — no longer used anywhere</div>
+    <div><span style="color:#888">UNCHANGED</span> Lightbox.tsx — still used from MultiCard</div>
+  </div>
+</div>

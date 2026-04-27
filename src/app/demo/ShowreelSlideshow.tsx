@@ -6,7 +6,11 @@ import { motion, AnimatePresence } from "motion/react";
 
 type SlideImage = { key: string; url: string; aspectRatio: number };
 
-export default function ShowreelSlideshow({ images }: { images: SlideImage[] }) {
+export default function ShowreelSlideshow({
+  images,
+}: {
+  images: SlideImage[];
+}) {
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
@@ -21,12 +25,10 @@ export default function ShowreelSlideshow({ images }: { images: SlideImage[] }) 
   if (!current) return null;
 
   const containerAspectRatio = images[0]?.aspectRatio || 16 / 9;
-  const tinyW = 16;
-  const tinyH = Math.round(16 / (current.aspectRatio || 1));
 
   return (
     <div
-      className="relative w-full overflow-hidden"
+      className="relative w-full overflow-hidden group"
       style={{ paddingBottom: `${(1 / containerAspectRatio) * 100}%` }}
     >
       <AnimatePresence>
@@ -38,31 +40,16 @@ export default function ShowreelSlideshow({ images }: { images: SlideImage[] }) 
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8 }}
         >
-          {/* Full-res layer */}
           <Image
             src={current.url}
             alt=""
             fill
-            className="object-cover"
+            className="object-contain object-left-top"
             sizes="(max-width: 768px) 100vw, 85vw"
           />
-          {/* Pixelated overlay — fades out as slide settles */}
-          <motion.div
-            className="absolute inset-0"
-            initial={{ opacity: 1 }}
-            animate={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
-          >
-            <Image
-              src={current.url}
-              alt=""
-              width={tinyW}
-              height={tinyH}
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ imageRendering: "pixelated" }}
-              aria-hidden={true}
-            />
-          </motion.div>
+          {/* <div className="absolute inset-0 z-10 bg-red-500 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
+            <span className="text-background font-rounded text-2xl">M2</span>
+          </div> */}
         </motion.div>
       </AnimatePresence>
     </div>

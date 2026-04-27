@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { X, ExternalLink } from "lucide-react";
-import { AnimatePresence } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Lightbox from "./Lightbox";
@@ -29,7 +29,7 @@ export default function MultiCard({
 
   return (
     <>
-      <Card className="w-full text-red-600">
+      <Card className="w-full text-red-600 rounded-none">
         <CardHeader className="flex flex-row items-start justify-between gap-4 pb-0">
           <div className="flex flex-col gap-0">
             <p className="text-2xl font-rounded leading-tight">
@@ -63,10 +63,17 @@ export default function MultiCard({
             move faster, think clearer, and create more with less.
           </p>
 
-          <div className="columns-2 gap-2">
+          <motion.div
+            className="columns-2 gap-2"
+            initial="hidden"
+            animate="visible"
+            variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
+          >
             {projectImages.map((img, i) => (
-              <div
+              <motion.div
                 key={img.key}
+                variants={{ hidden: { opacity: 0, y: 12 }, visible: { opacity: 1, y: 0 } }}
+                transition={{ duration: 0.3 }}
                 className="relative break-inside-avoid mb-2 cursor-zoom-in"
                 style={{ paddingBottom: `${(1 / (img.aspectRatio || 1)) * 100}%` }}
                 onClick={() => setLightboxIndex(i)}
@@ -78,9 +85,9 @@ export default function MultiCard({
                   className="object-cover"
                   sizes="(max-width: 768px) 50vw, 33vw"
                 />
-              </div>
+              </motion.div>
             ))}
-          </div>
+          </motion.div>
         </CardContent>
       </Card>
 
