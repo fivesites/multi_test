@@ -123,7 +123,7 @@ export default function DemoClient({
       <AnimatePresence>
         {!loaded && <Loader onDone={() => setLoaded(true)} />}
       </AnimatePresence>
-      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-0 h-">
+      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-0 bg-background">
         <div
           className={cn(
             "flex flex-row items-center font-rounded text-2xl text-red-200 h-full",
