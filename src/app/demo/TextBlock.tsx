@@ -13,10 +13,14 @@ export default function TextBlock({
   text,
   size = "text-2xl",
   delay = 0,
+  justify = true,
+  wordSpacing = 1,
 }: {
   text: string;
   size?: string;
   delay?: number;
+  justify?: boolean;
+  wordSpacing?: number;
 }) {
   const ref = useRef<HTMLParagraphElement>(null);
   const [state, setState] = useState<{
@@ -57,13 +61,13 @@ export default function TextBlock({
         >
           {state.lines.map((line, i) => {
             const isJustified =
+              justify &&
               line.ending !== "paragraph-end" &&
               line.spaceCount > 0 &&
               line.naturalWidth > line.maxWidth * 0.6;
-            const spaceW =
-              (isJustified
-                ? (line.maxWidth - line.wordWidth) / line.spaceCount
-                : state.normalSpaceWidth) * 1;
+            const spaceW = isJustified
+              ? (line.maxWidth - line.wordWidth) / line.spaceCount
+              : state.normalSpaceWidth * wordSpacing;
             return (
               <motion.span
                 key={i}

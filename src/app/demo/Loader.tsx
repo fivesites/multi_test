@@ -28,7 +28,7 @@ export default function Loader({ onDone }: { onDone?: () => void }) {
         if (dismissing) onDone?.();
       }}
     >
-      <div className="flex flex-wrap pt-4 px-4 gap-x-4">
+      <div className="flex flex-wrap w-full justify-center pt-4 px-4 gap-x-4">
         {lines.map(({ text, delay }) => (
           <TextBlock key={text} text={text} size="text-2xl" delay={delay} />
         ))}

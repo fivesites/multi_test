@@ -123,7 +123,7 @@ export default function DemoClient({
       <AnimatePresence>
         {!loaded && <Loader onDone={() => setLoaded(true)} />}
       </AnimatePresence>
-      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-4 h-">
+      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-0 h-">
         <div
           className={cn(
             "flex flex-row items-center font-rounded text-2xl text-red-200 h-full",
@@ -217,7 +217,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-4  pb-0 pt-4 text-2xl flex flex-wrap justify-start  font-rounded text-red-200 leading-tight w-full"
+              className="px-4  pb-0 pt-0 text-2xl flex flex-wrap justify-start  font-rounded text-red-200 leading-tight w-full scroll-mt.[48px]"
               initial="hidden"
               animate="show"
               variants={{
@@ -272,7 +272,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-2 mt-2 max-w-5xl mx-auto scroll-mt-[64px]"
+                        className="mb-2 mt-2 max-w-5xl mx-auto scroll-mt-[48px]"
                       >
                         <MultiCard
                           title={item.title}
@@ -329,7 +329,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 max-w-4xl mx-auto scroll-mt-[64px]"
+            className="px-4 pt-4 max-w-4xl mx-auto scroll-mt-[48px]"
           >
             <TextBlock text={ABOUT_TEXT} size="text-2xl" />
           </motion.div>
@@ -342,7 +342,7 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 scroll-mt-[56px]"
+            className="px-4 pt-4 scroll-mt-[48px]"
           >
             <motion.p
               className="text-2xl font-rounded text-red-500"
