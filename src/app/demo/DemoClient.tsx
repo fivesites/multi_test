@@ -4,11 +4,13 @@ import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
-import ShowreelSlideshow from "./ShowreelSlideshow";
+import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/components/ui/button";
 import TextBlock from "./TextBlock";
 import { cn } from "@/lib/utils";
 import Loader from "./Loader";
+import TextDrop from "./TextDrop";
+import DarkModeButton from "./DarkModeButton";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -119,11 +121,14 @@ export default function DemoClient({
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-background">
       <AnimatePresence>
         {!loaded && <Loader onDone={() => setLoaded(true)} />}
       </AnimatePresence>
-      <div className="sticky z-20 left-0 top-0  w-full  px-4  h-auto pt-4 pb-0 bg-background">
+      <motion.div
+        className="fixed z-20 top-0 left-0 right-0 px-4 pt-4 pb-2"
+        transition={{ duration: 0.4 }}
+      >
         <div
           className={cn(
             "flex flex-row items-center font-rounded text-2xl text-red-200 h-full",
@@ -135,12 +140,12 @@ export default function DemoClient({
             transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <Button
-              variant="link"
-              className="font-rounded   text-red-500 hover:text-red-300 cursor-pointer gap-0 flex leading-tight"
+              variant="glow"
+              className="font-rounded cursor-pointer gap-0 flex leading-tight tracking-normal text-red-100"
               onClick={() => handleNavClick("showreel")}
             >
-              Multi
-              <span
+              Multi²
+              {/* <span
                 className="font-ft88-gothique text-base pr-1.5"
                 style={{
                   transform: "scaleX(1.75)",
@@ -149,41 +154,39 @@ export default function DemoClient({
                 }}
               >
                 2
-              </span>
+              </span> */}
             </Button>
           </motion.div>
           <motion.div
             layout
-            className="flex items-baseline justify-start leading-tight"
+            className="flex items-baseline justify-start gap-x-[9px] leading-tight"
             transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
           >
             <Button
-              variant="link"
+              variant={panel === "projects" ? "glow" : "link"}
               className={cn(
-                "font-rounded tracking-normal",
-                panel === "projects" && "text-red-500",
+                "font-rounded",
+                panel === "projects" ? "tracking-wide" : "tracking-tight",
               )}
               onClick={() => handleNavClick("projects")}
             >
               Work
             </Button>
-            ,
             <Button
-              variant="link"
+              variant={panel === "about" ? "glow" : "link"}
               className={cn(
-                "font-rounded ml-1 tracking-normal",
-                panel === "about" && "text-red-500",
+                "font-rounded ml-1",
+                panel === "about" ? "tracking-wide" : "tracking-tight",
               )}
               onClick={() => handleNavClick("about")}
             >
               About
             </Button>
-            ,
             <Button
-              variant="link"
+              variant={panel === "connect" ? "glow" : "link"}
               className={cn(
-                "font-rounded ml-1 tracking-normal",
-                panel === "connect" && "text-red-500",
+                "font-rounded ml-1",
+                panel === "connect" ? "tracking-wide" : "tracking-tight",
               )}
               onClick={() => handleNavClick("connect")}
             >
@@ -191,7 +194,7 @@ export default function DemoClient({
             </Button>
           </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {panel === "showreel" && (
@@ -202,9 +205,14 @@ export default function DemoClient({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
           >
-            <div className="px-4 mb-4 mx-auto max-w-xl">
-              <ShowreelSlideshow images={showreelImages} />
-            </div>
+            <VideoPlayer
+              src="/multi_showreel_mobile.mp4"
+              className="w-full h-dvh block lg:hidden"
+            />
+            <VideoPlayer
+              src="/multi_showreel_desktop.mp4"
+              className="w-full h-dvh hidden lg:block"
+            />
           </motion.div>
         )}
 
@@ -217,7 +225,7 @@ export default function DemoClient({
             transition={{ duration: 0.25 }}
           >
             <motion.div
-              className="px-4  pb-0 pt-0 text-2xl flex flex-wrap justify-start  font-rounded text-red-200 leading-tight w-full scroll-mt.[48px]"
+              className="mt-[56px] lg:mt-[69px] px-4  pb-0 pt-2 text-2xl flex flex-wrap justify-start  font-rounded text-red-200 leading-tight w-full scroll-mt-[48px]"
               initial="hidden"
               animate="show"
               variants={{
@@ -227,31 +235,45 @@ export default function DemoClient({
                 },
               }}
             >
-              <div className="  text-red-300 rounded-2xl">
+              <div className="flex flex-wrap justify-between gap-x-[9px]  items-baseline gap-y-0 text-red-300 w-full">
                 {["all", ...categories].map((cat, i) => (
-                  <motion.span key={cat} variants={filterItemVariants}>
+                  <motion.span
+                    className="flex items-baseline gap-x-1 "
+                    key={cat}
+                    variants={filterItemVariants}
+                  >
+                    {active === cat && (
+                      <div
+                        className="w-4 h-4 rounded-full bg-red-100 shrink-0 self-center"
+                        style={{
+                          boxShadow:
+                            "0 0 6px #ef4444, 0 0 16px #ef4444, 0 0 32px rgba(239,68,68,0.6)",
+                        }}
+                      />
+                    )}
                     <Button
-                      variant="link"
+                      variant={active === cat ? "glow" : "link"}
                       onClick={() => handleFilterChange(cat)}
                       className={cn(
-                        "font-rounded tracking-normal inline px-0 text-red-300 leading-tight  hover:text-red-500",
-                        active === cat && "text-red-500",
+                        "font-rounded text-2xl inline px-0 leading-tight",
+                        active === cat ? "tracking-wide" : "tracking-normal",
                       )}
                     >
                       {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
-                    </Button>
-                    {i !== categories.length && ","}{" "}
+                    </Button>{" "}
                   </motion.span>
                 ))}
 
                 <motion.span variants={filterItemVariants}>
-                  ,{" "}
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search..."
-                    className="bg-transparent outline-none font-rounded text-2xl text-red-500 placeholder:text-red-300 w-32"
+                    className="bg-transparent outline-none font-rounded text-2xl  py-0 h-auto text-red-200 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-32 focus:[text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] transition-all duration-200"
                   />
+                </motion.span>
+                <motion.span variants={filterItemVariants}>
+                  <DarkModeButton className="font-rounded text-2xl  tracking-normal gap-x-2" />
                 </motion.span>
               </div>
             </motion.div>
@@ -272,7 +294,7 @@ export default function DemoClient({
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.3 }}
                         style={{ columnSpan: "all" } as React.CSSProperties}
-                        className="mb-2 mt-2 max-w-5xl mx-auto scroll-mt-[48px]"
+                        className="mb-2 mt-2 max-w-5xl mx-auto  scroll-mt-[48px]"
                       >
                         <MultiCard
                           title={item.title}
@@ -329,9 +351,9 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 max-w-4xl mx-auto scroll-mt-[48px]"
+            className="px-4 pt-4 max-w-4xl mt-[69px] mx-auto scroll-mt-[48px]"
           >
-            <TextBlock text={ABOUT_TEXT} size="text-2xl" />
+            <TextBlock text={ABOUT_TEXT} size="text-xl" />
           </motion.div>
         )}
 
@@ -342,10 +364,10 @@ export default function DemoClient({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 scroll-mt-[48px]"
+            className="px-4 mt-[69px] pt-4 scroll-mt-[48px]"
           >
             <motion.p
-              className="text-2xl font-rounded text-red-500"
+              className="text-2xl font-rounded  text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)]"
               initial="hidden"
               animate="show"
               variants={{

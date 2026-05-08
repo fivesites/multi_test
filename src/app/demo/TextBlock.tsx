@@ -46,7 +46,7 @@ export default function TextBlock({
   return (
     <p
       ref={ref}
-      className={`${size} font-rounded leading-tight px-0 tracking-wide text-red-500  `}
+      className={`${size} font-rounded [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] leading-tight px-0  text-red-100  `}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>
@@ -56,7 +56,9 @@ export default function TextBlock({
           animate="show"
           variants={{
             hidden: {},
-            show: { transition: { staggerChildren: 0.08, delayChildren: delay } },
+            show: {
+              transition: { staggerChildren: 0.08, delayChildren: delay },
+            },
           }}
         >
           {state.lines.map((line, i) => {

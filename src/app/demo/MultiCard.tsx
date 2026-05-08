@@ -35,20 +35,23 @@ export default function MultiCard({
 
   return (
     <>
-      <Card className="w-full text-red-500 bg-background rounded-none  pb-0   ">
+      <Card className="w-full text-red-500 bg-black   pb-0   ">
         <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-4 pt-4 pb-4 ">
           <div className="flex flex-col gap-0">
-            <p className="text-2xl font-rounded leading-tight flex items-center   ">
+            <Button
+              variant="glow"
+              className="text-2xl font-rounded leading-tight flex items-center   "
+            >
               {client ?? title}
-            </p>
+            </Button>
           </div>
           <div className="flex items-center gap-0 shrink-0">
             <Button
-              variant="link"
+              variant="glow"
               size="icon"
               aria-label="Close"
               onClick={onClose}
-              className="text-red-4400 "
+              className=" "
             >
               <X className="h-4 w-4" />
             </Button>
@@ -68,7 +71,7 @@ export default function MultiCard({
           </div>
 
           <motion.div
-            className="columns-2 gap-2 pt-2 px-0 bg-background"
+            className="columns-2 gap-2 pt-0 px-4 "
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.06 } } }}
@@ -81,7 +84,7 @@ export default function MultiCard({
                   visible: { opacity: 1, y: 0 },
                 }}
                 transition={{ duration: 0.3 }}
-                className="relative break-inside-avoid mb-2 cursor-zoom-in"
+                className="relative break-inside-avoid mb-2 cursor-zoom-in "
                 style={{
                   paddingBottom: `${(1 / (img.aspectRatio || 1)) * 100}%`,
                 }}

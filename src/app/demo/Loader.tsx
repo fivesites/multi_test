@@ -5,11 +5,12 @@ import { motion } from "motion/react";
 import TextBlock from "./TextBlock";
 
 const lines = [
-  { text: "Twice the talent.", delay: 0 },
-  { text: "Squared results.", delay: 1 },
+  { text: "Twice the talent", delay: 0 },
+  { text: "Squared results", delay: 1 },
+  { text: "Multi²", delay: 2 },
 ];
 
-const DISMISS_AFTER = 2200;
+const DISMISS_AFTER = 3000;
 
 export default function Loader({ onDone }: { onDone?: () => void }) {
   const [dismissing, setDismissing] = useState(false);
@@ -21,7 +22,7 @@ export default function Loader({ onDone }: { onDone?: () => void }) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-start justify-center bg-background w-full"
+      className="fixed inset-0 z-50 flex items-start justify-center bg-black w-full"
       animate={{ opacity: dismissing ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       onAnimationComplete={() => {
