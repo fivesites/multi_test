@@ -1,9 +1,8 @@
-import { client } from "../../../sanity/lib/client";
-import { workCardsQuery } from "../../../sanity/lib/queries";
-import { urlFor } from "../../../sanity/lib/image";
-import DemoClient, { type GridItem } from "./DemoClient";
-
-export const revalidate = 60;
+import React from "react";
+import { client } from "../../sanity/lib/client";
+import { workCardsQuery } from "../../sanity/lib/queries";
+import { urlFor } from "../../sanity/lib/image";
+import { WorkProvider, type GridItem } from "./WorkContext";
 
 type MediaItem = {
   _type: string;
@@ -16,14 +15,19 @@ type WorkData = {
   _id: string;
   title: string;
   client?: string;
+  credits?: unknown;
   categories?: string[];
   slug: string;
   coverImage?: { asset: { _ref: string }; aspectRatio?: number };
   media?: MediaItem[];
 };
 
-export default async function DemoPage() {
-  const works: WorkData[] = await client.fetch(workCardsQuery);
+export async function WorkContextServer({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const works = await client.fetch<WorkData[]>(workCardsQuery);
 
   const items: GridItem[] = [];
   const categorySet = new Set<string>();
@@ -54,6 +58,7 @@ export default async function DemoPage() {
           slug: work.slug,
           title: work.title,
           client: work.client,
+          credits: work.credits,
           categories: work.categories ?? [],
           aspectRatio: img.aspectRatio ?? 1,
           isPrimary: idx === 0,
@@ -69,6 +74,7 @@ export default async function DemoPage() {
         slug: work.slug,
         title: work.title,
         client: work.client,
+        credits: work.credits,
         categories: work.categories ?? [],
         aspectRatio: work.coverImage.aspectRatio ?? 1,
         isPrimary: true,
@@ -86,8 +92,8 @@ export default async function DemoPage() {
   const categories = Array.from(categorySet).sort();
 
   return (
-    <div className="">
-      <DemoClient items={items} categories={categories} />
-    </div>
+    <WorkProvider items={items} categories={categories}>
+      {children}
+    </WorkProvider>
   );
 }

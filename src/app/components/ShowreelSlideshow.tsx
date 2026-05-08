@@ -44,12 +44,9 @@ export default function ShowreelSlideshow({
             src={current.url}
             alt=""
             fill
-            className="object-contain object-center lg:object-top "
+            className="object-contain object-center lg:object-top"
             sizes="(max-width: 768px) 100vw, 85vw"
           />
-          {/* <div className="absolute inset-0 z-10 bg-red-500 flex items-center justify-center group-hover:opacity-0 transition-opacity duration-300">
-            <span className="text-background font-rounded text-2xl">M2</span>
-          </div> */}
         </motion.div>
       </AnimatePresence>
     </div>

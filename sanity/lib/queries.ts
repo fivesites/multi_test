@@ -58,6 +58,7 @@ export const workCardsQuery = groq`
     _id,
     title,
     client,
+    credits,
     categories,
     "slug": slug.current,
     coverImage { asset, "aspectRatio": asset->metadata.dimensions.aspectRatio },
@@ -81,36 +82,14 @@ export const stickyNotesQuery = groq`
   }
 `;
 
-// All saved two designs, ordered
-export const twoDesignsQuery = groq`
-  *[_type == "twoDesign"] | order(order asc) {
+// All copy entries (for CopyContext)
+export const allCopyQuery = groq`
+  *[_type == "copy"] {
     _id,
-    label,
-    cells,
-    style,
-    noGap,
-    cols,
-    rows,
-    asset
-  }
-`;
-
-// All multi assets, ordered
-export const multiAssetsQuery = groq`
-  *[_type == "multiAsset"] | order(order asc) {
-    _id,
-    label,
-    role,
-    type,
-    cells,
-    glyphStyle,
-    noGap,
-    cols,
-    rows,
-    uploadedAsset,
-    colorA,
-    colorB,
-    checkerStripCount
+    "key": key.current,
+    title,
+    body,
+    plainText
   }
 `;
 

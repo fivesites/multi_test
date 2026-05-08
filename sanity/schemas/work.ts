@@ -1,17 +1,5 @@
 import { defineField, defineType } from "sanity";
 
-const CATEGORIES = [
-  { title: "Photo", value: "photo" },
-  { title: "Video", value: "video" },
-  { title: "Production", value: "production" },
-  { title: "Art Direction", value: "art-direction" },
-  { title: "Concept", value: "concept" },
-  { title: "Sound Design", value: "sound-design" },
-  { title: "Vax", value: "vax" },
-  { title: "DOP", value: "dop" },
-  { title: "Post-processing", value: "post-processing" },
-];
-
 export const work = defineType({
   name: "work",
   title: "Work",
@@ -45,9 +33,6 @@ export const work = defineType({
       title: "Categories",
       type: "array",
       of: [{ type: "string" }],
-      options: {
-        list: CATEGORIES,
-      },
     }),
     defineField({
       name: "description",
@@ -150,9 +135,9 @@ export const work = defineType({
     defineField({
       name: "credits",
       title: "Credits",
-      type: "array",
-      of: [{ type: "block" }],
-      description: "Each block renders as a list item. Use line breaks to separate roles.",
+      type: "text",
+      rows: 6,
+      description: "Use line breaks to separate roles.",
     }),
     defineField({
       name: "imagesPerPage",
