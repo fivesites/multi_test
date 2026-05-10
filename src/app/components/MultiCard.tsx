@@ -47,7 +47,7 @@ export default function MultiCard({
             <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-4 pb-0">
               <Button
                 variant="glow"
-                className="text-base text-blue-600 font-rounded leading-tight px-0"
+                className="text-base  font-rounded leading-tight px-0"
                 asChild
               >
                 <Link href={`/work/${slug}`}>
@@ -69,7 +69,7 @@ export default function MultiCard({
 
           <Link href={`/work/${slug}`}>
             <CardContent className="pt-4 px-0 flex flex-col">
-              <p className="text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] mb-4">
+              <p className="text-base font-rounded max-w-sm lg:max-w-lg text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] mb-4">
                 {description ??
                   "This is a description text. Not a manifesto, not a pitch deck, and definitely not the usual agency talk. It's about a small team with an oversized obsession for clarity, motion, and ideas that stick. "}
               </p>
@@ -78,7 +78,6 @@ export default function MultiCard({
                   variant="glow"
                   className={cn(
                     "text-base font-rounded leading-tight px-0 mt-0 rounded-md",
-                    showList && "lg:hidden",
                   )}
                 >
                   Go to project
@@ -96,7 +95,7 @@ export default function MultiCard({
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.15 }}
-                  className="relative w-full max-w-1/2 aspect-square cursor-zoom-in  overflow-hidden"
+                  className="relative w-full max-w-1/2 lg:max-w-1/4 aspect-square cursor-zoom-in  overflow-hidden"
                 >
                   <Image
                     src={heroImage.url}

@@ -49,19 +49,19 @@ function WorkPageInner({
   return (
     <div className="min-h-screen bg-background lg:max-w-5xl">
       {/* Back button — fixed at same baseline as MultiNav Row 1 */}
-      <div className="fixed z-30 top-0 left-0 px-[9px] lg:px-[24px] pt-[9px] lg:pt-[12px] h-[8dvh] flex items-baseline pointer-events-none">
+      <div className="flex px-2 pt-2    items-baseline pointer-events-none">
         <Button
           variant={glowMode ? "glow" : "link"}
           className="font-rounded leading-tight pointer-events-auto"
           asChild
         >
-          <Link href="/">← Back</Link>
+          <Link href="/">Back</Link>
         </Button>
       </div>
 
-      <div className="px-2 mt-[8dvh] pt-4">
+      <div className="px-2 mt-16 ">
         {/* Header */}
-        <div className="flex justify-between w-full lg:grid lg:grid-cols-4 items-baseline gap-8 pt-2 mb-8">
+        <div className="flex justify-between w-full lg:grid lg:grid-cols-4 items-baseline gap-8  mb-16">
           <h1 className="col-span-2 text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
             {client && `${client} / `}
             {title}
@@ -73,15 +73,15 @@ function WorkPageInner({
 
         {/* Description + credits */}
         {(description || credits) && (
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-8 mb-16">
             {description && (
-              <p className="text-base col-span-2 max-w-sm font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+              <p className="text-base col-span-2 max-w-sm font-rounded text-red-100 mb-16 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
                 {description}
               </p>
             )}
             {credits && (
               <p
-                className="text-base leading-tight font-rounded text-red-100 max-w-sm lg:max-w-xl [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
+                className="text-base leading-tight font-rounded text-red-100 max-w-xs lg:max-w-xl [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
                 style={{ whiteSpace: "pre-line" }}
               >
                 {credits}
@@ -89,10 +89,10 @@ function WorkPageInner({
             )}
           </div>
         )}
-        <div className="flex flex-wrap gap-x-1 gap-y-0 font-rounded text-base mb-2 text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-4 font-rounded text-base mb-16 text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
           {categories.map((c, i) => (
             <span key={c}>
-              {i > 0 && "/ "}
+              {i > 0 && ""}
               {CATEGORY_LABELS[c] ?? c}
             </span>
           ))}

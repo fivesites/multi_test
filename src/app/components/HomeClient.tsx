@@ -260,7 +260,7 @@ function HomeClientInner() {
                           sizes={`${Math.floor(100 / numCols)}vw`}
                         />
                         <div
-                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 group ${glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
+                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 group ${entry.item.slug === openedCard ? "bg-red-500" : glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
                         >
                           <Link
                             href={`/work/${entry.item.slug}`}
