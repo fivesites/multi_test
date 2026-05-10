@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { UIProvider, useUI } from "@/context/UIContext";
-import MultiNav from "@/app/components/MultiNav";
+
 import Lightbox from "@/app/components/Lightbox";
 import { Button } from "@/components/ui/button";
 
@@ -26,7 +26,7 @@ const CATEGORY_LABELS: Record<string, string> = {
 function WorkPageInner({
   title,
   client,
-  slug,
+
   description,
   credits,
   categories,
@@ -35,7 +35,7 @@ function WorkPageInner({
 }: {
   title: string;
   client?: string;
-  slug: string;
+
   description?: string;
   credits?: string;
   categories: string[];

@@ -67,8 +67,7 @@ function HomeClientInner() {
     glowMode,
   } = useUI();
 
-  const hasSecondNavRow = showSettings || panel === "projects";
-  const navMt = hasSecondNavRow ? "mt-[16dvh]" : "mt-[8dvh]";
+  const navMt = panel !== "showreel" ? "mt-[16dvh]" : "mt-[8dvh]";
 
   const openCardRef = useRef<HTMLDivElement>(null);
 
@@ -343,7 +342,7 @@ function HomeClientInner() {
                           </Button>
                           <Link
                             href={`/work/${item.slug}`}
-                            className="flex-1 overflow-hidden flex items-center mx-2 gap-[2px] text-red-200 [.no-glow_&]:text-neutral-400 hover:opacity-80 transition-opacity duration-200"
+                            className={`flex-1 overflow-hidden flex items-center mx-2 gap-[2px] hover:opacity-80 transition-opacity duration-200 ${isOpen ? "text-red-100 [.no-glow_&]:text-red-500" : "text-red-200 [.no-glow_&]:text-neutral-400"}`}
                           >
                             {Array.from({ length: 100 }).map((_, i) => (
                               <ArrowRight
