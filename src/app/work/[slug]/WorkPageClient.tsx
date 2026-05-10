@@ -47,11 +47,11 @@ function WorkPageInner({
   const [heroImage, ...restImages] = images;
 
   return (
-    <div className="min-h-screen bg-background lg:max-w-5xl">
+    <div className="min-h-screen bg-background lg:max-w-5xl pb-2">
       {/* Back button — fixed at same baseline as MultiNav Row 1 */}
       <div className="flex px-2 pt-2    items-baseline pointer-events-none">
         <Button
-          variant={glowMode ? "glow" : "link"}
+          variant={glowMode ? "glow" : "glow"}
           className="font-rounded leading-tight pointer-events-auto"
           asChild
         >
@@ -89,7 +89,7 @@ function WorkPageInner({
             )}
           </div>
         )}
-        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-4 font-rounded text-base mb-16 text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-2 font-rounded text-base mb-16 text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
           {categories.map((c, i) => (
             <span key={c}>
               {i > 0 && ""}
@@ -104,7 +104,7 @@ function WorkPageInner({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="relative w-full mb-2 cursor-zoom-in"
+            className="relative w-full mb-0 cursor-zoom-in"
             style={{
               paddingBottom: `${(1 / (heroImage.aspectRatio || 1)) * 100}%`,
             }}
