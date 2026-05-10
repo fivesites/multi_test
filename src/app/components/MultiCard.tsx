@@ -42,12 +42,12 @@ export default function MultiCard({
   return (
     <>
       <div className="relative">
-        <Card className="w-full text-red-500  pb-[9px] lg:pb-[12px] rounded-xl  ">
+        <Card className="w-full text-red-500 pb-4 rounded-xl gap-y-16 ">
           {!showList && (
-            <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-[9px] lg:pt-[12px] pb-0">
+            <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-4 pb-0">
               <Button
                 variant="glow"
-                className="text-[18px] lg:text-[24px] font-rounded leading-tight px-0"
+                className="text-base text-blue-600 font-rounded leading-tight px-0"
                 asChild
               >
                 <Link href={`/work/${slug}`}>
@@ -68,16 +68,16 @@ export default function MultiCard({
           )}
 
           <Link href={`/work/${slug}`}>
-            <CardContent className="pt-[9px] lg:pt-[12px]px-0 flex flex-col ">
-              <p className="text-[18px] lg:text-[24px] font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] mb-[9px] lg:mb-[12px]">
+            <CardContent className="pt-4 px-0 flex flex-col">
+              <p className="text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] mb-4">
                 {description ??
                   "This is a description text. Not a manifesto, not a pitch deck, and definitely not the usual agency talk. It's about a small team with an oversized obsession for clarity, motion, and ideas that stick. "}
               </p>
-              <CardAction className="flex justify-start gap-1 w-full mb-[18px] lg:mb-[12px]">
+              <CardAction className="flex justify-start gap-1 w-full mb-4">
                 <Button
                   variant="glow"
                   className={cn(
-                    "text-[18px] lg:text-[24px] font-rounded leading-tight px-0 mt-0 rounded-md",
+                    "text-base font-rounded leading-tight px-0 mt-0 rounded-md",
                     showList && "lg:hidden",
                   )}
                 >
@@ -86,7 +86,7 @@ export default function MultiCard({
                 <Button variant="glow">/</Button>
                 <Button
                   variant="glow"
-                  className="text-[18px] lg:text-[24px] font-rounded leading-tight px-0 mt-0 "
+                  className="text-base font-rounded leading-tight px-0 mt-0 "
                 >
                   Back
                 </Button>

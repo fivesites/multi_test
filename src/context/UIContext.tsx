@@ -39,15 +39,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showList, setShowList] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [openedCard, setOpenedCard] = useState<string | null>(null);
-  const [glowMode, setGlowMode] = useState(true);
+  const [glowMode, setGlowMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
-  const [numCols, setNumCols] = useState(2);
+  const [numCols, setNumCols] = useState(4);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
       setShowGrid(true);
       setShowList(false);
+      setNumCols(6);
     }
   }, []);
 

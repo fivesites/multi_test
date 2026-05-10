@@ -67,7 +67,7 @@ function HomeClientInner() {
     glowMode,
   } = useUI();
 
-  const navMt = panel !== "showreel" ? "mt-[16dvh]" : "mt-[8dvh]";
+  const navMt = panel !== "showreel" ? "mt-[var(--nav-height,0px)]" : "";
 
   const openCardRef = useRef<HTMLDivElement>(null);
 
@@ -84,7 +84,7 @@ function HomeClientInner() {
 
   useEffect(() => {
     const update = () => {
-      const gap = 12;
+      const gap = 8;
       const cellSize = (window.innerWidth - gap * (numCols + 1)) / numCols;
       const viewportRows = Math.ceil(window.innerHeight / (cellSize + gap));
       setNumEmpty(Math.min(ANIM_MAX, (viewportRows + 2) * numCols));
@@ -194,13 +194,13 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className={`${navMt} lg:mt-[17dvh]`}
+            className={`${navMt}`}
           >
             {/* Grid view — unified with background */}
             {showGrid && (
               <div
                 ref={gridRef}
-                className="grid gap-[9px] px-[9px] pt-[9px] lg:gap-[12px] lg:p-[12px] min-h-dvh"
+                className="grid gap-2 px-2 pb-2 min-h-dvh"
                 style={{
                   gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
                 }}
@@ -260,12 +260,12 @@ function HomeClientInner() {
                           sizes={`${Math.floor(100 / numCols)}vw`}
                         />
                         <div
-                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-[9px] group ${glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
+                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 group ${glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
                         >
                           <Link
                             href={`/work/${entry.item.slug}`}
                             onClick={(e) => e.stopPropagation()}
-                            className={`font-rounded text-[18px] tracking-wide leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 ${glowMode ? "text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)]" : "text-neutral-300"}`}
+                            className={`font-rounded text-base tracking-wide leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 ${glowMode ? "text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)]" : "text-neutral-300"}`}
                           >
                             {entry.item.client
                               ? `${entry.item.client} / ${entry.item.title}`
@@ -291,7 +291,7 @@ function HomeClientInner() {
                   <div
                     key={`empty-${i}`}
                     data-empty-idx={i}
-                    className="aspect-square cursor-pointer flex items-start justify-start p-[3px] lg:p-[6px] font-rounded text-[9px] lg:text-[18px] tracking-wide text-red-200 dark:text-neutral-300 [.no-glow_&]:text-neutral-300 transition-colors hover:bg-white/10"
+                    className="aspect-square cursor-pointer flex items-start justify-start p-1 font-rounded text-xs lg:text-base tracking-wide text-red-200 [.no-glow_&]:text-neutral-300 transition-colors hover:bg-white/10"
                   >
                     M²
                   </div>
@@ -302,7 +302,7 @@ function HomeClientInner() {
             {/* List view */}
             {showList && (
               <motion.div
-                className="flex flex-col px-[9px] pt-[4.5px] lg:px-[24px] gap-y-1"
+                className="flex flex-col px-2 pt-0"
                 initial="hidden"
                 animate="show"
                 variants={{
@@ -328,10 +328,10 @@ function HomeClientInner() {
                         transition={{ duration: 0.25 }}
                         className="scroll-mt-[50vh]"
                       >
-                        <span className="flex items-center justify-between w-full py-[4.5px]">
+                        <span className="flex items-center justify-between w-full py-2">
                           <Button
                             variant={isOpen ? "glow" : "link"}
-                            className="font-rounded px-0 leading-tight justify-start gap-1 tracking-normal"
+                            className="font-rounded px-0 leading-tight justify-start  gap-1 tracking-normal"
                             onClick={() =>
                               setOpenedCard(isOpen ? null : item.slug)
                             }
@@ -340,18 +340,7 @@ function HomeClientInner() {
                             {item.client && item.title && <span>/</span>}
                             {item.title && <span>{item.title}</span>}
                           </Button>
-                          <Link
-                            href={`/work/${item.slug}`}
-                            className={`flex-1 overflow-hidden flex items-center mx-2 gap-[2px] hover:opacity-80 transition-opacity duration-200 ${isOpen ? "text-red-100 [.no-glow_&]:text-red-500" : "text-red-200 [.no-glow_&]:text-neutral-400"}`}
-                          >
-                            {Array.from({ length: 100 }).map((_, i) => (
-                              <ArrowRight
-                                key={i}
-                                className="h-3 w-3 lg:h-6 lg:w-6 shrink-0"
-                              />
-                            ))}
-                          </Link>
-                          <span className="flex items-center gap-2 shrink-0">
+                          <span className="flex items-center gap-2 shrink-0 ml-auto">
                             {isOpen && (
                               <Button
                                 variant="glow"
@@ -386,7 +375,7 @@ function HomeClientInner() {
                           )}
                         </AnimatePresence>
 
-                        <div className="h-[1px] w-full bg-red-200 [.no-glow_&]:bg-neutral-400 dark:bg-red-200 rounded-full" />
+                        <div className="h-[1px] w-full bg-red-200 [.no-glow_&]:bg-neutral-400 dark:bg-neutral-700 rounded-full" />
                       </motion.div>
                     );
                   })}
@@ -403,9 +392,9 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className={`px-[9px] pt-[9px] max-w-4xl ${navMt} lg:mt-[17dvh]`}
+            className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
-            <p className="text-[18px] lg:text-[24px] font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+            <p className="text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
               {aboutText ?? ""}
             </p>
           </motion.div>
@@ -418,10 +407,10 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className={`px-[9px] pt-[9px] max-w-4xl ${navMt} lg:mt-[17dvh]`}
+            className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
             <motion.p
-              className="text-[18px] lg:text-[24px] font-rounded text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
+              className="text-base font-rounded text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
               initial="hidden"
               animate="show"
               variants={{

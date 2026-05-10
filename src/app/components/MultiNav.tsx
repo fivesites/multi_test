@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -158,20 +158,28 @@ export default function MultiNav() {
     </>
   );
 
+  const navRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      document.documentElement.style.setProperty(
+        "--nav-height",
+        `${el.offsetHeight}px`,
+      );
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
   return (
     <motion.div
-      className={`fixed z-20 top-0 left-0 right-0 px-[9px] lg:px-[24px] pt-[9px] lg:pt-[12px] lg:h-[17dvh] flex flex-col justify-between items-center pb-[9px] lg:pb-[12px] transition-[height,background-color] duration-300 ${panel !== "showreel" ? "h-[16dvh]" : "h-[8dvh]"} ${panel === "showreel" ? "bg-transparent" : "bg-background"}`}
+      ref={navRef}
+      className={`fixed z-20 top-0 left-0 right-0 px-2 pt-2 flex flex-col items-center transition-colors duration-300 ${panel === "showreel" ? "bg-transparent" : "bg-background"}`}
       transition={{ duration: 0.4 }}
     >
       {/* Row 1: logo + nav links (desktop: settings inline) */}
-      <div
-        className={cn(
-          "flex flex-row items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full lg:items-baseline",
-          navExpanded
-            ? "justify-between lg:justify-start  lg:gap-x-16"
-            : "justify-center gap-x-[18px]",
-        )}
-      >
+      <div className="flex flex-row items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full lg:items-baseline justify-between lg:justify-start lg:gap-x-16">
         <motion.div
           layout
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
@@ -245,7 +253,7 @@ export default function MultiNav() {
                 className="font-rounded px-0 tracking-normal"
                 onClick={() => setShowSettings(!showSettings)}
               >
-                {showSettings ? "Hide Settings" : "Settings"}
+                {showSettings ? "Hide" : "Settings"}
               </Button>
             </>
           )}
@@ -260,7 +268,7 @@ export default function MultiNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="hidden lg:flex items-baseline gap-x-1 ml-auto font-rounded text-red-200 [.no-glow_&]:text-neutral-400"
+              className="hidden lg:flex items-baseline gap-x-1 pb-2 ml-auto font-rounded text-red-200 [.no-glow_&]:text-neutral-400"
             >
               {settingsContent}
             </motion.div>
@@ -269,7 +277,7 @@ export default function MultiNav() {
       </div>
 
       {/* Row 2 (mobile only): settings OR filters — smooth crossfade between them */}
-      <div className="lg:hidden w-full">
+      <div className="lg:hidden w-full mt-8">
         <AnimatePresence mode="wait">
           {showSettings ? (
             <motion.div
@@ -278,7 +286,7 @@ export default function MultiNav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-start gap-x-1 items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 py-0 w-full"
+              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
             >
               {settingsContent}
             </motion.div>
@@ -289,7 +297,7 @@ export default function MultiNav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-start gap-x-1 items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 py-0 w-full"
+              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
             >
               {["all", ...categories].map((cat, i) => (
                 <Fragment key={cat}>
@@ -325,7 +333,7 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-[18px] lg:text-[24px] py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
+                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
               />
             </motion.div>
           ) : null}
@@ -346,7 +354,7 @@ export default function MultiNav() {
                 transition: { staggerChildren: 0.06, delayChildren: 0.05 },
               },
             }}
-            className="hidden lg:flex flex-wrap justify-start gap-x-1 items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 py-0 w-full"
+            className="hidden lg:flex flex-wrap justify-start gap-x-1 items-baseline pb-2 mt-8 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
           >
             {["all", ...categories].map((cat, i) => (
               <Fragment key={cat}>
@@ -391,15 +399,15 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-[18px] lg:text-[24px] py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
+                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
               />
             </motion.span>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {panel !== "showreel" && (
-        <div className="absolute bottom-0 left-[9px] right-[9px] lg:left-[24px] lg:right-[24px] h-[1px] bg-red-200 dark:bg-neutral-400  [.no-glow_&]:bg-neutral-400 " />
+      {panel !== "showreel" && !showGrid && (
+        <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-red-200 dark:bg-neutral-600 [.no-glow_&]:bg-neutral-400" />
       )}
     </motion.div>
   );
