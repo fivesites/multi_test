@@ -47,8 +47,6 @@ export default function MultiNav() {
   } = useUI();
   const { categories } = useWork();
 
-  const navExpanded = panel !== "showreel";
-
   function handleNavClick(p: Panel) {
     setPanel(p);
     if (p !== "projects") setOpenedCard(null);
