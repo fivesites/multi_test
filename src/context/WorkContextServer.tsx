@@ -16,6 +16,7 @@ type WorkData = {
   title: string;
   client?: string;
   credits?: unknown;
+  description?: string;
   categories?: string[];
   slug: string;
   coverImage?: { asset: { _ref: string }; aspectRatio?: number };
@@ -43,7 +44,7 @@ export async function WorkContextServer({
 
     const projectImages = allImages.map((img) => ({
       key: img._key,
-      url: urlFor(img).width(1600).quality(90).url(),
+      url: urlFor(img).width(1200).quality(80).url(),
       aspectRatio: img.aspectRatio ?? 1,
     }));
 
@@ -53,12 +54,13 @@ export async function WorkContextServer({
       displayImages.forEach((img, idx) => {
         items.push({
           key: `${work._id}-${img._key}`,
-          url: urlFor(img).width(1600).quality(90).url(),
+          url: urlFor(img).width(1200).quality(80).url(),
           alt: work.client || work.title,
           slug: work.slug,
           title: work.title,
           client: work.client,
           credits: work.credits,
+          description: work.description,
           categories: work.categories ?? [],
           aspectRatio: img.aspectRatio ?? 1,
           isPrimary: idx === 0,
@@ -66,7 +68,7 @@ export async function WorkContextServer({
         });
       });
     } else if (work.coverImage?.asset) {
-      const coverUrl = urlFor(work.coverImage).width(1600).quality(90).url();
+      const coverUrl = urlFor(work.coverImage).width(1200).quality(80).url();
       items.push({
         key: work._id,
         url: coverUrl,
@@ -75,6 +77,7 @@ export async function WorkContextServer({
         title: work.title,
         client: work.client,
         credits: work.credits,
+        description: work.description,
         categories: work.categories ?? [],
         aspectRatio: work.coverImage.aspectRatio ?? 1,
         isPrimary: true,

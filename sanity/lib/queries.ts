@@ -59,6 +59,7 @@ export const workCardsQuery = groq`
     title,
     client,
     credits,
+    description,
     categories,
     "slug": slug.current,
     coverImage { asset, "aspectRatio": asset->metadata.dimensions.aspectRatio },

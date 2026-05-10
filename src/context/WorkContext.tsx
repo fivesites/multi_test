@@ -10,6 +10,7 @@ export type GridItem = {
   title: string;
   client?: string;
   credits?: unknown;
+  description?: string;
   categories: string[];
   aspectRatio: number;
   isPrimary: boolean;

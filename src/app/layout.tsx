@@ -2,11 +2,13 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import React from "react";
 import { Tiny5 } from "next/font/google";
+import MultiNav from "@/app/components/MultiNav";
 
 import "./globals.css";
 import { cookies } from "next/headers";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
+import { UIProvider } from "@/context/UIContext";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -44,9 +46,17 @@ const neuropolX = localFont({
 const karlRounded = localFont({
   src: [
     { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
-    { path: "./KarlSTTrial-RegularItalic.woff2", weight: "400", style: "italic" },
+    {
+      path: "./KarlSTTrial-RegularItalic.woff2",
+      weight: "400",
+      style: "italic",
+    },
     { path: "./KarlSTTrial-Medium.woff2", weight: "500", style: "normal" },
-    { path: "./KarlSTTrial-MediumItalic.woff2", weight: "500", style: "italic" },
+    {
+      path: "./KarlSTTrial-MediumItalic.woff2",
+      weight: "500",
+      style: "italic",
+    },
     { path: "./KarlSTTrial-Bold.woff2", weight: "700", style: "normal" },
     { path: "./KarlSTTrial-BoldItalic.woff2", weight: "700", style: "italic" },
     { path: "./KarlSTTrial-Black.woff2", weight: "800", style: "normal" },
@@ -88,7 +98,7 @@ export default async function RootLayout({
       >
         <WorkContextServer>
           <CopyContextServer>
-            {children}
+            <UIProvider>{children}</UIProvider>
           </CopyContextServer>
         </WorkContextServer>
       </body>

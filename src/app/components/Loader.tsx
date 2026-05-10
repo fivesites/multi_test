@@ -20,10 +20,7 @@ export default function Loader({
     return () => clearTimeout(t);
   }, []);
 
-  const lines = [
-    { text: tagline, delay: 0 },
-    { text: "Multi²", delay: 1 },
-  ];
+  const lines = [{ text: tagline, delay: 0 }];
 
   return (
     <motion.div
@@ -34,9 +31,14 @@ export default function Loader({
         if (dismissing) onDone?.();
       }}
     >
-      <div className="flex flex-wrap w-full justify-center pt-4 px-4 gap-x-4 whitespace-normal">
+      <div className="flex flex-wrap w-full justify-center p-[18px] lg:p-[24px] gap-x-4 whitespace-normal">
         {lines.map(({ text, delay }) => (
-          <TextBlock key={text} text={text} size="text-2xl" delay={delay} />
+          <TextBlock
+            key={text}
+            text={text}
+            size="text-[18px] lg:text-[24px]"
+            delay={delay}
+          />
         ))}
       </div>
     </motion.div>

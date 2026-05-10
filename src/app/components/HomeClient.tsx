@@ -1,17 +1,17 @@
 "use client";
 
-import { useRef, useEffect, useState, Fragment } from "react";
+import { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
-import VideoPlayer from "./VideoPlayer";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import Link from "next/link";
 import MultiNav from "./MultiNav";
-import DarkModeButton from "./DarkModeButton";
 import { UIProvider, useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import { useCopy } from "@/context/CopyContext";
+import { X, ArrowRight } from "lucide-react";
+import VideoPlayer from "./VideoPlayer";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -32,43 +32,94 @@ const charVariants = {
   show: { opacity: 1 },
 };
 
-const filterItemVariants = {
-  hidden: { opacity: 0, y: -6 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
-};
+// MULTISQUARED animation for empty grid cells
+const ANIM_WORD = "MULTISQUARED";
+const ANIM_SWEEP = 2400;
+const ANIM_HOLD = 1000;
+const ANIM_CYCLE = ANIM_SWEEP * 2 + ANIM_HOLD * 2;
+const ANIM_MAX = 400;
+
+function getEmptyChar(idx: number, elapsed: number): string {
+  const t = elapsed % ANIM_CYCLE;
+  const threshold = (idx / ANIM_MAX) * ANIM_SWEEP;
+  const letter = ANIM_WORD[idx % ANIM_WORD.length];
+  if (t < ANIM_SWEEP) return t > threshold ? letter : "M²";
+  if (t < ANIM_SWEEP + ANIM_HOLD) return letter;
+  if (t < ANIM_SWEEP * 2 + ANIM_HOLD)
+    return t - ANIM_SWEEP - ANIM_HOLD > threshold ? "M²" : letter;
+  return "M²";
+}
 
 function HomeClientInner() {
-  const { items, categories } = useWork();
+  const { items } = useWork();
   const aboutText = useCopy("about-intro");
 
   const {
     panel,
-    setPanel,
     showGrid,
-    setShowGrid,
     showList,
-    setShowList,
+    showSettings,
     activeFilter,
-    setActiveFilter,
     openedCard,
     setOpenedCard,
+    search,
+    numCols,
     glowMode,
-    setGlowMode,
-    showSettings,
-    setShowSettings,
   } = useUI();
 
-  const [search, setSearch] = useState("");
+  const hasSecondNavRow = showSettings || panel === "projects";
+  const navMt = hasSecondNavRow ? "mt-[16dvh]" : "mt-[8dvh]";
+
   const openCardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (openedCard && openCardRef.current) {
+    if (openedCard && openCardRef.current && showList) {
       openCardRef.current.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
     }
-  }, [openedCard]);
+  }, [openedCard, showList]);
+
+  const [numEmpty, setNumEmpty] = useState(40);
+
+  useEffect(() => {
+    const update = () => {
+      const gap = 12;
+      const cellSize = (window.innerWidth - gap * (numCols + 1)) / numCols;
+      const viewportRows = Math.ceil(window.innerHeight / (cellSize + gap));
+      setNumEmpty(Math.min(ANIM_MAX, (viewportRows + 2) * numCols));
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [numCols]);
+
+  // Animate empty cells
+  const gridRef = useRef<HTMLDivElement>(null);
+  const emptyStateRef = useRef<string[]>(Array(ANIM_MAX).fill("M²"));
+
+  useEffect(() => {
+    const container = gridRef.current;
+    if (!container || !showGrid) return;
+    const start = performance.now();
+    let rafId: number;
+    const frame = (now: number) => {
+      const elapsed = now - start;
+      const cells = container.querySelectorAll<HTMLElement>("[data-empty-idx]");
+      cells.forEach((cell) => {
+        const idx = Number(cell.dataset.emptyIdx);
+        const next = getEmptyChar(idx, elapsed);
+        if (emptyStateRef.current[idx] !== next) {
+          emptyStateRef.current[idx] = next;
+          cell.textContent = next;
+        }
+      });
+      rafId = requestAnimationFrame(frame);
+    };
+    rafId = requestAnimationFrame(frame);
+    return () => cancelAnimationFrame(rafId);
+  }, [showGrid]);
 
   const query = search.toLowerCase().trim();
   const slugsSeen = new Set<string>();
@@ -98,21 +149,19 @@ function HomeClientInner() {
       return labelA.localeCompare(labelB, "sv");
     });
 
-  function handleFilterChange(cat: string) {
-    setPanel("projects");
-    setActiveFilter(cat);
-    setOpenedCard(null);
-    setSearch("");
-  }
+  type GridItem = (typeof displayed)[number];
+  type GridEntry =
+    | { type: "image"; item: GridItem; idx: number }
+    | { type: "card"; item: GridItem };
 
-  function toggleView(mode: "grid" | "list") {
-    if (mode === "grid") {
-      setShowGrid(true);
-      setShowList(false);
-    } else {
-      setShowList(true);
-      setShowGrid(false);
-    }
+  const gridItems: GridEntry[] = [];
+  for (let i = 0; i < displayed.length; i += numCols) {
+    const row = displayed.slice(i, i + numCols);
+    row.forEach((item, colIdx) =>
+      gridItems.push({ type: "image", item, idx: i + colIdx }),
+    );
+    const openedInRow = row.find((item) => item.slug === openedCard);
+    if (openedInRow) gridItems.push({ type: "card", item: openedInRow });
   }
 
   return (
@@ -146,188 +195,37 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
+            className={`${navMt} lg:mt-[17dvh]`}
           >
-            {/* Filters + view toggle */}
-            <motion.div
-              className="mt-[56px] lg:mt-[69px] px-4 pt-4 lg:pt-0 pb-4 text-2xl flex flex-col gap-y-4 font-rounded text-red-200 leading-tight w-full scroll-mt-[48px] "
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: {},
-                show: {
-                  transition: { staggerChildren: 0.06, delayChildren: 0.05 },
-                },
-              }}
-            >
-              {/* Filter buttons + grid/list toggle row */}
-              <div className="flex flex-col justify-start gap-x-1 items-baseline gap-y-0 text-red-300 py-0">
-                {/* Grid / List toggle — before category buttons */}
-                <div className="flex flex-wrap justify-start gap-x-1 items-baseline gap-y-0 max-w-xl text-red-300 py-0">
-                  {["all", ...categories].map((cat, i) => (
-                    <Fragment key={cat}>
-                      {i > 0 && (
-                        <motion.span variants={filterItemVariants}>
-                          <Button
-                            variant="link"
-                            className="font-rounded text-2xl px-0 leading-tight pointer-events-none"
-                          >
-                            /
-                          </Button>
-                        </motion.span>
-                      )}
-                      <motion.span
-                        className="flex items-baseline gap-x-2"
-                        variants={filterItemVariants}
-                      >
-                        <Button
-                          variant={activeFilter === cat ? "glow" : "link"}
-                          onClick={() => handleFilterChange(cat)}
-                          className={cn(
-                            "font-rounded text-2xl inline px-0 leading-tight",
-                            activeFilter === cat
-                              ? "tracking-wide"
-                              : "tracking-normal",
-                          )}
-                        >
-                          {cat === "all"
-                            ? "All"
-                            : (CATEGORY_LABELS[cat] ?? cat)}
-                        </Button>
-                      </motion.span>
-                    </Fragment>
-                  ))}
-                  <motion.span variants={filterItemVariants}>
-                    <Button
-                      variant="link"
-                      className="font-rounded text-2xl px-0 leading-tight pointer-events-none mr-1"
-                    >
-                      /
-                    </Button>
-                    <input
-                      value={search}
-                      onChange={(e) => setSearch(e.target.value)}
-                      placeholder="Search..."
-                      className="bg-transparent outline-none font-rounded text-2xl py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
-                    />
-                  </motion.span>
-                </div>
-                <motion.span className="" variants={filterItemVariants}>
-                  <Button
-                    variant={showSettings ? "glow" : "link"}
-                    className="font-rounded text-2xl px-0 tracking-normal leading-tight mt-4"
-                    onClick={() => setShowSettings(!showSettings)}
-                  >
-                    {showSettings ? "Hide settings" : "Settings"}
-                  </Button>
-                </motion.span>
-              </div>
-
-              {/* Settings row */}
-              <AnimatePresence initial={false}>
-                {showSettings && (
-                  <motion.div
-                    key="settings"
-                    initial={{ opacity: 0, y: -4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -4 }}
-                    transition={{ duration: 0.15 }}
-                    className="flex justify-start flex-wrap gap-x-1 items-baseline py-0 text-red-300 w-full"
-                  >
-                    <span className="flex items-baseline gap-1">
-                      <Button
-                        variant={showList ? "glow" : "link"}
-                        className="font-rounded text-2xl px-0 leading-tight"
-                        onClick={() => toggleView("list")}
-                      >
-                        List
-                      </Button>
-                      <Button
-                        variant="link"
-                        className="font-rounded text-2xl px-0 leading-tight pointer-events-none"
-                      >
-                        /
-                      </Button>
-                      <Button
-                        variant={showGrid ? "glow" : "link"}
-                        className="font-rounded text-2xl px-0 leading-tight"
-                        onClick={() => toggleView("grid")}
-                      >
-                        Thumbnails
-                      </Button>
-                      <Button
-                        variant="link"
-                        className="font-rounded text-2xl px-0 leading-tight pointer-events-none"
-                      >
-                        /
-                      </Button>
-                      <Button
-                        variant={glowMode ? "glow" : "link"}
-                        className="font-rounded text-2xl px-0 leading-tight"
-                        onClick={() => setGlowMode(true)}
-                      >
-                        Glow
-                      </Button>
-                      <Button
-                        variant="link"
-                        className="font-rounded text-2xl px-0 leading-tight pointer-events-none"
-                      >
-                        /
-                      </Button>
-                      <Button
-                        variant={!glowMode ? "glow" : "link"}
-                        className="font-rounded text-2xl px-0 leading-tight"
-                        onClick={() => setGlowMode(false)}
-                      >
-                        Normal
-                      </Button>
-                    </span>
-                    <Button
-                      variant="link"
-                      className="font-rounded text-2xl px-0 leading-tight pointer-events-none"
-                    >
-                      /
-                    </Button>
-                    <span>
-                      <DarkModeButton className="font-rounded text-2xl tracking-normal gap-x-2" />
-                    </span>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-
-            {/* Grid view */}
+            {/* Grid view — unified with background */}
             {showGrid && (
-              <div className="columns-2 lg:columns-3 gap-2 px-2 pt-4">
+              <div
+                ref={gridRef}
+                className="grid gap-[9px] px-[9px] pt-[9px] lg:gap-[12px] lg:p-[12px] min-h-dvh"
+                style={{
+                  gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
+                }}
+              >
                 <AnimatePresence mode="popLayout" initial={false}>
-                  {displayed.map((item, i) => {
-                    const isOpen = item.slug === openedCard;
-
-                    if (isOpen) {
+                  {gridItems.map((entry) => {
+                    if (entry.type === "card") {
                       return (
                         <motion.div
                           ref={openCardRef}
-                          key={`card-${item.slug}`}
+                          key={`card-${entry.item.slug}`}
                           layout
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           exit={{ opacity: 0 }}
                           transition={{ duration: 0.3 }}
-                          style={
-                            {
-                              columnSpan: "all",
-                              position: "relative",
-                              zIndex: 10,
-                            } as React.CSSProperties
-                          }
-                          className="mb-2 mt-2 max-w-5xl mx-auto scroll-mt-[48px] isolation-isolate"
+                          className="col-span-full w-full rounded-lg lg:max-w-[560px] mt-0 mb-2  isolation-isolate"
                         >
                           <MultiCard
-                            title={item.title}
-                            client={item.client}
-                            credits={item.credits}
-                            categories={item.categories}
-                            slug={item.slug}
-                            projectImages={item.projectImages}
+                            title={entry.item.title}
+                            client={entry.item.client}
+                            slug={entry.item.slug}
+                            description={entry.item.description}
+                            projectImages={entry.item.projectImages}
                             onClose={() => setOpenedCard(null)}
                           />
                         </motion.div>
@@ -336,42 +234,76 @@ function HomeClientInner() {
 
                     return (
                       <motion.div
-                        key={item.key}
+                        key={entry.item.key}
                         layout
                         initial={{ opacity: 0, y: 12 }}
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0 }}
                         transition={{
                           duration: 0.35,
-                          delay: Math.min(i * 0.05, 0.4),
+                          delay: Math.min(entry.idx * 0.05, 0.4),
                           ease: "easeOut",
                         }}
-                        className="relative break-inside-avoid mb-2 cursor-pointer group"
-                        style={{
-                          paddingBottom: `${(1 / item.aspectRatio) * 100}%`,
-                        }}
-                        onClick={() => setOpenedCard(item.slug)}
+                        className={`aspect-square relative cursor-pointer overflow-hidden transition-all duration-200 ${glowMode ? " hover:[box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : ""}${entry.item.slug === openedCard ? (glowMode ? " [box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : " ring-2 ring-red-500") : ""}`}
+                        onClick={() =>
+                          setOpenedCard(
+                            entry.item.slug === openedCard
+                              ? null
+                              : entry.item.slug,
+                          )
+                        }
                       >
-                        <div className="absolute inset-0">
-                          <Image
-                            src={item.url}
-                            alt={item.alt}
-                            fill
-                            className="object-cover"
-                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-                          />
+                        <Image
+                          src={entry.item.url}
+                          alt={entry.item.alt}
+                          fill
+                          className="object-cover"
+                          sizes={`${Math.floor(100 / numCols)}vw`}
+                        />
+                        <div
+                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-[9px] group ${glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
+                        >
+                          <Link
+                            href={`/work/${entry.item.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className={`font-rounded text-[18px] tracking-wide leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 ${glowMode ? "text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)]" : "text-neutral-300"}`}
+                          >
+                            {entry.item.client
+                              ? `${entry.item.client} / ${entry.item.title}`
+                              : entry.item.title}
+                          </Link>
+                          <Link
+                            href={`/work/${entry.item.slug}`}
+                            onClick={(e) => e.stopPropagation()}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0"
+                          >
+                            <ArrowRight
+                              className={`h-4 w-4 ${glowMode ? "text-red-100 dark:text-neutral-300" : "text-neutral-300"}`}
+                            />
+                          </Link>
                         </div>
                       </motion.div>
                     );
                   })}
                 </AnimatePresence>
+
+                {/* Empty interactive cells */}
+                {Array.from({ length: numEmpty }).map((_, i) => (
+                  <div
+                    key={`empty-${i}`}
+                    data-empty-idx={i}
+                    className="aspect-square cursor-pointer flex items-start justify-start p-[3px] lg:p-[6px] font-rounded text-[9px] lg:text-[18px] tracking-wide text-red-200 dark:text-neutral-300 [.no-glow_&]:text-neutral-300 transition-colors hover:bg-white/10"
+                  >
+                    M²
+                  </div>
+                ))}
               </div>
             )}
 
             {/* List view */}
             {showList && (
               <motion.div
-                className="flex flex-col px-4 pt-4 gap-y-1"
+                className="flex flex-col px-[9px] pt-[4.5px] lg:px-[24px] gap-y-1"
                 initial="hidden"
                 animate="show"
                 variants={{
@@ -385,58 +317,84 @@ function HomeClientInner() {
                   {displayed.map((item) => {
                     const isOpen = item.slug === openedCard;
 
-                    if (isOpen) {
-                      return (
-                        <motion.div
-                          ref={openCardRef}
-                          key={`card-${item.slug}`}
-                          layout
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="scroll-mt-[48px] relative z-10 max-w-5xl"
-                        >
-                          <MultiCard
-                            title={item.title}
-                            client={item.client}
-                            credits={item.credits}
-                            categories={item.categories}
-                            slug={item.slug}
-                            projectImages={item.projectImages}
-                            onClose={() => setOpenedCard(null)}
-                          />
-                        </motion.div>
-                      );
-                    }
-
                     return (
                       <motion.div
                         key={item.key}
+                        ref={isOpen ? openCardRef : undefined}
                         layout
                         variants={{
                           hidden: { opacity: 0, y: 4 },
                           show: { opacity: 1, y: 0 },
                         }}
                         transition={{ duration: 0.25 }}
+                        className="scroll-mt-[50vh]"
                       >
-                        <Button
-                          variant="glow"
-                          className="font-rounded text-2xl px-0 leading-tight justify-start gap-1 tracking-normal"
-                          onClick={() => setOpenedCard(item.slug)}
-                        >
-                          {item.client && <span>{item.client}</span>}
-                          {item.client && item.title && (
-                            <span className="">/</span>
+                        <span className="flex items-center justify-between w-full py-[4.5px]">
+                          <Button
+                            variant={isOpen ? "glow" : "link"}
+                            className="font-rounded px-0 leading-tight justify-start gap-1 tracking-normal"
+                            onClick={() =>
+                              setOpenedCard(isOpen ? null : item.slug)
+                            }
+                          >
+                            {item.client && <span>{item.client}</span>}
+                            {item.client && item.title && <span>/</span>}
+                            {item.title && <span>{item.title}</span>}
+                          </Button>
+                          <Link
+                            href={`/work/${item.slug}`}
+                            className="flex-1 overflow-hidden flex items-center mx-2 gap-[2px] text-red-200 [.no-glow_&]:text-neutral-400 hover:opacity-80 transition-opacity duration-200"
+                          >
+                            {Array.from({ length: 100 }).map((_, i) => (
+                              <ArrowRight
+                                key={i}
+                                className="h-3 w-3 lg:h-6 lg:w-6 shrink-0"
+                              />
+                            ))}
+                          </Link>
+                          <span className="flex items-center gap-2 shrink-0">
+                            {isOpen && (
+                              <Button
+                                variant="glow"
+                                onClick={() =>
+                                  setOpenedCard(isOpen ? null : item.slug)
+                                }
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            )}
+                          </span>
+                        </span>
+
+                        <AnimatePresence>
+                          {isOpen && (
+                            <motion.div
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              exit={{ opacity: 0 }}
+                              transition={{ duration: 0.2 }}
+                              className="mt-0 max-w-5xl scroll-mt-[48px]"
+                            >
+                              <MultiCard
+                                title={item.title}
+                                client={item.client}
+                                slug={item.slug}
+                                description={item.description}
+                                projectImages={item.projectImages}
+                                onClose={() => setOpenedCard(null)}
+                              />
+                            </motion.div>
                           )}
-                          <span>{item.title}</span>
-                        </Button>
+                        </AnimatePresence>
+
+                        <div className="h-[1px] w-full bg-red-200 [.no-glow_&]:bg-neutral-400 dark:bg-red-200 rounded-full" />
                       </motion.div>
                     );
                   })}
                 </AnimatePresence>
               </motion.div>
             )}
+
           </motion.div>
         )}
 
@@ -447,9 +405,9 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 pt-4 max-w-4xl mt-[69px] mx-auto scroll-mt-[48px]"
+            className={`px-[9px] pt-[9px] max-w-4xl ${navMt} lg:mt-[17dvh]`}
           >
-            <p className="text-2xl font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+            <p className="text-[18px] lg:text-[24px] font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
               {aboutText ?? ""}
             </p>
           </motion.div>
@@ -462,10 +420,10 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="px-4 mt-[69px] pt-4 scroll-mt-[48px]"
+            className={`px-[9px] pt-[9px] max-w-4xl ${navMt} lg:mt-[17dvh]`}
           >
             <motion.p
-              className="text-2xl font-rounded text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
+              className="text-[18px] lg:text-[24px] font-rounded text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
               initial="hidden"
               animate="show"
               variants={{

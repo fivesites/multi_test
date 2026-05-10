@@ -24,7 +24,10 @@ export default function DarkModeButton({ className }: { className?: string }) {
       >
         Light
       </Button>
-      <Button variant="link" className="font-rounded text-2xl px-0 leading-tight pointer-events-none">
+      <Button
+        variant="link"
+        className="font-rounded  px-0 leading-tight pointer-events-none"
+      >
         /
       </Button>
       <Button
