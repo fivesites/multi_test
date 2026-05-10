@@ -42,7 +42,7 @@ export default function MultiCard({
   return (
     <>
       <div className="relative">
-        <Card className="w-full text-red-500 pb-4 rounded-xl gap-y-16 ">
+        <Card className="w-full text-red-500 pb-4 rounded-xl  ">
           {!showList && (
             <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-4 pb-0">
               <Button
