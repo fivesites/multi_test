@@ -58,7 +58,7 @@ function HomeClientInner() {
     panel,
     showGrid,
     showList,
-    showSettings,
+
     activeFilter,
     openedCard,
     setOpenedCard,
@@ -393,7 +393,6 @@ function HomeClientInner() {
                 </AnimatePresence>
               </motion.div>
             )}
-
           </motion.div>
         )}
 
