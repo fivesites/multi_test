@@ -184,7 +184,7 @@ export default function MultiNav() {
         >
           <Button
             variant="glow"
-            className="font-rounded cursor-pointer gap-0 flex leading-tight tracking-normal text-red-100 [.no-glow_&]:text-red-500"
+            className="font-ft88 cursor-pointer gap-0 flex leading-tight tracking-normal text-red-100 [.no-glow_&]:text-red-500"
             onClick={() => handleNavClick("showreel")}
           >
             Multi²

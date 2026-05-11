@@ -42,6 +42,11 @@ const neuropolX = localFont({
   variable: "--font-neuropol",
 });
 
+const eightPixFont = localFont({
+  src: "./8pixfont.otf.woff2",
+  variable: "--font-8pix",
+});
+
 const karlRounded = localFont({
   src: [
     { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
@@ -93,7 +98,7 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={`${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${ft88Gothique.variable} ${karlRounded.variable} ${neuropolX.variable} antialiased`}
+        className={`${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${ft88Gothique.variable} ${karlRounded.variable} ${neuropolX.variable} ${eightPixFont.variable} antialiased`}
       >
         <WorkContextServer>
           <CopyContextServer>

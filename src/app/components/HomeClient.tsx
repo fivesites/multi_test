@@ -243,7 +243,7 @@ function HomeClientInner() {
                           delay: Math.min(entry.idx * 0.05, 0.4),
                           ease: "easeOut",
                         }}
-                        className={`aspect-square relative cursor-pointer overflow-hidden transition-all duration-200 ${glowMode ? " hover:[box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : ""}${entry.item.slug === openedCard ? (glowMode ? " [box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : " ring-2 ring-red-500") : ""}`}
+                        className={`aspect-square relative cursor-pointer overflow-hidden transition-all duration-200 ${glowMode ? " hover:[box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : ""}${entry.item.slug === openedCard ? (glowMode ? " [box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : "") : ""}`}
                         onClick={() =>
                           setOpenedCard(
                             entry.item.slug === openedCard

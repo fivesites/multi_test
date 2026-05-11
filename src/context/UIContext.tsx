@@ -42,7 +42,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [glowMode, setGlowMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
-  const [numCols, setNumCols] = useState(4);
+  const [numCols, setNumCols] = useState(2);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
