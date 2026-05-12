@@ -42,7 +42,6 @@ function WorkPageInner({
   year?: number;
   images: ProjectImage[];
 }) {
-  const { glowMode } = useUI();
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [heroImage, ...restImages] = images;
 
@@ -51,7 +50,7 @@ function WorkPageInner({
       {/* Back button — fixed at same baseline as MultiNav Row 1 */}
       <div className="flex px-2 pt-2    items-baseline pointer-events-none">
         <Button
-          variant={glowMode ? "glow" : "glow"}
+          variant="link"
           className="font-rounded leading-tight pointer-events-auto"
           asChild
         >
@@ -62,11 +61,11 @@ function WorkPageInner({
       <div className="px-2 mt-16 ">
         {/* Header */}
         <div className="flex justify-between w-full lg:grid lg:grid-cols-4 items-baseline gap-8  mb-16">
-          <h1 className="col-span-2 text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+          <h1 className="col-span-2 text-base lg:text-lg font-rounded text-red-500 leading-tight">
             {client && `${client} / `}
             {title}
           </h1>
-          <h1 className="col-start-4 col-span-1 text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+          <h1 className="col-start-4 col-span-1 text-base lg:text-lg font-rounded text-red-500 leading-tight">
             {year && year}
           </h1>
         </div>
@@ -75,13 +74,13 @@ function WorkPageInner({
         {(description || credits) && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-8 mb-16">
             {description && (
-              <p className="text-base col-span-2 max-w-sm font-rounded text-red-100 mb-16 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+              <p className="text-base lg:text-lg col-span-2 max-w-sm font-rounded text-red-500 mb-16 leading-tight">
                 {description}
               </p>
             )}
             {credits && (
               <p
-                className="text-base leading-tight font-rounded text-red-100 max-w-xs lg:max-w-xl [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
+                className="text-base lg:text-lg leading-tight font-rounded text-red-500 max-w-xs lg:max-w-xl"
                 style={{ whiteSpace: "pre-line" }}
               >
                 {credits}
@@ -89,7 +88,7 @@ function WorkPageInner({
             )}
           </div>
         )}
-        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-2 font-rounded text-base mb-16 text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-2 font-rounded text-base lg:text-lg mb-16 text-red-500 leading-tight">
           {categories.map((c, i) => (
             <span key={c}>
               {i > 0 && ""}

@@ -21,8 +21,6 @@ type UIContextType = {
   setActiveFilter: (v: string) => void;
   openedCard: string | null;
   setOpenedCard: (slug: string | null) => void;
-  glowMode: boolean;
-  setGlowMode: (v: boolean) => void;
   showSettings: boolean;
   setShowSettings: (v: boolean) => void;
   search: string;
@@ -39,22 +37,23 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showList, setShowList] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
   const [openedCard, setOpenedCard] = useState<string | null>(null);
-  const [glowMode, setGlowMode] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
 
   useEffect(() => {
-    if (window.innerWidth >= 1024) {
+    if (window.innerWidth >= 1280) {
       setShowGrid(true);
       setShowList(false);
-      setNumCols(6);
+      setNumCols(4);
+    } else if (window.innerWidth >= 1024) {
+      setShowGrid(true);
+      setShowList(false);
+      setNumCols(3);
+    } else {
+      setNumCols(2);
     }
   }, []);
-
-  useEffect(() => {
-    document.documentElement.classList.toggle("no-glow", !glowMode);
-  }, [glowMode]);
 
   return (
     <UIContext.Provider
@@ -69,8 +68,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setActiveFilter,
         openedCard,
         setOpenedCard,
-        glowMode,
-        setGlowMode,
         showSettings,
         setShowSettings,
         search,

@@ -43,7 +43,7 @@ export default function PixelButton({ children = "Click me" }) {
 
   return (
     <>
-      <Button variant="glow" className="btn">
+      <Button variant="link" className="btn">
         {/* pixel version */}
         <canvas ref={canvasRef} className="pixel hover:opacity-0" />
 

@@ -64,7 +64,6 @@ function HomeClientInner() {
     setOpenedCard,
     search,
     numCols,
-    glowMode,
   } = useUI();
 
   const navMt = panel !== "showreel" ? "mt-[var(--nav-height,0px)]" : "";
@@ -243,7 +242,7 @@ function HomeClientInner() {
                           delay: Math.min(entry.idx * 0.05, 0.4),
                           ease: "easeOut",
                         }}
-                        className={`aspect-square relative cursor-pointer overflow-hidden transition-all duration-200 ${glowMode ? " hover:[box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : ""}${entry.item.slug === openedCard ? (glowMode ? " [box-shadow:0_0_16px_#ef4444,0_0_24px_rgba(239,68,68,0.5),0_0_48px_rgba(239,68,68,0.25)]" : "") : ""}`}
+                        className="aspect-square relative cursor-pointer overflow-hidden transition-all duration-200"
                         onClick={() =>
                           setOpenedCard(
                             entry.item.slug === openedCard
@@ -260,12 +259,12 @@ function HomeClientInner() {
                           sizes={`${Math.floor(100 / numCols)}vw`}
                         />
                         <div
-                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 group ${entry.item.slug === openedCard ? "bg-red-500" : glowMode ? "hover:bg-red-500/60" : "hover:bg-red-500"}`}
+                          className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 group ${entry.item.slug === openedCard ? "bg-red-500" : "hover:bg-red-500"}`}
                         >
                           <Link
                             href={`/work/${entry.item.slug}`}
                             onClick={(e) => e.stopPropagation()}
-                            className={`font-rounded text-base tracking-wide leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 ${glowMode ? "text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)]" : "text-neutral-300"}`}
+                            className="font-rounded text-base tracking-wide leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 text-neutral-300"
                           >
                             {entry.item.client
                               ? `${entry.item.client} / ${entry.item.title}`
@@ -276,9 +275,7 @@ function HomeClientInner() {
                             onClick={(e) => e.stopPropagation()}
                             className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 shrink-0"
                           >
-                            <ArrowRight
-                              className={`h-4 w-4 ${glowMode ? "text-red-100 dark:text-neutral-300" : "text-neutral-300"}`}
-                            />
+                            <ArrowRight className="h-4 w-4 text-neutral-300" />
                           </Link>
                         </div>
                       </motion.div>
@@ -291,9 +288,18 @@ function HomeClientInner() {
                   <div
                     key={`empty-${i}`}
                     data-empty-idx={i}
-                    className="aspect-square cursor-pointer flex items-start justify-start p-1 font-rounded text-xs lg:text-base tracking-wide text-red-200 [.no-glow_&]:text-neutral-300 transition-colors hover:bg-white/10"
+                    className="aspect-square cursor-pointer flex items-start justify-start p-1 font-rounded text-base lg:text-lg tracking-wide text-neutral-300 transition-colors hover:bg-white/10"
                   >
-                    M²
+                    <span
+                      className="font-ft88-gothique text-[0.5rem] mt-[0.15rem] lg:text-[0.6rem] lg:mt-[0.35rem] -ml-0.5 "
+                      style={{
+                        transform: "scaleX(1.75)",
+                        display: "inline-block",
+                        transformOrigin: "left",
+                      }}
+                    >
+                      2
+                    </span>
                   </div>
                 ))}
               </div>
@@ -330,8 +336,8 @@ function HomeClientInner() {
                       >
                         <span className="flex items-center justify-between w-full py-2">
                           <Button
-                            variant={isOpen ? "glow" : "link"}
-                            className="font-rounded px-0 leading-tight justify-start  gap-1 tracking-normal"
+                            variant={isOpen ? "link" : "nav"}
+                            className="font-rounded px-0 leading-tight justify-start gap-1 tracking-normal"
                             onClick={() =>
                               setOpenedCard(isOpen ? null : item.slug)
                             }
@@ -343,10 +349,8 @@ function HomeClientInner() {
                           <span className="flex items-center gap-2 shrink-0 ml-auto">
                             {isOpen && (
                               <Button
-                                variant="glow"
-                                onClick={() =>
-                                  setOpenedCard(isOpen ? null : item.slug)
-                                }
+                                variant="link"
+                                onClick={() => setOpenedCard(null)}
                               >
                                 <X className="h-4 w-4" />
                               </Button>
@@ -375,7 +379,7 @@ function HomeClientInner() {
                           )}
                         </AnimatePresence>
 
-                        <div className="h-[1px] w-full bg-red-200 [.no-glow_&]:bg-neutral-400 dark:bg-neutral-700 rounded-full" />
+                        <div className="h-[1px] w-full bg-red-200 dark:bg-neutral-700 rounded-full" />
                       </motion.div>
                     );
                   })}
@@ -394,7 +398,7 @@ function HomeClientInner() {
             transition={{ duration: 0.2 }}
             className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
-            <p className="text-base font-rounded text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]">
+            <p className="text-base font-rounded text-red-500 leading-tight">
               {aboutText ?? ""}
             </p>
           </motion.div>
@@ -410,7 +414,7 @@ function HomeClientInner() {
             className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
             <motion.p
-              className="text-base font-rounded text-red-100 [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none]"
+              className="text-base font-rounded text-red-500"
               initial="hidden"
               animate="show"
               variants={{

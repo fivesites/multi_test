@@ -38,8 +38,6 @@ export default function MultiNav() {
     setShowList,
     activeFilter,
     setActiveFilter,
-    glowMode,
-    setGlowMode,
     search,
     setSearch,
     numCols,
@@ -76,82 +74,72 @@ export default function MultiNav() {
       {panel === "projects" && (
         <>
           <Button
-            variant={showList ? "glow" : "link"}
+            variant={showList ? "link" : "nav"}
             className="font-rounded px-0 leading-tight"
             onClick={() => toggleView("list")}
           >
             List
           </Button>
           <Button
-            variant="link"
+            variant="nav"
             className="font-rounded px-0 pointer-events-none"
           >
             /
           </Button>
           <Button
-            variant={showGrid ? "glow" : "link"}
+            variant={showGrid ? "link" : "nav"}
             className="font-rounded px-0 leading-tight flex lg:hidden"
             onClick={() => toggleView("grid")}
           >
             Thumbs
           </Button>
           <Button
-            variant={showGrid ? "glow" : "link"}
+            variant={showGrid ? "link" : "nav"}
             className="font-rounded px-0 leading-tight hidden lg:flex"
             onClick={() => toggleView("grid")}
           >
             Thumbnails
           </Button>
           <Button
-            variant="link"
+            variant="nav"
             className="font-rounded px-0 pointer-events-none"
           >
             /
           </Button>
         </>
       )}
-      <Button
-        variant={glowMode ? "glow" : "link"}
-        className="font-rounded px-0 leading-tight"
-        onClick={() => setGlowMode(!glowMode)}
-      >
-        Glow
-      </Button>
       {panel === "projects" && showGrid && (
         <>
           <Button
-            variant="link"
-            className="font-rounded px-0 pointer-events-none"
-          >
-            /
-          </Button>
-          <Button
-            variant="link"
-            className="font-rounded px-0 leading-tight"
-            onClick={() => setNumCols(Math.max(1, numCols - 1))}
-            disabled={numCols <= 1}
-          >
-            Zoom out
-          </Button>
-          <Button
-            variant="link"
-            className="font-rounded px-0 pointer-events-none"
-          >
-            /
-          </Button>
-          <Button
-            variant="link"
+            variant="nav"
             className="font-rounded px-0 leading-tight"
             onClick={() => setNumCols(Math.min(8, numCols + 1))}
             disabled={numCols >= 8}
           >
+            Zoom out
+          </Button>
+          <Button
+            variant="nav"
+            className="font-rounded px-0 pointer-events-none"
+          >
+            /
+          </Button>
+          <Button
+            variant="nav"
+            className="font-rounded px-0 leading-tight"
+            onClick={() => setNumCols(Math.max(1, numCols - 1))}
+            disabled={numCols <= 1}
+          >
             Zoom in
+          </Button>
+          <Button
+            variant="nav"
+            className="font-rounded px-0 pointer-events-none"
+          >
+            /
           </Button>
         </>
       )}
-      <Button variant="link" className="font-rounded px-0 pointer-events-none">
-        /
-      </Button>
       <DarkModeButton className="font-rounded tracking-normal gap-x-2" />
     </>
   );
@@ -177,17 +165,27 @@ export default function MultiNav() {
       transition={{ duration: 0.4 }}
     >
       {/* Row 1: logo + nav links (desktop: settings inline) */}
-      <div className="flex flex-row items-baseline font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full lg:items-baseline justify-between lg:justify-start lg:gap-x-16">
+      <div className="flex flex-row items-baseline font-rounded w-full lg:items-baseline justify-between lg:justify-start lg:gap-x-16">
         <motion.div
           layout
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
-            variant="glow"
-            className="font-ft88 cursor-pointer gap-0 flex leading-tight tracking-normal text-red-100 [.no-glow_&]:text-red-500"
+            variant="link"
+            className="font-rounded cursor-pointer gap-0 flex leading-tight items-start tracking-normal"
             onClick={() => handleNavClick("showreel")}
           >
-            Multi²
+            Multi
+            <span
+              className="font-ft88-gothique text-[0.5rem] mt-[0.15rem] lg:text-[0.6rem] lg:mt-[0.25rem]  pr-1.5"
+              style={{
+                transform: "scaleX(1.75)",
+                display: "inline-block",
+                transformOrigin: "left",
+              }}
+            >
+              2
+            </span>
           </Button>
         </motion.div>
 
@@ -197,7 +195,7 @@ export default function MultiNav() {
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
-            variant={panel === "projects" ? "glow" : "link"}
+            variant={panel === "projects" ? "link" : "nav"}
             className={cn(
               "font-rounded",
               panel === "projects" ? "tracking-wide" : "tracking-tight",
@@ -207,13 +205,13 @@ export default function MultiNav() {
             Work
           </Button>
           <Button
-            variant="link"
+            variant="nav"
             className="font-rounded px-0 pointer-events-none"
           >
             /
           </Button>
           <Button
-            variant={panel === "about" ? "glow" : "link"}
+            variant={panel === "about" ? "link" : "nav"}
             className={cn(
               "font-rounded",
               panel === "about" ? "tracking-wide" : "tracking-tight",
@@ -223,13 +221,13 @@ export default function MultiNav() {
             About
           </Button>
           <Button
-            variant="link"
+            variant="nav"
             className="font-rounded px-0 pointer-events-none"
           >
             /
           </Button>
           <Button
-            variant={panel === "connect" ? "glow" : "link"}
+            variant={panel === "connect" ? "link" : "nav"}
             className={cn(
               "font-rounded",
               panel === "connect" ? "tracking-wide" : "tracking-tight",
@@ -241,13 +239,13 @@ export default function MultiNav() {
           {panel !== "showreel" && (
             <>
               <Button
-                variant="link"
+                variant="nav"
                 className="font-rounded px-0 pointer-events-none"
               >
                 /
               </Button>
               <Button
-                variant={showSettings ? "glow" : "link"}
+                variant={showSettings ? "link" : "nav"}
                 className="font-rounded px-0 tracking-normal"
                 onClick={() => setShowSettings(!showSettings)}
               >
@@ -266,7 +264,7 @@ export default function MultiNav() {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.15 }}
-              className="hidden lg:flex items-baseline gap-x-1 pb-2 ml-auto font-rounded text-red-200 [.no-glow_&]:text-neutral-400"
+              className="hidden lg:flex items-baseline gap-x-1 pb-2 ml-auto font-rounded"
             >
               {settingsContent}
             </motion.div>
@@ -284,7 +282,7 @@ export default function MultiNav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
+              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded w-full"
             >
               {settingsContent}
             </motion.div>
@@ -295,20 +293,20 @@ export default function MultiNav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
+              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded w-full"
             >
               {["all", ...categories].map((cat, i) => (
                 <Fragment key={cat}>
                   {i > 0 && (
                     <Button
-                      variant="link"
+                      variant="nav"
                       className="font-rounded px-0 leading-tight pointer-events-none"
                     >
                       /
                     </Button>
                   )}
                   <Button
-                    variant={activeFilter === cat ? "glow" : "link"}
+                    variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
                       "font-rounded inline px-0 leading-tight",
@@ -322,7 +320,7 @@ export default function MultiNav() {
                 </Fragment>
               ))}
               <Button
-                variant="link"
+                variant="nav"
                 className="font-rounded px-0 leading-tight pointer-events-none mr-1"
               >
                 /
@@ -331,7 +329,7 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
+                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
               />
             </motion.div>
           ) : null}
@@ -352,15 +350,15 @@ export default function MultiNav() {
                 transition: { staggerChildren: 0.06, delayChildren: 0.05 },
               },
             }}
-            className="hidden lg:flex flex-wrap justify-start gap-x-1 items-baseline pb-2 mt-8 font-rounded text-red-200 [.no-glow_&]:text-neutral-400 w-full"
+            className="hidden lg:flex flex-wrap justify-start gap-x-1 items-baseline pb-2 mt-8 font-rounded w-full"
           >
             {["all", ...categories].map((cat, i) => (
               <Fragment key={cat}>
                 {i > 0 && (
                   <motion.span variants={filterItemVariants}>
                     <Button
-                      variant="link"
-                      className="font-rounded  px-0 leading-tight pointer-events-none"
+                      variant="nav"
+                      className="font-rounded px-0 leading-tight pointer-events-none"
                     >
                       /
                     </Button>
@@ -371,7 +369,7 @@ export default function MultiNav() {
                   variants={filterItemVariants}
                 >
                   <Button
-                    variant={activeFilter === cat ? "glow" : "link"}
+                    variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
                       "font-rounded inline px-0 leading-tight",
@@ -388,8 +386,8 @@ export default function MultiNav() {
 
             <motion.span variants={filterItemVariants}>
               <Button
-                variant="link"
-                className="font-rounded  px-0 leading-tight pointer-events-none mr-1"
+                variant="nav"
+                className="font-rounded px-0 leading-tight pointer-events-none mr-1"
               >
                 /
               </Button>
@@ -397,7 +395,7 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-red-200 [.no-glow_&]:text-neutral-400 placeholder:text-red-200 [.no-glow_&]:placeholder:text-neutral-400 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
+                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
               />
             </motion.span>
           </motion.div>
@@ -405,7 +403,7 @@ export default function MultiNav() {
       </AnimatePresence>
 
       {panel !== "showreel" && !showGrid && (
-        <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-red-200 dark:bg-neutral-600 [.no-glow_&]:bg-neutral-400" />
+        <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-neutral-300 dark:bg-neutral-600" />
       )}
     </motion.div>
   );

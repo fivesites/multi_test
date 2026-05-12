@@ -46,8 +46,8 @@ export default function MultiCard({
           {!showList && (
             <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-4 pb-0">
               <Button
-                variant="glow"
-                className="text-base  font-rounded leading-tight px-0"
+                variant="link"
+                className=" font-rounded leading-tight px-0"
                 asChild
               >
                 <Link href={`/work/${slug}`}>
@@ -57,7 +57,7 @@ export default function MultiCard({
               </Button>
 
               <Button
-                variant="glow"
+                variant="link"
                 aria-label="Close"
                 onClick={onClose}
                 className="shrink-0"
@@ -69,23 +69,23 @@ export default function MultiCard({
 
           <Link href={`/work/${slug}`}>
             <CardContent className="pt-4 px-0 flex flex-col">
-              <p className="text-base font-rounded max-w-sm lg:max-w-lg text-red-100 leading-tight [text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] mb-4">
+              <p className="text-base lg:text-lg font-rounded max-w-sm lg:max-w-lg text-red-500 leading-tight mb-4">
                 {description ??
                   "This is a description text. Not a manifesto, not a pitch deck, and definitely not the usual agency talk. It's about a small team with an oversized obsession for clarity, motion, and ideas that stick. "}
               </p>
               <CardAction className="flex justify-start gap-1 w-full mb-4">
                 <Button
-                  variant="glow"
+                  variant="link"
                   className={cn(
                     "text-base font-rounded leading-tight px-0 mt-0 rounded-md",
                   )}
                 >
                   Go to project
                 </Button>
-                <Button variant="glow">/</Button>
+                <Button variant="link">/</Button>
                 <Button
-                  variant="glow"
-                  className="text-base font-rounded leading-tight px-0 mt-0 "
+                  variant="link"
+                  className=" font-rounded leading-tight px-0 mt-0 "
                 >
                   Back
                 </Button>

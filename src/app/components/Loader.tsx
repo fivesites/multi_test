@@ -31,14 +31,9 @@ export default function Loader({
         if (dismissing) onDone?.();
       }}
     >
-      <div className="flex flex-wrap w-full justify-center p-[18px] lg:p-[24px] gap-x-4 whitespace-normal">
+      <div className="flex flex-wrap w-full justify-center p-16 gap-x-4 whitespace-normal">
         {lines.map(({ text, delay }) => (
-          <TextBlock
-            key={text}
-            text={text}
-            size="text-[18px] lg:text-[24px]"
-            delay={delay}
-          />
+          <TextBlock key={text} text={text} size="text-base" delay={delay} />
         ))}
       </div>
     </motion.div>

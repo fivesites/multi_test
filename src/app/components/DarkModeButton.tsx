@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export default function DarkModeButton({ className }: { className?: string }) {
   const [dark, setDark] = useState(false);
@@ -18,20 +19,20 @@ export default function DarkModeButton({ className }: { className?: string }) {
   return (
     <span className="flex items-baseline font-rounded text-2xl gap-1">
       <Button
-        variant={!dark ? "glow" : "link"}
+        variant={!dark ? "link" : "nav"}
         onClick={() => setMode(false)}
         className={className}
       >
         Light
       </Button>
       <Button
-        variant="link"
-        className="font-rounded  px-0 leading-tight pointer-events-none"
+        variant="nav"
+        className="font-rounded px-0 leading-tight pointer-events-none"
       >
         /
       </Button>
       <Button
-        variant={dark ? "glow" : "link"}
+        variant={dark ? "link" : "nav"}
         onClick={() => setMode(true)}
         className={className}
       >

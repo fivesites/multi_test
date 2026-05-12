@@ -18,12 +18,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "bg-transparent  hover:backdrop-blur-lg text-background hover:bg-foreground/10 hover:text-foreground/80 ",
-        link: "text-red-200 [.no-glow_&]:text-neutral-400 no-underline hover:no-underline hover:text-red-100 hover:[text-shadow:0_0_6px_#ef4444,0_0_16px_#ef4444,0_0_32px_#ef4444,0_0_60px_rgba(239,68,68,0.6)] [.no-glow_&]:hover:text-red-500 [.no-glow_&]:hover:[text-shadow:none] transition-all duration-200",
-        glow: "bg-transparent text-red-100 [text-shadow:0_0_4px_#fff,0_0_8px_#ef4444,0_0_20px_#ef4444,0_0_40px_#ef4444,0_0_80px_rgba(239,68,68,0.7)] [&_svg]:[filter:drop-shadow(0_0_4px_#fff)_drop-shadow(0_0_8px_#ef4444)_drop-shadow(0_0_20px_rgba(239,68,68,0.8))] [.no-glow_&]:text-red-500 [.no-glow_&]:[text-shadow:none] [.no-glow_&_svg]:[filter:none] [.no-glow_&]:hover:text-red-500 [.no-glow_&]:hover:[text-shadow:none]",
+        link: "text-red-500 no-underline hover:no-underline transition-all duration-200",
+        nav: "text-neutral-300 no-underline hover:no-underline hover:text-red-500 transition-all duration-200",
       },
       size: {
         default:
-          "h-auto px-0 py-0 has-[>svg]:px-3 leading-tight tracking-normal text-base",
+          "h-auto px-0 py-0 has-[>svg]:px-3 leading-tight tracking-normal text-base lg:text-lg",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-[2rem] gap-1.5 px-3 has-[>svg]:px-2.5 text-sm",
         lg: "h-[4rem] lg:h-auto lg:py-4 text-xl lg:text-2xl rounded-md px-6 has-[>svg]:px-4 ",
