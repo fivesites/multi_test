@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
-import { UIProvider, useUI } from "@/context/UIContext";
+import { UIProvider } from "@/context/UIContext";
 
 import Lightbox from "@/app/components/Lightbox";
 import { Button } from "@/components/ui/button";

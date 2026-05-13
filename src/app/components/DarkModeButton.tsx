@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 
 export default function DarkModeButton({ className }: { className?: string }) {
   const [dark, setDark] = useState(false);
