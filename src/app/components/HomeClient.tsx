@@ -414,7 +414,7 @@ function HomeClientInner() {
             transition={{ duration: 0.2 }}
             className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
-            <p className="text-base font-rounded text-red-500 leading-tight">
+            <p className="text-base lg:text-lg font-rounded text-red-500 leading-tight">
               {aboutText ?? ""}
             </p>
           </motion.div>
@@ -430,7 +430,7 @@ function HomeClientInner() {
             className={`px-2 pt-2 max-w-4xl ${navMt}`}
           >
             <motion.p
-              className="text-base font-rounded text-red-500"
+              className="text-base lg:text-lg font-rounded text-red-500"
               initial="hidden"
               animate="show"
               variants={{
