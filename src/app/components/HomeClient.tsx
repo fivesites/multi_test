@@ -379,7 +379,7 @@ function HomeClientInner() {
                           )}
                         </AnimatePresence>
 
-                        <div className="h-[1px] w-full bg-red-200 dark:bg-neutral-700 rounded-full" />
+                        <div className="h-[1px] w-full bg-neutral-300 dark:bg-neutral-700 rounded-full" />
                       </motion.div>
                     );
                   })}

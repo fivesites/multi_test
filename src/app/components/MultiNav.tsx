@@ -395,7 +395,8 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
+                className=" 
+                 bg-transparent outline-none font-rounded text-base lg:text-lg py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
               />
             </motion.span>
           </motion.div>
