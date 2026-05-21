@@ -347,14 +347,20 @@ function HomeClientInner() {
                         <span className="flex items-center justify-between w-full py-2">
                           <Button
                             variant={isOpen ? "link" : "nav"}
-                            className="font-rounded px-0 leading-tight justify-start gap-1 tracking-normal"
+                            className="font-rounded px-0 leading-tight justify-start   gap-1 tracking-normal"
                             onClick={() =>
                               setOpenedCard(isOpen ? null : item.slug)
                             }
                           >
-                            {item.client && <span>{item.client}</span>}
+                            {item.client && (
+                              <span className="font-rounded">
+                                {item.client}{" "}
+                              </span>
+                            )}
                             {item.client && item.title && <span>/</span>}
-                            {item.title && <span>{item.title}</span>}
+                            {item.title && (
+                              <span className="">{item.title}</span>
+                            )}
                           </Button>
                           <span className="flex items-center gap-2 shrink-0 ml-auto">
                             {isOpen && (
