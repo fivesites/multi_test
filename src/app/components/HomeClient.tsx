@@ -63,6 +63,7 @@ function HomeClientInner() {
     openedCard,
     setOpenedCard,
     search,
+    setSearch,
     numCols,
   } = useUI();
 
@@ -318,6 +319,15 @@ function HomeClientInner() {
                   },
                 }}
               >
+                <div className="lg:hidden py-2">
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search..."
+                    className="bg-transparent outline-none  font-rounded text-base py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-full"
+                  />
+                </div>
+                <div className="lg:hidden h-[1px] w-full bg-neutral-300 dark:bg-neutral-700 rounded-full mb-0" />
                 <AnimatePresence mode="popLayout" initial={false}>
                   {displayed.map((item) => {
                     const isOpen = item.slug === openedCard;

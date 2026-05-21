@@ -43,7 +43,16 @@ export default function MultiNav() {
     numCols,
     setNumCols,
   } = useUI();
-  const { categories } = useWork();
+  const { categories, items } = useWork();
+
+  const countForCat = (cat: string) =>
+    new Set(
+      items
+        .filter((item) =>
+          cat === "all" ? item.isPrimary : item.categories.includes(cat),
+        )
+        .map((item) => item.slug),
+    ).size;
 
   function handleNavClick(p: Panel) {
     setPanel(p);
@@ -293,14 +302,14 @@ export default function MultiNav() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
               transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-2 font-rounded w-full"
+              className="flex flex-wrap justify-start gap-x-1 items-baseline pb-4 font-rounded w-full"
             >
               {["all", ...categories].map((cat, i) => (
                 <Fragment key={cat}>
                   {i > 0 && (
                     <Button
                       variant="nav"
-                      className="font-rounded px-0 leading-tight pointer-events-none"
+                      className="font-rounded px-0 leading-tight pointer-events-none text-xl lg:text-2xl"
                     >
                       /
                     </Button>
@@ -309,28 +318,17 @@ export default function MultiNav() {
                     variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
-                      "font-rounded inline px-0 leading-tight",
+                      "font-rounded inline px-0 leading-tight uppercase text-xl lg:text-2xl",
                       activeFilter === cat
                         ? "tracking-wide"
                         : "tracking-normal",
                     )}
                   >
                     {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                    {activeFilter === cat && ` (${countForCat(cat)})`}
                   </Button>
                 </Fragment>
               ))}
-              <Button
-                variant="nav"
-                className="font-rounded px-0 leading-tight pointer-events-none mr-1"
-              >
-                /
-              </Button>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="bg-transparent outline-none font-rounded text-base py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-32 transition-all duration-200"
-              />
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -358,7 +356,7 @@ export default function MultiNav() {
                   <motion.span variants={filterItemVariants}>
                     <Button
                       variant="nav"
-                      className="font-rounded px-0 leading-tight pointer-events-none"
+                      className="font-rounded px-0 leading-tight pointer-events-none text-xl lg:text-2xl"
                     >
                       /
                     </Button>
@@ -372,13 +370,14 @@ export default function MultiNav() {
                     variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
-                      "font-rounded inline px-0 leading-tight",
+                      "font-rounded inline px-0 leading-tight uppercase text-xl lg:text-2xl",
                       activeFilter === cat
                         ? "tracking-wide"
                         : "tracking-normal",
                     )}
                   >
                     {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                    {activeFilter === cat && ` (${countForCat(cat)})`}
                   </Button>
                 </motion.span>
               </Fragment>
@@ -387,16 +386,15 @@ export default function MultiNav() {
             <motion.span variants={filterItemVariants}>
               <Button
                 variant="nav"
-                className="font-rounded px-0 leading-tight pointer-events-none mr-1"
+                className="font-rounded px-0 leading-tight pointer-events-none mr-1 text-xl lg:text-2xl"
               >
                 /
               </Button>
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className=" 
-                 bg-transparent outline-none font-rounded text-base lg:text-lg py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-24 focus:w-48 transition-all duration-200"
+                placeholder="SEARCH..."
+                className="bg-transparent outline-none font-rounded text-base lg:text-2xl py-0 h-auto text-neutral-300 placeholder:text-neutral-300 dark:placeholder:text-neutral-700 w-32 focus:w-48 transition-all duration-200"
               />
             </motion.span>
           </motion.div>
@@ -404,7 +402,7 @@ export default function MultiNav() {
       </AnimatePresence>
 
       {panel !== "showreel" && !showGrid && (
-        <div className="absolute bottom-0 left-2 right-2 h-[1px] bg-neutral-300 dark:bg-neutral-600" />
+        <div className="hidden lg:block absolute bottom-0 left-2 right-2 h-[1px] bg-neutral-300 dark:bg-neutral-600" />
       )}
     </motion.div>
   );
