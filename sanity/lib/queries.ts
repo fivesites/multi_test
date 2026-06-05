@@ -58,6 +58,7 @@ export const workCardsQuery = groq`
     _id,
     title,
     client,
+    year,
     credits,
     description,
     categories,

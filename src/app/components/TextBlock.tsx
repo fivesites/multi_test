@@ -46,7 +46,7 @@ export default function TextBlock({
   return (
     <p
       ref={ref}
-      className={`${size} font-rounded text-base lg:text-lg text-red-500 leading-tight px-0`}
+      className={`${size} font-visual text-3xl lg:text-2xl text-red-500 leading-tight px-0`}
     >
       {state === null ? (
         <span style={{ visibility: "hidden" }}>{text}</span>

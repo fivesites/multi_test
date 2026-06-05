@@ -9,6 +9,7 @@ export type GridItem = {
   slug: string;
   title: string;
   client?: string;
+  year?: number;
   credits?: unknown;
   description?: string;
   categories: string[];

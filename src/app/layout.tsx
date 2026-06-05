@@ -47,6 +47,17 @@ const eightPixFont = localFont({
   variable: "--font-8pix",
 });
 
+const visualFont = localFont({
+  src: [
+    { path: "./Visual-Regular.woff2", weight: "400", style: "normal" },
+
+    { path: "./Visual-Medium.woff2", weight: "500", style: "normal" },
+
+    { path: "./Visual-Bold.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-visual",
+});
+
 const karlRounded = localFont({
   src: [
     { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
@@ -98,7 +109,7 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={`${tiny5.variable} ${absolution1.variable} ${ft88.variable} ${ft88Gothique.variable} ${karlRounded.variable} ${neuropolX.variable} ${eightPixFont.variable} antialiased`}
+        className={`${tiny5.variable} ${visualFont.variable} ${absolution1.variable} ${ft88.variable} ${ft88Gothique.variable} ${karlRounded.variable} ${neuropolX.variable} ${eightPixFont.variable} antialiased`}
       >
         <WorkContextServer>
           <CopyContextServer>

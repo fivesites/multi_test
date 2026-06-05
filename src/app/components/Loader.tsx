@@ -24,16 +24,21 @@ export default function Loader({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background w-full h-dvh text-foreground"
+      className="fixed inset-0 z-50 flex items-center justify-start bg-background w-full h-dvh text-foreground"
       animate={{ opacity: dismissing ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       onAnimationComplete={() => {
         if (dismissing) onDone?.();
       }}
     >
-      <div className="flex flex-wrap w-full justify-center p-16 gap-x-4 whitespace-normal">
+      <div className="flex flex-wrap w-full justify-center items-baseline whitespace-normal uppercase px-2 lg:px-16">
         {lines.map(({ text, delay }) => (
-          <TextBlock key={text} text={text} size="text-base" delay={delay} />
+          <TextBlock
+            key={text}
+            text={text}
+            size="text-4xl lg:text-7xl"
+            delay={delay}
+          />
         ))}
       </div>
     </motion.div>

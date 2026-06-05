@@ -16,7 +16,7 @@ export default function DarkModeButton({ className }: { className?: string }) {
   }
 
   return (
-    <span className="flex items-baseline font-rounded text-2xl gap-1">
+    <span className="flex items-baseline font-rounded text-2xl gap-0">
       <Button
         variant={!dark ? "link" : "nav"}
         onClick={() => setMode(false)}
@@ -26,9 +26,9 @@ export default function DarkModeButton({ className }: { className?: string }) {
       </Button>
       <Button
         variant="nav"
-        className="font-rounded px-0 leading-tight pointer-events-none"
+        className=" px-0 leading-tight pointer-events-none mr-1"
       >
-        /
+        ,
       </Button>
       <Button
         variant={dark ? "link" : "nav"}

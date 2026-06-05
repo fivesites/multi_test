@@ -42,14 +42,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [numCols, setNumCols] = useState(2);
 
   useEffect(() => {
-    if (window.innerWidth >= 1280) {
-      setShowGrid(true);
-      setShowList(false);
-      setNumCols(4);
-    } else if (window.innerWidth >= 1024) {
-      setShowGrid(true);
-      setShowList(false);
-      setNumCols(3);
+    if (window.innerWidth >= 1024) {
+      setShowList(true);
+      setShowGrid(false);
+      setNumCols(6);
     } else {
       setNumCols(2);
     }

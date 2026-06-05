@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, AnimatePresence } from "motion/react";
 import { UIProvider } from "@/context/UIContext";
-
+import MultiNav from "@/app/components/MultiNav";
 import Lightbox from "@/app/components/Lightbox";
 import { Button } from "@/components/ui/button";
 
@@ -46,41 +46,62 @@ function WorkPageInner({
   const [heroImage, ...restImages] = images;
 
   return (
-    <div className="min-h-screen bg-background lg:max-w-5xl pb-2">
+    <div className="min-h-screen bg-background ">
       {/* Back button — fixed at same baseline as MultiNav Row 1 */}
-      <div className="flex px-2 pt-2    items-baseline pointer-events-none">
-        <Button
-          variant="link"
-          className="font-rounded leading-tight pointer-events-auto"
-          asChild
-        >
-          <Link href="/">Back</Link>
+
+      <div className="flex flex-col-reverse lg:flex-row justify-center items-center lg:justify-between  px-8 pt-8 gap-y-8   lg:items-baseline pointer-events-none">
+        <h1 className=" text-4xl lg:text-4xl font-visual font-medium  text-red-700 leading-tight">
+          {client && <span className="uppercase">{client} </span>}
+        </h1>
+        <Button variant="link" className=" pointer-events-auto" asChild>
+          <Link href="/">(Back)</Link>
         </Button>
       </div>
+      {heroImage && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
+          className="relative w-full mt-8 mb-0 cursor-zoom-in"
+          style={{
+            paddingBottom: `${(1 / (heroImage.aspectRatio || 1)) * 100}%`,
+          }}
+          onClick={() => setLightboxIndex(0)}
+        >
+          <Image
+            src={heroImage.url}
+            alt=""
+            fill
+            priority
+            className="object-contain"
+            sizes="(max-width: 768px) 100vw, 80vw"
+          />
+        </motion.div>
+      )}
 
       <div className="px-2 mt-16 ">
         {/* Header */}
         <div className="flex justify-between w-full lg:grid lg:grid-cols-4 items-baseline gap-8  mb-16">
-          <h1 className="col-span-2 text-base lg:text-lg font-rounded text-red-500 leading-tight">
-            {client && `${client} / `}
+          <h1 className="col-span-3 text-3xl lg:text-2xl font-visual text-red-500 leading-tight">
             {title}
           </h1>
-          <h1 className="col-start-4 col-span-1 text-base lg:text-lg font-rounded text-red-500 leading-tight">
+          <h1 className="col-start-4 col-span-1 text-3xl lg:text-2xl font-visual  text-red-500 leading-tight">
             {year && year}
           </h1>
         </div>
+        {/* Hero image */}
 
         {/* Description + credits */}
         {(description || credits) && (
           <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-8 mb-16">
             {description && (
-              <p className="text-base lg:text-lg col-span-2 max-w-sm font-rounded text-red-500 mb-16 leading-tight">
+              <p className="text-3xl lg:text-2xl font-visual  text-red-500 leading-tight col-span-2 max-w-sm  mb-16 ">
                 {description}
               </p>
             )}
             {credits && (
               <p
-                className="text-base lg:text-lg leading-tight font-rounded text-red-500 max-w-xs lg:max-w-xl"
+                className="text-3xl lg:text-2xl font-visual  text-red-500 leading-tight max-w-sm lg:max-w-xl"
                 style={{ whiteSpace: "pre-line" }}
               >
                 {credits}
@@ -88,7 +109,7 @@ function WorkPageInner({
             )}
           </div>
         )}
-        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-2 font-rounded text-base lg:text-lg mb-16 text-red-500 leading-tight">
+        <div className="flex flex-wrap justify-between w-full lg:grid lg:grid-cols-4 gap-x-8 gap-y-2 text-xl lg:text-lg uppercase font-visual font-medium  text-red-600 leading-tight  mb-16 ">
           {categories.map((c, i) => (
             <span key={c}>
               {i > 0 && ""}
@@ -96,29 +117,6 @@ function WorkPageInner({
             </span>
           ))}
         </div>
-
-        {/* Hero image */}
-        {heroImage && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="relative w-full mb-0 cursor-zoom-in"
-            style={{
-              paddingBottom: `${(1 / (heroImage.aspectRatio || 1)) * 100}%`,
-            }}
-            onClick={() => setLightboxIndex(0)}
-          >
-            <Image
-              src={heroImage.url}
-              alt=""
-              fill
-              priority
-              className="object-contain"
-              sizes="(max-width: 768px) 100vw, 80vw"
-            />
-          </motion.div>
-        )}
 
         {/* Gallery */}
         {restImages.length > 0 && (

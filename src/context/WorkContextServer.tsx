@@ -15,6 +15,7 @@ type WorkData = {
   _id: string;
   title: string;
   client?: string;
+  year?: number;
   credits?: unknown;
   description?: string;
   categories?: string[];
@@ -59,6 +60,7 @@ export async function WorkContextServer({
           slug: work.slug,
           title: work.title,
           client: work.client,
+          year: work.year,
           credits: work.credits,
           description: work.description,
           categories: work.categories ?? [],
@@ -76,6 +78,7 @@ export async function WorkContextServer({
         slug: work.slug,
         title: work.title,
         client: work.client,
+        year: work.year,
         credits: work.credits,
         description: work.description,
         categories: work.categories ?? [],
