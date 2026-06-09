@@ -2,9 +2,17 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
-import TextBlock from "./TextBlock";
 
 const DISMISS_AFTER = 3000;
+
+const PALETTE = [
+  "text-lyx",
+  "text-lax",
+  "text-lava",
+  "text-lappar",
+  "text-liguriskt",
+  "text-lader",
+];
 
 export default function Loader({
   tagline,
@@ -20,27 +28,29 @@ export default function Loader({
     return () => clearTimeout(t);
   }, []);
 
-  const lines = [{ text: tagline, delay: 0 }];
+  const words = tagline.split(" ");
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-center justify-start bg-background w-full h-dvh text-foreground"
+      className="fixed inset-0 z-50 flex items-start justify-start bg-background w-full h-dvh"
       animate={{ opacity: dismissing ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       onAnimationComplete={() => {
         if (dismissing) onDone?.();
       }}
     >
-      <div className="flex flex-wrap w-full justify-center items-baseline whitespace-normal uppercase px-2 lg:px-16">
-        {lines.map(({ text, delay }) => (
-          <TextBlock
-            key={text}
-            text={text}
-            size="text-4xl lg:text-7xl"
-            delay={delay}
-          />
+      <motion.p
+        className=" font-visual uppercase font-medium text-4xl pt-2 px-4 text-center flex flex-wrap justify-center gap-x-2"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        {words.map((word, i) => (
+          <span key={i} className={PALETTE[i % PALETTE.length]}>
+            {word}
+          </span>
         ))}
-      </div>
+      </motion.p>
     </motion.div>
   );
 }

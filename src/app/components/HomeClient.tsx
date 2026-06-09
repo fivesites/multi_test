@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import MultiCard from "./MultiCard";
@@ -11,7 +11,8 @@ import { useWork } from "@/context/WorkContext";
 import { useCopy } from "@/context/CopyContext";
 import { useRouter } from "next/navigation";
 import VideoPlayer from "./VideoPlayer";
-import OverlayHeroText from "./OverlayHeroText";
+import AboutSectionText from "./AboutSectionText";
+import MultiFooter from "./MultiFooter";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -23,13 +24,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   vax: "Vax",
   dop: "DOP",
   "post-processing": "Post-processing",
-};
-
-const CONNECT_EMAIL = "hello@multi2.co";
-
-const charVariants = {
-  hidden: { opacity: 0 },
-  show: { opacity: 1 },
 };
 
 // MULTISQUARED animation for empty grid cells
@@ -56,24 +50,87 @@ function HomeClientInner() {
 
   const {
     panel,
+    setPanel,
     showGrid,
     showList,
-
     activeFilter,
     openedCard,
     setOpenedCard,
     search,
     setSearch,
     numCols,
+    setHeroInView,
+    aboutRef,
   } = useUI();
 
   const router = useRouter();
   const [hoveredGroup, setHoveredGroup] = useState<string | null>(null);
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-  const navMt = panel !== "showreel" ? "mt-[var(--nav-height,0px)]" : "";
-
   const openCardRef = useRef<HTMLDivElement>(null);
+  const [aboutEl, setAboutEl] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (panel !== "projects" || !aboutEl) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setHeroInView(entry.isIntersecting),
+      { threshold: 0, rootMargin: "0px 0px -50% 0px" },
+    );
+    observer.observe(aboutEl);
+    return () => observer.disconnect();
+  }, [panel, aboutEl, setHeroInView]);
+
+  useEffect(() => {
+    if (panel !== "projects") setHeroInView(false);
+  }, [panel, setHeroInView]);
+
+  useEffect(() => {
+    if (panel !== "showreel") return;
+    let touchStartY = 0;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 0) setPanel("projects");
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (touchStartY - e.changedTouches[0].clientY > 40) setPanel("projects");
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [panel, setPanel]);
+
+  useEffect(() => {
+    if (panel !== "projects") return;
+    let touchStartY = 0;
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY < 0 && window.scrollY === 0) setPanel("showreel");
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      touchStartY = e.touches[0].clientY;
+    };
+    const onTouchEnd = (e: TouchEvent) => {
+      if (
+        e.changedTouches[0].clientY - touchStartY > 40 &&
+        window.scrollY === 0
+      )
+        setPanel("showreel");
+    };
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchend", onTouchEnd, { passive: true });
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchend", onTouchEnd);
+    };
+  }, [panel, setPanel]);
 
   useEffect(() => {
     if (openedCard && openCardRef.current && showList) {
@@ -252,7 +309,7 @@ function HomeClientInner() {
             className={``}
           >
             {/* Desktop: list + thumbnails side by side */}
-            <div className="hidden lg:flex min-h-[200vh] px-6 gap-3">
+            <div className="hidden lg:flex min-h-[100vh] px-6 gap-3">
               {/* List */}
               {showList && (
                 <motion.div
@@ -275,12 +332,12 @@ function HomeClientInner() {
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Search..."
-                        className="hidden bg-transparent outline-none font-visual text-xl lg:text-lg font-medium leading-tight tracking-normal pb-1  h-auto border-b-2 border-red-300 text-red-300 placeholder:text-red-300 dark:placeholder:text-neutral-700 w-full px-2"
+                        className="hidden bg-transparent outline-none font-visual text-xl lg:text-lg font-medium leading-tight tracking-normal pb-1  h-auto border-b-2 border-lyx text-lyx placeholder:text-lyx w-full px-2"
                       />
                     </>
                   )}
                   {/* Header row */}
-                  <div className="grid grid-cols-6 w-full py-2 px-2 text-xl lg:text-lg font-medium font-visual text-red-300 border-b-2 border-red-300  ">
+                  <div className="grid grid-cols-6 w-full py-0 pl-4 text-xl lg:text-lg font-medium font-visual text-lyx border-b-2 border-lyx  ">
                     <span className="col-span-2">Client</span>
                     <span className={showGrid ? "col-span-3" : "col-span-2"}>
                       Title
@@ -308,7 +365,7 @@ function HomeClientInner() {
                           return (
                             <div
                               key={item.slug}
-                              className={`grid grid-cols-6 items-start w-full py-2 px-2 font-medium transition-colors duration-200 cursor-pointer ${group.items.length > 1 && itemIdx < group.items.length - 1 ? "border-b-2 border-red-300" : ""} ${isActive ? "text-red-700" : "text-red-300"}`}
+                              className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${group.items.length > 1 && itemIdx < group.items.length - 1 ? "border-b-2 border-lyx" : ""} ${isActive ? "text-lava" : "text-lyx"}`}
                               onMouseEnter={() => setHoveredItem(item.slug)}
                               onMouseLeave={() => setHoveredItem(null)}
                             >
@@ -328,13 +385,13 @@ function HomeClientInner() {
                                     .join(", ")}
                                 </span>
                               )}
-                              <span className="font-visual text-right transition-colors duration-200">
+                              <span className="font-visual text-right text-lg transition-colors duration-200">
                                 {item.year ?? ""}
                               </span>
                             </div>
                           );
                         })}
-                        <div className="border-b-2 border-b-red-300" />
+                        <div className="border-b-2 border-b-lyx" />
                       </motion.div>
                     ))}
                   </AnimatePresence>
@@ -343,7 +400,7 @@ function HomeClientInner() {
 
               {/* Thumbnails */}
               {showGrid && (
-                <div className="w-full px-2 pb-2 mt-[45vh] lg:mt-[45vh]">
+                <div className={`w-full px-2 pb-2 mt-[45vh] ${showList ? "lg:mt-[45vh]" : "lg:mt-[var(--nav-height)]"}`}>
                   <div className="grid grid-cols-6 gap-2">
                     <AnimatePresence mode="popLayout" initial={false}>
                       {displayed.map((item, idx) => (
@@ -370,10 +427,10 @@ function HomeClientInner() {
                             alt={item.alt}
                             fill
                             className="object-cover"
-                            sizes="17vw"
+                            sizes="12vw"
                           />
                           <div
-                            className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 ${hoveredGroup === (item.client ?? item.slug) ? "bg-red-500" : ""}`}
+                            className={`absolute inset-0 transition-colors duration-200 flex items-end justify-between p-2 ${hoveredGroup === (item.client ?? item.slug) ? "bg-lava" : ""}`}
                           >
                             <span
                               className={`font-visual font-bold text-base uppercase lg:text-base tracking-normal leading-tight transition-opacity duration-200 line-clamp-2 text-background ${hoveredGroup === (item.client ?? item.slug) ? "opacity-100" : "opacity-0"}`}
@@ -392,19 +449,19 @@ function HomeClientInner() {
             </div>
 
             {/* Mobile: grid or list toggle */}
-            <div className="lg:hidden mt-[45vh] px-4 min-h-[200vh]">
+            <div className="lg:hidden mt-[45vh] min-h-[65vh] px-4 ">
               {showGrid && (
                 <>
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
                     placeholder="Search..."
-                    className="bg-transparent outline-none font-visual text-xl lg:text-lg font-medium text-center justify-center leading-tight tracking-normal pb-1  h-auto border-b-2 border-red-300 text-red-300 placeholder:text-red-300 dark:placeholder:text-neutral-700 w-full px-2"
+                    className="bg-transparent outline-none font-visual text-xl lg:text-lg font-medium text-center justify-center leading-tight tracking-normal pb-1  h-auto border-b-2 border-lyx text-lyx placeholder:text-lyx  w-full px-2"
                   />
 
                   <div
                     ref={gridRef}
-                    className="pt-4 gap-2 grid  min-h-dvh"
+                    className="pt-4 gap-2 grid  "
                     style={{
                       gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
                     }}
@@ -464,13 +521,13 @@ function HomeClientInner() {
                               sizes={`${Math.floor(100 / numCols)}vw`}
                             />
                             <div
-                              className={`absolute inset-0 transition-colors duration-200 flex items-center  hover:bg-red-300 justify-center p-2 group  `}
+                              className={`absolute inset-0 transition-colors duration-200 flex items-center  hover:bg-lyx justify-center p-2 group  `}
                             >
                               <Link
                                 href={`/work/${entry.item.slug}`}
                                 onClick={(e) => e.stopPropagation()}
                                 className="font-visual  text-lg font-medium lg:text-2xl tracking-normal 
-                                justify-centerleading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 text-background"
+                                justify-center leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 text-background"
                               >
                                 {entry.item.client}
                               </Link>
@@ -513,7 +570,7 @@ function HomeClientInner() {
                       value={search}
                       onChange={(e) => setSearch(e.target.value)}
                       placeholder="Search projects..."
-                      className="bg-transparent outline-none font-visual text-xl lg:text-2xl  justify-center text-center px-2 font-medium leading-tight border-b-3 border-b-red-300 tracking-normal mb-2 pb-2  h-auto text-red-700 placeholder:text-red-300 dark:placeholder:text-neutral-700 w-full"
+                      className="bg-transparent outline-none font-visual text-xl lg:text-2xl  justify-center text-center px-2 py-2 mb-2 font-medium leading-tight border-b-2 border-b-lyx text-lax  placeholder:text-lyx  w-full"
                     />
                   </div>
 
@@ -535,7 +592,7 @@ function HomeClientInner() {
                           <div className="w-full py-0">
                             {hasMultiple ? (
                               <button
-                                className="uppercase font-visual text-4xl font-medium w-full  text-red-300 hover:text-red-700 text-center py-0 transition-colors duration-200"
+                                className={`uppercase font-visual text-4xl font-medium w-full text-center py-0 transition-colors duration-200 ${isExpanded ? "text-lava" : "text-lyx hover:text-lax active:text-lava"}`}
                                 onClick={() =>
                                   setExpandedGroup(
                                     isExpanded ? null : group.key,
@@ -547,7 +604,7 @@ function HomeClientInner() {
                             ) : (
                               <Link
                                 href={`/work/${group.items[0].slug}`}
-                                className="uppercase font-visual text-4xl text-center py-0 text-red-300 hover:text-red-700 font-medium block transition-colors duration-200"
+                                className="uppercase font-visual text-4xl text-center py-0 text-lyx hover:text-lax font-medium block transition-colors duration-200"
                               >
                                 {label}
                               </Link>
@@ -563,13 +620,13 @@ function HomeClientInner() {
                                     duration: 0.2,
                                     ease: "easeInOut",
                                   }}
-                                  className="overflow-hidden flex pb-2 flex-col items-center   py-0 text-red-300"
+                                  className="overflow-hidden flex pb-2 flex-col items-center   py-0 "
                                 >
                                   {group.items.map((item) => (
                                     <Link
                                       key={item.slug}
                                       href={`/work/${item.slug}`}
-                                      className="font-visual text-xl font-medium  transition-colors duration-200"
+                                      className="font-visual text-xl text-lava hover:text-liguriskt font-medium  transition-colors duration-200"
                                     >
                                       {item.title}
                                     </Link>
@@ -585,49 +642,18 @@ function HomeClientInner() {
                 </motion.div>
               )}
             </div>
-            <OverlayHeroText text={aboutText ?? ""} />
-          </motion.div>
-        )}
-
-        {panel === "about" && (
-          <motion.div
-            key="about"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={`px-2  max-w-4xl pt-[25vh] `}
-          >
-            <p className="text-3xl lg:text-2xl font-visual text-red-500 leading-tight">
-              {aboutText ?? ""}
-            </p>
-          </motion.div>
-        )}
-
-        {panel === "connect" && (
-          <motion.div
-            key="connect"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className={`px-2 pt-0 max-w-4xl ${navMt}`}
-          >
-            <motion.p
-              className="text-3xl lg:text-2xl font-rounded leading-tight text-red-500"
-              initial="hidden"
-              animate="show"
-              variants={{
-                hidden: {},
-                show: { transition: { staggerChildren: 0.07 } },
+            <div
+              className="min-h-[200vh]"
+              ref={(el) => {
+                setAboutEl(el);
+                (
+                  aboutRef as React.MutableRefObject<HTMLDivElement | null>
+                ).current = el;
               }}
             >
-              {CONNECT_EMAIL.split("").map((char, i) => (
-                <motion.span key={i} variants={charVariants}>
-                  {char}
-                </motion.span>
-              ))}
-            </motion.p>
+              <AboutSectionText text={aboutText ?? ""} />
+            </div>
+            <MultiFooter />
           </motion.div>
         )}
       </AnimatePresence>

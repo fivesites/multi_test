@@ -5,6 +5,8 @@ import {
   useContext,
   useState,
   useEffect,
+  useRef,
+  type RefObject,
   type ReactNode,
 } from "react";
 
@@ -27,6 +29,9 @@ type UIContextType = {
   setSearch: (v: string) => void;
   numCols: number;
   setNumCols: (n: number) => void;
+  heroInView: boolean;
+  setHeroInView: (v: boolean) => void;
+  aboutRef: RefObject<HTMLDivElement>;
 };
 
 const UIContext = createContext<UIContextType | null>(null);
@@ -40,6 +45,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
+  const [heroInView, setHeroInView] = useState(false);
+  const aboutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
@@ -70,6 +77,9 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setSearch,
         numCols,
         setNumCols,
+        heroInView,
+        setHeroInView,
+        aboutRef,
       }}
     >
       {children}

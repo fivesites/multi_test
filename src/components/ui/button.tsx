@@ -5,7 +5,7 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-x-2 w-min   tracking-tight whitespace-nowrap transition-all outline-none font-visual cursor-pointer focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-center gap-x-2 w-min    whitespace-nowrap transition-all outline-none font-visual cursor-pointer focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -18,12 +18,12 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "bg-transparent  hover:backdrop-blur-lg text-background hover:bg-foreground/10 hover:text-foreground/80 ",
-        link: "text-red-700 no-underline hover:no-underline transition-all duration-200",
-        nav: "text-red-300 no-underline hover:no-underline hover:text-red-500 transition-all duration-200",
+        link: "text-lava  hover:text-lappar no-underline hover:no-underline transition-all duration-200",
+        nav: "text-lyx dark:text-liguriskt  no-underline hover:no-underline hover:text-lax dark:hover:text-lader transition-all duration-200",
       },
       size: {
         default:
-          "h-auto px-0 py-0 has-[>svg]:px-3  leading-tight tracking-normal text-xl lg:text-lg",
+          "h-auto px-0 py-0 has-[>svg]:px-3  leading-tight tracking-wide text-xl lg:text-lg",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-[2rem] gap-1.5 px-3 has-[>svg]:px-2.5 text-sm",
         lg: "h-[4rem] lg:h-auto lg:py-4 text-xl lg:text-2xl rounded-none px-6 has-[>svg]:px-4 ",

@@ -5,6 +5,12 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-lyx: var(--lyx);
+  --color-lax: var(--lax);
+  --color-lava: var(--lava);
+  --color-lappar: var(--lappar);
+  --color-liguriskt: var(--liguriskt);
+  --color-lader: var(--lader);
   --font-sans: var(--font-monument-grotesk);
   --font-serif: var(--font-meta-old-french);
   --font-mono: var(--font-ft88);
@@ -56,6 +62,12 @@
 }
 
 :root {
+  --lyx: #FFD2D2;
+  --lax: #FF7171;
+  --lava: #F70000;
+  --lappar: #CB0B0B;
+  --liguriskt: #6F0000;
+  --lader: #460000;
   --background: oklch(0.9832 0.0017 325.5901);
   --foreground: oklch(0.2057 0.014 298.2309);
   --card: oklch(0.9832 0.0017 325.5901);

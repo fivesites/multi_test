@@ -1,7 +1,7 @@
 "use client";
 
-import { Fragment, useRef, useEffect, useState } from "react";
-import { motion, AnimatePresence } from "motion/react";
+import { useRef, useEffect, useState } from "react";
+import { motion, AnimatePresence, type Variants } from "motion/react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useUI, type Panel } from "@/context/UIContext";
@@ -20,9 +20,60 @@ const CATEGORY_LABELS: Record<string, string> = {
   "post-processing": "Post-processing",
 };
 
-const filterItemVariants = {
-  hidden: { opacity: 0, y: -6 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.2 } },
+const filterItem: Variants = {
+  hidden: {
+    opacity: 0,
+    x: -40,
+    transition: { duration: 0.15, ease: "easeIn" },
+  },
+  show: { opacity: 1, x: 0, transition: { duration: 0.3, ease: "easeOut" } },
+  exit: { opacity: 0, x: -40, transition: { duration: 0.15, ease: "easeIn" } },
+};
+
+const filterContainer: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      staggerChildren: 0.04,
+      staggerDirection: -1,
+      when: "afterChildren",
+    },
+  },
+  show: {
+    height: "auto",
+    transition: { staggerChildren: 0.07, delayChildren: 0.28 },
+  },
+  exit: {
+    height: 0,
+    transition: {
+      staggerChildren: 0.04,
+      staggerDirection: -1,
+      when: "afterChildren",
+    },
+  },
+};
+
+const filterContainerMobile: Variants = {
+  hidden: {
+    height: 0,
+    transition: {
+      staggerChildren: 0.04,
+      staggerDirection: -1,
+      when: "afterChildren",
+    },
+  },
+  show: {
+    height: "auto",
+    transition: { staggerChildren: 0.07, delayChildren: 0.28 },
+  },
+  exit: {
+    height: 0,
+    transition: {
+      staggerChildren: 0.04,
+      staggerDirection: -1,
+      when: "afterChildren",
+    },
+  },
 };
 
 export default function MultiNav() {
@@ -42,6 +93,9 @@ export default function MultiNav() {
     setSearch,
     numCols,
     setNumCols,
+    heroInView,
+    setHeroInView,
+    aboutRef,
   } = useUI();
   const { categories, items } = useWork();
   const [isDesktop, setIsDesktop] = useState(false);
@@ -51,6 +105,12 @@ export default function MultiNav() {
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
+
+  useEffect(() => {
+    window.scrollTo({ top: 0 });
+  }, [panel]);
+
+  const showFilters = panel === "projects" && !heroInView;
 
   const countForCat = (cat: string) =>
     new Set(
@@ -65,6 +125,26 @@ export default function MultiNav() {
     setPanel(p);
     if (p !== "projects") setOpenedCard(null);
     if (p === "showreel") setShowSettings(false);
+    if (p === "projects" && heroInView) {
+      setHeroInView(false);
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }
+
+  function handleAboutClick() {
+    setHeroInView(true);
+    if (panel !== "projects") {
+      setPanel("projects");
+      setOpenedCard(null);
+      setTimeout(() => {
+        aboutRef.current?.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }, 100);
+    } else {
+      aboutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
 
   function handleFilterChange(cat: string) {
@@ -166,14 +246,14 @@ export default function MultiNav() {
   return (
     <motion.div
       ref={navRef}
-      className={`fixed z-20 top-0 left-0 right-0 px-4 lg:px-8  pt-2 lg:pt-8  pb-2 lg:pb-3 flex flex-col  transition-colors duration-300  ${panel === "showreel" ? "bg-transparent" : "bg-background"}`}
+      className={`fixed z-20 top-0 left-0 right-0 px-4 lg:px-8  pt-2 lg:pt-8  pb-2 lg:pb-3 flex flex-col  transition-colors duration-300  ${panel === "showreel" ? "bg-transparent" : "bg-transparent"}`}
       transition={{ duration: 0.4 }}
     >
       {/* Row 1: logo + nav links (desktop: settings inline) */}
       <div className="flex flex-col items-center    w-full  justify-center lg:items-start  lg:gap-x-16">
         <motion.div
           layout
-          transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
+          transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
             variant="link"
@@ -186,11 +266,11 @@ export default function MultiNav() {
 
         <motion.div
           layout
-          className={`flex items-baseline justify-center lg:justify-start ${panel === "showreel" ? " lg:items-start flex-col items-center" : "flex-wrap"} font-visual  font-medium gap-x-0 leading-tight  w-full`}
+          className={`flex items-baseline justify-center lg:justify-start ${panel === "showreel" ? " flex-col  items-center lg:flex-row lg:items-start " : "lg:flex-wrap"} font-visual  font-medium gap-x-0 leading-tight  w-full`}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
-            variant={panel === "projects" ? "link" : "nav"}
+            variant={panel === "projects" && !heroInView ? "link" : "nav"}
             className={cn(
               "",
               panel === "showreel"
@@ -208,14 +288,14 @@ export default function MultiNav() {
             ,
           </Button>
           <Button
-            variant={panel === "about" ? "link" : "nav"}
+            variant={heroInView ? "link" : "nav"}
             className={cn(
               "",
               panel === "showreel"
                 ? "text-4xl lg:text-4xl uppercase"
                 : "tracking-tight",
             )}
-            onClick={() => handleNavClick("about")}
+            onClick={handleAboutClick}
           >
             About
           </Button>
@@ -226,16 +306,16 @@ export default function MultiNav() {
             ,
           </Button>
           <Button
-            variant={panel === "connect" ? "link" : "nav"}
+            variant="nav"
             className={cn(
               "",
               panel === "showreel"
                 ? "text-4xl lg:text-4xl uppercase"
-                : "tracking-tight ",
+                : "tracking-tight",
             )}
-            onClick={() => handleNavClick("connect")}
+            asChild
           >
-            Connect
+            <a href="mailto:hello@multi2.co">Connect</a>
           </Button>
           {panel !== "showreel" && (
             <>
@@ -287,35 +367,49 @@ export default function MultiNav() {
           ) : panel === "projects" ? (
             <motion.div
               key="filters"
-              initial={{ opacity: 0, y: -4 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -4 }}
-              transition={{ duration: 0.15 }}
-              className="flex flex-wrap justify-center gap-x-0 items-baseline pb-0 font-visual  font-medium  lg:mt-0  w-full"
+              variants={filterContainerMobile}
+              initial="hidden"
+              animate={showFilters ? "show" : "hidden"}
+              exit="exit"
+              className="overflow-hidden flex flex-wrap justify-center gap-x-0 items-baseline pb-0 font-visual font-medium lg:mt-0 w-full"
             >
-              {["all", ...categories].map((cat, i) => (
-                <Fragment key={cat}>
-                  {i > 0 && (
-                    <Button
-                      variant="nav"
-                      className=" px-0 h-auto, py-0 leading-tight pointer-events-none text-4xl  "
+              {["all", ...categories].flatMap((cat, i) => {
+                const nodes = [];
+                if (i > 0)
+                  nodes.push(
+                    <motion.span
+                      key={`mc-${cat}`}
+                      variants={filterItem}
+                      className="inline-flex items-baseline"
                     >
-                      ,
-                    </Button>
-                  )}
-                  <Button
-                    variant={activeFilter === cat ? "link" : "nav"}
-                    onClick={() => handleFilterChange(cat)}
-                    className={cn(
-                      "inline px-0 h-auto leading-tight ml-1 tracking-tight py-0 text-4xl uppercase ",
-                      activeFilter === cat ? "" : "",
-                    )}
+                      <Button
+                        variant="nav"
+                        className="px-0 h-auto py-0 leading-tight pointer-events-none text-4xl"
+                      >
+                        ,
+                      </Button>
+                    </motion.span>,
+                  );
+                nodes.push(
+                  <motion.span
+                    key={`mb-${cat}`}
+                    variants={filterItem}
+                    className="inline-flex items-baseline"
                   >
-                    {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
-                    {activeFilter === cat && ` (${countForCat(cat)})`}
-                  </Button>
-                </Fragment>
-              ))}
+                    <Button
+                      variant={activeFilter === cat ? "link" : "nav"}
+                      onClick={() => handleFilterChange(cat)}
+                      className={cn(
+                        "inline px-0 h-auto leading-tight ml-1 tracking-tight py-0 text-4xl uppercase",
+                      )}
+                    >
+                      {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                      {activeFilter === cat && ` (${countForCat(cat)})`}
+                    </Button>
+                  </motion.span>,
+                );
+                return nodes;
+              })}
             </motion.div>
           ) : null}
         </AnimatePresence>
@@ -326,38 +420,40 @@ export default function MultiNav() {
         {panel === "projects" && (
           <motion.div
             key="filters-desktop"
+            variants={filterContainer}
             initial="hidden"
-            animate="show"
-            exit={{ opacity: 0, transition: { duration: 0.15 } }}
-            variants={{
-              hidden: {},
-              show: {
-                transition: { staggerChildren: 0.06, delayChildren: 0.05 },
-              },
-            }}
-            className="hidden lg:flex font-visual font-medium  flex-wrap justify-start mx-0   uppercase items-baseline pb-0 gap-0    w-full "
+            animate={showFilters ? "show" : "hidden"}
+            exit="exit"
+            className="hidden lg:flex overflow-hidden font-visual font-medium flex-wrap justify-start uppercase items-baseline pb-0 gap-0 w-full"
           >
-            {["all", ...categories].map((cat, i) => (
-              <Fragment key={cat}>
-                {i > 0 && (
-                  <motion.span variants={filterItemVariants}>
+            {["all", ...categories].flatMap((cat, i) => {
+              const nodes = [];
+              if (i > 0)
+                nodes.push(
+                  <motion.span
+                    key={`c-${cat}`}
+                    variants={filterItem}
+                    className="inline-flex items-baseline"
+                  >
                     <Button
                       variant="nav"
-                      className=" px-0 leading-tight h-auto py-0 mr-1 pointer-events-none lg:text-4xl "
+                      className="px-0 leading-tight h-auto py-0 mr-1 pointer-events-none lg:text-4xl"
                     >
                       ,
                     </Button>
-                  </motion.span>
-                )}
+                  </motion.span>,
+                );
+              nodes.push(
                 <motion.span
-                  className="flex justify-start items-baseline lg:text-4xl  h-auto py-0"
-                  variants={filterItemVariants}
+                  key={`b-${cat}`}
+                  variants={filterItem}
+                  className="inline-flex justify-start items-baseline h-auto py-0"
                 >
                   <Button
                     variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
-                      " inline px-0 leading-tight uppercase lg:text-4xl h-auto py-0 space-x-0 gap-x-0 ",
+                      "inline px-0 leading-tight uppercase lg:text-4xl h-auto py-0 space-x-0 gap-x-0",
                       activeFilter === cat
                         ? "tracking-wide"
                         : "tracking-normal",
@@ -366,14 +462,18 @@ export default function MultiNav() {
                     {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
                     {activeFilter === cat && ` (${countForCat(cat)})`}
                   </Button>
-                </motion.span>
-              </Fragment>
-            ))}
-
-            <motion.span variants={filterItemVariants}>
+                </motion.span>,
+              );
+              return nodes;
+            })}
+            <motion.span
+              key="search"
+              variants={filterItem}
+              className="inline-flex items-baseline"
+            >
               <Button
                 variant="nav"
-                className="px-0 leading-tight pointer-events-none mr-1 lg:text-4xl  "
+                className="px-0 leading-tight pointer-events-none mr-1 lg:text-4xl"
               >
                 ,
               </Button>
@@ -381,7 +481,7 @@ export default function MultiNav() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search..."
-                className="bg-transparent outline-none font-visual leading-tight uppercase tracking-normal text-3xl lg:text-4xl py-0 h-auto text-red-700 placeholder:text-red-300 dark:placeholder:text-red-700 w-48 focus:w-48 transition-all duration-200"
+                className="bg-transparent outline-none font-visual leading-tight uppercase tracking-normal text-3xl lg:text-4xl py-0 h-auto text-lyx placeholder:text-lyx  w-48 focus:w-48 transition-all duration-200"
               />
             </motion.span>
           </motion.div>
