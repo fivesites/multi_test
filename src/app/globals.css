@@ -12,7 +12,8 @@
   --color-liguriskt: var(--liguriskt);
   --color-lader: var(--lader);
 
-  --font-mono: var --font-absolution1: var(--font-absolution1);
+  --font-mono: var(--font-mono);
+  --font-absolution1: var(--font-absolution1);
   --font-rounded: var(--font-rounded);
   --font-visual: var(--font-visual);
 
