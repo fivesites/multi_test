@@ -11,16 +11,11 @@
   --color-lappar: var(--lappar);
   --color-liguriskt: var(--liguriskt);
   --color-lader: var(--lader);
-  --font-sans: var(--font-monument-grotesk);
-  --font-serif: var(--font-meta-old-french);
-  --font-mono: var(--font-ft88);
-  --font-tiny5: var(--font-tiny5);
-  --font-absolution1: var(--font-absolution1);
+
+  --font-mono: var --font-absolution1: var(--font-absolution1);
   --font-rounded: var(--font-rounded);
   --font-visual: var(--font-visual);
-  --font-ft88-gothique: var(--font-ft88-gothique);
-  --font-neuropol: var(--font-neuropol);
-  --font-8pix: var(--font-8pix);
+
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -62,11 +57,11 @@
 }
 
 :root {
-  --lyx: #FFD2D2;
-  --lax: #FF7171;
-  --lava: #F70000;
-  --lappar: #CB0B0B;
-  --liguriskt: #6F0000;
+  --lyx: #ffd2d2;
+  --lax: #ff7171;
+  --lava: #f70000;
+  --lappar: #cb0b0b;
+  --liguriskt: #6f0000;
   --lader: #460000;
   --background: oklch(0.9832 0.0017 325.5901);
   --foreground: oklch(0.2057 0.014 298.2309);
@@ -100,9 +95,7 @@
   --sidebar-accent-foreground: oklch(0.2163 0.0025 145.4898);
   --sidebar-border: oklch(0.9219 0 0);
   --sidebar-ring: oklch(0.709 0 0);
-  --font-sans: var(--font-monument-grotesk);
-  --font-serif: var(--font-meta-old-french);
-  --font-mono: var(--font-monument-grotesk-mono);
+
   --radius: 0.625rem;
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
@@ -151,9 +144,7 @@
   --sidebar-accent-foreground: oklch(0.9851 0 0);
   --sidebar-border: oklch(0.2768 0 0);
   --sidebar-ring: oklch(0.4386 0 0);
-  --font-sans: var(--font-monument-grotesk);
-  --font-serif: var(--font-meta-old-french);
-  --font-mono: var(--font-monument-grotesk-mono);
+
   --shadow-2xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(0 0% 0% / 0.05);
   --shadow-sm:
@@ -175,56 +166,5 @@
   body {
     @apply bg-background text-foreground;
     scroll-snap-type: y proximity;
-  }
-}
-
-/* ── Typography classes ─────────────────────────────────────────────────────
-   h1, h2  → Absolution Contextual (font-absolution1)
-   h3      → Monument Grotesk Mono (font-mono)
-   p       → Monument Grotesk (font-sans, default)
-   ────────────────────────────────────────────────────────────────────────── */
-@layer utilities {
-  .type-h1 {
-    font-family: var(--font-rounded);
-    @apply text-5xl lg:text-8xl leading-none tracking-tight;
-  }
-  .type-h2 {
-    font-family: var(--font-tiny5);
-    @apply text-3xl lg:text-5xl leading-tight;
-  }
-  .type-h3 {
-    font-family: var(--font-mono);
-    @apply text-xl leading-snug;
-  }
-  .type-p {
-    font-family: var(--font-serif);
-    @apply text-base leading-loose;
-  }
-}
-
-/* Philosophy page checkerboard — 2-col mobile, 4-col desktop */
-.philosophy-cell {
-  background-color: var(--secondary);
-  color: var(--secondary-foreground);
-}
-/* 2-col: positions 4n+2 and 4n+3 are dark */
-.philosophy-cell:nth-child(4n + 2),
-.philosophy-cell:nth-child(4n + 3) {
-  background-color: var(--secondary-foreground);
-  color: var(--secondary);
-}
-@media (min-width: 1024px) {
-  /* 4-col: positions 8n+2, 8n+4, 8n+5, 8n+7 are dark */
-  .philosophy-cell:nth-child(4n + 2),
-  .philosophy-cell:nth-child(4n + 3) {
-    background-color: var(--secondary);
-    color: var(--secondary-foreground);
-  }
-  .philosophy-cell:nth-child(8n + 2),
-  .philosophy-cell:nth-child(8n + 4),
-  .philosophy-cell:nth-child(8n + 5),
-  .philosophy-cell:nth-child(8n + 7) {
-    background-color: var(--secondary-foreground);
-    color: var(--secondary);
   }
 }

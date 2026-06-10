@@ -8,7 +8,7 @@ import Link from "next/link";
 import MultiNav from "./MultiNav";
 import { UIProvider, useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
-import { useCopy } from "@/context/CopyContext";
+import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import { useRouter } from "next/navigation";
 import VideoPlayer from "./VideoPlayer";
 import AboutSectionText from "./AboutSectionText";
@@ -46,7 +46,8 @@ function getEmptyChar(idx: number, elapsed: number): string {
 
 function HomeClientInner() {
   const { items } = useWork();
-  const aboutText = useCopy("about-intro");
+  const aboutEntry = useCopyEntry("about-intro");
+  const aboutBody = useCopyBody("about-intro");
 
   const {
     panel,
@@ -287,14 +288,15 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
+            className="relative h-dvh w-full"
           >
             <VideoPlayer
               src="/multi_showreel_mobile.mp4"
-              className="w-full h-dvh block lg:hidden"
+              className="absolute inset-0 h-full w-full block lg:hidden invert"
             />
             <VideoPlayer
               src="/multi_showreel_desktop.mp4"
-              className="w-full h-dvh hidden lg:block"
+              className="absolute inset-0 h-full w-full hidden lg:block invert"
             />
           </motion.div>
         )}
@@ -400,7 +402,9 @@ function HomeClientInner() {
 
               {/* Thumbnails */}
               {showGrid && (
-                <div className={`w-full px-2 pb-2 mt-[45vh] ${showList ? "lg:mt-[45vh]" : "lg:mt-[var(--nav-height)]"}`}>
+                <div
+                  className={`w-full px-2 pb-2 mt-[45vh] ${showList ? "lg:mt-[45vh]" : "lg:mt-[var(--nav-height)]"}`}
+                >
                   <div className="grid grid-cols-6 gap-2">
                     <AnimatePresence mode="popLayout" initial={false}>
                       {displayed.map((item, idx) => (
@@ -651,7 +655,10 @@ function HomeClientInner() {
                 ).current = el;
               }}
             >
-              <AboutSectionText text={aboutText ?? ""} />
+              <AboutSectionText
+                plainText={aboutEntry?.plainText ?? ""}
+                text={aboutBody ?? undefined}
+              />
             </div>
             <MultiFooter />
           </motion.div>

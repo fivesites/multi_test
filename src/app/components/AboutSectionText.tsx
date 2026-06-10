@@ -2,10 +2,17 @@
 
 import { useRef, useState, useEffect } from "react";
 import Link from "next/link";
+import TypedWord from "./TypedWord";
 
 type Phase = "p1" | "p2" | "p3" | "p4";
 
-export default function AboutSectionText({ text }: { text: string }) {
+export default function AboutSectionText({
+  plainText,
+  text,
+}: {
+  plainText: string;
+  text?: string;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>("p1");
 
@@ -18,7 +25,7 @@ export default function AboutSectionText({ text }: { text: string }) {
       if (!parent) return;
       const parentRect = parent.getBoundingClientRect();
 
-      if (parentRect.top > 0) {
+      if (parentRect.top > window.innerHeight * 0.8) {
         setPhase("p1");
         return;
       }
@@ -37,27 +44,20 @@ export default function AboutSectionText({ text }: { text: string }) {
     return () => window.removeEventListener("scroll", update);
   }, []);
 
-  const [blink, setBlink] = useState(false);
-
-  useEffect(() => {
-    if (phase !== "p4") {
-      setBlink(false);
-      return;
-    }
-    const id = setInterval(() => setBlink((b) => !b), 600);
-    return () => clearInterval(id);
-  }, [phase]);
-
   const colorClass =
     phase === "p1"
-      ? "text-lava"
+      ? "text-lyx"
       : phase === "p2"
-        ? "text-lappar"
+        ? "text-lax"
         : phase === "p3"
-          ? "text-liguriskt"
-          : "text-ladar";
+          ? "text-lava"
+          : "text-liguriskt";
 
   const lineColor = `${colorClass} transition-colors duration-0`;
+
+  const TYPING_MS = 22;
+  const textDelay = plainText.length * TYPING_MS + 100;
+  const ctaDelay = textDelay + (text?.length ?? 0) * TYPING_MS + 100;
 
   return (
     <div
@@ -67,20 +67,24 @@ export default function AboutSectionText({ text }: { text: string }) {
       <h1
         className={`font-visual text-6xl lg:text-9xl uppercase leading-none text-center lg:text-left font-normal tracking-tight lg:tracking-tighter lg:leading-[0.9] ${lineColor}`}
       >
-        We multiply what matters
+        <TypedWord text={plainText} visible={phase !== "p1"} />
       </h1>
       {text && (
         <p
-          className={`font-visual text-2xl lg:text-3xl tracking-wide max-w-5xl font-medium leading-[1.1] mt-1 text-center lg:text-left lg:tracking-normal lg:font-normal lg:indent-16 lg:mt-2 delay-150 ${lineColor}`}
+          className={`font-visual text-2xl lg:text-3xl tracking-wide max-w-5xl font-medium leading-[1.1] mt-1 text-center lg:text-left lg:tracking-normal lg:font-normal lg:indent-16 lg:mt-2 ${lineColor}`}
         >
-          {text}
+          <TypedWord text={text} visible={phase !== "p1"} delay={textDelay} />
         </p>
       )}
       <Link
         href="mailto:hello@multi2.co"
-        className={`font-visual text-3xl lg:text-7xl w-full uppercase leading-[1] font-medium tracking-normal mt-2 lg:mt-2 delay-300 max-w-sm  text-center lg:text-left  lg:max-w-3xl lg:indent-16 ${lineColor} `}
+        className={`font-visual text-3xl lg:text-7xl w-full uppercase leading-[1] font-medium tracking-normal mt-2 lg:mt-2 max-w-sm hover:text-lyx transition-colors text-center lg:text-left lg:max-w-3xl lg:indent-16 ${lineColor}`}
       >
-        connect with us
+        <TypedWord
+          text="connect with us —>"
+          visible={phase !== "p1"}
+          delay={ctaDelay}
+        />
       </Link>
     </div>
   );

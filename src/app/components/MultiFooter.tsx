@@ -44,7 +44,7 @@ export default function MultiFooter() {
           </span>
         </div>
 
-        <p className=" text-center ">Multi² is pronounced "Multisquared"</p>
+        <p className=" text-center ">Multi² is pronounced &ldquo;Multisquared&rdquo;</p>
       </div>
     </footer>
   );

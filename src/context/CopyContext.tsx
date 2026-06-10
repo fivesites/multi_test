@@ -40,3 +40,23 @@ export function useCopy(key: string): string | null {
   }
   return null;
 }
+
+export function useCopyEntry(key: string): CopyEntry | null {
+  const { entries } = useContext(CopyContext);
+  return entries[key] ?? null;
+}
+
+function bodyToString(entry: CopyEntry): string | null {
+  if (!entry.body) return null;
+  return entry.body
+    .map((block) => (block.children ?? []).map((c) => c.text ?? "").join(""))
+    .filter(Boolean)
+    .join("\n\n");
+}
+
+export function useCopyBody(key: string): string | null {
+  const { entries } = useContext(CopyContext);
+  const entry = entries[key];
+  if (!entry) return null;
+  return bodyToString(entry);
+}

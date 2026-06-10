@@ -7,6 +7,8 @@ import { cn } from "@/lib/utils";
 import { useUI, type Panel } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import DarkModeButton from "./DarkModeButton";
+import Link from "next/link";
+import TypedWord from "./TypedWord";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -21,59 +23,21 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const filterItem: Variants = {
-  hidden: {
-    opacity: 0,
-    x: -40,
-    transition: { duration: 0.15, ease: "easeIn" },
-  },
-  show: { opacity: 1, x: 0, transition: { duration: 0.3, ease: "easeOut" } },
-  exit: { opacity: 0, x: -40, transition: { duration: 0.15, ease: "easeIn" } },
+  hidden: {},
+  show: {},
+  exit: {},
 };
 
 const filterContainer: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      staggerChildren: 0.04,
-      staggerDirection: -1,
-      when: "afterChildren",
-    },
-  },
-  show: {
-    height: "auto",
-    transition: { staggerChildren: 0.07, delayChildren: 0.28 },
-  },
-  exit: {
-    height: 0,
-    transition: {
-      staggerChildren: 0.04,
-      staggerDirection: -1,
-      when: "afterChildren",
-    },
-  },
+  hidden: { height: 0, transition: { duration: 0.2 } },
+  show: { height: "auto", transition: { duration: 0.2 } },
+  exit: { height: 0, transition: { duration: 0.2 } },
 };
 
 const filterContainerMobile: Variants = {
-  hidden: {
-    height: 0,
-    transition: {
-      staggerChildren: 0.04,
-      staggerDirection: -1,
-      when: "afterChildren",
-    },
-  },
-  show: {
-    height: "auto",
-    transition: { staggerChildren: 0.07, delayChildren: 0.28 },
-  },
-  exit: {
-    height: 0,
-    transition: {
-      staggerChildren: 0.04,
-      staggerDirection: -1,
-      when: "afterChildren",
-    },
-  },
+  hidden: { height: 0, transition: { duration: 0.2 } },
+  show: { height: "auto", transition: { duration: 0.2 } },
+  exit: { height: 0, transition: { duration: 0.2 } },
 };
 
 export default function MultiNav() {
@@ -109,6 +73,12 @@ export default function MultiNav() {
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [panel]);
+
+  useEffect(() => {
+    if (panel === "projects" && isDesktop) {
+      setShowSettings(true);
+    }
+  }, [panel, isDesktop, setShowSettings]);
 
   const showFilters = panel === "projects" && !heroInView;
 
@@ -257,7 +227,7 @@ export default function MultiNav() {
         >
           <Button
             variant="link"
-            className={`cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-normal ${panel === "showreel" ? "text-4xl lg:text-4xl " : ""}`}
+            className={`cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-normal`}
             onClick={() => handleNavClick("showreel")}
           >
             Multi²
@@ -266,56 +236,29 @@ export default function MultiNav() {
 
         <motion.div
           layout
-          className={`flex items-baseline justify-center lg:justify-start ${panel === "showreel" ? " flex-col  items-center lg:flex-row lg:items-start " : "lg:flex-wrap"} font-visual  font-medium gap-x-0 leading-tight  w-full`}
+          className={`flex flex-wrap items-baseline justify-center lg:justify-start font-visual  font-medium gap-x-0 leading-tight  w-full`}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
             variant={panel === "projects" && !heroInView ? "link" : "nav"}
-            className={cn(
-              "",
-              panel === "showreel"
-                ? "text-4xl uppercase lg:text-4xl"
-                : "tracking-tight",
-            )}
             onClick={() => handleNavClick("projects")}
           >
             Projects
           </Button>
-          <Button
-            variant="nav"
-            className={`${panel === "showreel" ? "hidden lg:flex text-4xl lg:text-4xl" : "flex"} px-0 pointer-events-none mr-1 `}
-          >
+          <Button variant="nav" className={` px-0 pointer-events-none mr-1 `}>
             ,
           </Button>
           <Button
             variant={heroInView ? "link" : "nav"}
-            className={cn(
-              "",
-              panel === "showreel"
-                ? "text-4xl lg:text-4xl uppercase"
-                : "tracking-tight",
-            )}
             onClick={handleAboutClick}
           >
             About
           </Button>
-          <Button
-            variant="nav"
-            className={`${panel === "showreel" ? "hidden lg:flex text-4xl lg:text-4xl" : "flex"} px-0 pointer-events-none mr-1 `}
-          >
+          <Button variant="nav" className={` px-0 pointer-events-none mr-1 `}>
             ,
           </Button>
-          <Button
-            variant="nav"
-            className={cn(
-              "",
-              panel === "showreel"
-                ? "text-4xl lg:text-4xl uppercase"
-                : "tracking-tight",
-            )}
-            asChild
-          >
-            <a href="mailto:hello@multi2.co">Connect</a>
+          <Button variant="nav" asChild>
+            <Link href="mailto:hello@multi2.co">Connect</Link>
           </Button>
           {panel !== "showreel" && (
             <>
@@ -403,7 +346,11 @@ export default function MultiNav() {
                         "inline px-0 h-auto leading-tight ml-1 tracking-tight py-0 text-4xl uppercase",
                       )}
                     >
-                      {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                      <TypedWord
+                        text={cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                        visible={showFilters}
+                        delay={i * 60}
+                      />
                       {activeFilter === cat && ` (${countForCat(cat)})`}
                     </Button>
                   </motion.span>,
@@ -459,7 +406,11 @@ export default function MultiNav() {
                         : "tracking-normal",
                     )}
                   >
-                    {cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                    <TypedWord
+                      text={cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                      visible={showFilters}
+                      delay={i * 60}
+                    />
                     {activeFilter === cat && ` (${countForCat(cat)})`}
                   </Button>
                 </motion.span>,

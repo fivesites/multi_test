@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "motion/react";
+import TypedWord from "./TypedWord";
 
 const DISMISS_AFTER = 3000;
+const WORD_STAGGER = 180; // ms between words starting to type
 
 const PALETTE = [
   "text-lyx",
@@ -11,7 +13,6 @@ const PALETTE = [
   "text-lava",
   "text-lappar",
   "text-liguriskt",
-  "text-lader",
 ];
 
 export default function Loader({
@@ -32,25 +33,25 @@ export default function Loader({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-start justify-start bg-background w-full h-dvh"
+      className="fixed inset-0 z-50 flex items-start justify-start bg-lader w-full pt-2 lg:pt-8 px-8 h-dvh"
       animate={{ opacity: dismissing ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       onAnimationComplete={() => {
         if (dismissing) onDone?.();
       }}
     >
-      <motion.p
-        className=" font-visual uppercase font-medium text-4xl pt-2 px-4 text-center flex flex-wrap justify-center gap-x-2"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, ease: "easeOut" }}
-      >
+      <p className="font-visual  font-medium text-4xl lg:text-lg pt-2 px-4 text-center tracking-wide lg:text-left flex flex-wrap uppercase justify-center gap-x-2 lg:gap-x-1 ">
         {words.map((word, i) => (
-          <span key={i} className={PALETTE[i % PALETTE.length]}>
-            {word}
-          </span>
+          <TypedWord
+            key={i}
+            text={word}
+            visible={!dismissing}
+            delay={i * WORD_STAGGER}
+            eraseDelay={(words.length - 1 - i) * WORD_STAGGER}
+            className={PALETTE[i % PALETTE.length]}
+          />
         ))}
-      </motion.p>
+      </p>
     </motion.div>
   );
 }
