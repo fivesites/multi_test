@@ -102,7 +102,6 @@ export default function MultiNav() {
   }
 
   function handleAboutClick() {
-    setHeroInView(true);
     if (panel !== "projects") {
       setPanel("projects");
       setOpenedCard(null);
@@ -111,7 +110,7 @@ export default function MultiNav() {
           behavior: "smooth",
           block: "start",
         });
-      }, 100);
+      }, 600);
     } else {
       aboutRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     }
@@ -318,21 +317,6 @@ export default function MultiNav() {
             >
               {["all", ...categories].flatMap((cat, i) => {
                 const nodes = [];
-                if (i > 0)
-                  nodes.push(
-                    <motion.span
-                      key={`mc-${cat}`}
-                      variants={filterItem}
-                      className="inline-flex items-baseline"
-                    >
-                      <Button
-                        variant="nav"
-                        className="px-0 h-auto py-0 leading-tight pointer-events-none text-4xl"
-                      >
-                        ,
-                      </Button>
-                    </motion.span>,
-                  );
                 nodes.push(
                   <motion.span
                     key={`mb-${cat}`}
@@ -347,7 +331,7 @@ export default function MultiNav() {
                       )}
                     >
                       <TypedWord
-                        text={cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                        text={(i > 0 ? ", " : "") + (cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat))}
                         visible={showFilters}
                         delay={i * 60}
                       />
@@ -375,21 +359,6 @@ export default function MultiNav() {
           >
             {["all", ...categories].flatMap((cat, i) => {
               const nodes = [];
-              if (i > 0)
-                nodes.push(
-                  <motion.span
-                    key={`c-${cat}`}
-                    variants={filterItem}
-                    className="inline-flex items-baseline"
-                  >
-                    <Button
-                      variant="nav"
-                      className="px-0 leading-tight h-auto py-0 mr-1 pointer-events-none lg:text-4xl"
-                    >
-                      ,
-                    </Button>
-                  </motion.span>,
-                );
               nodes.push(
                 <motion.span
                   key={`b-${cat}`}
@@ -407,7 +376,7 @@ export default function MultiNav() {
                     )}
                   >
                     <TypedWord
-                      text={cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat)}
+                      text={(i > 0 ? ", " : "") + (cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat))}
                       visible={showFilters}
                       delay={i * 60}
                     />

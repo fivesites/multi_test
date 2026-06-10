@@ -13,6 +13,7 @@ const PALETTE = [
   "text-lava",
   "text-lappar",
   "text-liguriskt",
+  "text-lader",
 ];
 
 export default function Loader({
@@ -33,14 +34,14 @@ export default function Loader({
 
   return (
     <motion.div
-      className="fixed inset-0 z-50 flex items-start justify-start bg-lader w-full pt-2 lg:pt-8 px-8 h-dvh"
+      className="fixed inset-0 z-50 flex items-start justify-start bg-background w-full pt-2 lg:pt-8 px-8 h-dvh"
       animate={{ opacity: dismissing ? 0 : 1 }}
       transition={{ duration: 0.5, ease: "easeInOut" }}
       onAnimationComplete={() => {
         if (dismissing) onDone?.();
       }}
     >
-      <p className="font-visual  font-medium text-4xl lg:text-lg pt-2 px-4 text-center tracking-wide lg:text-left flex flex-wrap uppercase justify-center gap-x-2 lg:gap-x-1 ">
+      <p className="font-visual  font-medium text-xl lg:text-lg pt-2 px-4 text-center tracking-wide lg:text-left flex flex-wrap uppercase justify-center gap-x-2 lg:gap-x-1 ">
         {words.map((word, i) => (
           <TypedWord
             key={i}

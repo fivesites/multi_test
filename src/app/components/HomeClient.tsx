@@ -308,7 +308,7 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.25 }}
-            className={``}
+            className="min-h-[50dvh]"
           >
             {/* Desktop: list + thumbnails side by side */}
             <div className="hidden lg:flex min-h-[100vh] px-6 gap-3">
