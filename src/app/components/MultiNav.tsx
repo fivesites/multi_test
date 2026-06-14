@@ -13,7 +13,6 @@ import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import DarkModeButton from "./DarkModeButton";
-import Link from "next/link";
 import TypedWord from "./TypedWord";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -399,7 +398,6 @@ export default function MultiNav() {
         className="hidden lg:flex overflow-hidden font-visual font-medium flex-wrap justify-start uppercase items-baseline pb-0 gap-0 w-full"
       >
         {allCats.flatMap((cat, i) => {
-          const isLast = i === allCats.length - 1;
           const label = getFilterLabel(cat);
           return (
             <motion.span
