@@ -18,6 +18,7 @@ export default function TypedWord({
   speed = 1,
   eraseSpeed,
   className,
+  cursor,
 }: {
   text: string;
   visible?: boolean;
@@ -26,7 +27,11 @@ export default function TypedWord({
   speed?: number;
   eraseSpeed?: number;
   className?: string;
+  cursor?: boolean | string;
 }) {
+  const cursorChar = typeof cursor === "string" ? cursor : "_";
+  const cursorDelay = delay / 1000 + text.length * TYPING_INTERVAL * speed;
+
   return (
     <motion.span
       className={className}
@@ -54,6 +59,22 @@ export default function TypedWord({
           {char}
         </motion.span>
       ))}
+      {cursor && visible && (
+        <motion.span
+          aria-hidden
+          initial={{ opacity: 0 }}
+          animate={{ opacity: [0, 1, 1, 0, 0] }}
+          transition={{
+            delay: cursorDelay,
+            duration: 1,
+            repeat: Infinity,
+            times: [0, 0, 0.5, 0.5, 1],
+          }}
+          className="bg-current text-background"
+        >
+          {cursorChar}
+        </motion.span>
+      )}
     </motion.span>
   );
 }

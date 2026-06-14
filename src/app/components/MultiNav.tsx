@@ -50,8 +50,6 @@ export default function MultiNav() {
     panel,
     setPanel,
     setOpenedCard,
-    showReel,
-    setShowReel,
     reelMode,
     setReelMode,
     showSettings,
@@ -67,42 +65,65 @@ export default function MultiNav() {
     numCols,
     setNumCols,
   } = useUI();
-  const { categories, items } = useWork();
+  const { categories } = useWork();
+
+  const TYPING_MS_PER_CHAR = 22;
+  const NAV_LOGO = "Multi²";
+  const navItems = ["Showreel", "Projects", "About", "Connect", "Settings"];
+  const navDelays = navItems.reduce<number[]>((acc, _label, i) => {
+    if (i === 0) return [0];
+    return [
+      ...acc,
+      acc[i - 1] + (navItems[i - 1].length + 2) * TYPING_MS_PER_CHAR,
+    ];
+  }, []);
+  const navCommaDelays = navItems.map(
+    (label, i) => navDelays[i] + label.length * TYPING_MS_PER_CHAR,
+  );
+
   const [isDesktop, setIsDesktop] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [navVisible, setNavVisible] = useState(false);
+  const [linksVisible, setLinksVisible] = useState(false);
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1024);
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
   }, []);
-
+  useEffect(() => {
+    setNavVisible(true);
+    const t = setTimeout(
+      () => setLinksVisible(true),
+      NAV_LOGO.length * TYPING_MS_PER_CHAR,
+    );
+    return () => clearTimeout(t);
+  }, []);
 
   const showFilters = panel === "projects" && filtersOpen;
 
   const allCats = ["all", ...categories];
   const getFilterLabel = (cat: string) =>
     cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat);
-  const TYPING_MS_PER_CHAR = 22; // matches TypedWord TYPING_INTERVAL of 0.022s
-  // Each item types its label then ", " (2 chars), so next item starts after both finish
+  const getDesktopFilterLabel = (cat: string) =>
+    cat === "all" ? "All Projects" : (CATEGORY_LABELS[cat] ?? cat);
   const filterDelays = allCats.reduce<number[]>((acc, _cat, i) => {
     if (i === 0) return [0];
     const prevLabel = getFilterLabel(allCats[i - 1]);
+    return [...acc, acc[i - 1] + (prevLabel.length + 2) * TYPING_MS_PER_CHAR];
+  }, []);
+  const desktopFilterDelays = allCats.reduce<number[]>((acc, _cat, i) => {
+    if (i === 0) return [0];
+    const prevLabel = getDesktopFilterLabel(allCats[i - 1]);
     return [...acc, acc[i - 1] + (prevLabel.length + 2) * TYPING_MS_PER_CHAR];
   }, []);
   const lastCat = allCats[allCats.length - 1];
   const searchDelay =
     filterDelays[allCats.length - 1] +
     (getFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR;
-
-  const countForCat = (cat: string) =>
-    new Set(
-      items
-        .filter((item) =>
-          cat === "all" ? item.isPrimary : item.categories.includes(cat),
-        )
-        .map((item) => item.slug),
-    ).size;
+  const desktopSearchDelay =
+    desktopFilterDelays[allCats.length - 1] +
+    (getDesktopFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR;
 
   function scrollToProjects() {
     const el = document.getElementById("projects");
@@ -169,7 +190,10 @@ export default function MultiNav() {
           >
             Zoom Out
           </Button>
-          <Button variant="nav" className=" px-0 pointer-events-none mr-1 text-lyx">
+          <Button
+            variant="nav"
+            className=" px-0 pointer-events-none mr-1 text-lyx"
+          >
             ,
           </Button>
           <Button
@@ -180,7 +204,10 @@ export default function MultiNav() {
           >
             Zoom In
           </Button>
-          <Button variant="nav" className="px-0 pointer-events-none mr-1 text-lyx">
+          <Button
+            variant="nav"
+            className="px-0 pointer-events-none mr-1 text-lyx"
+          >
             ,
           </Button>
         </>
@@ -194,7 +221,7 @@ export default function MultiNav() {
   const openScrollY = useRef(0);
 
   useEffect(() => {
-    if (!showReel || reelMode !== "intro") {
+    if (panel !== "showReel") {
       scrollProgress.set(0);
       return;
     }
@@ -204,13 +231,13 @@ export default function MultiNav() {
       const delta = Math.max(0, window.scrollY - openScrollY.current);
       scrollProgress.set(delta);
       if (delta >= 400) {
-        setShowReel(false);
+        setPanel("projects");
         setReelMode("background");
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [showReel, reelMode, scrollProgress, setShowReel, setReelMode]);
+  }, [panel, scrollProgress, setPanel, setReelMode]);
 
   const navRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -229,39 +256,48 @@ export default function MultiNav() {
   return (
     <motion.div
       ref={navRef}
-      className="fixed z-20 top-0 left-0 right-0 px-4 lg:px-8 pt-2 lg:pt-8 pb-2 lg:pb-3 flex flex-col bg-background text-lyx"
+      className="fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-2 lg:pb-3 flex flex-col bg-background text-lyx"
       transition={{ duration: 0.4 }}
     >
       {/* Row 1: logo + nav links (desktop: settings inline) */}
-      <div className="flex flex-col items-center    w-full  justify-center lg:items-start  lg:gap-x-16">
+      <div className="flex flex-col   w-full  justify-center lg:items-start  lg:gap-x-16">
         <motion.div
           layout
           transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
             variant="link"
-            className="cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-normal"
+            className="cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-wide"
             onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
           >
-            Multi²
+            <TypedWord text="Multi²" visible={navVisible} delay={0} />
           </Button>
         </motion.div>
 
-{ !showReel && 
         <motion.div
           layout
-          className={`flex flex-wrap items-baseline justify-center lg:justify-start font-visual  font-medium gap-x-0 leading-tight  w-full`}
+          className={`flex flex-wrap lg:items-baseline justify-start items-start lg:justify-start font-visual  font-medium gap-x-0 leading-tight  w-full`}
           transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
         >
           <Button
-            variant={showReel ? "link" : "nav"}
-            onClick={() => setShowReel(!showReel)}
+            variant={panel === "showReel" ? "link" : "nav"}
+            onClick={() => {
+              setPanel("showReel");
+              setReelMode("intro");
+            }}
           >
-            Showreel
+            <TypedWord
+              text="Showreel"
+              visible={linksVisible}
+              delay={navDelays[0]}
+            />
           </Button>
-          <Button variant="nav" className="px-0 pointer-events-none mr-1 text-lyx">
-            ,
-          </Button>
+          <TypedWord
+            text=", "
+            visible={linksVisible}
+            delay={navCommaDelays[0]}
+            className="text-xl lg:text-lg text-lyx leading-tight tracking-wide"
+          />
           <Button
             variant={panel === "projects" ? "link" : "nav"}
             onClick={() => {
@@ -269,42 +305,75 @@ export default function MultiNav() {
                 setFiltersOpen((v) => !v);
               } else {
                 setPanel("projects");
+                setReelMode("background");
                 setFiltersOpen(true);
               }
               scrollToProjects();
             }}
+            className="ml-1"
           >
-            Projects
+            <TypedWord
+              text="Projects"
+              visible={linksVisible}
+              delay={navDelays[1]}
+            />
           </Button>
-          <Button variant="nav" className="px-0 pointer-events-none mr-1 text-lyx">
-            ,
-          </Button>
+          <TypedWord
+            text=", "
+            visible={linksVisible}
+            delay={navCommaDelays[1]}
+            className="text-xl lg:text-lg text-lyx leading-tight tracking-wide"
+          />
           <Button
             variant={panel === "about" ? "link" : "nav"}
             onClick={() => setPanel(panel === "about" ? "projects" : "about")}
+            className="ml-1"
           >
-            About
+            <TypedWord
+              text="About"
+              visible={linksVisible}
+              delay={navDelays[2]}
+            />
           </Button>
-          <Button variant="nav" className="px-0 pointer-events-none mr-1 text-lyx">
-            ,
-          </Button>
+          <TypedWord
+            text=", "
+            visible={linksVisible}
+            delay={navCommaDelays[2]}
+            className="text-xl lg:text-lg text-lyx leading-tight tracking-wide"
+          />
           <Button
             variant={panel === "connect" ? "link" : "nav"}
             onClick={() =>
               setPanel(panel === "connect" ? "projects" : "connect")
             }
+            className="ml-1"
           >
-            Connect
+            <TypedWord
+              text="Connect"
+              visible={linksVisible}
+              delay={navDelays[3]}
+            />
           </Button>
-          <Button variant="nav" className=" px-0 pointer-events-none mr-1 text-lyx">
-            ,
-          </Button>
+          <TypedWord
+            text=", "
+            visible={linksVisible}
+            delay={navCommaDelays[3]}
+            className="text-xl lg:text-lg text-lyx leading-tight tracking-wide"
+          />
           <Button
             variant={showSettings ? "link" : "nav"}
-            className="px-0 tracking-normal"
+            className="px-0 tracking-normal ml-1"
             onClick={() => setShowSettings(!showSettings)}
           >
-            {showSettings ? "Hide Settings" : "Settings"}
+            {showSettings ? (
+              "Hide Settings"
+            ) : (
+              <TypedWord
+                text="Settings"
+                visible={linksVisible}
+                delay={navDelays[4]}
+              />
+            )}
           </Button>
           <AnimatePresence>
             {showSettings && (
@@ -316,17 +385,21 @@ export default function MultiNav() {
                 transition={{ duration: 0.15 }}
                 className="hidden lg:inline-flex items-baseline font-visual font-medium"
               >
-                <Button variant="nav" className="px-0 pointer-events-none mr-1 text-lyx">,</Button>
+                <Button
+                  variant="nav"
+                  className="px-0 pointer-events-none mr-1 text-lyx"
+                >
+                  ,
+                </Button>
                 {settingsContent}
               </motion.span>
             )}
           </AnimatePresence>
         </motion.div>
-}
       </div>
 
       {/* Row 2 (mobile only): settings OR filters — smooth crossfade between them */}
-      <div className="lg:hidden w-full px-4 mt-0">
+      <div className="lg:hidden w-full  mt-0">
         <AnimatePresence mode="wait">
           {showSettings ? (
             <motion.div
@@ -346,10 +419,9 @@ export default function MultiNav() {
               initial="hidden"
               animate={showFilters ? "show" : "hidden"}
               exit="exit"
-              className="overflow-hidden flex flex-wrap justify-center gap-x-0 items-baseline pb-0 font-visual font-medium lg:mt-0 w-full"
+              className="overflow-hidden flex items-start flex-wrap lg:justify-center gap-x-0 gap-y-0 lg:items-baseline pb-0 font-visual font-medium mt-1 lg:mt-0 w-full"
             >
               {allCats.flatMap((cat, i) => {
-                const isLast = i === allCats.length - 1;
                 const label = getFilterLabel(cat);
                 return (
                   <motion.span
@@ -361,7 +433,7 @@ export default function MultiNav() {
                       variant={activeFilter === cat ? "link" : "nav"}
                       onClick={() => handleFilterChange(cat)}
                       className={cn(
-                        "inline px-0 h-auto leading-tight ml-1 tracking-tight py-0 text-4xl uppercase",
+                        "inline-flex px-0 h-auto leading-tight ml-1 tracking-normal py-0 gap-x-0.5  items-start text-3xl uppercase",
                         activeFilter === cat ? "text-lava" : "text-lyx",
                       )}
                     >
@@ -370,21 +442,40 @@ export default function MultiNav() {
                         visible={showFilters}
                         delay={filterDelays[i]}
                       />
-                      {activeFilter === cat && ` (${countForCat(cat)})`}
                     </Button>
-                    {!isLast && (
-                      <TypedWord
-                        className="inline px-0 h-auto leading-tight tracking-tight py-0 text-4xl text-lyx"
-                        text=", "
-                        visible={showFilters}
-                        delay={
-                          filterDelays[i] + label.length * TYPING_MS_PER_CHAR
-                        }
-                      />
-                    )}
+                    <TypedWord
+                      className="inline px-0 h-auto leading-tight tracking-tight py-0 text-3xl text-lyx"
+                      text=", "
+                      visible={showFilters}
+                      delay={
+                        filterDelays[i] + label.length * TYPING_MS_PER_CHAR
+                      }
+                    />
                   </motion.span>
                 );
               })}
+              <motion.span
+                key="search-mobile"
+                variants={filterItem}
+                className="inline-flex items-baseline whitespace-nowrap ml-1"
+              >
+                <span className="relative inline-flex items-baseline w-36">
+                  {!search && (
+                    <TypedWord
+                      text="Search..."
+                      visible={showFilters}
+                      delay={searchDelay}
+                      className="absolute pointer-events-none font-visual leading-tight uppercase tracking-tight text-3xl text-lyx"
+                    />
+                  )}
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder=""
+                    className="bg-transparent outline-none font-visual leading-tight uppercase tracking-tight text-3xl py-0 h-auto text-lyx w-full"
+                  />
+                </span>
+              </motion.span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -395,10 +486,10 @@ export default function MultiNav() {
         variants={filterContainer}
         initial="hidden"
         animate={showFilters ? "show" : "hidden"}
-        className="hidden lg:flex overflow-hidden font-visual font-medium flex-wrap justify-start uppercase items-baseline pb-0 gap-0 w-full"
+        className="hidden lg:flex overflow-hidden font-visual font-medium flex-wrap justify-start uppercase items-baseline pb-0 gap-0 w-full max-w-6xl"
       >
         {allCats.flatMap((cat, i) => {
-          const label = getFilterLabel(cat);
+          const label = getDesktopFilterLabel(cat);
           return (
             <motion.span
               key={`b-${cat}`}
@@ -409,22 +500,25 @@ export default function MultiNav() {
                 variant={activeFilter === cat ? "link" : "nav"}
                 onClick={() => handleFilterChange(cat)}
                 className={cn(
-                  "inline px-0 leading-tight uppercase lg:text-4xl ml-1 h-auto py-0 space-x-0 gap-x-0",
-                  activeFilter === cat ? "tracking-wide text-lava" : "tracking-normal text-lyx",
+                  "inline-flex items-start px-0 leading-tight uppercase lg:text-4xl ml-1 h-auto py-0 space-x-0 gap-x-0.5",
+                  activeFilter === cat
+                    ? "tracking-wide text-lava"
+                    : "tracking-normal text-lyx",
                 )}
               >
                 <TypedWord
                   text={label}
                   visible={showFilters}
-                  delay={filterDelays[i]}
+                  delay={desktopFilterDelays[i]}
                 />
-                {activeFilter === cat && ` (${countForCat(cat)})`}
               </Button>
               <TypedWord
                 text=", "
                 className="inline px-0 leading-tight uppercase lg:text-4xl h-auto py-0 space-x-0 gap-x-0 text-lyx"
                 visible={showFilters}
-                delay={filterDelays[i] + label.length * TYPING_MS_PER_CHAR}
+                delay={
+                  desktopFilterDelays[i] + label.length * TYPING_MS_PER_CHAR
+                }
               />
             </motion.span>
           );
@@ -432,14 +526,14 @@ export default function MultiNav() {
         <motion.span
           key="search"
           variants={filterItem}
-          className="inline-flex items-baseline whitespace-nowrap"
+          className="inline-flex items-baseline whitespace-nowrap ml-1"
         >
           <span className="relative inline-flex items-baseline w-43">
             {!search && (
               <TypedWord
                 text="Search..."
                 visible={showFilters}
-                delay={searchDelay}
+                delay={desktopSearchDelay}
                 className="absolute pointer-events-none font-visual leading-tight uppercase tracking-normal lg:text-4xl text-lyx"
               />
             )}
@@ -447,7 +541,7 @@ export default function MultiNav() {
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder=""
-              className="bg-transparent outline-none font-visual leading-tight uppercase tracking-normal text-3xl lg:text-4xl py-0 h-auto text-lyx w-full"
+              className="bg-transparent outline-none font-visual leading-tight uppercase tracking-normal lg:text-4xl py-0 h-auto text-lyx w-full ml-1"
             />
           </span>
         </motion.span>
@@ -458,7 +552,7 @@ export default function MultiNav() {
 
       {/* Showreel — intro: centered, scales on scroll */}
       <AnimatePresence>
-        {showReel && reelMode === "intro" && (
+        {panel === "showReel" && (
           <motion.div
             key="showreel-intro"
             initial={{ opacity: 0 }}
@@ -466,7 +560,10 @@ export default function MultiNav() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[15] flex items-center justify-center cursor-pointer"
-            onClick={() => { setShowReel(false); setReelMode("background"); }}
+            onClick={() => {
+              setPanel("projects");
+              setReelMode("background");
+            }}
           >
             <motion.div
               initial={{ opacity: 0 }}
@@ -474,11 +571,29 @@ export default function MultiNav() {
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
               style={{ scale: videoScale }}
-              className="relative w-[90vw] lg:w-[70vw] max-w-5xl aspect-video"
+              className="hidden lg:block relative w-[70vw] max-w-5xl aspect-video"
               onClick={(e) => e.stopPropagation()}
             >
               <video
                 src="/multi_showreel_desktop.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ scale: videoScale }}
+              className="block lg:hidden relative h-[80dvh] aspect-[9/16]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video
+                src="/multi_showreel_mobile.mp4"
                 autoPlay
                 loop
                 muted
@@ -491,27 +606,6 @@ export default function MultiNav() {
       </AnimatePresence>
 
       {/* Showreel — background: full-screen behind content */}
-      <AnimatePresence>
-        {showReel && reelMode === "background" && (
-          <motion.div
-            key="showreel-background"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.4 }}
-            className="fixed inset-0 z-[1] pointer-events-none"
-          >
-            <video
-              src="/multi_showreel_desktop.mp4"
-              autoPlay
-              loop
-              muted
-              playsInline
-              className="w-full h-full object-cover"
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.div>
   );
 }

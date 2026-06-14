@@ -54,14 +54,14 @@ function WorkPageInner({
   }, []);
 
   return (
-    <div className="bg-background w-full relative">
+    <div className="bg-background w-full relative pb-8">
       {/* Nav wrapper — measured for content offset */}
       <div ref={navRef} className="absolute top-0 left-0 right-0 z-10">
         {/* Mobile nav */}
         <div className="px-4 pt-2 w-full grid grid-cols-3 items-start lg:hidden">
           <Button
-            variant="link"
-            className={`font-visual text-sm font-medium tracking-wide text-lava leading-tight uppercase px-0`}
+            variant="nav"
+            className={`font-visual text-sm font-medium tracking-wide text-lyx hover:text-lava leading-tight uppercase px-0`}
             asChild
           >
             <Link href="/">Back</Link>
@@ -115,20 +115,20 @@ function WorkPageInner({
 
       {/* Client / description / credits */}
       <div
-        className="flex flex-col justify-center items-center lg:items-start px-4 lg:px-8 pb-0 "
+        className="flex flex-col justify-center items-center lg:items-start px-4 lg:px-8 pb-0 h-[50dvh] lg:h-auto "
         style={{ paddingTop: navHeight || undefined }}
       >
-        <h1 className="font-visual text-5xl lg:text-4xl font-medium uppercase leading-none text-center lg:text-left text-lava tracking-tight lg:tracking-normal lg:leading-[0.9] flex flex-wrap justify-center whitespace-break-spaces mt-8 lg:mt-0 mb-2 lg:mb-4 items-baseline gap-x-1">
+        <h1 className="font-visual text-4xl lg:text-8xl font-normal uppercase leading-none text-center lg:text-left text-lava tracking-normal lg:tracking-normal lg:leading-[0.9] flex flex-wrap justify-center whitespace-break-spaces mt-16 lg:mt-8 mb-4 lg:mb-4 items-baseline gap-x-1">
           {client}
         </h1>
         <div className="flex lg:grid lg:grid-cols-6 lg:mb-8">
-          <span className="lg:col-span-3">
+          <span className="lg:col-span-4">
             {description ? (
-              <p className="font-visual  text-2xl lg:text-2xl lg:tracking-normal lg:max-w-3xl font-medium leading-[1.1] lg:mt-1 text-center text-lava lg:text-left lg:font-normal max-w-sm ">
+              <p className="font-visual  text-3xl lg:text-2xl lg:tracking-normal lg:max-w-4xl  leading-[1.1] lg:mt-1 text-center text-lava lg:text-left font-normal max-w-sm ">
                 {description}
               </p>
             ) : (
-              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-3xl font-medium leading-[1.1] lg:mt-1 text-center text-lava lg:text-left lg:font-normal max-w-sm ">
+              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl font-normal leading-[1.1] lg:mt-1 text-center text-lava lg:text-left lg:font-normal max-w-sm mb-4 ">
                 A bold visual concept rooted in craft and intention. Shot on
                 location, refined in post. Every frame built around a singular
                 idea — to make the ordinary feel inevitable.
@@ -145,10 +145,10 @@ function WorkPageInner({
         </div>
       </div>
 
-      <div className="">
+      <div className="max-w-7xl">
         {/* Gallery */}
         <motion.div
-          className="grid grid-cols-1 lg:grid-cols-4 gap-2 pt-2 px-8"
+          className="grid grid-cols-1 lg:grid-cols-4 gap-2 pt-2 px-2.5 lg:px-8"
           initial="hidden"
           animate="visible"
           variants={{ visible: { transition: { staggerChildren: 0.03 } } }}
@@ -188,19 +188,20 @@ function WorkPageInner({
 
       {/* WORK FOOTER */}
       <div className="flex lg:hidden  flex-col  justify-center items-center   lg:grid-cols-6 px-8 w-full pt-8 pb-8 text-lava font-visual text-xl lg:text-2xl lg:items-baseline  ">
-        <h4 className="w-full col-span-2 font-visual text-xl lg:text-2xl leading-tight text-center lg:text-left font-normal  tracking-normal lg:tracking-normal lg:leading-[1] flex flex-wrap justify-center lg:justify-start whitespace-break-spaces lg:items-baseline gap-x-0 gap-y-0 ">
-          Services provided by <span className="normal-case">Multi²</span> in
-          this project:
+        <h4 className="w-full col-span-2 font-visual text-lg lg:text-2xl leading-tight text-center lg:text-left font-normal  tracking-normal lg:tracking-normal lg:leading-[1] flex flex-wrap justify-center lg:justify-start whitespace-break-spaces lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lyx ">
+          Services provided by{" "}
+          <span className="normal-case font-medium">Multi²</span> in this
+          project:
         </h4>
 
         {categories.map((c, i) => (
-          <span className="uppercase font-medium text-lg" key={c}>
+          <span className="uppercase font-normal text-2xl text-lava" key={c}>
             {i > 0 && ""}
             {CATEGORY_LABELS[c] ?? c}
           </span>
         ))}
 
-        <div className="flex lg:hidden flex-col justify-center w-full gap-x-8 gap-y-2 text-sm lg:text-2xl tracking-normal font-medium   font-visual  leading-tight mt-8 mb-8 ">
+        <div className="flex lg:hidden flex-col justify-center w-full gap-x-8 gap-y-2 text-sm lg:text-2xl tracking-normal font-medium   font-visual  leading-tight mt-8 mb-0 ">
           {credits && (
             <ul className="lg:col-span-3 font-visual text-sm lg:text-2xl tracking-wide max-w-5xl font-medium leading-[1.4] mt-1 text-center text-lava lg:text-left lg:tracking-normal lg:font-normal lg:indent-16 list-none capitalize">
               {credits

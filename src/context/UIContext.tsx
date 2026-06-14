@@ -8,7 +8,7 @@ import {
   type ReactNode,
 } from "react";
 
-export type Panel = "projects" | "about" | "connect";
+export type Panel = "showReel" | "projects" | "about" | "connect";
 export type ReelMode = "intro" | "background";
 
 type UIContextType = {
@@ -37,7 +37,7 @@ type UIContextType = {
 const UIContext = createContext<UIContextType | null>(null);
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const [panel, setPanel] = useState<Panel>("projects");
+  const [panel, setPanel] = useState<Panel>("showReel");
   const [showReel, setShowReel] = useState(true);
   const [reelMode, setReelMode] = useState<ReelMode>("intro");
   const [showGrid, setShowGrid] = useState(false);

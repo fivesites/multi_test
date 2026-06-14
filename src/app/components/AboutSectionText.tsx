@@ -34,22 +34,24 @@ export default function AboutSectionText({
   const paraDelay = plainText.length * TYPING_MS_PER_CHAR;
 
   return (
-    <div className="min-h-full flex flex-col items-center justify-start lg:items-start px-4 lg:px-8 text-lava">
-      <h1 className="font-visual text-6xl lg:text-8xl max-w-3xl uppercase leading-none text-center lg:text-left font-normal tracking-tight lg:tracking-tighter lg:leading-[0.9]">
+    <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava">
+      <h1 className="font-visual text-4xl lg:text-8xl max-w-3xl uppercase leading-none lg:text-left font-medium tracking-wide lg:tracking-tighter lg:leading-[0.9]">
         <TypedWord
           text={plainText}
           visible={textVisible}
           delay={0}
           eraseSpeed={ERASE_SPEED}
+          cursor={!text ? "²" : false}
         />
       </h1>
       {text && (
-        <p className="font-visual text-xl lg:text-2xl tracking-normal max-w-4xl font-medium leading-[1.1] lg:leading-[1.2] mt-1 text-center lg:text-left lg:tracking-wide lg:font-normal  lg:mt-2">
+        <p className="font-visual text-xl lg:text-2xl tracking-normal max-w-4xl font-medium leading-[1.1] lg:leading-[1.2] mt-4 text-left lg:tracking-wide lg:font-normal  lg:mt-2">
           <TypedWord
             text={text}
             visible={textVisible}
             delay={paraDelay}
             eraseSpeed={ERASE_SPEED}
+            cursor="²"
           />
         </p>
       )}

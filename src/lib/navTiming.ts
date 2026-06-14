@@ -17,6 +17,17 @@ function getFilterLabel(cat: string): string {
   return cat === "all" ? "All" : (CATEGORY_LABELS[cat] ?? cat);
 }
 
+export function getFilterDoneMs(categories: string[]): number {
+  const allCats = ["all", ...categories];
+  const filterDelays = allCats.reduce<number[]>((acc, _cat, i) => {
+    if (i === 0) return [0];
+    const prevLabel = getFilterLabel(allCats[i - 1]);
+    return [...acc, acc[i - 1] + (prevLabel.length + 2) * TYPING_MS_PER_CHAR];
+  }, []);
+  const lastCat = allCats[allCats.length - 1];
+  return filterDelays[allCats.length - 1] + (getFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR;
+}
+
 export function getNavTypingDelayMs(categories: string[]): number {
   const allCats = ["all", ...categories];
   const filterDelays = allCats.reduce<number[]>((acc, _cat, i) => {

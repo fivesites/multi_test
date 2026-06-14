@@ -14,7 +14,7 @@ import VideoPlayer from "./VideoPlayer";
 import AboutSectionText from "./AboutSectionText";
 import ConnectSection from "./ConnectSection";
 import MultiFooter from "./MultiFooter";
-import { getNavTypingDelayMs } from "@/lib/navTiming";
+import { getNavTypingDelayMs, getFilterDoneMs } from "@/lib/navTiming";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -52,6 +52,19 @@ function HomeClientInner() {
   useEffect(() => {
     isInitialMount.current = false;
   }, []);
+
+  const [listVisible, setListVisible] = useState(false);
+  useEffect(() => {
+    if (panel !== "projects") {
+      setListVisible(false);
+      return;
+    }
+    const t = setTimeout(
+      () => setListVisible(true),
+      getFilterDoneMs(categories),
+    );
+    return () => clearTimeout(t);
+  }, [panel, categories]);
 
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -176,7 +189,7 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-10 overflow-y-auto bg-liguriskt"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-10 overflow-y-auto bg-background"
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -219,12 +232,12 @@ function HomeClientInner() {
         {/* <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-transparent to-background pointer-events-none" /> */}
         {/* Desktop: list + thumbnails side by side */}
         <div className="hidden lg:flex px-8 gap-3 mb-2 pt-[var(--nav-height)]">
-          {showList && (
+          {listVisible && showList && (
             <div
               className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
             >
               {/* Header row */}
-              <div className="grid grid-cols-6 w-full py-0 pl-4 text-xl lg:text-lg font-medium font-visual text-liguriskt border-b-2 border-liguriskt">
+              <div className="grid grid-cols-6 w-full py-1 pl-4 text-xl lg:text-lg font-medium font-visual text-lyx border-b-2 border-lyx">
                 <span className="col-span-2">Client</span>
                 <span className={showGrid ? "col-span-3" : "col-span-2"}>
                   Title
@@ -254,7 +267,7 @@ function HomeClientInner() {
                       return (
                         <div
                           key={item.slug}
-                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${group.items.length > 1 && itemIdx < group.items.length - 1 ? "border-b-2 border-liguriskt" : ""} ${isActive ? "text-lava" : "text-liguriskt"}`}
+                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${group.items.length > 1 && itemIdx < group.items.length - 1 ? "border-b-2 border-lyx" : ""} ${isActive ? "text-lava" : "text-lyx"}`}
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                         >
@@ -280,15 +293,15 @@ function HomeClientInner() {
                         </div>
                       );
                     })}
-                    <div className="border-b-2 border-b-liguriskt" />
+                    <div className="border-b-2 border-b-lyx" />
                   </motion.div>
                 ))}
               </AnimatePresence>
             </div>
           )}
 
-          {showGrid && (
-            <div className={`w-full px-2 pb-2 ${showList ? "" : ""}`}>
+          {listVisible && showGrid && (
+            <div className={`w-full  pb-2 ${showList ? "" : ""}`}>
               <div className="grid grid-cols-6 gap-2 max-w-5xl">
                 <AnimatePresence mode="popLayout" initial={false}>
                   {displayed.map((item, idx) => (
@@ -324,8 +337,8 @@ function HomeClientInner() {
         </div>
 
         {/* Mobile: grid or list toggle */}
-        <div className="lg:hidden min-h-[65vh] px-4 pt-[var(--nav-height)]">
-          {showGrid && (
+        <div className="lg:hidden min-h-[65vh] mx-0 pt-[var(--nav-height)]">
+          {listVisible && showGrid && (
             <>
               <input
                 value={search}
@@ -411,8 +424,8 @@ function HomeClientInner() {
             </>
           )}
 
-          {showList && (
-            <div className="flex flex-col px-4">
+          {listVisible && showList && (
+            <div className="flex flex-col px-8 border-t-2 border-lyx pt-2">
               <AnimatePresence mode="popLayout">
                 {grouped.map((group, idx) => {
                   const hasMultiple = group.items.length > 1;
@@ -432,10 +445,10 @@ function HomeClientInner() {
                           : idx * 0.04,
                       }}
                     >
-                      <div className="w-full py-0">
+                      <div className="w-full py-0 ">
                         {hasMultiple ? (
                           <button
-                            className={`  font-visual uppercase text-4xl lg:text-4xl font-medium border-b-lyx w-full text-center py-0 transition-colors duration-200 ${isExpanded ? "text-lava" : "text-liguriskt hover:text-lava active:text-lava"}`}
+                            className={`  font-visual uppercase text-3xl lg:text-4xl font-medium  border-b-lyx   py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-lyx hover:text-lava active:text-lava"}`}
                             onClick={() =>
                               setExpandedGroup(isExpanded ? null : group.key)
                             }
@@ -445,7 +458,7 @@ function HomeClientInner() {
                         ) : (
                           <Link
                             href={`/work/${group.items[0].slug}`}
-                            className=" font-visual  font-medium uppercase text-4xl lg:text-4xl text-center py-0 text-liguriskt hover:text-lava  block transition-colors duration-200"
+                            className=" font-visual  font-medium uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-lyx hover:text-lava  block transition-colors duration-200"
                           >
                             {label}
                           </Link>
@@ -458,13 +471,13 @@ function HomeClientInner() {
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2, ease: "easeInOut" }}
-                              className="overflow-hidden  flex pb-0 flex-col items-center py-0 mb-1"
+                              className="overflow-hidden  flex pb-0 flex-col items-start py-0 mb-1 px-8"
                             >
                               {group.items.map((item) => (
                                 <Link
                                   key={item.slug}
                                   href={`/work/${item.slug}`}
-                                  className="font-visual text-xl lg:text-2xl text-liguriskt hover:text-lava font-medium transition-colors duration-200"
+                                  className="font-visual text-xl lg:text-2xl text-lyx text-left hover:text-lava font-medium  leading-tighttransition-colors duration-200"
                                 >
                                   {item.title}
                                 </Link>
@@ -478,14 +491,6 @@ function HomeClientInner() {
                 })}
               </AnimatePresence>
             </div>
-          )}
-          {panel === "projects" && showList && (
-            <input
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search projects..."
-              className="fixed bottom-0 left-0 right-0 bg-background outline-none font-visual text-xl text-center px-4 pt-3 pb-4 font-medium leading-tight border-b-2 border-lava text-lava placeholder:text-lava w-full z-10"
-            />
           )}
         </div>
         <MultiFooter />

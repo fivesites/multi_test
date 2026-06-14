@@ -7,6 +7,7 @@ import { cookies } from "next/headers";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
+import Cookie from "@/app/components/Cookie";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -68,6 +69,7 @@ export default async function RootLayout({
             <UIProvider>{children}</UIProvider>
           </CopyContextServer>
         </WorkContextServer>
+        <Cookie />
       </body>
     </html>
   );
