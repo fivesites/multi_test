@@ -8,12 +8,12 @@ const DISMISS_AFTER = 3000;
 const WORD_STAGGER = 180; // ms between words starting to type
 
 const PALETTE = [
-  "text-lyx",
-  "text-lax",
   "text-lava",
-  "text-lappar",
-  "text-liguriskt",
-  "text-lader",
+  "text-lava",
+  "text-lava",
+  "text-lava",
+  "text-lava",
+  "text-lava",
 ];
 
 export default function Loader({

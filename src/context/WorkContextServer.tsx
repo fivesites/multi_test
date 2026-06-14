@@ -4,6 +4,21 @@ import { workCardsQuery } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 import { WorkProvider, type GridItem } from "./WorkContext";
 
+const PLACEHOLDER_IMG = "https://placehold.co/1200x1200/111111/111111";
+
+const MOCK_ITEMS: import("./WorkContext").GridItem[] = [
+  { key: "mock-1", url: PLACEHOLDER_IMG, alt: "Norrlands Guld", slug: "norrlands-guld-summer", title: "Summer Campaign", client: "Norrlands Guld", year: 2024, categories: ["photo", "art-direction"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-1-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-2", url: PLACEHOLDER_IMG, alt: "Volvo Cars", slug: "volvo-electric", title: "Electric Future", client: "Volvo Cars", year: 2024, categories: ["video", "concept"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-2-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-3", url: PLACEHOLDER_IMG, alt: "H&M", slug: "hm-spring", title: "Spring Collection", client: "H&M", year: 2024, categories: ["photo", "production"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-3-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-4", url: PLACEHOLDER_IMG, alt: "Spotify", slug: "spotify-wrapped", title: "Wrapped", client: "Spotify", year: 2023, categories: ["concept", "art-direction"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-4-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-5", url: PLACEHOLDER_IMG, alt: "Audi", slug: "audi-the-drive", title: "The Drive", client: "Audi", year: 2023, categories: ["video", "dop"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-5-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-6", url: PLACEHOLDER_IMG, alt: "IKEA", slug: "ikea-home-stories", title: "Home Stories", client: "IKEA", year: 2023, categories: ["photo", "concept"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-6-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-7", url: PLACEHOLDER_IMG, alt: "Absolut Vodka", slug: "absolut-new-drop", title: "New Drop", client: "Absolut Vodka", year: 2024, categories: ["photo", "art-direction", "production"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-7-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-8", url: PLACEHOLDER_IMG, alt: "Peak Performance", slug: "peak-performance-fw24", title: "FW24", client: "Peak Performance", year: 2024, categories: ["video", "production", "concept"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-8-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+];
+
+const MOCK_CATEGORIES = ["art-direction", "concept", "dop", "photo", "production", "video"];
+
 type MediaItem = {
   _type: string;
   _key: string;
@@ -96,9 +111,12 @@ export async function WorkContextServer({
   }
 
   const categories = Array.from(categorySet).sort();
+  const finalItems = items.length > 0 ? items : MOCK_ITEMS;
+  const finalCategories =
+    categories.length > 0 ? categories : MOCK_CATEGORIES;
 
   return (
-    <WorkProvider items={items} categories={categories}>
+    <WorkProvider items={finalItems} categories={finalCategories}>
       {children}
     </WorkProvider>
   );

@@ -6,8 +6,8 @@ const TYPING_INTERVAL = 0.022;
 const ERASING_INTERVAL = 0.014;
 
 const letterVariants = {
-  visible: { opacity: 1, transition: { duration: 0 } },
-  hidden: { opacity: 0, transition: { duration: 0 } },
+  visible: { display: "inline", opacity: 1, transition: { duration: 0 } },
+  hidden: { display: "none", opacity: 0, transition: { duration: 0 } },
 };
 
 export default function TypedWord({
@@ -16,13 +16,15 @@ export default function TypedWord({
   delay = 0,
   eraseDelay = 0,
   speed = 1,
+  eraseSpeed,
   className,
 }: {
   text: string;
   visible?: boolean;
-  delay?: number;      // ms — delay before typing starts
-  eraseDelay?: number; // ms — delay before erasing starts
-  speed?: number;      // multiplier: >1 slower, <1 faster
+  delay?: number;
+  eraseDelay?: number;
+  speed?: number;
+  eraseSpeed?: number;
   className?: string;
 }) {
   return (
@@ -40,7 +42,7 @@ export default function TypedWord({
         },
         hidden: {
           transition: {
-            staggerChildren: ERASING_INTERVAL * speed,
+            staggerChildren: ERASING_INTERVAL * (eraseSpeed ?? speed),
             staggerDirection: -1,
             delayChildren: eraseDelay / 1000,
           },

@@ -5,16 +5,19 @@ import {
   useContext,
   useState,
   useEffect,
-  useRef,
-  type RefObject,
   type ReactNode,
 } from "react";
 
-export type Panel = "showreel" | "projects" | "about" | "connect";
+export type Panel = "projects" | "about" | "connect";
+export type ReelMode = "intro" | "background";
 
 type UIContextType = {
   panel: Panel;
   setPanel: (p: Panel) => void;
+  showReel: boolean;
+  setShowReel: (v: boolean) => void;
+  reelMode: ReelMode;
+  setReelMode: (v: ReelMode) => void;
   showGrid: boolean;
   setShowGrid: (v: boolean) => void;
   showList: boolean;
@@ -29,15 +32,14 @@ type UIContextType = {
   setSearch: (v: string) => void;
   numCols: number;
   setNumCols: (n: number) => void;
-  heroInView: boolean;
-  setHeroInView: (v: boolean) => void;
-  aboutRef: RefObject<HTMLDivElement>;
 };
 
 const UIContext = createContext<UIContextType | null>(null);
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const [panel, setPanel] = useState<Panel>("showreel");
+  const [panel, setPanel] = useState<Panel>("projects");
+  const [showReel, setShowReel] = useState(true);
+  const [reelMode, setReelMode] = useState<ReelMode>("intro");
   const [showGrid, setShowGrid] = useState(false);
   const [showList, setShowList] = useState(true);
   const [activeFilter, setActiveFilter] = useState("all");
@@ -45,8 +47,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
-  const [heroInView, setHeroInView] = useState(false);
-  const aboutRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
@@ -63,6 +63,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
       value={{
         panel,
         setPanel,
+        showReel,
+        setShowReel,
+        reelMode,
+        setReelMode,
         showGrid,
         setShowGrid,
         showList,
@@ -77,9 +81,6 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setSearch,
         numCols,
         setNumCols,
-        heroInView,
-        setHeroInView,
-        aboutRef,
       }}
     >
       {children}

@@ -18,8 +18,8 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
           "bg-transparent  hover:backdrop-blur-lg text-background hover:bg-foreground/10 hover:text-foreground/80 ",
-        link: "text-lava  hover:text-lappar no-underline hover:no-underline transition-all duration-200",
-        nav: "text-lyx dark:text-liguriskt  no-underline hover:no-underline hover:text-lax dark:hover:text-lader transition-all duration-200",
+        link: "text-lava  hover:text-lava no-underline hover:no-underline transition-all duration-200",
+        nav: "text-lyx no-underline hover:no-underline hover:text-lava transition-all duration-200",
       },
       size: {
         default:
