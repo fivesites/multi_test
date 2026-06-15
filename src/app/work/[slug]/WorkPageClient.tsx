@@ -36,29 +36,29 @@ function WorkPageInner({
 
   return (
     <div
-      className="bg-background dark:bg-lader w-full relative pb-8"
+      className="bg-background dark:bg-lader w-full relative pb-4"
       style={{ paddingTop: "var(--nav-height)" }}
     >
       {/* Client / description / credits */}
-      <div className="flex flex-col justify-center items-center lg:items-center px-4 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
-        <h1 className="font-visual text-4xl lg:text-8xl  font-normal uppercase leading-none text-center lg:text-center items-center text-lava tracking-normal lg:tracking-normal lg:leading-[0.9]  flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
+      <div className="flex flex-col justify-center items-start lg:items-start px-8 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
+        <h1 className="font-visual text-4xl lg:text-8xl  font-normal uppercase leading-none w-full text-center lg:text-center items-center text-lava tracking-normal lg:tracking-normal lg:leading-[0.9]  flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
           {client}
         </h1>
-        <div className="flex lg:grid lg:grid-cols-6 lg:mb-4 mb-4 ">
+        <div className="flex lg:grid lg:grid-cols-6 lg:mb-4 mb-4  justify-start ">
           <span className="lg:col-span-4">
             {description ? (
-              <p className="font-visual text-3xl lg:text-2xl lg:tracking-normal lg:max-w-4xl leading-[1.1] lg:mt-1 text-center text-lava lg:text-left font-normal max-w-sm">
+              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl leading-[1.1] lg:mt-1 text-left text-lava lg:text-left font-normal max-w-sm ">
                 {description}
               </p>
             ) : (
-              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl font-normal leading-[1.1] lg:mt-1 text-center text-lava lg:text-left lg:font-normal max-w-sm mb-4">
+              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl font-normal leading-[1.1] lg:mt-1 text-left text-lava lg:text-left lg:font-normal max-w-sm mb-4">
                 A bold visual concept rooted in craft and intention. Shot on
                 location, refined in post. Every frame built around a singular
                 idea — to make the ordinary feel inevitable.
               </p>
             )}
           </span>
-          <span className="hidden lg:flex lg:col-span-1">
+          <span className="hidden  lg:col-span-1">
             {credits && (
               <ul className="font-visual text-sm tracking-normal font-normal leading-[1.5] mt-1 text-lava list-none">
                 {credits
@@ -115,22 +115,24 @@ function WorkPageInner({
       </div>
 
       {/* WORK FOOTER */}
-      <div className="flex lg:hidden flex-col justify-center items-center lg:grid-cols-6 px-8 w-full pt-8 pb-8 text-lava font-visual text-xl lg:text-2xl lg:items-baseline">
-        <h4 className="w-full col-span-2 font-visual text-lg lg:text-2xl leading-tight text-center lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] flex flex-wrap justify-center lg:justify-start whitespace-break-spaces lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lyx">
-          Services provided by{" "}
-          <span className="normal-case font-medium">Multi²</span> in this
-          project:
+      <div className="flex lg:hidden flex-col justify-center items-start lg:grid-cols-6 px-8 w-full pt-8 pb-8 text-lava font-visual text-2xl lg:text-2xl lg:items-baseline">
+        <h4 className="w-full col-span-2 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] flex flex-wrap justify-start  lg:justify-start whitespace-break-spaces lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
+          Services provided by <span className="normal-case f">Multi²</span> in
+          this project:
         </h4>
 
         {categories.map((c, i) => (
-          <span className="uppercase font-normal text-2xl text-lava" key={c}>
+          <span
+            className="uppercase font-normal text-2xl tracking-normal text-lava"
+            key={c}
+          >
             {i > 0 && ""}
             {CATEGORY_LABELS[c] ?? c}
           </span>
         ))}
 
         {credits && (
-          <ul className="font-visual text-sm tracking-normal font-normal leading-[1.5] mt-8 text-center text-lava list-none">
+          <ul className="font-visual text-2xl tracking-normal font-normal leading-[1.2] mt-16 text-left text-lava list-none">
             {credits
               .split("\n")
               .filter(Boolean)

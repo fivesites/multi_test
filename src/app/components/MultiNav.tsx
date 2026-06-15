@@ -97,6 +97,7 @@ export default function MultiNav() {
   const isWorkPageRef = useRef(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
+  const [workHeaderOpen, setWorkHeaderOpen] = useState(true);
   const [navVisible, setNavVisible] = useState(false);
   const [linksVisible, setLinksVisible] = useState(false);
   useEffect(() => {
@@ -116,12 +117,11 @@ export default function MultiNav() {
   useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
-      if (
-        !isWorkPageRef.current &&
-        window.scrollY > lastY &&
-        window.scrollY > 10
-      )
-        setFiltersOpen(false);
+      const scrollingDown = window.scrollY > lastY && window.scrollY > 10;
+      if (scrollingDown) {
+        if (isWorkPageRef.current) setWorkHeaderOpen(false);
+        else setFiltersOpen(false);
+      }
       lastY = window.scrollY;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -141,7 +141,7 @@ export default function MultiNav() {
     const onScroll = () => {
       const delta = Math.max(0, window.scrollY - openScrollY.current);
       scrollProgress.set(delta);
-      if (delta >= 400) {
+      if (delta > 0) {
         setPanel("projects");
         setReelMode("background");
       }
@@ -165,6 +165,9 @@ export default function MultiNav() {
   }, []);
 
   const pathname = usePathname();
+  useEffect(() => {
+    setWorkHeaderOpen(true);
+  }, [pathname]);
   if (pathname.startsWith("/studio")) return null;
   const isWorkPage = pathname.startsWith("/work/");
   isWorkPageRef.current = isWorkPage;
@@ -592,7 +595,7 @@ export default function MultiNav() {
           key={workSlug}
           variants={filterContainer}
           initial="hidden"
-          animate={workVisible && navMenuOpen ? "show" : "hidden"}
+          animate={workVisible && navMenuOpen && workHeaderOpen ? "show" : "hidden"}
           className="overflow-hidden flex flex-wrap items-baseline font-visual font-normal uppercase gap-y-1 gap-x-1 leading-tight  "
         >
           {wHasClient && (
@@ -747,7 +750,6 @@ export default function MultiNav() {
               transition={{ duration: 0.2 }}
               style={{ scale: videoScale }}
               className="hidden h-dvh w-screen lg:block relative aspect-video"
-              onClick={(e) => e.stopPropagation()}
             >
               <video
                 src="/multi_showreel_desktop.mp4"
@@ -765,7 +767,6 @@ export default function MultiNav() {
               transition={{ duration: 0.2 }}
               style={{ scale: videoScale }}
               className="block lg:hidden relative h-[100dvh] w-full aspect-[9/16]"
-              onClick={(e) => e.stopPropagation()}
             >
               <video
                 src="/multi_showreel_mobile.mp4"
