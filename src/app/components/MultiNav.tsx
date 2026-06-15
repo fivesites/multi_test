@@ -137,7 +137,11 @@ export default function MultiNav() {
   useEffect(() => {
     let lastY = window.scrollY;
     const onScroll = () => {
-      if (!isWorkPageRef.current && window.scrollY > lastY && window.scrollY > 10)
+      if (
+        !isWorkPageRef.current &&
+        window.scrollY > lastY &&
+        window.scrollY > 10
+      )
         setNavMenuOpen(false);
       lastY = window.scrollY;
     };
@@ -375,7 +379,7 @@ export default function MultiNav() {
             >
               <TypedWord text="Multi²" visible={navVisible} delay={0} />
             </Button>
-            <motion.div
+            {/* <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: logoVisible ? 1 : 0 }}
               transition={{ duration: 0.15 }}
@@ -427,7 +431,7 @@ export default function MultiNav() {
                   />
                 </Link>
               </Button>
-            </span>
+            </span> */}
           </motion.div>
           {navMenuOpen && (
             <motion.div
@@ -840,7 +844,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-[15] overflow-y-auto bg-background"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7 lg:-mt-2 z-[15] overflow-y-auto bg-background"
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -855,7 +859,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-[15] bg-background"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-4 lg:-mt-2 z-[15] bg-background"
           >
             <ConnectSection />
           </motion.div>

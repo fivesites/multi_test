@@ -28,9 +28,14 @@ export default function ConnectSection() {
     <div className="min-h-full flex flex-col items-center lg:items-start justify-start px-4 lg:px-8 pb-12 text-lava">
       <a
         href={`mailto:${EMAIL}`}
-        className="font-visual font-medium uppercase tracking-tight text-4xl lg:text-8xl text-lava hover:text-lava transition-colors duration-200 leading-none"
+        className="font-visual font-medium uppercase tracking-normalt text-4xl lg:text-4xl text-lava hover:text-lava transition-colors duration-200 leading-none"
       >
-        <TypedWord text={EMAIL} visible={textVisible} delay={0} eraseSpeed={ERASE_SPEED} />
+        <TypedWord
+          text={EMAIL}
+          visible={textVisible}
+          delay={0}
+          eraseSpeed={ERASE_SPEED}
+        />
       </a>
     </div>
   );

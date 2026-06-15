@@ -170,7 +170,7 @@ function HomeClientInner() {
               className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
             >
               {/* Header row */}
-              <div className="grid grid-cols-6 w-full py-1 text-xl lg:text-lg font-medium font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
+              <div className="hidden  grid-cols-6 w-full py-1 text-xl lg:text-lg font-medium font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
                 <span className="col-span-2 pl-4">Client</span>
                 <span
                   className={`${showGrid ? "col-span-3" : "col-span-2"} pl-4`}
@@ -208,7 +208,7 @@ function HomeClientInner() {
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                         >
-                          <span className="uppercase font-visual leading-tight lg:text-4xl col-span-2 pl-4 transition-colors duration-200">
+                          <span className="uppercase font-visual leading-tight lg:text-4xl col-span-2 pl-0 transition-colors duration-200">
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </span>
                           <Link
@@ -364,17 +364,19 @@ function HomeClientInner() {
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2, ease: "easeInOut" }}
-                              className="overflow-hidden  flex pb-0 flex-col items-start py-0 mb-1 px-8"
+                              className="overflow-hidden  flex pb-0 flex-col  items-start py-0 mb-1 px-8"
                             >
-                              {group.items.map((item) => (
-                                <Link
-                                  key={item.slug}
-                                  href={`/work/${item.slug}`}
-                                  className="font-visual text-xl lg:text-2xl text-liguriskt dark:text-lax text-left hover:text-lava font-medium leading-tight transition-colors duration-200"
-                                >
-                                  {item.title}
-                                </Link>
-                              ))}
+                              <span className="grid grid-cols-4 gap-x-2">
+                                {group.items.map((item) => (
+                                  <Link
+                                    key={item.slug}
+                                    href={`/work/${item.slug}`}
+                                    className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-medium leading-tight transition-colors duration-200"
+                                  >
+                                    {item.title}
+                                  </Link>
+                                ))}
+                              </span>
                             </motion.div>
                           )}
                         </AnimatePresence>
