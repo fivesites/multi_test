@@ -23,7 +23,7 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "h-auto px-0 py-0 has-[>svg]:px-3  leading-tight tracking-wide text-xl lg:text-lg",
+          "h-auto px-0 py-0 has-[>svg]:px-3  leading-tight tracking-wide text-3xl lg:text-lg font-normal",
         xs: "h-6 gap-1 rounded-md px-2 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
         sm: "h-[2rem] gap-1.5 px-3 has-[>svg]:px-2.5 text-sm",
         lg: "h-[4rem] lg:h-auto lg:py-4 text-xl lg:text-2xl rounded-none px-6 has-[>svg]:px-4 ",

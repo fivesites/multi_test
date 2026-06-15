@@ -60,6 +60,10 @@ function HomeClientInner() {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
+  const handleMouseMove = (e: React.MouseEvent) => {
+    setMousePos({ x: e.clientX, y: e.clientY });
+  };
 
   const query = search.toLowerCase().trim();
   const slugsSeen = new Set<string>();
@@ -129,15 +133,19 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-50 pointer-events-none hidden lg:flex items-center justify-center"
+            className="fixed z-50 pointer-events-none hidden lg:block"
+            style={{
+              left: mousePos.x + 24,
+              top: mousePos.y - 80,
+            }}
           >
-            <div className="relative w-[50vw] h-[33.3vh]">
+            <div className="relative w-[28vw] h-[20vh]">
               <Image
                 src={previewItem.url}
                 alt={previewItem.alt}
                 fill
-                className="object-contain"
-                sizes="50vw"
+                className="object-contain object-left-top"
+                sizes="28vw"
               />
             </div>
           </motion.div>
@@ -170,7 +178,7 @@ function HomeClientInner() {
               className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
             >
               {/* Header row */}
-              <div className="hidden  grid-cols-6 w-full py-1 text-xl lg:text-lg font-medium font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
+              <div className="hidden  grid-cols-6 w-full py-1 text-xl lg:text-lg font-normal font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
                 <span className="col-span-2 pl-4">Client</span>
                 <span
                   className={`${showGrid ? "col-span-3" : "col-span-2"} pl-4`}
@@ -200,37 +208,37 @@ function HomeClientInner() {
                     className="w-full"
                   >
                     {group.items.map((item, itemIdx) => {
-                      const isActive = hoveredItem === item.slug;
                       return (
                         <div
                           key={item.slug}
-                          className="grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer text-lava"
+                          className="group grid grid-cols-3 items-start w-full py-2 px-0 font-normal tracking-normal cursor-pointer text-liguriskt hover:text-lava transition-colors duration-200"
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
+                          onMouseMove={handleMouseMove}
                         >
-                          <span className="uppercase font-visual leading-tight lg:text-4xl col-span-2 pl-0 transition-colors duration-200">
+                          <span className="uppercase font-visual leading-tight lg:text-4xl tracking-normal col-span-1 pl-0">
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </span>
                           <Link
                             href={`/work/${item.slug}`}
-                            className={`font-visual text-4xl font-medium pl-4 transition-colors duration-200 ${showGrid ? "col-span-3" : "col-span-2"}`}
+                            className="font-visual text-3xl text-left font-normal tracking-normal pl-4 col-span-1"
                           >
                             {item.title}
                           </Link>
                           {!showGrid && (
-                            <span className="font-visual text-lg tracking-normal font-medium pl-4 transition-colors duration-200 line-clamp-2">
+                            <span className="hidden font-visual text-lg tracking-wide font-normal line-clamp-2">
                               {item.categories
                                 .map((c) => CATEGORY_LABELS[c] ?? c)
                                 .join(", ")}
                             </span>
                           )}
-                          <span className="font-visual text-right text-lg pl-4 transition-colors duration-200">
+                          <span className="font-visual text-right tracking-normal font-normal text-2xl">
                             {item.year ?? ""}
                           </span>
                         </div>
                       );
                     })}
-                    <div className="border-b-2 border-b-liguriskt dark:border-b-lax" />
+                    <div className="border-b-2 border-b-liguriskt dark:border-b-liguriskt" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -241,7 +249,7 @@ function HomeClientInner() {
             <div className="w-full pb-2">
               <div
                 className="gap-x-2"
-                style={{ columns: showList ? 3 : 5, columnGap: "0.5rem" }}
+                style={{ columns: numCols, columnGap: "0.5rem" }}
               >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {displayed.map((item, idx) => (
@@ -341,7 +349,7 @@ function HomeClientInner() {
                       <div className="w-full ">
                         {hasMultiple ? (
                           <button
-                            className={`  font-visual uppercase text-3xl lg:text-4xl font-medium  border-b-lyx   py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-liguriskt dark:text-lax hover:text-lava active:text-lava"}`}
+                            className={`  font-visual uppercase text-3xl lg:text-4xl font-normal tracking-normal     py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-liguriskt dark:text-lax hover:text-lava active:text-lava"}`}
                             onClick={() =>
                               setExpandedGroup(isExpanded ? null : group.key)
                             }
@@ -351,7 +359,7 @@ function HomeClientInner() {
                         ) : (
                           <Link
                             href={`/work/${group.items[0].slug}`}
-                            className=" font-visual  font-medium uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-liguriskt dark:text-lax hover:text-lava  block transition-colors duration-200"
+                            className="font-visual font-normal uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-liguriskt tracking-normal dark:text-lax hover:text-lava block transition-colors duration-200"
                           >
                             {label}
                           </Link>
@@ -371,7 +379,7 @@ function HomeClientInner() {
                                   <Link
                                     key={item.slug}
                                     href={`/work/${item.slug}`}
-                                    className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-medium leading-tight transition-colors duration-200"
+                                    className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-normal leading-tight tracking-normal transition-colors duration-200"
                                   >
                                     {item.title}
                                   </Link>

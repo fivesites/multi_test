@@ -45,7 +45,7 @@ export default function AboutSectionText({
         />
       </h1>
       {text && (
-        <p className="font-visual text-xl lg:text-2xl tracking-normal max-w-4xl font-normal leading-[1.1] lg:leading-[1.2]  text-left lg:tracking-wide lg:font-normal mt-2 ">
+        <p className="font-visual text-2xl lg:text-2xl tracking-normal max-w-4xl font-normal leading-[1.2] lg:leading-[1.2]  text-left lg:tracking-wide lg:font-normal mt-2 ">
           <TypedWord
             text={text}
             visible={textVisible}

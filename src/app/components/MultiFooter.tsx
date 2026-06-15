@@ -32,7 +32,7 @@ export default function MultiFooter() {
         text="Copyright Multi² 2026. All Rights Reserved."
         visible={visible}
         delay={0}
-        className="col-span-2 font-visual text-lg font-medium leading-tight text-lava items-center text-left"
+        className="col-span-2 font-visual text-lg font-normal tracking-wide leading-tight text-lava items-center text-left"
       />
     </footer>
   );

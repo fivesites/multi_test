@@ -160,6 +160,24 @@
   --shadow-2xl: 0 1px 3px 0px hsl(0 0% 0% / 0.25);
 }
 
+:root.bw {
+  --lava: oklch(0.13 0 0);
+  --lappar: oklch(0.10 0 0);
+  --liguriskt: oklch(0.25 0 0);
+  --lax: oklch(0.55 0 0);
+  --lyx: oklch(0.88 0 0);
+  --lader: oklch(0.08 0 0);
+}
+
+:root.dark.bw {
+  --lava: oklch(0.92 0 0);
+  --lappar: oklch(0.96 0 0);
+  --liguriskt: oklch(0.75 0 0);
+  --lax: oklch(0.55 0 0);
+  --lyx: oklch(0.18 0 0);
+  --lader: oklch(0.92 0 0);
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

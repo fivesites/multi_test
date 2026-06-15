@@ -122,7 +122,7 @@ export default function MultiNav() {
         window.scrollY > lastY &&
         window.scrollY > 10
       )
-        setNavMenuOpen(false);
+        setFiltersOpen(false);
       lastY = window.scrollY;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -251,85 +251,93 @@ export default function MultiNav() {
 
   const settingsContent = (
     <>
-      <Button
-        variant={showList ? "link" : "nav"}
-        className="px-0 leading-tight"
-        onClick={() => toggleView("list")}
-      >
-        <TypedWord text="List" visible={showSettings} delay={sListDelay} />
-      </Button>
-      <TypedWord
-        text=", "
-        visible={showSettings}
-        delay={sListDelay + sListLen * TYPING_MS_PER_CHAR}
-        className="mr-1 text-lava"
-      />
-      <Button
-        variant={showGrid ? "link" : "nav"}
-        className="px-0 leading-tight flex lg:hidden"
-        onClick={() => toggleView("grid")}
-      >
-        <TypedWord text="Thumbs" visible={showSettings} delay={sThumbDelay} />
-      </Button>
-      <Button
-        variant={showGrid ? "link" : "nav"}
-        className="px-0 leading-tight hidden lg:flex"
-        onClick={() => toggleView("grid")}
-      >
+      <span className="inline-flex items-baseline whitespace-nowrap">
+        <Button
+          variant={showList ? "link" : "nav"}
+          className="px-0 leading-tight text-3xl lg:text-2xl text-lava"
+          onClick={() => toggleView("list")}
+        >
+          <TypedWord text="List" visible={showSettings} delay={sListDelay} />
+        </Button>
         <TypedWord
-          text="Thumbnails"
+          text=", "
           visible={showSettings}
-          delay={sThumbDelay}
+          delay={sListDelay + sListLen * TYPING_MS_PER_CHAR}
+          className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
         />
-      </Button>
-      <TypedWord
-        text=", "
-        visible={showSettings}
-        delay={sThumbDelay + sThumbLen * TYPING_MS_PER_CHAR}
-        className="mr-1 text-lava"
-      />
+      </span>
+      <span className="inline-flex items-baseline whitespace-nowrap">
+        <Button
+          variant={showGrid ? "link" : "nav"}
+          className="px-0 leading-tight lg:text-2xl flex lg:hidden text-lava"
+          onClick={() => toggleView("grid")}
+        >
+          <TypedWord text="Thumbs" visible={showSettings} delay={sThumbDelay} />
+        </Button>
+        <Button
+          variant={showGrid ? "link" : "nav"}
+          className="px-0 leading-tight lg:text-2xl hidden lg:flex text-lava"
+          onClick={() => toggleView("grid")}
+        >
+          <TypedWord
+            text="Thumbnails"
+            visible={showSettings}
+            delay={sThumbDelay}
+          />
+        </Button>
+        <TypedWord
+          text=", "
+          visible={showSettings}
+          delay={sThumbDelay + sThumbLen * TYPING_MS_PER_CHAR}
+          className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
+        />
+      </span>
       {showGrid && (
         <>
-          <Button
-            variant="nav"
-            className="px-0 leading-tight"
-            onClick={() => setNumCols(Math.min(8, numCols + 1))}
-            disabled={numCols >= 8}
-          >
+          <span className="inline-flex items-baseline whitespace-nowrap">
+            <Button
+              variant="nav"
+              className="px-0 leading-tight lg:text-2xl text-lava"
+              onClick={() => setNumCols(Math.min(8, numCols + 1))}
+              disabled={numCols >= 8}
+            >
+              <TypedWord
+                text="Zoom Out"
+                visible={showSettings}
+                delay={sZoomOutDelay}
+              />
+            </Button>
             <TypedWord
-              text="Zoom Out"
+              text=", "
               visible={showSettings}
-              delay={sZoomOutDelay}
+              delay={sZoomOutDelay + sZoomOutLen * TYPING_MS_PER_CHAR}
+              className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
             />
-          </Button>
-          <TypedWord
-            text=", "
-            visible={showSettings}
-            delay={sZoomOutDelay + sZoomOutLen * TYPING_MS_PER_CHAR}
-            className="mr-1 text-lava"
-          />
-          <Button
-            variant="nav"
-            className="px-0 leading-tight"
-            onClick={() => setNumCols(Math.max(1, numCols - 1))}
-            disabled={numCols <= 1}
-          >
+          </span>
+          <span className="inline-flex items-baseline whitespace-nowrap">
+            <Button
+              variant="nav"
+              className="px-0 leading-tight lg:text-2xl text-lava"
+              onClick={() => setNumCols(Math.max(1, numCols - 1))}
+              disabled={numCols <= 1}
+            >
+              <TypedWord
+                text="Zoom In"
+                visible={showSettings}
+                delay={sZoomInDelay}
+              />
+            </Button>
             <TypedWord
-              text="Zoom In"
+              text=", "
               visible={showSettings}
-              delay={sZoomInDelay}
+              delay={sZoomInDelay + sZoomInLen * TYPING_MS_PER_CHAR}
+              className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
             />
-          </Button>
-          <TypedWord
-            text=", "
-            visible={showSettings}
-            delay={sZoomInDelay + sZoomInLen * TYPING_MS_PER_CHAR}
-            className="mr-1 text-lava"
-          />
+          </span>
         </>
       )}
       <DarkModeButton
-        className="tracking-normal"
+        className="tracking-wide lg:text-2xl text-lava"
         visible={showSettings}
         lightDelay={sLightDelay}
         darkDelay={sDarkDelay}
@@ -353,74 +361,22 @@ export default function MultiNav() {
           >
             <Button
               variant="link"
-              className="cursor-pointer gap-0 font-visual font-medium  flex leading-tight items-center justify-center   tracking-wide"
+              className="cursor-pointer gap-0 font-visual font-normal lg:text-2xl flex leading-tight items-center justify-center   tracking-wide"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
             >
               <TypedWord text="Multi²" visible={navVisible} delay={0} />
             </Button>
-            {/* <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: logoVisible ? 1 : 0 }}
-              transition={{ duration: 0.15 }}
-            >
-              <Button
-                variant="link"
-                className="cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-wide"
-                onClick={() => setNavMenuOpen((v) => !v)}
-              >
-                <svg
-                  viewBox="0 0 300 300"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-8 h-8 lg:w-10 lg:h-10 aspect-square"
-                >
-                  <rect
-                    width="300"
-                    height="300"
-                    transform="matrix(-1 0 0 1 300 0)"
-                    className={
-                      navMenuOpen
-                        ? "fill-lader dark:fill-lava"
-                        : "fill-lyx dark:fill-lax"
-                    }
-                  />
-                  <path
-                    d="M112 111V30H94.153L78.0331 67.3757C77.3423 68.9957 76.6514 69.8057 75.5 69.8057C74.1183 69.8057 73.5426 69.2271 72.7366 67.3757L56.7319 30H39V111H51.7808V52.2171H56.2713V61.2429H60.7618V74.4343H65.2524V83.46H85.7476V74.4343H90.2382V61.2429H94.7287V52.2171H99.2192V111H112Z"
-                    className={
-                      navMenuOpen
-                        ? "fill-lyx dark:fill-lyx"
-                        : "fill-lava dark:fill-lader"
-                    }
-                  />
-                </svg>
-              </Button>
-            </motion.div>
-            <span className="flex flex-wrap">
-              <Button
-                variant="nav"
-                className="cursor-pointer gap-0 font-visual font-medium flex leading-tight items-center justify-center tracking-wide"
-                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-                asChild
-              >
-                <Link href="/studio">
-                  <TypedWord
-                    text={loggedIn ? "studio" : "Log In"}
-                    visible={loginVisible}
-                    delay={0}
-                  />
-                </Link>
-              </Button>
-            </span> */}
           </motion.div>
           {navMenuOpen && (
             <motion.div
               layout
-              className={`flex flex-wrap lg:items-baseline justify-start items-baseline lg:justify-start font-visual font-medium gap-x-1 leading-tight w-full`}
+              className={`flex flex-wrap lg:items-baseline justify-start items-baseline lg:justify-start font-visual lg:text-2xl font-normal gap-x-1 leading-tight w-full`}
               transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             >
               <span className="inline-flex items-baseline whitespace-nowrap">
                 <Button
                   variant={panel === "showReel" ? "link" : "nav"}
+                  className="lg:text-2xl"
                   onClick={() => {
                     setPanel("showReel");
                     setReelMode("intro");
@@ -436,12 +392,13 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[0]}
-                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
+                  className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
                 <Button
                   variant={panel === "projects" ? "link" : "nav"}
+                  className="lg:text-2xl"
                   onClick={() => {
                     if (isWorkPage) {
                       setPanel("projects");
@@ -468,12 +425,13 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[1]}
-                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
+                  className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
                 <Button
                   variant={panel === "about" ? "link" : "nav"}
+                  className="lg:text-2xl"
                   onClick={() =>
                     setPanel(panel === "about" ? "projects" : "about")
                   }
@@ -488,12 +446,13 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[2]}
-                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
+                  className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
                 <Button
                   variant={panel === "connect" ? "link" : "nav"}
+                  className="lg:text-2xl"
                   onClick={() =>
                     setPanel(panel === "connect" ? "projects" : "connect")
                   }
@@ -508,40 +467,50 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[3]}
-                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
+                  className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
                 />
               </span>
-              <Button
-                variant={showSettings ? "link" : "nav"}
-                className="px-0 tracking-normal"
-                onClick={() => setShowSettings(!showSettings)}
-              >
-                {showSettings ? (
-                  "Hide Settings"
-                ) : (
-                  <TypedWord
-                    text="Settings"
-                    visible={linksVisible && navMenuOpen}
-                    delay={navDelays[4]}
-                  />
-                )}
-              </Button>
+              <span className="inline-flex items-baseline whitespace-nowrap">
+                <Button
+                  variant={showSettings ? "link" : "nav"}
+                  className="px-0 lg:text-2xl"
+                  onClick={() => setShowSettings(!showSettings)}
+                >
+                  {showSettings ? (
+                    "Hide Settings"
+                  ) : (
+                    <TypedWord
+                      text="Settings"
+                      visible={linksVisible && navMenuOpen}
+                      delay={navDelays[4]}
+                    />
+                  )}
+                </Button>
+                <AnimatePresence>
+                  {showSettings && (
+                    <motion.span
+                      key="s-comma"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
+                    >
+                      ,
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </span>
               <AnimatePresence>
                 {showSettings && (
                   <motion.span
-                    key="settings-inline-desktop"
+                    key="settings-inline"
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
                     transition={{ duration: 0.15 }}
-                    className="inline-flex items-baseline font-visual font-medium "
+                    className="flex flex-wrap items-baseline gap-x-1 font-visual font-normal"
                   >
-                    <Button
-                      variant="nav"
-                      className="px-0 pointer-events-none mr-1 text-lava"
-                    >
-                      ,
-                    </Button>
                     {settingsContent}
                   </motion.span>
                 )}
@@ -561,7 +530,7 @@ export default function MultiNav() {
             variants={filterContainerMobile}
             initial="hidden"
             animate={showFilters ? "show" : "hidden"}
-            className="overflow-hidden h-auto leading-tight flex flex-wrap lg:justify-center gap-x-1 gap-y-0 items-baseline pb-0 font-visual font-medium  lg:mt-0 w-full"
+            className="overflow-hidden h-auto leading-tight flex flex-wrap lg:justify-center gap-x-1 gap-y-0 items-baseline pb-0 font-visual font-normal lg:mt-0 w-full"
           >
             {allCats.flatMap((cat, i) => {
               const label = getFilterLabel(cat);
@@ -575,7 +544,7 @@ export default function MultiNav() {
                     variant={activeFilter === cat ? "link" : "nav"}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
-                      "inline-flex px-0 h-auto leading-tight tracking-normal py-0 gap-x-0.5  items-start text-3xl uppercase",
+                      "inline-flex px-0 h-auto leading-tight tracking-wide py-0 gap-x-0.5  items-start text-3xl uppercase",
                       activeFilter === cat ? "text-lava" : "text-liguriskt",
                     )}
                   >
@@ -586,7 +555,7 @@ export default function MultiNav() {
                     />
                   </Button>
                   <TypedWord
-                    className="inline px-0 h-auto leading-tight tracking-tight py-0 text-3xl text-liguriskt dark:text-lax"
+                    className="inline px-0 h-auto leading-tight tracking-wide py-0 text-3xl text-liguriskt dark:text-lax"
                     text=", "
                     visible={showFilters}
                     delay={filterDelays[i] + label.length * TYPING_MS_PER_CHAR}
@@ -605,14 +574,14 @@ export default function MultiNav() {
                     text="Search..."
                     visible={showFilters}
                     delay={searchDelay}
-                    className="absolute pointer-events-none font-visual leading-tight uppercase tracking-tight text-3xl text-liguriskt dark:text-lax"
+                    className="absolute pointer-events-none font-visual  font-normal leading-tight uppercase tracking-wide text-3xl text-liguriskt dark:text-lax"
                   />
                 )}
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder=""
-                  className="bg-transparent outline-none font-visual leading-tight uppercase tracking-tight text-3xl py-0 h-auto text-liguriskt dark:text-lax w-full"
+                  className="bg-transparent outline-none font-visual leading-tight uppercase tracking-wide text-3xl py-0 h-auto text-liguriskt dark:text-lax w-full font-normal"
                 />
               </span>
             </motion.span>
@@ -625,10 +594,10 @@ export default function MultiNav() {
           variants={filterContainer}
           initial="hidden"
           animate={workVisible && navMenuOpen ? "show" : "hidden"}
-          className="overflow-hidden flex flex-wrap items-baseline font-visual font-medium gap-y-1 gap-x-1 leading-tight  "
+          className="overflow-hidden flex flex-wrap items-baseline font-visual font-normal uppercase gap-y-1 gap-x-1 leading-tight  "
         >
           {wHasClient && (
-            <span className="inline-flex items-baseline whitespace-nowrap text-xl lg:text-lg font-medium text-lava dark:text-lava leading-tight uppercase">
+            <span className="inline-flex items-baseline whitespace-nowrap text-3xl tracking-normal lg:text-2xl font-normal text-lava dark:text-lava leading-tight uppercase">
               <TypedWord
                 text={workItem!.client!}
                 visible={workVisible}
@@ -643,7 +612,7 @@ export default function MultiNav() {
               />
             </span>
           )}
-          <span className="inline-flex items-baseline whitespace-nowrap text-xl lg:text-lg font-medium text-lava dark:text-lava leading-tight">
+          <span className="inline-flex items-baseline whitespace-nowrap text-3xl lg:text-2xl font-norml text-lava dark:text-lava leading-tight">
             <TypedWord
               text={workItem?.title ?? ""}
               visible={workVisible}
@@ -658,7 +627,7 @@ export default function MultiNav() {
             />
           </span>
           {workItem?.year && (
-            <span className="inline-flex items-baseline whitespace-nowrap text-xl lg:text-lg font-medium text-liguriskt dark:text-lax leading-tight">
+            <span className="inline-flex items-baseline whitespace-nowrap text-3xl lg:text-2xl font-normal text-liguriskt dark:text-lax leading-tight">
               <TypedWord
                 text={workItem.year.toString()}
                 visible={workVisible}
@@ -675,7 +644,7 @@ export default function MultiNav() {
           )}
           <Button
             variant="nav"
-            className="px-0 text-xl lg:text-lg font-medium leading-tight"
+            className="px-0 text-3xl lg:text-2xl font-normal leading-tight"
             asChild
           >
             <Link href="/">
@@ -683,7 +652,7 @@ export default function MultiNav() {
                 text="Back"
                 visible={workVisible}
                 delay={wBackDelay}
-                className="text-xl lg:text-lg font-medium tracking-wide dark:text-lax text-liguriskt hover:text-lava leading-tight uppercase "
+                className="text-3xl lg:text-2xl font-normal tracking-normal dark:text-lax text-liguriskt hover:text-lava leading-tight"
               />
             </Link>
           </Button>
@@ -692,7 +661,7 @@ export default function MultiNav() {
           variants={filterContainer}
           initial="hidden"
           animate={showFilters && navMenuOpen ? "show" : "hidden"}
-          className="hidden lg:flex overflow-hidden font-visual font-medium flex-wrap justify-start uppercase items-baseline pb-0 gap-x-1 w-full max-w-6xl"
+          className="hidden lg:flex overflow-hidden font-visual font-normal flex-wrap justify-start uppercase items-baseline pb-0 gap-x-1 w-full max-w-6xl"
         >
           {allCats.flatMap((cat, i) => {
             const label = getDesktopFilterLabel(cat);
@@ -740,14 +709,14 @@ export default function MultiNav() {
                   text="Search..."
                   visible={showFilters}
                   delay={desktopSearchDelay}
-                  className="absolute pointer-events-none font-visual leading-tight uppercase tracking-normal lg:text-4xl text-liguriskt dark:text-liguriskt"
+                  className="absolute pointer-events-none font-visual font-normal leading-tight uppercase tracking-wide lg:text-4xl text-liguriskt dark:text-liguriskt"
                 />
               )}
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder=""
-                className="bg-transparent outline-none font-visual leading-tight uppercase tracking-normal lg:text-4xl py-0 h-auto text-liguriskt dark:text-lax w-full ml-1"
+                className="bg-transparent outline-none font-visual leading-tight uppercase font-normal tracking-wide lg:text-4xl py-0 h-auto text-liguriskt dark:text-lax w-full ml-1"
               />
             </span>
           </motion.span>
