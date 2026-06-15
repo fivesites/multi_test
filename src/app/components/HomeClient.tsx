@@ -32,7 +32,6 @@ function HomeClientInner() {
     showList,
     activeFilter,
     search,
-    setSearch,
     numCols,
     showReel,
     reelMode,

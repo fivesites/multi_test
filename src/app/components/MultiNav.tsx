@@ -93,7 +93,7 @@ export default function MultiNav() {
 
   const router = useRouter();
 
-  const [navMenuOpen, setNavMenuOpen] = useState(true);
+  const navMenuOpen = true;
   const isWorkPageRef = useRef(false);
   const [isDesktop, setIsDesktop] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
@@ -112,7 +112,6 @@ export default function MultiNav() {
       NAV_LOGO_DONE_MS + LOGO_APPEAR_MS + LOGIN_LEN * TYPING_MS_PER_CHAR,
     );
     return () => clearTimeout(t);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     let lastY = window.scrollY;
