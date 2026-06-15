@@ -844,7 +844,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7 lg:-mt-2 z-[15] overflow-y-auto bg-background"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7 lg:-mt-2 z-[15] overflow-y-auto "
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -859,7 +859,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-4 lg:-mt-2 z-[15] bg-background"
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-4 lg:-mt-2 z-[15] "
           >
             <ConnectSection />
           </motion.div>

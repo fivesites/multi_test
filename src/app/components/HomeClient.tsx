@@ -118,7 +118,7 @@ function HomeClientInner() {
 
   return (
     <div
-      className={`min-h-screen relative z-10 bg-background dark:bg-lader text-lader`}
+      className={`min-h-screen relative z-10 bg-background dark:bg-black text-lader`}
     >
       {/* Preview overlay — desktop list-only mode */}
       <AnimatePresence>
@@ -204,7 +204,7 @@ function HomeClientInner() {
                       return (
                         <div
                           key={item.slug}
-                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${isActive ? "text-lava" : "text-liguriskt dark:text-lax"}`}
+                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${isActive ? "text-lava" : "text-liguriskt"}`}
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                         >

@@ -41,7 +41,7 @@ export default function AboutSectionText({
           visible={textVisible}
           delay={0}
           eraseSpeed={ERASE_SPEED}
-          cursor={!text ? "²" : false}
+          cursor={false}
         />
       </h1>
       {text && (
@@ -51,7 +51,7 @@ export default function AboutSectionText({
             visible={textVisible}
             delay={paraDelay}
             eraseSpeed={ERASE_SPEED}
-            cursor="²"
+            cursor={false}
           />
         </p>
       )}
