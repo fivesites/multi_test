@@ -26,13 +26,13 @@ export default function MultiFooter() {
   return (
     <footer
       ref={ref}
-      className="absolute bottom-0 left-0 w-full px-4 lg:px-8 py-4 grid grid-cols-1 items-center lg:grid-cols-6"
+      className="absolute bottom-0 left-0 w-full px-4 lg:px-8 py-4 grid grid-cols-1 items-start lg:grid-cols-6"
     >
       <TypedWord
-        text="Multi² 2026. All Rights Reserved."
+        text="Copyright Multi² 2026. All Rights Reserved."
         visible={visible}
         delay={0}
-        className="col-span-2 font-visual text-lg font-medium leading-tight text-lava items-center text-center lg:text-left"
+        className="col-span-2 font-visual text-lg font-medium leading-tight text-lava items-center text-left"
       />
     </footer>
   );

@@ -8,6 +8,7 @@ import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
 import Cookie from "@/app/components/Cookie";
+import MultiNav from "@/app/components/MultiNav";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -62,11 +63,14 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={` ${visualFont.variable}  ${karlRounded.variable} antialiased`}
+        className={` ${visualFont.variable}  ${karlRounded.variable} antialiasing`}
       >
         <WorkContextServer>
           <CopyContextServer>
-            <UIProvider>{children}</UIProvider>
+            <UIProvider>
+              <MultiNav />
+              {children}
+            </UIProvider>
           </CopyContextServer>
         </WorkContextServer>
         <Cookie />

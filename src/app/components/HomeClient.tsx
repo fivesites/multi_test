@@ -3,16 +3,11 @@
 import React, { useRef, useEffect, useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
-import MultiCard from "./MultiCard";
 import Link from "next/link";
-import MultiNav from "./MultiNav";
-import { UIProvider, useUI } from "@/context/UIContext";
+import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
-import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import { useRouter } from "next/navigation";
 import VideoPlayer from "./VideoPlayer";
-import AboutSectionText from "./AboutSectionText";
-import ConnectSection from "./ConnectSection";
 import MultiFooter from "./MultiFooter";
 import { getNavTypingDelayMs, getFilterDoneMs } from "@/lib/navTiming";
 
@@ -30,16 +25,12 @@ const CATEGORY_LABELS: Record<string, string> = {
 
 function HomeClientInner() {
   const { items, categories } = useWork();
-  const aboutEntry = useCopyEntry("about-intro");
-  const aboutBody = useCopyBody("about-intro");
 
   const {
     panel,
     showGrid,
     showList,
     activeFilter,
-    openedCard,
-    setOpenedCard,
     search,
     setSearch,
     numCols,
@@ -69,16 +60,6 @@ function HomeClientInner() {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-  const openCardRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (openedCard && openCardRef.current && showList) {
-      openCardRef.current.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    }
-  }, [openedCard, showList]);
 
   const query = search.toLowerCase().trim();
   const slugsSeen = new Set<string>();
@@ -131,31 +112,14 @@ function HomeClientInner() {
     }
   }
 
-  type GridItem = (typeof displayed)[number];
-  type GridEntry =
-    | { type: "image"; item: GridItem; idx: number }
-    | { type: "card"; item: GridItem };
-
-  const gridItems: GridEntry[] = [];
-  for (let i = 0; i < displayed.length; i += numCols) {
-    const row = displayed.slice(i, i + numCols);
-    row.forEach((item, colIdx) =>
-      gridItems.push({ type: "image", item, idx: i + colIdx }),
-    );
-    const openedInRow = row.find((item) => item.slug === openedCard);
-    if (openedInRow) gridItems.push({ type: "card", item: openedInRow });
-  }
-
   const previewItem = hoveredItem
     ? displayed.find((i) => i.slug === hoveredItem)
     : null;
 
   return (
     <div
-      className={`min-h-screen relative z-10 ${showReel && reelMode === "background" ? "bg-transparent" : "bg-background"}`}
+      className={`min-h-screen relative z-10 bg-background dark:bg-lader text-lader`}
     >
-      <MultiNav />
-
       {/* Preview overlay — desktop list-only mode */}
       <AnimatePresence>
         {showList && !showGrid && previewItem && (
@@ -176,37 +140,6 @@ function HomeClientInner() {
                 sizes="50vw"
               />
             </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Panel overlays — About and Connect sit above Projects */}
-      <AnimatePresence mode="wait">
-        {panel === "about" && (
-          <motion.div
-            key="about-panel"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-10 overflow-y-auto bg-background"
-          >
-            <AboutSectionText
-              plainText={aboutEntry?.plainText ?? ""}
-              text={aboutBody ?? undefined}
-            />
-          </motion.div>
-        )}
-        {panel === "connect" && (
-          <motion.div
-            key="connect-panel"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 1 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] z-10 bg-background"
-          >
-            <ConnectSection />
           </motion.div>
         )}
       </AnimatePresence>
@@ -237,13 +170,17 @@ function HomeClientInner() {
               className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
             >
               {/* Header row */}
-              <div className="grid grid-cols-6 w-full py-1 pl-4 text-xl lg:text-lg font-medium font-visual text-lyx border-b-2 border-lyx">
-                <span className="col-span-2">Client</span>
-                <span className={showGrid ? "col-span-3" : "col-span-2"}>
+              <div className="grid grid-cols-6 w-full py-1 text-xl lg:text-lg font-medium font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
+                <span className="col-span-2 pl-4">Client</span>
+                <span
+                  className={`${showGrid ? "col-span-3" : "col-span-2"} pl-4`}
+                >
                   Title
                 </span>
-                {!showGrid && <span className="col-span-1">Categories</span>}
-                <span className="text-right">Year</span>
+                {!showGrid && (
+                  <span className="col-span-1 pl-4">Categories</span>
+                )}
+                <span className="pl-4 text-right pr-0">Year</span>
               </div>
 
               <AnimatePresence mode="popLayout">
@@ -267,33 +204,33 @@ function HomeClientInner() {
                       return (
                         <div
                           key={item.slug}
-                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${group.items.length > 1 && itemIdx < group.items.length - 1 ? "border-b-2 border-lyx" : ""} ${isActive ? "text-lava" : "text-lyx"}`}
+                          className={`grid grid-cols-6 items-start w-full py-2 px-0 font-medium transition-colors duration-200 cursor-pointer ${isActive ? "text-lava" : "text-liguriskt dark:text-lax"}`}
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                         >
-                          <span className="uppercase font-visual lg:text-4xl col-span-2 transition-colors duration-200">
+                          <span className="uppercase font-visual leading-tight lg:text-4xl col-span-2 pl-4 transition-colors duration-200">
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </span>
                           <Link
                             href={`/work/${item.slug}`}
-                            className={`font-visual text-4xl  font-medium transition-colors duration-200 ${showGrid ? "col-span-3" : "col-span-2"}`}
+                            className={`font-visual text-4xl font-medium pl-4 transition-colors duration-200 ${showGrid ? "col-span-3" : "col-span-2"}`}
                           >
                             {item.title}
                           </Link>
                           {!showGrid && (
-                            <span className="font-visual text-sm tracking-normal font-medium uppercase transition-colors duration-200 line-clamp-2">
+                            <span className="font-visual text-lg tracking-normal font-medium pl-4 transition-colors duration-200 line-clamp-2">
                               {item.categories
                                 .map((c) => CATEGORY_LABELS[c] ?? c)
                                 .join(", ")}
                             </span>
                           )}
-                          <span className="font-visual text-right text-lg transition-colors duration-200">
+                          <span className="font-visual text-right text-lg pl-4 transition-colors duration-200">
                             {item.year ?? ""}
                           </span>
                         </div>
                       );
                     })}
-                    <div className="border-b-2 border-b-lyx" />
+                    <div className="border-b-2 border-b-liguriskt dark:border-b-lax" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -301,15 +238,17 @@ function HomeClientInner() {
           )}
 
           {listVisible && showGrid && (
-            <div className={`w-full  pb-2 ${showList ? "" : ""}`}>
-              <div className="grid grid-cols-6 gap-2 max-w-5xl">
+            <div className="w-full pb-2">
+              <div
+                className="gap-x-2"
+                style={{ columns: showList ? 3 : 5, columnGap: "0.5rem" }}
+              >
                 <AnimatePresence mode="popLayout" initial={false}>
                   {displayed.map((item, idx) => (
                     <motion.div
                       key={item.key}
-                      layout
-                      initial={{ opacity: 0, y: 12 }}
-                      animate={{ opacity: 1, y: 0 }}
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
                       transition={{
                         duration: 0.35,
@@ -318,7 +257,8 @@ function HomeClientInner() {
                           Math.min(idx * 0.05, 0.4),
                         ease: "easeOut",
                       }}
-                      className="aspect-square relative cursor-pointer overflow-hidden transition-all duration-200 group border-transparent border-3 hover:border-lava"
+                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden transition-all duration-200 group border-transparent border-3 hover:border-lava"
+                      style={{ aspectRatio: item.aspectRatio }}
                       onClick={() => router.push(`/work/${item.slug}`)}
                     >
                       <Image
@@ -326,7 +266,7 @@ function HomeClientInner() {
                         alt={item.alt}
                         fill
                         className="object-cover"
-                        sizes="12vw"
+                        sizes="20vw"
                       />
                     </motion.div>
                   ))}
@@ -337,95 +277,48 @@ function HomeClientInner() {
         </div>
 
         {/* Mobile: grid or list toggle */}
-        <div className="lg:hidden min-h-[65vh] mx-0 pt-[var(--nav-height)]">
+        <div className="lg:hidden min-h-[65vh]  pt-[var(--nav-height)]">
           {listVisible && showGrid && (
             <>
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search..."
-                className="bg-transparent outline-none font-visual text-xl lg:text-lg font-medium text-center justify-center leading-tight tracking-normal pb-1 h-auto border-liguriskt text-lava placeholder:text-lava w-full px-2"
-              />
               <div
-                className="pt-4 gap-2 grid"
-                style={{
-                  gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
-                }}
+                className=" pb-16 px-8"
+                style={{ columns: numCols, columnGap: "0.5rem" }}
               >
                 <AnimatePresence mode="popLayout" initial={false}>
-                  {gridItems.map((entry) => {
-                    if (entry.type === "card") {
-                      return (
-                        <motion.div
-                          ref={openCardRef}
-                          key={`card-${entry.item.slug}`}
-                          layout
-                          initial={{ opacity: 0 }}
-                          animate={{ opacity: 1 }}
-                          exit={{ opacity: 0 }}
-                          transition={{ duration: 0.3 }}
-                          className="col-span-full w-full rounded-lg lg:max-w-[560px] mt-0 mb-2 isolation-isolate"
-                        >
-                          <MultiCard
-                            title={entry.item.title}
-                            client={entry.item.client}
-                            slug={entry.item.slug}
-                            description={entry.item.description}
-                            projectImages={entry.item.projectImages}
-                            onClose={() => setOpenedCard(null)}
-                          />
-                        </motion.div>
-                      );
-                    }
-                    return (
-                      <motion.div
-                        key={entry.item.key}
-                        layout
-                        initial={{ opacity: 0, y: 12 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0 }}
-                        transition={{
-                          duration: 0.35,
-                          delay:
-                            (isInitialMount.current ? navDelaySec : 0) +
-                            Math.min(entry.idx * 0.05, 0.4),
-                          ease: "easeOut",
-                        }}
-                        className="aspect-square relative cursor-pointer overflow-hidden transition-all duration-200"
-                        onClick={() =>
-                          setOpenedCard(
-                            entry.item.slug === openedCard
-                              ? null
-                              : entry.item.slug,
-                          )
-                        }
-                      >
-                        <Image
-                          src={entry.item.url}
-                          alt={entry.item.alt}
-                          fill
-                          className="object-cover"
-                          sizes={`${Math.floor(100 / numCols)}vw`}
-                        />
-                        <div className="absolute inset-0 transition-colors duration-200 flex items-center hover:bg-lyx justify-center p-2 group">
-                          <Link
-                            href={`/work/${entry.item.slug}`}
-                            onClick={(e) => e.stopPropagation()}
-                            className="font-visual text-xl font-medium lg:text-2xl tracking-normal justify-center leading-tight opacity-0 group-hover:opacity-100 transition-opacity duration-200 line-clamp-2 text-background"
-                          >
-                            {entry.item.client}
-                          </Link>
-                        </div>
-                      </motion.div>
-                    );
-                  })}
+                  {displayed.map((item, idx) => (
+                    <motion.div
+                      key={item.key}
+                      initial={{ opacity: 0, y: 12 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        duration: 0.35,
+                        delay:
+                          (isInitialMount.current ? navDelaySec : 0) +
+                          Math.min(idx * 0.05, 0.4),
+                        ease: "easeOut",
+                      }}
+                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden"
+                      style={{ aspectRatio: item.aspectRatio }}
+                      onClick={() => router.push(`/work/${item.slug}`)}
+                    >
+                      <Image
+                        src={item.url}
+                        alt={item.alt}
+                        fill
+                        className="object-cover"
+                        sizes={`${Math.floor(100 / numCols)}vw`}
+                      />
+                    </motion.div>
+                  ))}
                 </AnimatePresence>
               </div>
             </>
           )}
 
           {listVisible && showList && (
-            <div className="flex flex-col px-8 border-t-2 border-lyx pt-2">
+            <div className="flex flex-col px-8 ">
+              <div className="border-t-2 border-lyx  w-full hidden" />
               <AnimatePresence mode="popLayout">
                 {grouped.map((group, idx) => {
                   const hasMultiple = group.items.length > 1;
@@ -445,10 +338,10 @@ function HomeClientInner() {
                           : idx * 0.04,
                       }}
                     >
-                      <div className="w-full py-0 ">
+                      <div className="w-full ">
                         {hasMultiple ? (
                           <button
-                            className={`  font-visual uppercase text-3xl lg:text-4xl font-medium  border-b-lyx   py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-lyx hover:text-lava active:text-lava"}`}
+                            className={`  font-visual uppercase text-3xl lg:text-4xl font-medium  border-b-lyx   py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-liguriskt dark:text-lax hover:text-lava active:text-lava"}`}
                             onClick={() =>
                               setExpandedGroup(isExpanded ? null : group.key)
                             }
@@ -458,7 +351,7 @@ function HomeClientInner() {
                         ) : (
                           <Link
                             href={`/work/${group.items[0].slug}`}
-                            className=" font-visual  font-medium uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-lyx hover:text-lava  block transition-colors duration-200"
+                            className=" font-visual  font-medium uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-liguriskt dark:text-lax hover:text-lava  block transition-colors duration-200"
                           >
                             {label}
                           </Link>
@@ -477,7 +370,7 @@ function HomeClientInner() {
                                 <Link
                                   key={item.slug}
                                   href={`/work/${item.slug}`}
-                                  className="font-visual text-xl lg:text-2xl text-lyx text-left hover:text-lava font-medium  leading-tighttransition-colors duration-200"
+                                  className="font-visual text-xl lg:text-2xl text-liguriskt dark:text-lax text-left hover:text-lava font-medium leading-tight transition-colors duration-200"
                                 >
                                   {item.title}
                                 </Link>
@@ -500,9 +393,5 @@ function HomeClientInner() {
 }
 
 export default function HomeClient() {
-  return (
-    <UIProvider>
-      <HomeClientInner />
-    </UIProvider>
-  );
+  return <HomeClientInner />;
 }

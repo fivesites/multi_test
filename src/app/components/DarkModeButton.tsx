@@ -2,8 +2,19 @@
 
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import TypedWord from "./TypedWord";
 
-export default function DarkModeButton({ className }: { className?: string }) {
+export default function DarkModeButton({
+  className,
+  visible = true,
+  lightDelay = 0,
+  darkDelay = 0,
+}: {
+  className?: string;
+  visible?: boolean;
+  lightDelay?: number;
+  darkDelay?: number;
+}) {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
@@ -16,26 +27,26 @@ export default function DarkModeButton({ className }: { className?: string }) {
   }
 
   return (
-    <span className="flex items-baseline font-rounded text-2xl gap-0">
+    <span className="flex items-baseline font-rounded text-xl lg:text-lg gap-0">
       <Button
         variant={!dark ? "link" : "nav"}
         onClick={() => setMode(false)}
         className={className}
       >
-        Light
+        <TypedWord text="Light" visible={visible} delay={lightDelay} />
       </Button>
-      <Button
-        variant="nav"
-        className=" px-0 leading-tight pointer-events-none mr-1"
-      >
-        ,
-      </Button>
+      <TypedWord
+        text=", "
+        visible={visible}
+        delay={lightDelay + 5 * 22}
+        className="mr-1 text-lader dark:text-lax"
+      />
       <Button
         variant={dark ? "link" : "nav"}
         onClick={() => setMode(true)}
         className={className}
       >
-        Dark
+        <TypedWord text="Dark" visible={visible} delay={darkDelay} />
       </Button>
     </span>
   );
