@@ -41,10 +41,10 @@ function WorkPageInner({
     >
       {/* Client / description / credits */}
       <div className="flex flex-col justify-center items-center lg:items-start px-4 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
-        <h1 className="font-visual text-4xl lg:text-8xl font-normal uppercase leading-none text-center lg:text-left text-lava tracking-normal lg:tracking-normal lg:leading-[0.9] flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4 lg:mb-0 items-baseline gap-x-1">
+        <h1 className="font-visual text-4xl  font-normal uppercase leading-none text-center lg:text-left text-lava tracking-normal lg:tracking-normal lg:leading-[0.9] flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4 items-baseline gap-x-1">
           {client}
         </h1>
-        <div className="flex lg:grid lg:grid-cols-6 lg:mb-8">
+        <div className="flex lg:grid lg:grid-cols-6 lg:mb-8 mb-4 ">
           <span className="lg:col-span-4">
             {description ? (
               <p className="font-visual text-3xl lg:text-2xl lg:tracking-normal lg:max-w-4xl leading-[1.1] lg:mt-1 text-center text-lava lg:text-left font-normal max-w-sm">
@@ -58,7 +58,7 @@ function WorkPageInner({
               </p>
             )}
           </span>
-          <span className="hidden lg:flex lg:col-span-2">
+          <span className="hidden lg:flex lg:col-span-1">
             {credits && (
               <ul className="font-visual text-sm tracking-normal font-normal leading-[1.5] mt-1 text-lava list-none">
                 {credits

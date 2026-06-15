@@ -39,7 +39,7 @@ export default function DarkModeButton({
         text=", "
         visible={visible}
         delay={lightDelay + 5 * 22}
-        className="mr-1 text-lader dark:text-lax"
+        className="mr-1 text-lava"
       />
       <Button
         variant={dark ? "link" : "nav"}

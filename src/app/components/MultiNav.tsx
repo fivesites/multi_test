@@ -246,7 +246,7 @@ export default function MultiNav() {
         text=", "
         visible={showSettings}
         delay={sListDelay + sListLen * TYPING_MS_PER_CHAR}
-        className="mr-1 text-lader dark:text-lax"
+        className="mr-1 text-lava"
       />
       <Button
         variant={showGrid ? "link" : "nav"}
@@ -270,7 +270,7 @@ export default function MultiNav() {
         text=", "
         visible={showSettings}
         delay={sThumbDelay + sThumbLen * TYPING_MS_PER_CHAR}
-        className="mr-1 text-lader dark:text-lax"
+        className="mr-1 text-lava"
       />
       {showGrid && (
         <>
@@ -290,7 +290,7 @@ export default function MultiNav() {
             text=", "
             visible={showSettings}
             delay={sZoomOutDelay + sZoomOutLen * TYPING_MS_PER_CHAR}
-            className="mr-1 text-lader dark:text-lax"
+            className="mr-1 text-lava"
           />
           <Button
             variant="nav"
@@ -308,7 +308,7 @@ export default function MultiNav() {
             text=", "
             visible={showSettings}
             delay={sZoomInDelay + sZoomInLen * TYPING_MS_PER_CHAR}
-            className="mr-1 text-lader dark:text-lax"
+            className="mr-1 text-lava"
           />
         </>
       )}
@@ -457,7 +457,7 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[0]}
-                  className="text-xl lg:text-lg text-lader dark:text-lax leading-tight tracking-wide"
+                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
@@ -489,7 +489,7 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[1]}
-                  className="text-xl lg:text-lg text-lader dark:text-lax leading-tight tracking-wide"
+                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
@@ -509,7 +509,7 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[2]}
-                  className="text-xl lg:text-lg text-lader dark:text-lax leading-tight tracking-wide"
+                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
                 />
               </span>
               <span className="inline-flex items-baseline whitespace-nowrap">
@@ -529,7 +529,7 @@ export default function MultiNav() {
                   text=", "
                   visible={linksVisible && navMenuOpen}
                   delay={navCommaDelays[3]}
-                  className="text-xl lg:text-lg text-lader dark:text-lax leading-tight tracking-wide"
+                  className="text-xl lg:text-lg text-lava leading-tight tracking-wide"
                 />
               </span>
               <Button
@@ -559,7 +559,7 @@ export default function MultiNav() {
                   >
                     <Button
                       variant="nav"
-                      className="px-0 pointer-events-none mr-1 text-lader dark:text-lax"
+                      className="px-0 pointer-events-none mr-1 text-lava"
                     >
                       ,
                     </Button>
@@ -844,7 +844,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7 lg:-mt-2 z-[15] overflow-y-auto "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] overflow-y-auto "
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -859,7 +859,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-4 lg:-mt-2 z-[15] "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] "
           >
             <ConnectSection />
           </motion.div>
