@@ -50,12 +50,17 @@ const filterContainerMobile: Variants = {
   exit: { height: 0, transition: { duration: 0.2 } },
 };
 
+const TYPING_MS_PER_CHAR = 22;
+const NAV_LOGO = "Multi²";
+const NAV_LOGO_DONE_MS = NAV_LOGO.length * TYPING_MS_PER_CHAR;
+const LOGO_APPEAR_MS = 80;
+const LOGIN_LEN = 6;
+
 export default function MultiNav() {
   const {
     panel,
     setPanel,
     setOpenedCard,
-    reelMode,
     setReelMode,
     showSettings,
     setShowSettings,
@@ -74,11 +79,6 @@ export default function MultiNav() {
   const aboutEntry = useCopyEntry("about-intro");
   const aboutBody = useCopyBody("about-intro");
 
-  const TYPING_MS_PER_CHAR = 22;
-  const NAV_LOGO = "Multi²";
-  const NAV_LOGO_DONE_MS = NAV_LOGO.length * TYPING_MS_PER_CHAR;
-  const LOGO_APPEAR_MS = 80;
-  const LOGIN_LEN = 6; // "Log In" and "studio" are both 6 chars
   const navItems = ["Showreel", "Projects", "About", "Connect", "Settings"];
   const navDelays = navItems.reduce<number[]>((acc, _label, i) => {
     if (i === 0) return [0];
@@ -98,19 +98,7 @@ export default function MultiNav() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [navVisible, setNavVisible] = useState(false);
-  const [logoVisible, setLogoVisible] = useState(false);
-  const [loginVisible, setLoginVisible] = useState(false);
   const [linksVisible, setLinksVisible] = useState(false);
-  const [loggedIn, setLoggedIn] = useState(false);
-  useEffect(() => {
-    fetch(
-      `https://${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}.api.sanity.io/v2021-06-07/users/me`,
-      { credentials: "include" },
-    )
-      .then((r) => r.json())
-      .then((d) => setLoggedIn(!!d?.id))
-      .catch(() => setLoggedIn(false));
-  }, []);
   useEffect(() => {
     const check = () => setIsDesktop(window.innerWidth >= 1024);
     check();
@@ -119,20 +107,12 @@ export default function MultiNav() {
   }, []);
   useEffect(() => {
     setNavVisible(true);
-    const t1 = setTimeout(() => setLogoVisible(true), NAV_LOGO_DONE_MS);
-    const t2 = setTimeout(
-      () => setLoginVisible(true),
-      NAV_LOGO_DONE_MS + LOGO_APPEAR_MS,
-    );
-    const t3 = setTimeout(
+    const t = setTimeout(
       () => setLinksVisible(true),
       NAV_LOGO_DONE_MS + LOGO_APPEAR_MS + LOGIN_LEN * TYPING_MS_PER_CHAR,
     );
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-      clearTimeout(t3);
-    };
+    return () => clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   useEffect(() => {
     let lastY = window.scrollY;
@@ -147,6 +127,42 @@ export default function MultiNav() {
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  const scrollProgress = useMotionValue(0);
+  const videoScale = useTransform(scrollProgress, [0, 400], [1, 0]);
+  const openScrollY = useRef(0);
+  useEffect(() => {
+    if (panel !== "showReel") {
+      scrollProgress.set(0);
+      return;
+    }
+    openScrollY.current = window.scrollY;
+    scrollProgress.set(0);
+    const onScroll = () => {
+      const delta = Math.max(0, window.scrollY - openScrollY.current);
+      scrollProgress.set(delta);
+      if (delta >= 400) {
+        setPanel("projects");
+        setReelMode("background");
+      }
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [panel, scrollProgress, setPanel, setReelMode]);
+
+  const navRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = navRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => {
+      document.documentElement.style.setProperty(
+        "--nav-height",
+        `${el.offsetHeight}px`,
+      );
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
   const pathname = usePathname();
@@ -320,43 +336,6 @@ export default function MultiNav() {
       />
     </>
   );
-
-  const scrollProgress = useMotionValue(0);
-  const videoScale = useTransform(scrollProgress, [0, 400], [1, 0]);
-  const openScrollY = useRef(0);
-
-  useEffect(() => {
-    if (panel !== "showReel") {
-      scrollProgress.set(0);
-      return;
-    }
-    openScrollY.current = window.scrollY;
-    scrollProgress.set(0);
-    const onScroll = () => {
-      const delta = Math.max(0, window.scrollY - openScrollY.current);
-      scrollProgress.set(delta);
-      if (delta >= 400) {
-        setPanel("projects");
-        setReelMode("background");
-      }
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, [panel, scrollProgress, setPanel, setReelMode]);
-
-  const navRef = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = navRef.current;
-    if (!el) return;
-    const ro = new ResizeObserver(() => {
-      document.documentElement.style.setProperty(
-        "--nav-height",
-        `${el.offsetHeight}px`,
-      );
-    });
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
 
   return (
     <>
@@ -776,64 +755,62 @@ export default function MultiNav() {
 
         {/* Gradient fade below nav */}
         {/* <div className="absolute left-0 right-0 top-full h-12 bg-gradient-to-b from-background to-transparent pointer-events-none" /> */}
+      </motion.div>
 
-        {/* Showreel — intro: centered, scales on scroll */}
-        <AnimatePresence>
-          {panel === "showReel" && (
+      {/* Showreel — intro: centered, scales on scroll */}
+      <AnimatePresence>
+        {panel === "showReel" && (
+          <motion.div
+            key="showreel-intro"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 z-[15] flex items-center h-dvh justify-center cursor-pointer"
+            onClick={() => {
+              setPanel("projects");
+              setReelMode("background");
+            }}
+          >
             <motion.div
-              key="showreel-intro"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="fixed inset-0 z-[15] flex items-center justify-center cursor-pointer"
-              onClick={() => {
-                setPanel("projects");
-                setReelMode("background");
-              }}
+              style={{ scale: videoScale }}
+              className="hidden h-dvh w-screen lg:block relative aspect-video"
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ scale: videoScale }}
-                className="hidden lg:block relative w-[70vw] max-w-5xl aspect-video"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <video
-                  src="/multi_showreel_desktop.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.2 }}
-                style={{ scale: videoScale }}
-                className="block lg:hidden relative h-[80dvh] aspect-[9/16]"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <video
-                  src="/multi_showreel_mobile.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
+              <video
+                src="/multi_showreel_desktop.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
             </motion.div>
-          )}
-        </AnimatePresence>
-
-        {/* Showreel — background: full-screen behind content */}
-      </motion.div>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              style={{ scale: videoScale }}
+              className="block lg:hidden relative h-[100dvh] w-full aspect-[9/16]"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <video
+                src="/multi_showreel_mobile.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+              />
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* About and Connect panels — accessible from any page */}
       <AnimatePresence mode="wait">
@@ -844,7 +821,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] overflow-y-auto "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7  z-[15] overflow-y-auto "
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -859,7 +836,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7  z-[15] "
           >
             <ConnectSection />
           </motion.div>

@@ -25,10 +25,10 @@ export default function ConnectSection() {
   }, [isPresent, safeToRemove]);
 
   return (
-    <div className="min-h-full flex flex-col items-center lg:items-start justify-start px-4 lg:px-8 pb-12 text-lava">
+    <div className="min-h-full flex flex-col items-start lg:items-start justify-start px-8 lg:px-8 pb-12 text-lava">
       <a
         href={`mailto:${EMAIL}`}
-        className="font-visual font-medium uppercase tracking-normalt text-4xl lg:text-4xl text-lava hover:text-lava transition-colors duration-200 leading-none"
+        className="font-visual text-3xl lg:text-4xl max-w-7xl uppercase leading-none lg:text-left font-medium lg:font-medium lg:mb-4   tracking-wide lg:tracking-normal lg:leading-[0.9]"
       >
         <TypedWord
           text={EMAIL}

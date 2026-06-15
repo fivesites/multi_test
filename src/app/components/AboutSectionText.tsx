@@ -35,7 +35,7 @@ export default function AboutSectionText({
 
   return (
     <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava">
-      <h1 className="font-visual text-4xl lg:text-4xl max-w-7xl uppercase leading-none lg:text-left font-medium lg:mb-4   tracking-normal lg:tracking-normal lg:leading-[0.9]">
+      <h1 className="font-visual text-6xl lg:text-4xl max-w-7xl uppercase leading-none lg:text-left font-normal lg:font-medium lg:mb-4   tracking-normal lg:tracking-normal lg:leading-[0.9]">
         <TypedWord
           text={plainText}
           visible={textVisible}
