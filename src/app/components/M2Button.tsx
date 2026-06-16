@@ -17,12 +17,13 @@ type M2ButtonProps = {
   disabled?: boolean;
   lg?: boolean;
   noClick?: boolean;
+  active?: boolean;
 };
 
 const MS = 22;
 
 export default function M2Button({
-  className = "",
+  className = "text-left",
   text,
   visible,
   delay,
@@ -33,6 +34,7 @@ export default function M2Button({
   disabled = false,
   lg = false,
   noClick = false,
+  active = false,
 }: M2ButtonProps) {
   const isInteractive = !!href || !!onClick;
   const m2ButtonStyles = cn(
@@ -40,6 +42,7 @@ export default function M2Button({
     "font-visual",
     noClick ? "text-lader" : "text-lava",
     isInteractive && "cursor-pointer",
+    active && "text-liguriskt",
   );
   const [dots, setDots] = useState(".");
   const [showDots, setShowDots] = useState(false);
@@ -60,14 +63,16 @@ export default function M2Button({
     };
   }, [loading, loadingText]);
 
-  const content = loading ? (
-    <span className="inline-flex items-baseline">
+  const inner = loading ? (
+    <span className="inline-flex items-baseline text-left">
       <TypedWord text={loadingText} visible={loading} delay={0} />
       {showDots && <span>{` (${dots})`}</span>}
     </span>
   ) : (
     <TypedWord text={text} visible={visible} delay={delay} />
   );
+
+  const content = inner;
 
   if (!href && !onClick) {
     return <span className={cn(m2ButtonStyles, className)}>{content}</span>;

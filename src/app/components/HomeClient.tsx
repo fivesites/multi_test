@@ -147,16 +147,18 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed inset-0 z-50 pointer-events-none hidden lg:flex items-center justify-center"
+            className="fixed inset-0 z-50 pointer-events-none hidden lg:flex items-center px-8"
           >
-            <div className="relative w-[28vw] h-[33.3vh]">
-              <Image
-                src={previewItem.url}
-                alt={previewItem.alt}
-                fill
-                className="object-contain object-center"
-                sizes="28vw"
-              />
+            <div className="w-full max-w-7xl flex justify-center">
+              <div className="relative w-[28vw] h-[33.3vh]">
+                <Image
+                  src={previewItem.url}
+                  alt={previewItem.alt}
+                  fill
+                  className="object-contain object-center"
+                  sizes="28vw"
+                />
+              </div>
             </div>
           </motion.div>
         )}
@@ -182,7 +184,7 @@ function HomeClientInner() {
         <div className="hidden lg:flex px-8 gap-3 mb-2 pt-[var(--nav-height)]">
           {listVisible && showList && (
             <div
-              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
+              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0 `}
             >
               {/* Header row */}
 
@@ -202,13 +204,13 @@ function HomeClientInner() {
                   >
                     {group.items.length > 1 ? (
                       <div
-                        className="flex justify-between gap-x-8 w-full py-2 px-0 items-baseline buttonTextLG"
+                        className="flex justify-between gap-x-8 w-full py-1.5 px-0 items-baseline buttonTextSM"
                         onMouseLeave={() => setHoveredItem(null)}
                         onMouseMove={handleMouseMove}
                       >
                         <Link
                           href={`/projects/${group.items[0].slug}`}
-                          className="buttonTextLG noClickColors pl-0 uppercase shrink-0"
+                          className="buttonTextSM pl-0 uppercase shrink-0 text-liguriskt hover:text-lava transition-colors duration-200"
                           onMouseEnter={() =>
                             setHoveredItem(group.items[0].slug)
                           }
@@ -220,13 +222,13 @@ function HomeClientInner() {
                             <React.Fragment key={item.slug}>
                               <Link
                                 href={`/projects/${item.slug}`}
-                                className="buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
+                                className="buttonTextSM text-liguriskt hover:text-lava transition-colors duration-200"
                                 onMouseEnter={() => setHoveredItem(item.slug)}
                               >
                                 {item.title}
                               </Link>
                               {i < group.items.length - 1 && (
-                                <span className="buttonTextLG noClickColors">
+                                <span className="buttonTextSM text-liguriskt">
                                   {", "}
                                 </span>
                               )}
@@ -238,27 +240,27 @@ function HomeClientInner() {
                       group.items.map((item, itemIdx) => (
                         <div
                           key={item.slug}
-                          className="group flex justify-between gap-x-8 w-full py-2 px-0 items-baseline cursor-pointer buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
+                          className="group flex justify-between gap-x-8 w-full py-1.5 px-0 items-baseline cursor-pointer buttonTextSM text-liguriskt hover:text-lava transition-colors duration-200"
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                           onMouseMove={handleMouseMove}
                         >
                           <Link
                             href={`/projects/${item.slug}`}
-                            className="buttonTextLG noClickColors pl-0 uppercase shrink-0"
+                            className="buttonTextSM pl-0 uppercase shrink-0"
                           >
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </Link>
                           <Link
                             href={`/projects/${item.slug}`}
-                            className="buttonTextLG noClickColors text-right"
+                            className="buttonTextSM text-right"
                           >
                             {item.title}
                           </Link>
                         </div>
                       ))
                     )}
-                    <div className="border-b-2 border-b-lader dark:border-b-liguriskt" />
+                    <div className="border-b-[1.5px] border-b-liguriskt" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -362,7 +364,7 @@ function HomeClientInner() {
                       <div className="w-full ">
                         {hasMultiple ? (
                           <button
-                            className={`uppercase py-0 leading-tight transition-colors duration-200 buttonTextLG noClickColors`}
+                            className={`uppercase py-0 leading-tight transition-colors duration-200 buttonTextLG text-liguriskt hover:text-lava`}
                             onClick={() =>
                               setExpandedGroup(isExpanded ? null : group.key)
                             }
@@ -372,7 +374,7 @@ function HomeClientInner() {
                         ) : (
                           <Link
                             href={`/projects/${group.items[0].slug}`}
-                            className="buttonTextLG noClickColors text-left py-0 uppercase block transition-colors duration-200"
+                            className="buttonTextLG text-liguriskt hover:text-lava text-left py-0 uppercase block transition-colors duration-200"
                           >
                             {label}
                           </Link>
@@ -385,13 +387,13 @@ function HomeClientInner() {
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2, ease: "easeInOut" }}
-                              className="overflow-hidden flex pb-0 flex-wrap items-start py-0 mb- buttonTextLG noClickColors uppercase"
+                              className="overflow-hidden flex pb-0 flex-wrap items-start py-0 mb- buttonTextLG uppercase"
                             >
                               {group.items.map((item) => (
                                 <Link
                                   key={item.slug}
                                   href={`/projects/${item.slug}`}
-                                  className="buttonTextLG clickColors"
+                                  className="buttonTextLG text-liguriskt hover:text-lava transition-colors duration-200"
                                 >
                                   {item.title}
                                 </Link>

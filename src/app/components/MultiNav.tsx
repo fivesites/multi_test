@@ -303,7 +303,7 @@ export default function MultiNav() {
   }
 
   // Settings reveal delays
-  const sToggleLabel = showList ? "Thumbnails" : "List";
+  const sToggleLabel = showList ? "List" : "Thumbnails";
   const sToggleLen = sToggleLabel.length;
   const defaultCols = isDesktop ? 6 : 2;
   const isZoomed = numCols < defaultCols;
@@ -323,6 +323,7 @@ export default function MultiNav() {
             text={sToggleLabel}
             visible={showSettings}
             delay={sToggleDelay}
+            active={showList}
             onClick={() => toggleView(showList ? "grid" : "list")}
             className=""
           />
@@ -365,7 +366,9 @@ export default function MultiNav() {
         ref={navRef}
         className={cn(
           "fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col nav-bw",
-          isBw && panel === "showReel" ? "text-background" : "text-lyx",
+          isBw && panel === "showReel"
+            ? "text-background"
+            : "text-neutral-300 dark:text-neutral-900",
         )}
         animate={{
           backgroundColor:
@@ -409,6 +412,7 @@ export default function MultiNav() {
                 text="Projects"
                 visible={linksVisible}
                 delay={navDelays[0]}
+                active={panel === "projects" && !isAboutPage}
                 className={cn("", panel !== "projects" && "")}
                 onClick={() => {
                   if (isWorkPage || isAboutPage) {
@@ -438,6 +442,7 @@ export default function MultiNav() {
                 text="About"
                 visible={linksVisible}
                 delay={navDelays[1]}
+                active={isAboutPage}
                 className=""
                 href="/about"
               />
@@ -453,6 +458,7 @@ export default function MultiNav() {
                 text="Connect"
                 visible={linksVisible}
                 delay={navDelays[2]}
+                active={panel === "connect"}
                 className={cn("", panel !== "connect" && "")}
                 onClick={() =>
                   setPanel(panel === "connect" ? "projects" : "connect")
@@ -471,6 +477,7 @@ export default function MultiNav() {
                   text={showSettings ? "Hide Settings" : "Settings"}
                   visible={showSettings || linksVisible}
                   delay={showSettings ? 0 : navDelays[3]}
+                  active={showSettings}
                   className={cn("", !showSettings && "")}
                   onClick={() => setShowSettings(!showSettings)}
                 />
@@ -526,7 +533,7 @@ export default function MultiNav() {
             variants={filterContainerMobile}
             initial="hidden"
             animate={showFilters ? "show" : "hidden"}
-            className="overflow-hidden h-auto flex flex-wrap lg:justify-center gap-x-1 gap-y-0 items-baseline pb-0 buttonTextSM buttonColors uppercase lg:mt-0 w-full"
+            className="overflow-hidden h-auto flex flex-wrap lg:justify-center gap-x-1 gap-y-0 items-baseline pb-0 buttonTextSM buttonColors uppercase mt-0 w-full"
           >
             {allCats.flatMap((cat, i) => {
               const label = getFilterLabel(cat);
@@ -543,14 +550,14 @@ export default function MultiNav() {
                     delay={filterDelays[i]}
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
-                      "uppercase",
+                      "uppercase transition-colors duration-150",
                       activeFilter === cat
-                        ? "text-lava dark:text-lava"
-                        : "text-lader dark:text-lax",
+                        ? "text-liguriskt hover:text-lappar"
+                        : "text-lava hover:text-lappar",
                     )}
                   />
                   <TypedWord
-                    className="buttonTextLG noClickColors"
+                    className="buttonTextLG text-lava"
                     text=", "
                     visible={showFilters}
                     delay={filterDelays[i] + label.length * TYPING_MS_PER_CHAR}
@@ -569,14 +576,14 @@ export default function MultiNav() {
                     text="Search..."
                     visible={showFilters}
                     delay={searchDelay}
-                    className="absolute pointer-events-none buttonTextLG buttonColors"
+                    className="absolute pointer-events-none buttonTextLG text-lava"
                   />
                 )}
                 <input
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                   placeholder=""
-                  className="bg-transparent outline-none l py-0 h-auto  w-full buttonTextLG buttonColors"
+                  className={`bg-transparent outline-none py-0 h-auto w-full buttonTextLG text-lava`}
                 />
               </span>
             </motion.span>
@@ -649,7 +656,7 @@ export default function MultiNav() {
           variants={filterContainer}
           initial="hidden"
           animate={showFilters ? "show" : "hidden"}
-          className="hidden lg:flex overflow-hidden  flex-wrap justify-start uppercase items-baseline buttonTextLG buttonColors gap-x-1 w-full max-w-6xl"
+          className="hidden lg:flex overflow-hidden  flex-wrap justify-start uppercase items-baseline buttonTextLG buttonColors gap-x-1 w-full max-w-6xl mt-0"
         >
           {allCats.flatMap((cat, i) => {
             const label = getDesktopFilterLabel(cat);
@@ -666,15 +673,15 @@ export default function MultiNav() {
                   delay={desktopFilterDelays[i]}
                   onClick={() => handleFilterChange(cat)}
                   className={cn(
-                    "inline-flex items-start px-0  uppercase h-auto py-0 space-x-0 gap-x-0.5",
+                    "inline-flex items-start px-0 uppercase h-auto py-0 space-x-0 gap-x-0.5 transition-colors duration-150",
                     activeFilter === cat
-                      ? "text-lava"
-                      : "text-lader dark:text-lax",
+                      ? "text-liguriskt hover:text-lappar"
+                      : "text-lava hover:text-lappar",
                   )}
                 />
                 <TypedWord
                   text=", "
-                  className="buttonTextLG noClickColors"
+                  className="buttonTextLG text-lava"
                   visible={showFilters}
                   delay={
                     desktopFilterDelays[i] + label.length * TYPING_MS_PER_CHAR
@@ -694,14 +701,14 @@ export default function MultiNav() {
                   text="Search..."
                   visible={showFilters}
                   delay={desktopSearchDelay}
-                  className="absolute pointer-events-none buttonTextLG buttonColors uppercase tracking-wide lg:text-4xl text-lader dark:text-lax"
+                  className="absolute pointer-events-none buttonTextLG uppercase tracking-wide lg:text-4xl text-lava"
                 />
               )}
               <input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder=""
-                className="bg-transparent outline-none  uppercase  py-0 h-auto buttonTextLG buttonColors w-full ml-1"
+                className={`bg-transparent outline-none uppercase py-0 h-auto buttonTextLG w-full ml-1 text-lava`}
               />
             </span>
           </motion.span>

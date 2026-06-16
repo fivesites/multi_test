@@ -38,7 +38,7 @@ export default function DarkModeButton({
     setBw(next);
   }
 
-  const label = dark ? "Light" : "Dark";
+  const label = dark ? "Dark" : "Light";
   const bwDelay = lightDelay + (5 + 2) * MS;
 
   return (
@@ -48,6 +48,7 @@ export default function DarkModeButton({
           text={label}
           visible={visible}
           delay={lightDelay}
+          active={dark}
           onClick={toggleDark}
           className={cn("", className)}
         />

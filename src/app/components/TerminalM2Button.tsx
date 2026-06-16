@@ -129,7 +129,8 @@ export default function TerminalM2Button({
   }, [stopTrigger]);
 
   const cls = cn(
-    "buttonTextSM font-visual text-lava text-left",
+    "buttonTextSM font-visual text-left",
+    activePhrase !== null || loading ? "text-liguriskt" : "text-lava",
     onClick && "cursor-pointer",
     className,
   );
@@ -137,22 +138,22 @@ export default function TerminalM2Button({
   let content: React.ReactNode;
   if (loading) {
     content = (
-      <span className="inline-flex items-baseline">
+      <>
         <TypedWord text={`${loadingText}`} visible={loading} delay={0} />
-        <span>{` (${dots})`}</span>
-      </span>
+        <span className="whitespace-nowrap">{` (${dots})`}</span>
+      </>
     );
   } else if (activePhrase !== null) {
     content = (
-      <span className="inline-flex items-baseline justify-start">
+      <>
         <TypedWord
           key={phraseKey}
           text={activePhrase}
           visible={phraseVisible}
           delay={0}
         />
-        <span>{` (${dots})`}</span>
-      </span>
+        <span className="whitespace-nowrap">{` (${dots})`}</span>
+      </>
     );
   } else {
     content = <TypedWord text={text} visible={visible} delay={delay} />;
