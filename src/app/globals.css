@@ -192,7 +192,7 @@
   }
 
   .buttonTextSM {
-    @apply text-2xl lg:text-2xl font-normal tracking-normal text-lava dark:text-lava hover:text-lappar dark:hover:text-lax;
+    @apply text-2xl lg:text-2xl font-normal tracking-normal font-visual;
   }
 
   .pText {
@@ -218,4 +218,11 @@
   .clickColors {
     @apply text-lava dark:text-lava;
   }
+}
+
+:root.dark.bw .nav-bw {
+  mix-blend-mode: difference;
+}
+:root.dark.bw .nav-bw * {
+  color: white;
 }

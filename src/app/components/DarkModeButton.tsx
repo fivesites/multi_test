@@ -49,7 +49,7 @@ export default function DarkModeButton({
           visible={visible}
           delay={lightDelay}
           onClick={toggleDark}
-          className={cn("dark:text-lax", className)}
+          className={cn("", className)}
         />
         <TypedWord
           text=", "
@@ -64,7 +64,7 @@ export default function DarkModeButton({
         visible={visible}
         delay={bwDelay}
         onClick={toggleBw}
-        className={cn(!bw && "dark:text-lax", className)}
+        className={cn(!bw && "", className)}
       />
     </span>
   );

@@ -186,7 +186,7 @@ function HomeClientInner() {
         <div className="hidden lg:flex px-8 gap-3 mb-2 pt-[var(--nav-height)]">
           {listVisible && showList && (
             <div
-              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0 max-w-7xl`}
+              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
             >
               {/* Header row */}
 
@@ -206,20 +206,20 @@ function HomeClientInner() {
                   >
                     {group.items.length > 1 ? (
                       <div
-                        className="grid grid-cols-2 w-full py-2 px-0 items-baseline justify-start buttonTextLG"
+                        className="flex justify-between gap-x-8 w-full py-2 px-0 items-baseline buttonTextLG"
                         onMouseLeave={() => setHoveredItem(null)}
                         onMouseMove={handleMouseMove}
                       >
                         <Link
                           href={`/work/${group.items[0].slug}`}
-                          className="buttonTextLG noClickColors col-span-1 pl-0 uppercase"
+                          className="buttonTextLG noClickColors pl-0 uppercase shrink-0"
                           onMouseEnter={() =>
                             setHoveredItem(group.items[0].slug)
                           }
                         >
                           {group.client ?? ""}
                         </Link>
-                        <span className="col-span-1 w-full text-right flex flex-wrap justify-end">
+                        <span className="text-right flex flex-wrap justify-end">
                           {group.items.map((item, i) => (
                             <React.Fragment key={item.slug}>
                               <Link
@@ -242,17 +242,17 @@ function HomeClientInner() {
                       group.items.map((item, itemIdx) => (
                         <div
                           key={item.slug}
-                          className="group grid grid-cols-2 w-full py-2 px-0 items-baseline justify-start cursor-pointer buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
+                          className="group flex justify-between gap-x-8 w-full py-2 px-0 items-baseline cursor-pointer buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                           onMouseMove={handleMouseMove}
                         >
-                          <span className="buttonTextLG noClickColors col-span-1 pl-0 uppercase">
+                          <span className="buttonTextLG noClickColors pl-0 uppercase shrink-0">
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </span>
                           <Link
                             href={`/work/${item.slug}`}
-                            className="buttonTextLG noClickColors col-span-1 w-full text-right"
+                            className="buttonTextLG noClickColors text-right"
                           >
                             {item.title}
                           </Link>

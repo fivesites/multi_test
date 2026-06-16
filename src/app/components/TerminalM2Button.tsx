@@ -129,7 +129,7 @@ export default function TerminalM2Button({
   }, [stopTrigger]);
 
   const cls = cn(
-    "buttonTextSM font-visual text-lava",
+    "buttonTextSM font-visual text-lava text-left",
     onClick && "cursor-pointer",
     className,
   );

@@ -375,7 +375,7 @@ export default function MultiNav() {
       <motion.div
         ref={navRef}
         className={cn(
-          "fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col",
+          "fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col nav-bw",
           isBw && panel === "showReel" ? "text-background" : "text-lyx",
         )}
         animate={{
@@ -557,7 +557,9 @@ export default function MultiNav() {
                     onClick={() => handleFilterChange(cat)}
                     className={cn(
                       "uppercase",
-                      activeFilter === cat ? "text-lava" : "text-lader",
+                      activeFilter === cat
+                        ? "text-lava dark:text-lava"
+                        : "text-lader dark:text-lax",
                     )}
                   />
                   <TypedWord
@@ -683,7 +685,7 @@ export default function MultiNav() {
                     "inline-flex items-start px-0  uppercase h-auto py-0 space-x-0 gap-x-0.5",
                     activeFilter === cat
                       ? "text-lava"
-                      : "text-lader dark:text-liguriskt",
+                      : "text-lader dark:text-lax",
                   )}
                 />
                 <TypedWord
@@ -708,7 +710,7 @@ export default function MultiNav() {
                   text="Search..."
                   visible={showFilters}
                   delay={desktopSearchDelay}
-                  className="absolute pointer-events-none buttonTextLG buttonColors uppercase tracking-wide lg:text-4xl text-lader dark:text-liguriskt"
+                  className="absolute pointer-events-none buttonTextLG buttonColors uppercase tracking-wide lg:text-4xl text-lader dark:text-lax"
                 />
               )}
               <input
