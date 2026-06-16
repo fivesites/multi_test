@@ -44,7 +44,7 @@ export function WorkCard({
 
   return (
     <Link
-      href={`/work/${slug}`}
+      href={`/projects/${slug}`}
       className={cn(
         "relative flex items-start justify-start overflow-hidden group bg-black w-full",
         className ?? "h-[90vh]",

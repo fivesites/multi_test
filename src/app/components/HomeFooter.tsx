@@ -6,7 +6,7 @@ import { renderGlyphShapes, glyphDims } from "@/app/lib/multiUtils";
 import type { SavedAsset } from "@/app/lib/multiUtils";
 
 const NAV_LINKS = [
-  { label: "Work", href: "/work" },
+  { label: "Work", href: "/projects" },
   { label: "About", href: "/about" },
   { label: "Contact", href: "/contact" },
   { label: "Privacy Policy", href: "/privacy-policy" },

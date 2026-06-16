@@ -204,7 +204,7 @@
   }
 
   .h1ProjectHeader {
-    @apply font-visual text-5xl lg:text-8xl  font-normal uppercase leading-none    text-lader dark:text-lava tracking-normal    lg:mt-2 mb-4;
+    @apply font-visual text-5xl lg:text-7xl  font-normal uppercase leading-none    text-lader dark:text-lava tracking-normal    lg:mt-2 mb-4;
   }
 
   .buttonColors {

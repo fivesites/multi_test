@@ -48,7 +48,7 @@ export default function Lightbox({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.2 }}
-      className="fixed inset-0 z-50 bg-background"
+      className="fixed inset-0 z-10 bg-background"
       onClick={onClose}
     >
       <Button
@@ -65,22 +65,22 @@ export default function Lightbox({
       </Button>
 
       <div
-        className="w-full h-dvh overflow-hidden"
+        className="w-full h-dvh overflow-hidden p-8"
         ref={emblaRef}
-        onClick={(e) => e.stopPropagation()}
       >
         <div className="flex h-full">
           {images.map((img) => (
             <div
               key={img.key}
               className="flex-none w-full h-full flex items-center justify-center"
+              onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-full h-full">
                 <Image
                   src={img.url}
                   alt=""
                   fill
-                  className="object-contain object-top"
+                  className="object-contain object-center"
                   sizes="100vw"
                 />
               </div>

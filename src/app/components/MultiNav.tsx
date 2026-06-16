@@ -212,29 +212,34 @@ export default function MultiNav() {
       isFirstMount.current = false;
       return;
     }
-    if (pathname.startsWith("/work/")) {
+    if (pathname.startsWith("/projects/")) {
       setIsNavigating(true);
       if (panel === "showReel") setPanel("projects");
       const t = setTimeout(() => setIsNavigating(false), 700);
       return () => clearTimeout(t);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (pathname === "/about") {
+      if (panel === "showReel") setPanel("projects");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
   if (pathname.startsWith("/studio")) return null;
-  const isWorkPage = pathname.startsWith("/work/");
+  const isAboutPage = pathname === "/about";
+  const isHomePage = pathname === "/";
+  const isWorkPage = pathname.startsWith("/projects/");
   isWorkPageRef.current = isWorkPage;
   const workSlug = isWorkPage ? (pathname.split("/").pop() ?? "") : "";
   const workItem = workSlug ? items.find((i) => i.slug === workSlug) : null;
-  const showFilters = panel === "projects" && filtersOpen && !isWorkPage;
+  const showFilters =
+    panel === "projects" && filtersOpen && !isWorkPage && !isAboutPage;
 
-  const currentPhrases =
-    panel === "about"
-      ? aboutPhrases
-      : panel === "connect"
-        ? connectPhrases
-        : isWorkPage
-          ? workPhrases
-          : projectPhrases;
+  const currentPhrases = isAboutPage
+    ? aboutPhrases
+    : panel === "connect"
+      ? connectPhrases
+      : isWorkPage
+        ? workPhrases
+        : projectPhrases;
 
   const workVisible = isWorkPage && !!workItem;
   const workHeaderVisible = workVisible && !isNavigating;
@@ -300,67 +305,51 @@ export default function MultiNav() {
   // Settings reveal delays
   const sToggleLabel = showList ? "Thumbnails" : "List";
   const sToggleLen = sToggleLabel.length;
-  const sZoomOutLen = 8; // "Zoom Out"
-  const sZoomInLen = 7; // "Zoom In"
+  const defaultCols = isDesktop ? 6 : 2;
+  const isZoomed = numCols < defaultCols;
+  const sZoomLabel = isZoomed ? "Zoom Out" : "Zoom In";
+  const sZoomLen = sZoomLabel.length;
   const sToggleDelay = 0;
   const sPostToggleDelay = (sToggleLen + 2) * TYPING_MS_PER_CHAR;
-  const sZoomOutDelay = sPostToggleDelay;
-  const sZoomInDelay = sZoomOutDelay + (sZoomOutLen + 2) * TYPING_MS_PER_CHAR;
+  const sZoomDelay = sPostToggleDelay;
   const sLightDelay = showGrid
-    ? sZoomInDelay + (sZoomInLen + 2) * TYPING_MS_PER_CHAR
+    ? sZoomDelay + (sZoomLen + 2) * TYPING_MS_PER_CHAR
     : sPostToggleDelay;
   const settingsContent = (
     <>
-      <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
-        <M2Button
-          text={sToggleLabel}
-          visible={showSettings}
-          delay={sToggleDelay}
-          onClick={() => toggleView(showList ? "grid" : "list")}
-          className=""
-        />
-        <TypedWord
-          text=", "
-          visible={showSettings}
-          delay={sToggleDelay + sToggleLen * TYPING_MS_PER_CHAR}
-          className=""
-        />
-      </span>
-      {showGrid && (
-        <>
-          <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
-            <M2Button
-              text="Zoom Out"
-              visible={showSettings}
-              delay={sZoomOutDelay}
-              onClick={() => setNumCols(Math.min(8, numCols + 1))}
-              disabled={numCols >= 8}
-              className=""
-            />
-            <TypedWord
-              text=", "
-              visible={showSettings}
-              delay={sZoomOutDelay + sZoomOutLen * TYPING_MS_PER_CHAR}
-              className=""
-            />
-          </span>
-          <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
-            <M2Button
-              text="Zoom In"
-              visible={showSettings}
-              delay={sZoomInDelay}
-              onClick={() => setNumCols(Math.max(1, numCols - 1))}
-              disabled={numCols <= 1}
-              className=""
-            />
-            <TypedWord
-              text=", "
-              visible={showSettings}
-              delay={sZoomInDelay + sZoomInLen * TYPING_MS_PER_CHAR}
-              className=""
-            />
-          </span>
-        </>
+      {isHomePage && (
+        <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
+          <M2Button
+            text={sToggleLabel}
+            visible={showSettings}
+            delay={sToggleDelay}
+            onClick={() => toggleView(showList ? "grid" : "list")}
+            className=""
+          />
+          <TypedWord
+            text=", "
+            visible={showSettings}
+            delay={sToggleDelay + sToggleLen * TYPING_MS_PER_CHAR}
+            className=""
+          />
+        </span>
+      )}
+      {isHomePage && showGrid && (
+        <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
+          <M2Button
+            text={sZoomLabel}
+            visible={showSettings}
+            delay={sZoomDelay}
+            onClick={() => setNumCols(isZoomed ? defaultCols : 2)}
+            className=""
+          />
+          <TypedWord
+            text=", "
+            visible={showSettings}
+            delay={sZoomDelay + sZoomLen * TYPING_MS_PER_CHAR}
+            className=""
+          />
+        </span>
       )}
       <DarkModeButton
         className=""
@@ -393,7 +382,7 @@ export default function MultiNav() {
           <motion.div
             layout
             transition={{ duration: 1.0, ease: [0.25, 0.1, 0.25, 1] }}
-            className=" flex justify-between items-center w-full "
+            className=" flex justify-between items-baseline w-full "
           >
             <TerminalM2Button
               text="Multi²"
@@ -404,9 +393,9 @@ export default function MultiNav() {
                 isNavigating ? "Loading Project" : "Loading multi2.co"
               }
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="cursor-pointer"
+              className="cursor-pointer  "
               phrases={currentPhrases}
-              trigger={`${panel}|${workSlug}`}
+              trigger={`${panel}|${workSlug}|${pathname}`}
               stopTrigger={contentDoneKey}
             />
           </motion.div>
@@ -422,7 +411,7 @@ export default function MultiNav() {
                 delay={navDelays[0]}
                 className={cn("", panel !== "projects" && "")}
                 onClick={() => {
-                  if (isWorkPage) {
+                  if (isWorkPage || isAboutPage) {
                     setPanel("projects");
                     router.push("/");
                     return;
@@ -449,10 +438,8 @@ export default function MultiNav() {
                 text="About"
                 visible={linksVisible}
                 delay={navDelays[1]}
-                className={cn("", panel !== "about" && "")}
-                onClick={() =>
-                  setPanel(panel === "about" ? "projects" : "about")
-                }
+                className=""
+                href="/about"
               />
               <TypedWord
                 text=", "
@@ -602,16 +589,15 @@ export default function MultiNav() {
           variants={filterContainer}
           initial="hidden"
           animate={workHeaderVisible ? "show" : "hidden"}
-          className="overflow-hidden flex flex-wrap items-baseline  uppercase gap-x-1  buttonTextSM noClickColors  "
+          className="overflow-hidden flex flex-wrap items-baseline  uppercase gap-x-1  buttonTextSM buttonColors  "
         >
           {wHasClient && (
-            <span className="inline-flex items-baseline whitespace-nowrap noClickColors buttonTextSM ">
+            <span className="inline-flex items-baseline whitespace-nowrap buttonColors buttonTextSM ">
               <M2Button
                 text={workItem!.client!}
                 visible={workHeaderVisible}
                 delay={0}
                 className=""
-                noClick
               />
               <TypedWord
                 text=", "
@@ -621,13 +607,12 @@ export default function MultiNav() {
               />
             </span>
           )}
-          <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM noClickColors">
+          <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
             <M2Button
               text={workItem?.title ?? ""}
               visible={workHeaderVisible}
               delay={wTitleDelay}
               className=""
-              noClick
             />
             <TypedWord
               text=", "
@@ -637,13 +622,12 @@ export default function MultiNav() {
             />
           </span>
           {workItem?.year && (
-            <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM noClickColors ">
+            <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors ">
               <M2Button
                 text={workItem.year.toString()}
                 visible={workHeaderVisible}
                 delay={wYearDelay}
                 className=" "
-                noClick
               />
               <TypedWord
                 text=", "
@@ -726,7 +710,7 @@ export default function MultiNav() {
 
       {/* Showreel — intro: centered, scales on scroll */}
       <AnimatePresence>
-        {panel === "showReel" && navTyped && !isWorkPage && (
+        {panel === "showReel" && navTyped && !isWorkPage && !isAboutPage && (
           <motion.div
             key="showreel-intro"
             initial={{ opacity: 0 }}

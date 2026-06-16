@@ -46,7 +46,7 @@ export default function MultiCard({
           {!showList && (
             <CardHeader className="flex flex-row items-baseline justify-between gap-4 px-0 pt-4 pb-0">
               <Button variant="link" className=" px-0" asChild>
-                <Link href={`/work/${slug}`}>
+                <Link href={`/projects/${slug}`}>
                   {client && `${client} / `}
                   {title}
                 </Link>
@@ -63,7 +63,7 @@ export default function MultiCard({
             </CardHeader>
           )}
 
-          <Link href={`/work/${slug}`}>
+          <Link href={`/projects/${slug}`}>
             <CardContent className="pt-0 px-0 flex flex-col">
               <p className="text-xl   lg:text-lg font-visual max-w-sm lg:max-w-lg text-red-500 leading-tight ">
                 {description ??

@@ -45,7 +45,7 @@ export default function AboutSectionText({
 
   return (
     <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava pb-8 overflow-y-scroll">
-      <h1 className="h2Text mt-0 mb-8 lg:mb-4 ">
+      <h1 className="h2Text mt-0 mb-8 lg:mb-4 buttonColors ">
         <TypedWord
           text={plainText}
           visible={textVisible}

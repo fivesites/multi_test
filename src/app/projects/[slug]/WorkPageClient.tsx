@@ -67,7 +67,7 @@ function WorkPageInner({
     >
       {/* Client / description / credits */}
       <div className="flex flex-col justify-center items-start lg:items-start px-8 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
-        <h1 className="h1ProjectHeader flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
+        <h1 className="h1ProjectHeader flex flex-wrap justify-center buttonColors whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
           {client}
         </h1>
         <div className="flex lg:grid lg:grid-cols-6 lg:mb-4 mb-4  justify-start ">
@@ -127,23 +127,20 @@ function WorkPageInner({
       </div>
 
       {/* WORK FOOTER */}
-      <div className="flex  flex-col justify-center items-start lg:grid-cols-4 px-8 w-full pt-8 pb-8 text-lava font-visual text-2xl lg:text-2xl lg:items-baseline">
-        <h4 className="w-full col-span-3 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] lg:justify-start whitespace-normal lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
+      <div className="flex  flex-col justify-center items-start lg:grid-cols-4 px-8 w-full pt-8 pb-8 lg:items-baseline">
+        <h4 className="w-full col-span-3 pText noClickColors lg:justify-start whitespace-normal lg:whitespace-nowrap lg:items-baseline gap-x-0 gap-y-0 max-w-sm  mb-4">
           Services provided by Multi² in this project:
         </h4>
 
         {categories.map((c, i) => (
-          <span
-            className="uppercase font-normal text-2xl tracking-normal text-lava"
-            key={c}
-          >
+          <span className="buttonTextSM noClickColors uppercase" key={c}>
             {i > 0 && ""}
             {CATEGORY_LABELS[c] ?? c}
           </span>
         ))}
 
         {credits && (
-          <ul className="font-visual text-2xl tracking-normal font-normal leading-[1.2] mt-16 text-left text-lava list-none flex flex-col items-start justify-start">
+          <ul className="pText noClickColors list-none flex flex-col items-start justify-start mt-8">
             {credits
               .split("\n")
               .filter(Boolean)

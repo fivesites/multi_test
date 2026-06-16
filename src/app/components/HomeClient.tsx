@@ -147,13 +147,9 @@ function HomeClientInner() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.15 }}
-            className="fixed z-50 pointer-events-none hidden lg:block"
-            style={{
-              left: mousePos.x + 24,
-              top: mousePos.y - 80,
-            }}
+            className="fixed inset-0 z-50 pointer-events-none hidden lg:flex items-center justify-center"
           >
-            <div className="relative w-[28vw] h-[20vh]">
+            <div className="relative w-[28vw] h-[33.3vh]">
               <Image
                 src={previewItem.url}
                 alt={previewItem.alt}
@@ -211,7 +207,7 @@ function HomeClientInner() {
                         onMouseMove={handleMouseMove}
                       >
                         <Link
-                          href={`/work/${group.items[0].slug}`}
+                          href={`/projects/${group.items[0].slug}`}
                           className="buttonTextLG noClickColors pl-0 uppercase shrink-0"
                           onMouseEnter={() =>
                             setHoveredItem(group.items[0].slug)
@@ -223,7 +219,7 @@ function HomeClientInner() {
                           {group.items.map((item, i) => (
                             <React.Fragment key={item.slug}>
                               <Link
-                                href={`/work/${item.slug}`}
+                                href={`/projects/${item.slug}`}
                                 className="buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
                                 onMouseEnter={() => setHoveredItem(item.slug)}
                               >
@@ -247,11 +243,14 @@ function HomeClientInner() {
                           onMouseLeave={() => setHoveredItem(null)}
                           onMouseMove={handleMouseMove}
                         >
-                          <span className="buttonTextLG noClickColors pl-0 uppercase shrink-0">
-                            {itemIdx === 0 ? (group.client ?? "") : ""}
-                          </span>
                           <Link
-                            href={`/work/${item.slug}`}
+                            href={`/projects/${item.slug}`}
+                            className="buttonTextLG noClickColors pl-0 uppercase shrink-0"
+                          >
+                            {itemIdx === 0 ? (group.client ?? "") : ""}
+                          </Link>
+                          <Link
+                            href={`/projects/${item.slug}`}
                             className="buttonTextLG noClickColors text-right"
                           >
                             {item.title}
@@ -267,7 +266,7 @@ function HomeClientInner() {
           )}
 
           {listVisible && showGrid && (
-            <div className="w-full pb-2">
+            <div className="w-full pb-2 ">
               <div
                 className="gap-x-2"
                 style={{ columns: numCols, columnGap: "0.5rem" }}
@@ -284,9 +283,9 @@ function HomeClientInner() {
                         delay: Math.min(idx * 0.07, 0.7),
                         ease: "easeOut",
                       }}
-                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden transition-all duration-200 group  border-3 hover:border-lava"
+                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden transition-all duration-200 group  "
                       style={{ aspectRatio: item.aspectRatio }}
-                      onClick={() => router.push(`/work/${item.slug}`)}
+                      onClick={() => router.push(`/projects/${item.slug}`)}
                     >
                       <Image
                         src={item.url}
@@ -325,7 +324,7 @@ function HomeClientInner() {
                       }}
                       className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden"
                       style={{ aspectRatio: item.aspectRatio }}
-                      onClick={() => router.push(`/work/${item.slug}`)}
+                      onClick={() => router.push(`/projects/${item.slug}`)}
                     >
                       <Image
                         src={item.url}
@@ -372,7 +371,7 @@ function HomeClientInner() {
                           </button>
                         ) : (
                           <Link
-                            href={`/work/${group.items[0].slug}`}
+                            href={`/projects/${group.items[0].slug}`}
                             className="buttonTextLG noClickColors text-left py-0 uppercase block transition-colors duration-200"
                           >
                             {label}
@@ -391,7 +390,7 @@ function HomeClientInner() {
                               {group.items.map((item) => (
                                 <Link
                                   key={item.slug}
-                                  href={`/work/${item.slug}`}
+                                  href={`/projects/${item.slug}`}
                                   className="buttonTextLG clickColors"
                                 >
                                   {item.title}
