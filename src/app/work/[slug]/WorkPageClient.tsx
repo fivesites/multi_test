@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import Lightbox from "@/app/components/Lightbox";
@@ -23,55 +23,67 @@ const formatCredit = (line: string) =>
   CATEGORY_LABELS[line.trim()] ??
   line.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
 
+const TYPING_MS = 22;
+const NAVIGATING_MS = 700;
+
 function WorkPageInner({
   client,
+  title,
+  year,
   description,
   credits,
   categories,
   images,
 }: {
   client?: string;
+  title: string;
+  year?: number;
   description?: string;
   credits?: string;
   categories: string[];
   images: ProjectImage[];
 }) {
+  const clientLen = client?.length ?? 0;
+  const titleLen = title.length;
+  const yearLen = year?.toString().length ?? 0;
+  const wTitleDelay = client ? (clientLen + 2) * TYPING_MS : 0;
+  const wYearDelay = wTitleDelay + (titleLen + 2) * TYPING_MS;
+  const wBackDelay = year
+    ? wYearDelay + (yearLen + 2) * TYPING_MS
+    : wTitleDelay + (titleLen + 2) * TYPING_MS;
+  const revealDelayMs = NAVIGATING_MS + wBackDelay + (4 + 2) * TYPING_MS + 100;
+
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  const [revealed, setRevealed] = useState(false);
+
+  useEffect(() => {
+    const t = setTimeout(() => setRevealed(true), revealDelayMs);
+    return () => clearTimeout(t);
+  }, [revealDelayMs]);
 
   return (
-    <div
+    <motion.div
       className="bg-background dark:bg-lader w-full relative pb-4"
       style={{ paddingTop: "var(--nav-height)" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: revealed ? 1 : 0 }}
+      transition={{ duration: 0.4 }}
     >
       {/* Client / description / credits */}
       <div className="flex flex-col justify-center items-start lg:items-start px-8 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
-        <h1 className="font-visual text-4xl lg:text-8xl  font-normal uppercase leading-none   items-center text-lava tracking-normal lg:tracking-normal lg:leading-[0.9]  flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
+        <h1 className="h1ProjectHeader flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
           {client}
         </h1>
         <div className="flex lg:grid lg:grid-cols-6 lg:mb-4 mb-4  justify-start ">
           <span className="lg:col-span-4">
             {description ? (
-              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl leading-[1.1] lg:mt-1 text-left text-lava lg:text-left font-normal max-w-sm ">
-                {description}
-              </p>
+              <p className="pText ">{description}</p>
             ) : (
-              <p className="font-visual text-2xl lg:text-2xl lg:tracking-normal lg:max-w-4xl font-normal leading-[1.1] lg:mt-1 text-left text-lava lg:text-left lg:font-normal max-w-sm mb-4">
+              <p className="pText">
                 A bold visual concept rooted in craft and intention. Shot on
                 location, refined in post. Every frame built around a singular
                 idea — to make the ordinary feel inevitable.
               </p>
-            )}
-          </span>
-          <span className="hidden  lg:col-span-1">
-            {credits && (
-              <ul className="font-visual text-sm tracking-normal font-normal leading-[1.5] mt-1 text-lava list-none">
-                {credits
-                  .split("\n")
-                  .filter(Boolean)
-                  .map((line, i) => (
-                    <li key={i}>{formatCredit(line)}</li>
-                  ))}
-              </ul>
             )}
           </span>
         </div>
@@ -120,7 +132,7 @@ function WorkPageInner({
 
       {/* WORK FOOTER */}
       <div className="flex  flex-col justify-center items-start lg:grid-cols-4 px-8 w-full pt-8 pb-8 text-lava font-visual text-2xl lg:text-2xl lg:items-baseline">
-        <h4 className="w-full col-span-3 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] lg:justify-start whitespace-nowrap lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
+        <h4 className="w-full col-span-3 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] lg:justify-start whitespace-normal lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
           Services provided by Multi² in this project:
         </h4>
 
@@ -135,7 +147,7 @@ function WorkPageInner({
         ))}
 
         {credits && (
-          <ul className="font-visual text-2xl tracking-normal font-normal leading-[1.2] mt-16 text-left text-lava list-none">
+          <ul className="font-visual text-2xl tracking-normal font-normal leading-[1.2] mt-16 text-left text-lava list-none flex flex-col items-start justify-start">
             {credits
               .split("\n")
               .filter(Boolean)
@@ -155,7 +167,7 @@ function WorkPageInner({
           />
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 }
 

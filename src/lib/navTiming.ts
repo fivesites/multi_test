@@ -1,3 +1,6 @@
+const NAV_LOGO_CHARS = 6; // "Multi²"
+const LOGO_APPEAR_MS = 80;
+
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
   video: "Video",
@@ -26,6 +29,10 @@ export function getFilterDoneMs(categories: string[]): number {
   }, []);
   const lastCat = allCats[allCats.length - 1];
   return filterDelays[allCats.length - 1] + (getFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR;
+}
+
+export function getPostLoadFilterDoneMs(categories: string[]): number {
+  return NAV_LOGO_CHARS * TYPING_MS_PER_CHAR + LOGO_APPEAR_MS + getFilterDoneMs(categories);
 }
 
 export function getNavTypingDelayMs(categories: string[]): number {

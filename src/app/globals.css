@@ -162,7 +162,7 @@
 
 :root.bw {
   --lava: oklch(0.13 0 0);
-  --lappar: oklch(0.10 0 0);
+  --lappar: oklch(0.1 0 0);
   --liguriskt: oklch(0.25 0 0);
   --lax: oklch(0.55 0 0);
   --lyx: oklch(0.88 0 0);
@@ -185,5 +185,37 @@
   body {
     @apply bg-background text-foreground;
     scroll-snap-type: y proximity;
+  }
+
+  .buttonTextLG {
+    @apply text-3xl lg:text-4xl font-normal tracking-normal  font-visual;
+  }
+
+  .buttonTextSM {
+    @apply text-2xl lg:text-2xl font-normal tracking-normal text-lava dark:text-lava hover:text-lappar dark:hover:text-lax;
+  }
+
+  .pText {
+    @apply text-2xl lg:text-2xl font-normal font-visual tracking-normal leading-tight text-lader dark:text-lava lg:max-w-2xl;
+  }
+
+  .h2Text {
+    @apply font-visual text-4xl lg:text-5xl leading-tight uppercase   font-normal  text-lader dark:text-lava   tracking-normal;
+  }
+
+  .h1ProjectHeader {
+    @apply font-visual text-5xl lg:text-8xl  font-normal uppercase leading-none    text-lader dark:text-lava tracking-normal    lg:mt-2 mb-4;
+  }
+
+  .buttonColors {
+    @apply text-lava dark:text-lava hover:text-lappar dark:hover:text-lax;
+  }
+
+  .noClickColors {
+    @apply text-lader dark:text-lava hover:text-lader dark:hover:text-liguriskt;
+  }
+
+  .clickColors {
+    @apply text-lava dark:text-lava;
   }
 }

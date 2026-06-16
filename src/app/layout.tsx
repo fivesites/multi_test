@@ -7,7 +7,7 @@ import { cookies } from "next/headers";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
-import Cookie from "@/app/components/Cookie";
+import Cookie from "@/app/components/CookieAndSound";
 import MultiNav from "@/app/components/MultiNav";
 
 export const metadata: Metadata = {
@@ -63,7 +63,7 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={` ${visualFont.variable}  ${karlRounded.variable} antialiasing`}
+        className={` ${visualFont.variable}  ${karlRounded.variable} antialiased`}
       >
         <WorkContextServer>
           <CopyContextServer>

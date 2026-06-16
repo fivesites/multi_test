@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePresence } from "motion/react";
 import TypedWord from "./TypedWord";
+import { useUI } from "@/context/UIContext";
 
 const TYPING_MS_PER_CHAR = 22;
 const ERASING_MS_PER_CHAR = 14;
@@ -15,12 +16,21 @@ export default function AboutSectionText({
   plainText: string;
   text?: string;
 }) {
+  const { notifyContentDone } = useUI();
   const [isPresent, safeToRemove] = usePresence();
   const [textVisible, setTextVisible] = useState(false);
 
   useEffect(() => {
     setTextVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (!textVisible) return;
+    const doneMs =
+      (plainText.length + (text?.length ?? 0)) * TYPING_MS_PER_CHAR;
+    const t = setTimeout(notifyContentDone, doneMs);
+    return () => clearTimeout(t);
+  }, [textVisible, plainText, text]);
 
   useEffect(() => {
     if (isPresent) return;
@@ -34,8 +44,8 @@ export default function AboutSectionText({
   const paraDelay = plainText.length * TYPING_MS_PER_CHAR;
 
   return (
-    <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava">
-      <h1 className="font-visual text-3xl lg:text-4xl max-w-7xl uppercase leading-none  text-lader lg:text-left font-normal  lg:mb-2   tracking-normal ">
+    <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava pb-8 overflow-y-scroll">
+      <h1 className="h2Text mt-0 mb-8 lg:mb-4 ">
         <TypedWord
           text={plainText}
           visible={textVisible}
@@ -45,7 +55,7 @@ export default function AboutSectionText({
         />
       </h1>
       {text && (
-        <p className="font-visual text-2xl lg:text-2xl tracking-normal max-w-4xl font-normal text-lader leading-[1.2] lg:leading-[1.2]  text-left lg:tracking-wide lg:font-normal mt-8 lg:mt-0 ">
+        <p className="pText ">
           <TypedWord
             text={text}
             visible={textVisible}

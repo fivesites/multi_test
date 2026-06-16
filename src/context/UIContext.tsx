@@ -14,6 +14,8 @@ export type ReelMode = "intro" | "background";
 type UIContextType = {
   panel: Panel;
   setPanel: (p: Panel) => void;
+  contentDoneKey: number;
+  notifyContentDone: () => void;
   showReel: boolean;
   setShowReel: (v: boolean) => void;
   reelMode: ReelMode;
@@ -47,6 +49,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
+  const [contentDoneKey, setContentDoneKey] = useState(0);
+  const notifyContentDone = () => setContentDoneKey((k) => k + 1);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
@@ -81,6 +85,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setSearch,
         numCols,
         setNumCols,
+        contentDoneKey,
+        notifyContentDone,
       }}
     >
       {children}

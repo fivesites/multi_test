@@ -70,7 +70,7 @@ export default function TypedWord({
             repeat: Infinity,
             times: [0, 0, 0.5, 0.5, 1],
           }}
-          className="bg-current text-background"
+          className="bg-current text-background font-normal"
         >
           {cursorChar}
         </motion.span>

@@ -9,7 +9,7 @@ import { useWork } from "@/context/WorkContext";
 import { useRouter } from "next/navigation";
 import VideoPlayer from "./VideoPlayer";
 import MultiFooter from "./MultiFooter";
-import { getNavTypingDelayMs, getFilterDoneMs } from "@/lib/navTiming";
+import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -35,26 +35,39 @@ function HomeClientInner() {
     numCols,
     showReel,
     reelMode,
+    notifyContentDone,
   } = useUI();
 
-  const navDelaySec = getNavTypingDelayMs(categories) / 1000;
-  const isInitialMount = useRef(true);
+  const [revealed, setRevealed] = useState(false);
+  const [timerDone, setTimerDone] = useState(false);
+  const hasRevealedRef = useRef(false);
   useEffect(() => {
-    isInitialMount.current = false;
+    const t = setTimeout(() => setTimerDone(true), 4000);
+    return () => clearTimeout(t);
   }, []);
+  useEffect(() => {
+    if (items.length === 0 || !timerDone || hasRevealedRef.current) return;
+    hasRevealedRef.current = true;
+    setRevealed(true);
+  }, [items.length, timerDone]);
 
   const [listVisible, setListVisible] = useState(false);
+  const listRevealedRef = useRef(false);
   useEffect(() => {
-    if (panel !== "projects") {
-      setListVisible(false);
+    if (!revealed || panel !== "projects") {
+      if (panel !== "projects") setListVisible(false);
       return;
     }
-    const t = setTimeout(
-      () => setListVisible(true),
-      getFilterDoneMs(categories),
-    );
+    const delay = listRevealedRef.current
+      ? getFilterDoneMs(categories)
+      : getPostLoadFilterDoneMs(categories);
+    const t = setTimeout(() => {
+      listRevealedRef.current = true;
+      setListVisible(true);
+      notifyContentDone();
+    }, delay);
     return () => clearTimeout(t);
-  }, [panel, categories]);
+  }, [revealed, panel, categories]);
 
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
@@ -120,8 +133,10 @@ function HomeClientInner() {
     : null;
 
   return (
-    <div
-      className={`min-h-screen relative z-10 bg-background dark:bg-black text-lader`}
+    <motion.div
+      className={`min-h-screen relative z-10 bg-background dark:bg-black `}
+      animate={{ opacity: revealed ? 1 : 0 }}
+      transition={{ duration: 0.6 }}
     >
       {/* Preview overlay — desktop list-only mode */}
       <AnimatePresence>
@@ -143,7 +158,7 @@ function HomeClientInner() {
                 src={previewItem.url}
                 alt={previewItem.alt}
                 fill
-                className="object-contain object-left-top"
+                className="object-contain object-center"
                 sizes="28vw"
               />
             </div>
@@ -155,7 +170,7 @@ function HomeClientInner() {
       <div className="hidden relative h-dvh lg:h-[80dvh] w-full ">
         <VideoPlayer
           src="/multi_showreel_mobile.mp4"
-          className="absolute inset-0 h-full w-full block lg:hidden invert"
+          className="absolute inset-0 h-full w-full block lg:hidden "
         />
         <VideoPlayer
           src="/multi_showreel_desktop.mp4"
@@ -168,27 +183,12 @@ function HomeClientInner() {
         id="projects"
         className={`relative min-h-[100dvh] ${showReel && reelMode === "background" ? "" : "bg-background"}`}
       >
-        {/* Gradient fade from transparent (showreel visible) to background */}
-        {/* <div className="absolute inset-x-0 top-0 h-48 bg-gradient-to-b from-transparent to-background pointer-events-none" /> */}
-        {/* Desktop: list + thumbnails side by side */}
         <div className="hidden lg:flex px-8 gap-3 mb-2 pt-[var(--nav-height)]">
           {listVisible && showList && (
             <div
-              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0`}
+              className={`${showGrid ? "w-2/3" : "w-full"} flex flex-col px-0 max-w-7xl`}
             >
               {/* Header row */}
-              <div className="hidden  grid-cols-6 w-full py-1 text-xl lg:text-lg font-normal font-visual text-lader dark:text-liguriskt border-b-2 border-liguriskt">
-                <span className="col-span-2 pl-4">Client</span>
-                <span
-                  className={`${showGrid ? "col-span-3" : "col-span-2"} pl-4`}
-                >
-                  Title
-                </span>
-                {!showGrid && (
-                  <span className="col-span-1 pl-4">Categories</span>
-                )}
-                <span className="pl-4 text-right pr-0">Year</span>
-              </div>
 
               <AnimatePresence mode="popLayout">
                 {grouped.map((group, idx) => (
@@ -200,44 +200,66 @@ function HomeClientInner() {
                     exit={{ opacity: 0 }}
                     transition={{
                       duration: 0.25,
-                      delay: isInitialMount.current
-                        ? navDelaySec + idx * 0.04
-                        : idx * 0.04,
+                      delay: idx * 0.07,
                     }}
                     className="w-full"
                   >
-                    {group.items.map((item, itemIdx) => {
-                      return (
+                    {group.items.length > 1 ? (
+                      <div
+                        className="grid grid-cols-2 w-full py-2 px-0 items-baseline justify-start buttonTextLG"
+                        onMouseLeave={() => setHoveredItem(null)}
+                        onMouseMove={handleMouseMove}
+                      >
+                        <Link
+                          href={`/work/${group.items[0].slug}`}
+                          className="buttonTextLG noClickColors col-span-1 pl-0 uppercase"
+                          onMouseEnter={() =>
+                            setHoveredItem(group.items[0].slug)
+                          }
+                        >
+                          {group.client ?? ""}
+                        </Link>
+                        <span className="col-span-1 w-full text-right flex flex-wrap justify-end">
+                          {group.items.map((item, i) => (
+                            <React.Fragment key={item.slug}>
+                              <Link
+                                href={`/work/${item.slug}`}
+                                className="buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
+                                onMouseEnter={() => setHoveredItem(item.slug)}
+                              >
+                                {item.title}
+                              </Link>
+                              {i < group.items.length - 1 && (
+                                <span className="buttonTextLG noClickColors">
+                                  {", "}
+                                </span>
+                              )}
+                            </React.Fragment>
+                          ))}
+                        </span>
+                      </div>
+                    ) : (
+                      group.items.map((item, itemIdx) => (
                         <div
                           key={item.slug}
-                          className="group grid grid-cols-3 items-start w-full py-2 px-0 font-normal tracking-normal cursor-pointer text-liguriskt hover:text-lava transition-colors duration-200"
+                          className="group grid grid-cols-2 w-full py-2 px-0 items-baseline justify-start cursor-pointer buttonTextLG noClickColors hover:text-lava transition-colors duration-200"
                           onMouseEnter={() => setHoveredItem(item.slug)}
                           onMouseLeave={() => setHoveredItem(null)}
                           onMouseMove={handleMouseMove}
                         >
-                          <span className="uppercase font-visual leading-tight lg:text-4xl tracking-normal col-span-1 pl-0">
+                          <span className="buttonTextLG noClickColors col-span-1 pl-0 uppercase">
                             {itemIdx === 0 ? (group.client ?? "") : ""}
                           </span>
                           <Link
                             href={`/work/${item.slug}`}
-                            className="font-visual text-3xl text-left font-normal tracking-normal pl-4 col-span-1"
+                            className="buttonTextLG noClickColors col-span-1 w-full text-right"
                           >
                             {item.title}
                           </Link>
-                          {!showGrid && (
-                            <span className="hidden font-visual text-lg tracking-wide font-normal line-clamp-2">
-                              {item.categories
-                                .map((c) => CATEGORY_LABELS[c] ?? c)
-                                .join(", ")}
-                            </span>
-                          )}
-                          <span className="font-visual text-right tracking-normal font-normal text-2xl">
-                            {item.year ?? ""}
-                          </span>
                         </div>
-                      );
-                    })}
-                    <div className="border-b-2 border-b-liguriskt dark:border-b-liguriskt" />
+                      ))
+                    )}
+                    <div className="border-b-2 border-b-lader dark:border-b-liguriskt" />
                   </motion.div>
                 ))}
               </AnimatePresence>
@@ -259,12 +281,10 @@ function HomeClientInner() {
                       exit={{ opacity: 0 }}
                       transition={{
                         duration: 0.35,
-                        delay:
-                          (isInitialMount.current ? navDelaySec : 0) +
-                          Math.min(idx * 0.05, 0.4),
+                        delay: Math.min(idx * 0.07, 0.7),
                         ease: "easeOut",
                       }}
-                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden transition-all duration-200 group border-transparent border-3 hover:border-lava"
+                      className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden transition-all duration-200 group  border-3 hover:border-lava"
                       style={{ aspectRatio: item.aspectRatio }}
                       onClick={() => router.push(`/work/${item.slug}`)}
                     >
@@ -300,9 +320,7 @@ function HomeClientInner() {
                       exit={{ opacity: 0 }}
                       transition={{
                         duration: 0.35,
-                        delay:
-                          (isInitialMount.current ? navDelaySec : 0) +
-                          Math.min(idx * 0.05, 0.4),
+                        delay: Math.min(idx * 0.07, 0.7),
                         ease: "easeOut",
                       }}
                       className="break-inside-avoid mb-2 relative cursor-pointer overflow-hidden"
@@ -339,15 +357,13 @@ function HomeClientInner() {
                       exit={{ opacity: 0 }}
                       transition={{
                         duration: 0.25,
-                        delay: isInitialMount.current
-                          ? navDelaySec + idx * 0.04
-                          : idx * 0.04,
+                        delay: idx * 0.07,
                       }}
                     >
                       <div className="w-full ">
                         {hasMultiple ? (
                           <button
-                            className={`  font-visual uppercase text-3xl lg:text-4xl font-normal tracking-normal     py-0 leading-tight transition-colors duration-200 ${isExpanded ? "text-lava" : "text-liguriskt dark:text-lax hover:text-lava active:text-lava"}`}
+                            className={`uppercase py-0 leading-tight transition-colors duration-200 buttonTextLG noClickColors`}
                             onClick={() =>
                               setExpandedGroup(isExpanded ? null : group.key)
                             }
@@ -357,7 +373,7 @@ function HomeClientInner() {
                         ) : (
                           <Link
                             href={`/work/${group.items[0].slug}`}
-                            className="font-visual font-normal uppercase text-3xl lg:text-4xl text-left py-0 leading-tight text-liguriskt tracking-normal dark:text-lax hover:text-lava block transition-colors duration-200"
+                            className="buttonTextLG noClickColors text-left py-0 uppercase block transition-colors duration-200"
                           >
                             {label}
                           </Link>
@@ -370,13 +386,13 @@ function HomeClientInner() {
                               animate={{ height: "auto", opacity: 1 }}
                               exit={{ height: 0, opacity: 0 }}
                               transition={{ duration: 0.2, ease: "easeInOut" }}
-                              className="overflow-hidden  flex pb-0 flex-col  items-start py-0 mb-1 px-8"
+                              className="overflow-hidden flex pb-0 flex-wrap items-start py-0 mb- buttonTextLG noClickColors uppercase"
                             >
                               {group.items.map((item) => (
                                 <Link
                                   key={item.slug}
                                   href={`/work/${item.slug}`}
-                                  className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-normal leading-tight tracking-normal transition-colors duration-200"
+                                  className="buttonTextLG clickColors"
                                 >
                                   {item.title}
                                 </Link>
@@ -394,7 +410,7 @@ function HomeClientInner() {
         </div>
         <MultiFooter />
       </div>
-    </div>
+    </motion.div>
   );
 }
 

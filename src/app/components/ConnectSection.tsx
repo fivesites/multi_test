@@ -2,19 +2,28 @@
 
 import { useEffect, useState } from "react";
 import { usePresence } from "motion/react";
-import TypedWord from "./TypedWord";
+import M2Button from "./M2Button";
+import { useUI } from "@/context/UIContext";
 
 const EMAIL = "hello@multi2.co";
+const TYPING_MS_PER_CHAR = 22;
 const ERASING_MS_PER_CHAR = 14;
 const ERASE_SPEED = 0.2;
 
 export default function ConnectSection() {
+  const { notifyContentDone } = useUI();
   const [isPresent, safeToRemove] = usePresence();
   const [textVisible, setTextVisible] = useState(false);
 
   useEffect(() => {
     setTextVisible(true);
   }, []);
+
+  useEffect(() => {
+    if (!textVisible) return;
+    const t = setTimeout(notifyContentDone, EMAIL.length * TYPING_MS_PER_CHAR);
+    return () => clearTimeout(t);
+  }, [textVisible]);
 
   useEffect(() => {
     if (isPresent) return;
@@ -25,18 +34,13 @@ export default function ConnectSection() {
   }, [isPresent, safeToRemove]);
 
   return (
-    <div className="min-h-full flex flex-col items-start lg:items-start justify-start px-8 lg:px-8 pb-12 text-lava">
-      <a
-        href={`mailto:${EMAIL}`}
-        className="font-visual text-3xl lg:text-4xl max-w-7xl uppercase leading-none lg:text-left  lg:mb-4   tracking-normal lg:tracking-normal lg:leading-[0.9]"
-      >
-        <TypedWord
-          text={EMAIL}
-          visible={textVisible}
-          delay={0}
-          eraseSpeed={ERASE_SPEED}
-        />
-      </a>
+    <div className="min-h-full flex flex-col items-start lg:items-start justify-start px-8 lg:px-8 pb-12  ">
+      <M2Button
+        className="pText uppercase"
+        text={EMAIL}
+        visible={textVisible}
+        delay={0}
+      />
     </div>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import M2Button from "./M2Button";
 import TypedWord from "./TypedWord";
 
 const MS = 22;
@@ -10,10 +11,12 @@ export default function DarkModeButton({
   className,
   visible = true,
   lightDelay = 0,
+  lg = false,
 }: {
   className?: string;
   visible?: boolean;
   lightDelay?: number;
+  lg?: boolean;
 }) {
   const [dark, setDark] = useState(false);
   const [bw, setBw] = useState(false);
@@ -39,21 +42,30 @@ export default function DarkModeButton({
   const bwDelay = lightDelay + (5 + 2) * MS;
 
   return (
-    <span className="inline-flex flex-wrap items-baseline gap-x-1">
-      <span className="inline-flex items-baseline whitespace-nowrap">
-        <Button variant="nav" onClick={toggleDark} className={className}>
-          <TypedWord text={label} visible={visible} delay={lightDelay} />
-        </Button>
+    <span className="inline-flex flex-wrap items-baseline gap-x-1 buttonTextSM buttonColors">
+      <span className="inline-flex items-baseline whitespace-nowrap buttonTextSM buttonColors">
+        <M2Button
+          text={label}
+          visible={visible}
+          delay={lightDelay}
+          onClick={toggleDark}
+          className={cn("dark:text-lax", className)}
+        />
         <TypedWord
           text=", "
           visible={visible}
           delay={lightDelay + 5 * MS}
-          className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
+          className=""
         />
       </span>
-      <Button variant={bw ? "link" : "nav"} onClick={toggleBw} className={className}>
-        <TypedWord text="B/W" visible={visible} delay={bwDelay} />
-      </Button>
+      <M2Button
+        lg={lg}
+        text="B/W"
+        visible={visible}
+        delay={bwDelay}
+        onClick={toggleBw}
+        className={cn(!bw && "dark:text-lax", className)}
+      />
     </span>
   );
 }
