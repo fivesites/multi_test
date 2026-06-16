@@ -19,6 +19,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   "post-processing": "Post-processing",
 };
 
+const formatCredit = (line: string) =>
+  CATEGORY_LABELS[line.trim()] ??
+  line.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+
 function WorkPageInner({
   client,
   description,
@@ -41,7 +45,7 @@ function WorkPageInner({
     >
       {/* Client / description / credits */}
       <div className="flex flex-col justify-center items-start lg:items-start px-8 lg:px-8 pb-0 h-[50dvh] lg:h-auto">
-        <h1 className="font-visual text-4xl lg:text-8xl  font-normal uppercase leading-none w-full text-center lg:text-center items-center text-lava tracking-normal lg:tracking-normal lg:leading-[0.9]  flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
+        <h1 className="font-visual text-4xl lg:text-8xl  font-normal uppercase leading-none   items-center text-lava tracking-normal lg:tracking-normal lg:leading-[0.9]  flex flex-wrap justify-center whitespace-break-spaces mt-0 lg:mt-2 mb-4  gap-x-1">
           {client}
         </h1>
         <div className="flex lg:grid lg:grid-cols-6 lg:mb-4 mb-4  justify-start ">
@@ -65,7 +69,7 @@ function WorkPageInner({
                   .split("\n")
                   .filter(Boolean)
                   .map((line, i) => (
-                    <li key={i}>{line}</li>
+                    <li key={i}>{formatCredit(line)}</li>
                   ))}
               </ul>
             )}
@@ -115,10 +119,9 @@ function WorkPageInner({
       </div>
 
       {/* WORK FOOTER */}
-      <div className="flex lg:hidden flex-col justify-center items-start lg:grid-cols-6 px-8 w-full pt-8 pb-8 text-lava font-visual text-2xl lg:text-2xl lg:items-baseline">
-        <h4 className="w-full col-span-2 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] flex flex-wrap justify-start  lg:justify-start whitespace-break-spaces lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
-          Services provided by <span className="normal-case f">Multi²</span> in
-          this project:
+      <div className="flex  flex-col justify-center items-start lg:grid-cols-4 px-8 w-full pt-8 pb-8 text-lava font-visual text-2xl lg:text-2xl lg:items-baseline">
+        <h4 className="w-full col-span-3 font-visual text-2xl lg:text-2xl leading-tight text-left lg:text-left font-normal tracking-normal lg:tracking-normal lg:leading-[1] lg:justify-start whitespace-nowrap lg:items-baseline gap-x-0 gap-y-0 max-w-sm text-lava mb-4">
+          Services provided by Multi² in this project:
         </h4>
 
         {categories.map((c, i) => (

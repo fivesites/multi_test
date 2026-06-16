@@ -325,7 +325,6 @@ function HomeClientInner() {
 
           {listVisible && showList && (
             <div className="flex flex-col px-8 ">
-              <div className="border-t-2 border-lyx  w-full hidden" />
               <AnimatePresence mode="popLayout">
                 {grouped.map((group, idx) => {
                   const hasMultiple = group.items.length > 1;
@@ -373,17 +372,15 @@ function HomeClientInner() {
                               transition={{ duration: 0.2, ease: "easeInOut" }}
                               className="overflow-hidden  flex pb-0 flex-col  items-start py-0 mb-1 px-8"
                             >
-                              <span className="grid grid-cols-4 gap-x-2">
-                                {group.items.map((item) => (
-                                  <Link
-                                    key={item.slug}
-                                    href={`/work/${item.slug}`}
-                                    className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-normal leading-tight tracking-normal transition-colors duration-200"
-                                  >
-                                    {item.title}
-                                  </Link>
-                                ))}
-                              </span>
+                              {group.items.map((item) => (
+                                <Link
+                                  key={item.slug}
+                                  href={`/work/${item.slug}`}
+                                  className="col-start-2 col-span-3 font-visual text-3xl lg:text-2xl text-lava dark:text-lax text-left hover:text-lava font-normal leading-tight tracking-normal transition-colors duration-200"
+                                >
+                                  {item.title}
+                                </Link>
+                              ))}
                             </motion.div>
                           )}
                         </AnimatePresence>

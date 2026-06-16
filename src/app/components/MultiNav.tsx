@@ -93,18 +93,37 @@ export default function MultiNav() {
 
   const router = useRouter();
 
-  const navMenuOpen = true;
+  const [navMenuOpen, setNavMenuOpen] = useState(true);
   const isWorkPageRef = useRef(false);
+  const isDesktopRef = useRef(false);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+  const [isBw, setIsBw] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(true);
-  const [workHeaderOpen, setWorkHeaderOpen] = useState(true);
   const [navVisible, setNavVisible] = useState(false);
   const [linksVisible, setLinksVisible] = useState(false);
   useEffect(() => {
-    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    const check = () => {
+      const val = window.innerWidth >= 1024;
+      setIsDesktop(val);
+      isDesktopRef.current = val;
+    };
     check();
     window.addEventListener("resize", check);
     return () => window.removeEventListener("resize", check);
+  }, []);
+  useEffect(() => {
+    const check = () => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+      setIsBw(document.documentElement.classList.contains("bw"));
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+    return () => observer.disconnect();
   }, []);
   useEffect(() => {
     setNavVisible(true);
@@ -118,10 +137,10 @@ export default function MultiNav() {
     let lastY = window.scrollY;
     const onScroll = () => {
       const scrollingDown = window.scrollY > lastY && window.scrollY > 10;
-      if (scrollingDown) {
-        if (isWorkPageRef.current) setWorkHeaderOpen(false);
-        else setFiltersOpen(false);
-      }
+      const scrollingUp = window.scrollY < lastY;
+      if (scrollingDown && isWorkPageRef.current && !isDesktopRef.current)
+        setNavMenuOpen(false);
+      if (scrollingUp && !isDesktopRef.current) setNavMenuOpen(true);
       lastY = window.scrollY;
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -166,7 +185,7 @@ export default function MultiNav() {
 
   const pathname = usePathname();
   useEffect(() => {
-    setWorkHeaderOpen(true);
+    setNavMenuOpen(true);
   }, [pathname]);
   if (pathname.startsWith("/studio")) return null;
   const isWorkPage = pathname.startsWith("/work/");
@@ -342,7 +361,6 @@ export default function MultiNav() {
         className="tracking-wide lg:text-2xl text-lava"
         visible={showSettings}
         lightDelay={sLightDelay}
-        darkDelay={sDarkDelay}
       />
     </>
   );
@@ -351,7 +369,18 @@ export default function MultiNav() {
     <>
       <motion.div
         ref={navRef}
-        className="fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col bg-transparent text-lyx"
+        className={cn(
+          "fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col",
+          isBw && panel === "showReel" ? "text-background" : "text-lyx",
+        )}
+        animate={{
+          backgroundColor:
+            panel === "about" || panel === "connect"
+              ? isDark
+                ? "#000000"
+                : "var(--background)"
+              : "transparent",
+        }}
         transition={{ duration: 0.4 }}
       >
         {/* Row 1: logo + nav links (desktop: settings inline) */}
@@ -369,34 +398,55 @@ export default function MultiNav() {
               <TypedWord text="Multi²" visible={navVisible} delay={0} />
             </Button>
           </motion.div>
+          <AnimatePresence>
+            {!navMenuOpen && !isDesktop && (
+              <motion.div
+                key="menu-collapsed"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Button
+                  variant="nav"
+                  className="lg:text-2xl"
+                  onClick={() => setNavMenuOpen(true)}
+                >
+                  <TypedWord text="Menu" visible={!navMenuOpen} delay={0} />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
           {navMenuOpen && (
             <motion.div
               layout
               className={`flex flex-wrap lg:items-baseline justify-start items-baseline lg:justify-start font-visual lg:text-2xl font-normal gap-x-1 leading-tight w-full`}
               transition={{ duration: 0.6, ease: [0.25, 0.1, 0.25, 1] }}
             >
-              <span className="inline-flex items-baseline whitespace-nowrap">
-                <Button
-                  variant={panel === "showReel" ? "link" : "nav"}
-                  className="lg:text-2xl"
-                  onClick={() => {
-                    setPanel("showReel");
-                    setReelMode("intro");
-                  }}
-                >
+              {pathname === "/" && (
+                <span className="inline-flex items-baseline whitespace-nowrap">
+                  <Button
+                    variant={panel === "showReel" ? "link" : "nav"}
+                    className="lg:text-2xl"
+                    onClick={() => {
+                      setPanel("showReel");
+                      setReelMode("intro");
+                    }}
+                  >
+                    <TypedWord
+                      text="Showreel"
+                      visible={linksVisible && navMenuOpen}
+                      delay={navDelays[0]}
+                    />
+                  </Button>
                   <TypedWord
-                    text="Showreel"
+                    text=", "
                     visible={linksVisible && navMenuOpen}
-                    delay={navDelays[0]}
+                    delay={navCommaDelays[0]}
+                    className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
                   />
-                </Button>
-                <TypedWord
-                  text=", "
-                  visible={linksVisible && navMenuOpen}
-                  delay={navCommaDelays[0]}
-                  className="text-3xl lg:text-2xl text-lava leading-tight tracking-wide"
-                />
-              </span>
+                </span>
+              )}
               <span className="inline-flex items-baseline whitespace-nowrap">
                 <Button
                   variant={panel === "projects" ? "link" : "nav"}
@@ -595,11 +645,11 @@ export default function MultiNav() {
           key={workSlug}
           variants={filterContainer}
           initial="hidden"
-          animate={workVisible && navMenuOpen && workHeaderOpen ? "show" : "hidden"}
+          animate={workVisible ? "show" : "hidden"}
           className="overflow-hidden flex flex-wrap items-baseline font-visual font-normal uppercase gap-y-1 gap-x-1 leading-tight  "
         >
           {wHasClient && (
-            <span className="inline-flex items-baseline whitespace-nowrap text-3xl tracking-normal lg:text-2xl font-normal text-lava dark:text-lava leading-tight uppercase">
+            <span className="inline-flex items-baseline whitespace-nowrap text-3xl tracking-normal lg:text-2xl font-normal text-liguriskt dark:text-lax leading-tight uppercase">
               <TypedWord
                 text={workItem!.client!}
                 visible={workVisible}
@@ -614,7 +664,7 @@ export default function MultiNav() {
               />
             </span>
           )}
-          <span className="inline-flex items-baseline whitespace-nowrap text-3xl lg:text-2xl font-norml text-lava dark:text-lava leading-tight">
+          <span className="inline-flex items-baseline whitespace-nowrap text-3xl lg:text-2xl font-normal text-liguriskt dark:text-lax leading-tight">
             <TypedWord
               text={workItem?.title ?? ""}
               visible={workVisible}
@@ -646,7 +696,7 @@ export default function MultiNav() {
           )}
           <Button
             variant="nav"
-            className="px-0 text-3xl lg:text-2xl font-normal leading-tight"
+            className="px-0 text-3xl lg:text-2xl font-normal leading-tight normal-case"
             asChild
           >
             <Link href="/">
@@ -790,7 +840,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7  z-[15] overflow-y-auto "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] overflow-y-auto bg-background "
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -805,7 +855,7 @@ export default function MultiNav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 1 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)] -mt-7  z-[15] "
+            className="fixed inset-x-0 bottom-0 top-[var(--nav-height)]  z-[15] bg-background "
           >
             <ConnectSection />
           </motion.div>
