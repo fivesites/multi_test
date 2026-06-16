@@ -32,23 +32,29 @@ export default function Cookie() {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
-          className="fixed bottom-0 left-0 right-0 z-50 grid grid-cols-6 gap-4 px-4 lg:px-8 py-3  font-visual font-medium text-lg items-baseline"
+          className="fixed bottom-0 left-0 right-0 z-50 flex flex-wrap gap-0 px-8 lg:px-8 pb-8  font-visual font-normal tracking-normal justify-start text-2xl lg:text-4xl items-baseline"
         >
-          <p className="  leading-tight  text-liguriskt whitespace-nowrap">
+          <p className=" text-2xl  leading-tight  text-liguriskt whitespace-normal">
             We use cookies to improve your experience.{" "}
             <Link href="/privacy-policy" className="text-lava ">
               Privacy policy.
             </Link>
-          </p>
-          <div className="col-start-3 flex items-center gap-0 shrink-0">
-            <Button variant="link" className="text-sm px-0" onClick={accept}>
-              Accept
-            </Button>
-            <span className="text-lyx mx-1">,</span>
-            <Button variant="nav" className="text-sm px-0" onClick={decline}>
-              Decline
-            </Button>
-          </div>
+          </p>{" "}
+          <Button
+            variant="link"
+            className=" text-2xl lg:px-0 font-normal tracking-normal"
+            onClick={accept}
+          >
+            Accept
+          </Button>
+          <span className=" mx-1">,</span>
+          <Button
+            variant="nav"
+            className=" text-2xl px-0 font-normal tracking-normal"
+            onClick={decline}
+          >
+            Decline
+          </Button>
         </motion.div>
       )}
     </AnimatePresence>

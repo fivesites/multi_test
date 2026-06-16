@@ -268,8 +268,6 @@ export default function MultiNav() {
   const sLightDelay = showGrid
     ? sZoomInDelay + (sZoomInLen + 2) * TYPING_MS_PER_CHAR
     : sPostThumbDelay;
-  const sDarkDelay = sLightDelay + (sLightLen + 2) * TYPING_MS_PER_CHAR;
-
   const settingsContent = (
     <>
       <span className="inline-flex items-baseline whitespace-nowrap">
