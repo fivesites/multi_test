@@ -259,7 +259,6 @@ export default function MultiNav() {
   const sThumbLen = isDesktop ? 10 : 6; // "Thumbnails" or "Thumbs"
   const sZoomOutLen = 8; // "Zoom Out"
   const sZoomInLen = 7; // "Zoom In"
-  const sLightLen = 5; // "Light"
   const sListDelay = 0;
   const sThumbDelay = (sListLen + 2) * TYPING_MS_PER_CHAR;
   const sPostThumbDelay = sThumbDelay + (sThumbLen + 2) * TYPING_MS_PER_CHAR;
