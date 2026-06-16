@@ -656,7 +656,7 @@ export default function MultiNav() {
           variants={filterContainer}
           initial="hidden"
           animate={showFilters ? "show" : "hidden"}
-          className="hidden lg:flex overflow-hidden  flex-wrap justify-start uppercase items-baseline buttonTextLG buttonColors gap-x-1 w-full max-w-6xl mt-0"
+          className="hidden lg:flex overflow-hidden  flex-wrap justify-start uppercase items-baseline buttonTextLG buttonColors gap-x-1 w-full max-w-6xl"
         >
           {allCats.flatMap((cat, i) => {
             const label = getDesktopFilterLabel(cat);
