@@ -86,7 +86,7 @@ export default function CookieAndSound() {
           transition={{ duration: 0.25 }}
           className="fixed bottom-0 left-0 right-0 z-50 flex flex-wrap gap-0 px-8 lg:px-8 pb-8 font-visual font-normal tracking-normal justify-start pText buttonColors   items-baseline"
         >
-          <p className="pText noClickColors whitespace-normal">
+          <p className="pText buttonColors whitespace-normal">
             Enable sound?{" "}
             <button className="buttonTextSM buttonColors" onClick={acceptSound}>
               Yes
