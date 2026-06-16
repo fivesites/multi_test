@@ -72,10 +72,7 @@ function HomeClientInner() {
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
   const [expandedGroup, setExpandedGroup] = useState<string | null>(null);
-  const [mousePos, setMousePos] = useState({ x: 0, y: 0 });
-  const handleMouseMove = (e: React.MouseEvent) => {
-    setMousePos({ x: e.clientX, y: e.clientY });
-  };
+  const handleMouseMove = (_e: React.MouseEvent) => {};
 
   const query = search.toLowerCase().trim();
   const slugsSeen = new Set<string>();
