@@ -23,7 +23,7 @@ export default function ConnectSection() {
     if (!textVisible) return;
     const t = setTimeout(notifyContentDone, EMAIL.length * TYPING_MS_PER_CHAR);
     return () => clearTimeout(t);
-  }, [textVisible]);
+  }, [textVisible, notifyContentDone]);
 
   useEffect(() => {
     if (isPresent) return;

@@ -19,10 +19,6 @@ const CATEGORY_LABELS: Record<string, string> = {
   "post-processing": "Post-processing",
 };
 
-const formatCredit = (line: string) =>
-  CATEGORY_LABELS[line.trim()] ??
-  line.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-
 const TYPING_MS = 22;
 const NAVIGATING_MS = 700;
 

@@ -54,7 +54,6 @@ const TYPING_MS_PER_CHAR = 22;
 const NAV_LOGO = "Multi²";
 const NAV_LOGO_DONE_MS = NAV_LOGO.length * TYPING_MS_PER_CHAR;
 const LOGO_APPEAR_MS = 80;
-const LOGIN_LEN = 6;
 
 const aboutPhrases = [
   "Remembering origin story",
@@ -170,7 +169,7 @@ export default function MultiNav() {
     if (!linksVisible) return;
     const t = setTimeout(() => setNavTyped(true), navLastTypedMs);
     return () => clearTimeout(t);
-  }, [linksVisible]);
+  }, [linksVisible, navLastTypedMs]);
   const scrollProgress = useMotionValue(0);
   const videoScale = useTransform(scrollProgress, [0, 400], [1, 0]);
   const openScrollY = useRef(0);
@@ -219,6 +218,7 @@ export default function MultiNav() {
       const t = setTimeout(() => setIsNavigating(false), 700);
       return () => clearTimeout(t);
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pathname]);
   if (pathname.startsWith("/studio")) return null;
   const isWorkPage = pathname.startsWith("/work/");

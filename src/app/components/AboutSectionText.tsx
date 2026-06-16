@@ -30,7 +30,7 @@ export default function AboutSectionText({
       (plainText.length + (text?.length ?? 0)) * TYPING_MS_PER_CHAR;
     const t = setTimeout(notifyContentDone, doneMs);
     return () => clearTimeout(t);
-  }, [textVisible, plainText, text]);
+  }, [textVisible, plainText, text, notifyContentDone]);
 
   useEffect(() => {
     if (isPresent) return;

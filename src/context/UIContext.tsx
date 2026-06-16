@@ -5,6 +5,7 @@ import {
   useContext,
   useState,
   useEffect,
+  useCallback,
   type ReactNode,
 } from "react";
 
@@ -50,7 +51,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
   const [contentDoneKey, setContentDoneKey] = useState(0);
-  const notifyContentDone = () => setContentDoneKey((k) => k + 1);
+  const notifyContentDone = useCallback(() => setContentDoneKey((k) => k + 1), []);
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {

@@ -67,7 +67,7 @@ function HomeClientInner() {
       notifyContentDone();
     }, delay);
     return () => clearTimeout(t);
-  }, [revealed, panel, categories]);
+  }, [revealed, panel, categories, notifyContentDone]);
 
   const router = useRouter();
   const [hoveredItem, setHoveredItem] = useState<string | null>(null);
