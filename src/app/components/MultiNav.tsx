@@ -365,7 +365,7 @@ export default function MultiNav() {
       <motion.div
         ref={navRef}
         className={cn(
-          "fixed z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col nav-bw",
+          "absolute z-20 top-0 left-0 right-0 px-8 lg:px-8 pt-8 lg:pt-8 pb-8 lg:pb-3 flex flex-col nav-bw",
           isBw && panel === "showReel"
             ? "text-background"
             : "text-neutral-300 dark:text-neutral-900",
