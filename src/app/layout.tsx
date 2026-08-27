@@ -7,8 +7,9 @@ import { cookies } from "next/headers";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
-import Cookie from "@/app/components/CookieAndSound";
+import { ReelProvider } from "@/context/ReelContext";
 import MultiNav from "@/app/components/MultiNav";
+import CookieAndSound from "@/app/components/CookieAndSound";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -17,22 +18,75 @@ export const metadata: Metadata = {
 
 const visualFont = localFont({
   src: [
-    { path: "./Visual-Regular.woff2", weight: "400", style: "normal" },
-
-    { path: "./Visual-Medium.woff2", weight: "500", style: "normal" },
-
-    { path: "./Visual-Bold.woff2", weight: "700", style: "normal" },
+    {
+      path: "../../public/fonts/visual/Visual-Light-trial.otf",
+      weight: "300",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/visual/Visual-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/visual/Visual-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/visual/Visual-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
   ],
   variable: "--font-visual",
+  display: "swap",
 });
 
-const karlRounded = localFont({
+// Diatype ships 5 weights, all upright — no italic cuts.
+const diatype = localFont({
   src: [
-    { path: "./KarlST_Regular.woff2", weight: "400", style: "normal" },
-
-    { path: "./KarlST_UltraBlack.woff2", weight: "900", style: "normal" },
+    {
+      path: "../../public/fonts/diatype/ABCDiatypeEdu-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/diatype/ABCDiatypeEdu-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/diatype/ABCDiatypeEdu-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/diatype/ABCDiatypeEdu-Heavy.woff2",
+      weight: "800",
+      style: "normal",
+    },
+    {
+      path: "../../public/fonts/diatype/ABCDiatypeEdu-Black.woff2",
+      weight: "900",
+      style: "normal",
+    },
   ],
-  variable: "--font-rounded",
+  variable: "--font-diatype",
+  display: "swap",
+});
+
+// Karl currently ships Regular only.
+const karl = localFont({
+  src: [
+    {
+      path: "../../public/fonts/karl/KarlST_Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  variable: "--font-karl",
+  display: "swap",
 });
 
 export default async function RootLayout({
@@ -63,17 +117,21 @@ export default async function RootLayout({
         ) : null}
       </head>
       <body
-        className={` ${visualFont.variable}  ${karlRounded.variable} antialiased`}
+        className={`${visualFont.variable} ${diatype.variable} ${karl.variable} antialiased`}
       >
         <WorkContextServer>
           <CopyContextServer>
             <UIProvider>
-              <MultiNav />
-              {children}
+              {/* Wraps the whole tree: the consent box and the nav read reel
+                  state too, not just the page below them. */}
+              <ReelProvider>
+                <MultiNav />
+                <CookieAndSound  />
+                {children}
+              </ReelProvider>
             </UIProvider>
           </CopyContextServer>
         </WorkContextServer>
-        <Cookie />
       </body>
     </html>
   );

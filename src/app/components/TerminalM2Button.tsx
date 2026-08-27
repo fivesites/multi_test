@@ -8,6 +8,7 @@ const TYPE_MS = 22;
 const ERASE_MS = 14;
 const HOLD_MS = 1000;
 const PHRASE_GAP_MS = 150;
+const LOOP_GAP_MS = 6000;
 
 type Props = {
   text: string;
@@ -17,9 +18,11 @@ type Props = {
   loadingText?: string;
   onClick?: () => void;
   className?: string;
-  phrases: string[];
-  trigger: string;
-  stopTrigger: number;
+  phrases?: string[];
+  trigger?: string;
+  stopTrigger?: number;
+  /** Keep cycling the phrases forever, restarting after LOOP_GAP_MS. */
+  loop?: boolean;
 };
 
 export default function TerminalM2Button({
@@ -27,23 +30,33 @@ export default function TerminalM2Button({
   visible,
   delay,
   loading = false,
-  loadingText = "Loading multi2.co",
+  loadingText = "loading",
   onClick,
   className = "",
-  phrases,
-  trigger,
-  stopTrigger,
+  phrases = [],
+  trigger = "",
+  stopTrigger = 0,
+  loop = false,
 }: Props) {
   const [dots, setDots] = useState(".");
   const [activePhrase, setActivePhrase] = useState<string | null>(null);
   const [phraseVisible, setPhraseVisible] = useState(false);
   const [phraseKey, setPhraseKey] = useState(0);
+  const [cycleKey, setCycleKey] = useState(0);
 
   const isFirstRef = useRef(true);
   const loadingRef = useRef(loading);
   loadingRef.current = loading;
   const phrasesRef = useRef(phrases);
   phrasesRef.current = phrases;
+  const loopRef = useRef(loop);
+  loopRef.current = loop;
+  const restartRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const queueRestart = (delay: number) => {
+    if (!loopRef.current) return;
+    if (restartRef.current) clearTimeout(restartRef.current);
+    restartRef.current = setTimeout(() => setCycleKey((k) => k + 1), delay);
+  };
   const stopCycleRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
@@ -60,9 +73,12 @@ export default function TerminalM2Button({
   useEffect(() => {
     if (isFirstRef.current) {
       isFirstRef.current = false;
+      if (!loopRef.current) return;
+    }
+    if (loadingRef.current) {
+      queueRestart(LOOP_GAP_MS);
       return;
     }
-    if (loadingRef.current) return;
 
     const ps = phrasesRef.current;
     const timers: ReturnType<typeof setTimeout>[] = [];
@@ -114,6 +130,7 @@ export default function TerminalM2Button({
       setTimeout(() => {
         setActivePhrase(null);
         stopCycleRef.current = null;
+        queueRestart(LOOP_GAP_MS);
       }, elapsed),
     );
 
@@ -121,16 +138,24 @@ export default function TerminalM2Button({
       timers.forEach(clearTimeout);
       stopCycleRef.current = null;
     };
-  }, [trigger]);
+  }, [trigger, cycleKey]);
 
   useEffect(() => {
     if (!stopCycleRef.current) return;
     stopCycleRef.current();
+    queueRestart(LOOP_GAP_MS);
   }, [stopTrigger]);
 
+  useEffect(
+    () => () => {
+      if (restartRef.current) clearTimeout(restartRef.current);
+    },
+    [],
+  );
+
   const cls = cn(
-    "buttonTextSM font-visual text-left",
-    activePhrase !== null || loading ? "text-liguriskt" : "text-lava",
+    " flex font-normal font-diatype text-xs tracking-wide text-primary",
+    activePhrase !== null || loading ? "" : "",
     onClick && "cursor-pointer",
     className,
   );
@@ -140,7 +165,7 @@ export default function TerminalM2Button({
     content = (
       <>
         <TypedWord text={`${loadingText}`} visible={loading} delay={0} />
-        <span className="whitespace-nowrap">{` (${dots})`}</span>
+        <span className="whitespace-nowrap">{dots}</span>
       </>
     );
   } else if (activePhrase !== null) {

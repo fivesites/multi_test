@@ -56,6 +56,7 @@ export const allWorkSlugsQuery = groq`
 export const workCardsQuery = groq`
   *[_type == "work"] | order(year desc) {
     _id,
+    _createdAt,
     title,
     client,
     year,

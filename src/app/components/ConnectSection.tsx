@@ -36,6 +36,7 @@ export default function ConnectSection() {
   return (
     <div className="min-h-full flex flex-col items-start lg:items-start justify-start px-8 lg:px-8 pb-12  ">
       <M2Button
+        lg
         className="pText uppercase"
         text={EMAIL}
         visible={textVisible}

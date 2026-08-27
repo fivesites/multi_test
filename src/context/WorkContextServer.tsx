@@ -28,6 +28,7 @@ type MediaItem = {
 
 type WorkData = {
   _id: string;
+  _createdAt?: string;
   title: string;
   client?: string;
   year?: number;
@@ -54,6 +55,12 @@ export async function WorkContextServer({
       categorySet.add(cat);
     }
 
+    // Hoisted: works with media still have a cover, and callers that want the
+    // cover specifically can't get it from the media-derived `url`.
+    const coverUrl = work.coverImage?.asset
+      ? urlFor(work.coverImage).width(1200).quality(80).url()
+      : undefined;
+
     const allImages = (work.media ?? []).filter(
       (m) => m._type === "image" && m.asset,
     );
@@ -76,16 +83,17 @@ export async function WorkContextServer({
           title: work.title,
           client: work.client,
           year: work.year,
+          createdAt: work._createdAt,
           credits: work.credits,
           description: work.description,
           categories: work.categories ?? [],
           aspectRatio: img.aspectRatio ?? 1,
+          coverUrl,
           isPrimary: idx === 0,
           projectImages,
         });
       });
-    } else if (work.coverImage?.asset) {
-      const coverUrl = urlFor(work.coverImage).width(1200).quality(80).url();
+    } else if (coverUrl) {
       items.push({
         key: work._id,
         url: coverUrl,
@@ -94,16 +102,18 @@ export async function WorkContextServer({
         title: work.title,
         client: work.client,
         year: work.year,
+        createdAt: work._createdAt,
         credits: work.credits,
         description: work.description,
         categories: work.categories ?? [],
-        aspectRatio: work.coverImage.aspectRatio ?? 1,
+        aspectRatio: work.coverImage?.aspectRatio ?? 1,
+        coverUrl,
         isPrimary: true,
         projectImages: [
           {
             key: work._id,
             url: coverUrl,
-            aspectRatio: work.coverImage.aspectRatio ?? 1,
+            aspectRatio: work.coverImage?.aspectRatio ?? 1,
           },
         ],
       });

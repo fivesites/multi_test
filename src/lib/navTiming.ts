@@ -10,7 +10,10 @@ const CATEGORY_LABELS: Record<string, string> = {
   "sound-design": "Sound Design",
   vax: "Vax",
   dop: "DOP",
-  "post-processing": "Post-processing",
+  "post-processing": "Post-prod",
+  "post-production": "Post-prod",
+  music: "Music Prod",
+  "music-production": "Music Prod",
 };
 
 const TYPING_MS_PER_CHAR = 22;
@@ -28,11 +31,18 @@ export function getFilterDoneMs(categories: string[]): number {
     return [...acc, acc[i - 1] + (prevLabel.length + 2) * TYPING_MS_PER_CHAR];
   }, []);
   const lastCat = allCats[allCats.length - 1];
-  return filterDelays[allCats.length - 1] + (getFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR;
+  return (
+    filterDelays[allCats.length - 1] +
+    (getFilterLabel(lastCat).length + 2) * TYPING_MS_PER_CHAR
+  );
 }
 
 export function getPostLoadFilterDoneMs(categories: string[]): number {
-  return NAV_LOGO_CHARS * TYPING_MS_PER_CHAR + LOGO_APPEAR_MS + getFilterDoneMs(categories);
+  return (
+    NAV_LOGO_CHARS * TYPING_MS_PER_CHAR +
+    LOGO_APPEAR_MS +
+    getFilterDoneMs(categories)
+  );
 }
 
 export function getNavTypingDelayMs(categories: string[]): number {

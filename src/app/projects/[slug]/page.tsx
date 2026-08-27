@@ -1,8 +1,11 @@
 import { notFound } from "next/navigation";
 import { client } from "../../../../sanity/lib/client";
-import { workBySlugQuery, allWorkSlugsQuery } from "../../../../sanity/lib/queries";
+import {
+  workBySlugQuery,
+  allWorkSlugsQuery,
+} from "../../../../sanity/lib/queries";
 import { urlFor } from "../../../../sanity/lib/image";
-import WorkPageClient from "./WorkPageClient";
+import WorkPageClient from "./ProjectPageClient";
 
 export async function generateStaticParams() {
   const slugs = await client.fetch<{ slug: string }[]>(allWorkSlugsQuery);

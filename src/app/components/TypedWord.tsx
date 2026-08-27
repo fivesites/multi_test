@@ -2,8 +2,10 @@
 
 import { motion } from "motion/react";
 
-const TYPING_INTERVAL = 0.022;
-const ERASING_INTERVAL = 0.014;
+// Seconds per character. Exported so callers that need to time themselves
+// against the animation (TypedRotator) can't drift out of sync with it.
+export const TYPING_INTERVAL = 0.022;
+export const ERASING_INTERVAL = 0.014;
 
 const letterVariants = {
   visible: { display: "inline", opacity: 1, transition: { duration: 0 } },
@@ -19,6 +21,7 @@ export default function TypedWord({
   eraseSpeed,
   className,
   cursor,
+  cursorClassName = "bg-current text-background",
 }: {
   text: string;
   visible?: boolean;
@@ -28,6 +31,9 @@ export default function TypedWord({
   eraseSpeed?: number;
   className?: string;
   cursor?: boolean | string;
+  /** Replaces the cursor's classes — the default knocks the glyph out of a
+   *  filled block, so pass a plain colour to get a bare cursor instead. */
+  cursorClassName?: string;
 }) {
   const cursorChar = typeof cursor === "string" ? cursor : "_";
   const cursorDelay = delay / 1000 + text.length * TYPING_INTERVAL * speed;
@@ -70,7 +76,7 @@ export default function TypedWord({
             repeat: Infinity,
             times: [0, 0, 0.5, 0.5, 1],
           }}
-          className="bg-current text-background font-normal"
+          className={cursorClassName}
         >
           {cursorChar}
         </motion.span>

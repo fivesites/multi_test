@@ -8,7 +8,7 @@ export default function AboutPage() {
   const aboutBody = useCopyBody("about-intro");
 
   return (
-    <div className="min-h-screen" style={{ paddingTop: "var(--nav-height)" }}>
+    <div className="min-h-screen " style={{ paddingTop: "var(--nav-height)" }}>
       <AboutSectionText
         plainText={aboutEntry?.plainText ?? ""}
         text={aboutBody ?? undefined}

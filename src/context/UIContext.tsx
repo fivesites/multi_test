@@ -9,24 +9,19 @@ import {
   type ReactNode,
 } from "react";
 
-export type Panel = "showReel" | "projects" | "about" | "connect";
-export type ReelMode = "intro" | "background";
-
 type UIContextType = {
-  panel: Panel;
-  setPanel: (p: Panel) => void;
   contentDoneKey: number;
   notifyContentDone: () => void;
-  showReel: boolean;
-  setShowReel: (v: boolean) => void;
-  reelMode: ReelMode;
-  setReelMode: (v: ReelMode) => void;
   showGrid: boolean;
   setShowGrid: (v: boolean) => void;
   showList: boolean;
   setShowList: (v: boolean) => void;
   activeFilter: string;
   setActiveFilter: (v: string) => void;
+  filtersOpen: boolean;
+  setFiltersOpen: (v: boolean | ((prev: boolean) => boolean)) => void;
+  searchOpen: boolean;
+  setSearchOpen: (v: boolean | ((prev: boolean) => boolean)) => void;
   openedCard: string | null;
   setOpenedCard: (slug: string | null) => void;
   showSettings: boolean;
@@ -40,24 +35,28 @@ type UIContextType = {
 const UIContext = createContext<UIContextType | null>(null);
 
 export function UIProvider({ children }: { children: ReactNode }) {
-  const [panel, setPanel] = useState<Panel>("showReel");
-  const [showReel, setShowReel] = useState(true);
-  const [reelMode, setReelMode] = useState<ReelMode>("intro");
-  const [showGrid, setShowGrid] = useState(false);
-  const [showList, setShowList] = useState(true);
+  const [showGrid, setShowGrid] = useState(true);
+  const [showList, setShowList] = useState(false);
   const [activeFilter, setActiveFilter] = useState("all");
+  // mobile only: desktop always shows the category column (CategoryFilters),
+  // below lg the same list is a full-screen overlay that starts closed
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const [openedCard, setOpenedCard] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(false);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
   const [contentDoneKey, setContentDoneKey] = useState(0);
-  const notifyContentDone = useCallback(() => setContentDoneKey((k) => k + 1), []);
+  const notifyContentDone = useCallback(
+    () => setContentDoneKey((k) => k + 1),
+    [],
+  );
 
   useEffect(() => {
     if (window.innerWidth >= 1024) {
       setShowList(true);
       setShowGrid(false);
-      setNumCols(6);
+      setNumCols(3);
     } else {
       setNumCols(2);
     }
@@ -66,18 +65,16 @@ export function UIProvider({ children }: { children: ReactNode }) {
   return (
     <UIContext.Provider
       value={{
-        panel,
-        setPanel,
-        showReel,
-        setShowReel,
-        reelMode,
-        setReelMode,
         showGrid,
         setShowGrid,
         showList,
         setShowList,
         activeFilter,
         setActiveFilter,
+        filtersOpen,
+        setFiltersOpen,
+        searchOpen,
+        setSearchOpen,
         openedCard,
         setOpenedCard,
         showSettings,

@@ -10,10 +10,14 @@ export type GridItem = {
   title: string;
   client?: string;
   year?: number;
+  createdAt?: string;
   credits?: unknown;
   description?: string;
   categories: string[];
   aspectRatio: number;
+  /** The work's own coverImage — a different asset from the media
+   *  images, so `url` is not a stand-in for it. */
+  coverUrl?: string;
   isPrimary: boolean;
   projectImages: { key: string; url: string; aspectRatio: number }[];
 };

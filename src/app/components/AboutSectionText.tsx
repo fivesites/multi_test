@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { usePresence } from "motion/react";
 import TypedWord from "./TypedWord";
 import { useUI } from "@/context/UIContext";
+import { cn } from "@/lib/utils";
+import { Http2ServerRequest } from "node:http2";
 
 const TYPING_MS_PER_CHAR = 22;
 const ERASING_MS_PER_CHAR = 14;
@@ -12,9 +14,12 @@ const ERASE_SPEED = 0.2;
 export default function AboutSectionText({
   plainText,
   text,
+  className,
 }: {
   plainText: string;
   text?: string;
+  /** Overrides the standalone-page padding/scroll when embedded in a column. */
+  className?: string;
 }) {
   const { notifyContentDone } = useUI();
   const [isPresent, safeToRemove] = usePresence();
@@ -44,25 +49,18 @@ export default function AboutSectionText({
   const paraDelay = plainText.length * TYPING_MS_PER_CHAR;
 
   return (
-    <div className="min-h-full flex flex-col items-start justify-start lg:items-start px-8 lg:px-8 text-lava pb-8 overflow-y-scroll">
-      <h1 className="h2Text mt-0 mb-8 lg:mb-4 buttonColors ">
-        <TypedWord
-          text={plainText}
-          visible={textVisible}
-          delay={0}
-          eraseSpeed={ERASE_SPEED}
-          cursor={false}
-        />
-      </h1>
+    <div
+      className={cn(
+        "min-h-full lg:h-[66.6dvh] flex flex-col items-start justify-start lg:items-center pt-6 pb-6 px-6 lg:px-24 lg:justify-center  overflow-y-scroll lg:grid lg:grid-cols-12 gap-6   ",
+        className,
+      )}
+    >
+      <h2 className="hidden  font-visual  text-lg font-light   lg:text-5xl  lg:col-span-6 lg:text-left lg:col-start-1 lg:flex justify-start lowercase ">
+        {plainText}
+      </h2>
       {text && (
-        <p className="pText ">
-          <TypedWord
-            text={text}
-            visible={textVisible}
-            delay={paraDelay}
-            eraseSpeed={ERASE_SPEED}
-            cursor={false}
-          />
+        <p className="lg:col-span-5 f text-base font-diatype font-normal">
+          {text}
         </p>
       )}
     </div>
