@@ -11,32 +11,32 @@
   --card-foreground: oklch(0.282 0.091 267.935);
   --popover: oklch(0.984 0.003 247.858);
   --popover-foreground: oklch(0.282 0.091 267.935);
-  --primary: oklch(0.577 0.245 27.325);
-  --primary-foreground: oklch(0.885 0.062 18.334);
-  --secondary: oklch(0.929 0.013 255.508);
-  --secondary-foreground: oklch(0.446 0.043 257.281);
-  --muted: oklch(0.968 0.007 247.896);
-  --muted-foreground: oklch(0.704 0.04 256.788);
-  --accent: oklch(0.905 0.182 98.111);
-  --accent-foreground: oklch(0.527 0.154 150.069);
+  --primary: oklch(0.628 0.2577 29.2339);
+  --primary-foreground: oklch(0.943 0.0286 17.6699);
+  --secondary: oklch(0.9433 0.0286 15.0115);
+  --secondary-foreground: oklch(0.6283 0.2574 29.2947);
+  --muted: oklch(1 0 0);
+  --muted-foreground: oklch(0.788 0.123 20);
+  --accent: oklch(0.968 0.211 109.7692);
+  --accent-foreground: oklch(0.3108 0.0678 109.7692);
   --destructive: oklch(0.396 0.141 25.723);
   --destructive-foreground: oklch(0.936 0.032 17.717);
-  --border: oklch(0.869 0.022 252.894);
-  --input: oklch(0.968 0.007 247.896);
-  --ring: oklch(0.869 0.022 252.894);
+  --border: oklch(0.6283 0.2574 29.2947);
+  --input: oklch(0.9435 0.0286 12.3566);
+  --ring: oklch(0.6283 0.2574 29.2947);
   --chart-1: oklch(0.637 0.237 25.331);
   --chart-2: oklch(0.577 0.245 27.325);
   --chart-3: oklch(0.505 0.213 27.518);
   --chart-4: oklch(0.396 0.141 25.723);
   --chart-5: oklch(0.258 0.092 26.042);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --sidebar: oklch(0.984 0.003 247.858);
+  --sidebar-foreground: oklch(0.205 0 0);
+  --sidebar-primary: oklch(0.577 0.245 27.325);
+  --sidebar-primary-foreground: oklch(0.948 0.028 342.258);
+  --sidebar-accent: oklch(0.905 0.182 98.111);
+  --sidebar-accent-foreground: oklch(0.527 0.154 150.069);
+  --sidebar-border: oklch(0.869 0.022 252.894);
+  --sidebar-ring: oklch(0.869 0.022 252.894);
   --font-sans:
     ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif,
@@ -195,7 +195,7 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border  outline-ring/50;
   }
   body {
     @apply bg-background text-foreground;
@@ -209,7 +209,7 @@
   }
 
   .btnText {
-    @apply font-diatype   text-sm font-medium  tracking-wide leading-snug;
+    @apply font-diatype   text-xs;
   }
 
   .btnTextLG {
@@ -217,10 +217,13 @@
   }
 
   .pText {
-    @apply tracking-wide text-left font-diatype text-base font-medium lg:font-normal leading-snug;
+    @apply text-[1.125rem] tracking-normal lg:tracking-[0.0125em] lg:text-[1.25rem] leading-[1.25] font-visual;
   }
   .h2Text {
-    @apply tracking-wide text-left font-visual text-3xl  font-normal leading-snug;
+    @apply font-visual text-[3.125rem] lg:text-[3.5rem] leading-[1.3] tracking-normal font-thin;
+  }
+  .h3Text {
+    @apply font-diatype text-xs tracking-wide  font-normal;
   }
 
   /* Mobile keeps it an ordinary heading; the full-bleed treatment is desktop
@@ -247,4 +250,142 @@
   .borderBtn {
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
   }
+}
+
+/* CustomCursor draws the pointer itself, so the native one goes away — including
+   the per-element cursors (pointer, zoom-in, text) set throughout the UI. The
+   class is only on <html> while that component is mounted. */
+html.cursor-none,
+html.cursor-none * {
+  cursor: none !important;
+}
+
+/* Alternate palettes, set by MultiVertNav's theme rows. Only the tokens that
+   carry colour are overridden — everything downstream (buttons, borders, the
+   cursor, bg-background/text-primary anywhere on the site) follows from these,
+   so no component needs to know the theme exists. Beats .dark on specificity:
+   one class plus the element, against .dark's single class. */
+html.black-on-green {
+  --background: rgb(0, 255, 0);
+  --foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: rgb(0, 255, 0);
+  --secondary: #000000;
+  --secondary-foreground: rgb(0, 255, 0);
+  --accent: rgb(0, 255, 0);
+  --accent-foreground: #000000;
+  --muted: rgb(0, 255, 0);
+  --muted-foreground: #000000;
+  --card: rgb(0, 255, 0);
+  --card-foreground: #000000;
+  --popover: rgb(0, 255, 0);
+  --popover-foreground: #000000;
+  --destructive: #000000;
+  --destructive-foreground: rgb(0, 255, 0);
+  /* --input is shadcn's *border* colour for fields, not their fill. */
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+}
+
+html.black-and-white {
+  --background: #ffffff;
+  --foreground: #000000;
+  --primary: #000000;
+  --primary-foreground: #ffffff;
+  --secondary: #000000;
+  --secondary-foreground: #ffffff;
+  --accent: #ffffff;
+  --accent-foreground: #000000;
+  --muted: #ffffff;
+  --muted-foreground: #000000;
+  --card: #ffffff;
+  --card-foreground: #000000;
+  --popover: #ffffff;
+  --popover-foreground: #000000;
+  --destructive: #000000;
+  --destructive-foreground: #ffffff;
+  --border: #000000;
+  --input: #000000;
+  --ring: #000000;
+}
+
+/* Multi2 colour themes, set by the Color Settings rows in M2Nav. Same shape as
+   the palettes above: only the tokens that carry colour are overridden, so
+   every component follows without knowing the theme exists. Each one keeps the
+   red palette's lightness and chroma relationships and moves only the hue, so
+   the family stays consistent. multi2_red matches the bare :root, which is the
+   palette before any class is set. */
+html.multi2_red {
+  --primary: oklch(0.628 0.2577 29.2339);
+  --primary-foreground: oklch(0.943 0.0286 29.23);
+  --secondary: oklch(0.9433 0.0286 29.23);
+  --secondary-foreground: oklch(0.628 0.2577 29.2339);
+  --muted-foreground: oklch(0.7044 0.1872 29.23);
+  --border: oklch(0.628 0.2577 29.2339);
+  --input: oklch(0.9435 0.0286 29.23);
+  --ring: oklch(0.628 0.2577 29.2339);
+}
+
+html.multi2_blue {
+  --primary: oklch(0.452 0.3132 264.05);
+  --primary-foreground: oklch(0.943 0.0286 264.05);
+  --secondary: oklch(0.9433 0.0286 264.05);
+  --secondary-foreground: oklch(0.452 0.3132 264.05);
+  --muted-foreground: oklch(0.7044 0.1872 264.05);
+  --border: oklch(0.452 0.3132 264.05);
+  --input: oklch(0.9435 0.0286 264.05);
+  --ring: oklch(0.452 0.3132 264.05);
+}
+
+/* The one theme built from two given colours rather than one hue: #003500
+   (oklch 0.285 0.097 142.5) carries text and borders, pure green
+   (oklch 0.8664 0.2948 142.5) fills. Same hue, so they still read as a pair —
+   and the dark one is legible on the light background, which pure green is not. */
+html.multi2_green {
+  --primary: oklch(0.285 0.097 142.5);
+  --primary-foreground: oklch(0.8664 0.2948 142.5);
+  --secondary: oklch(0.8664 0.2948 142.5);
+  --secondary-foreground: oklch(0.285 0.097 142.5);
+  --muted-foreground: oklch(0.5 0.14 142.5);
+  --border: oklch(0.285 0.097 142.5);
+  --input: oklch(0.8664 0.2948 142.5);
+  --ring: oklch(0.285 0.097 142.5);
+}
+
+html.multi2_pink {
+  --primary: oklch(0.7017 0.3225 328.36);
+  --primary-foreground: oklch(0.943 0.0286 328.36);
+  --secondary: oklch(0.9433 0.0286 328.36);
+  --secondary-foreground: oklch(0.7017 0.3225 328.36);
+  --muted-foreground: oklch(0.7044 0.1872 328.36);
+  --border: oklch(0.7017 0.3225 328.36);
+  --input: oklch(0.9435 0.0286 328.36);
+  --ring: oklch(0.7017 0.3225 328.36);
+}
+
+/* Built from two given colours like the green theme: teal #008080
+   (oklch 0.5431 0.0927 194.77) carries text and borders, #CCFFFF
+   (oklch 0.965 0.0516 196.33) fills. */
+html.multi2_teal {
+  --primary: oklch(0.5431 0.0927 194.77);
+  --primary-foreground: oklch(0.965 0.0516 196.33);
+  --secondary: oklch(0.965 0.0516 196.33);
+  --secondary-foreground: oklch(0.5431 0.0927 194.77);
+  --muted-foreground: oklch(0.72 0.07 195.5);
+  --border: oklch(0.5431 0.0927 194.77);
+  --input: oklch(0.965 0.0516 196.33);
+  --ring: oklch(0.5431 0.0927 194.77);
+}
+
+/* Greyscale: the same structure with the chroma taken to zero. */
+html.multi2_bw {
+  --primary: oklch(0 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.9433 0 0);
+  --secondary-foreground: oklch(0 0 0);
+  --muted-foreground: oklch(0.7044 0 0);
+  --border: oklch(0 0 0);
+  --input: oklch(0.9435 0 0);
+  --ring: oklch(0 0 0);
 }

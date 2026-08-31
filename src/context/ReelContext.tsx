@@ -17,9 +17,6 @@ type ReelContextType = {
   playing: boolean;
   setPlaying: (v: boolean) => void;
   toggle: () => void;
-  muted: boolean;
-  setMuted: (v: boolean) => void;
-  toggleMute: () => void;
   /** Reported by the reel itself, so the transport UI can track it. */
   currentTime: number;
   setCurrentTime: (v: number) => void;
@@ -51,9 +48,7 @@ const ReelContext = createContext<ReelContextType | null>(null);
  * ReactPlayer instance, which would play a duplicate copy of the footage.
  */
 export function ReelProvider({ children }: { children: ReactNode }) {
-  // starts playing muted — the only way browsers allow autoplay
   const [playing, setPlaying] = useState(true);
-  const [muted, setMuted] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [ready, setReady] = useState(false);
@@ -81,7 +76,6 @@ export function ReelProvider({ children }: { children: ReactNode }) {
   }, [reelEl]);
 
   const toggle = useCallback(() => setPlaying((p) => !p), []);
-  const toggleMute = useCallback(() => setMuted((m) => !m), []);
 
   return (
     <ReelContext.Provider
@@ -89,9 +83,6 @@ export function ReelProvider({ children }: { children: ReactNode }) {
         playing,
         setPlaying,
         toggle,
-        muted,
-        setMuted,
-        toggleMute,
         currentTime,
         setCurrentTime,
         duration,

@@ -154,7 +154,7 @@ export default function TerminalM2Button({
   );
 
   const cls = cn(
-    " flex font-normal font-diatype text-xs tracking-wide text-primary",
+    " ",
     activePhrase !== null || loading ? "" : "",
     onClick && "cursor-pointer",
     className,

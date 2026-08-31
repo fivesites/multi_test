@@ -8,8 +8,13 @@ import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
 import { ReelProvider } from "@/context/ReelContext";
+import { SoundProvider } from "@/context/SoundContext";
+import { CursorProvider } from "@/context/CursorContext";
 import MultiNav from "@/app/components/MultiNav";
+import MultiVertNav from "@/app/components/MultiVertNav";
+import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
+import CustomCursor from "@/app/components/CustomCursor";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -124,11 +129,18 @@ export default async function RootLayout({
             <UIProvider>
               {/* Wraps the whole tree: the consent box and the nav read reel
                   state too, not just the page below them. */}
-              <ReelProvider>
-                <MultiNav />
-                <CookieAndSound  />
-                {children}
-              </ReelProvider>
+              <SoundProvider>
+                <ReelProvider>
+                  {/* Above the nav: the nav reports its loading state to the
+                    cursor. */}
+                  <CursorProvider>
+                    <CustomCursor />
+                    <M2Nav />
+
+                    {children}
+                  </CursorProvider>
+                </ReelProvider>
+              </SoundProvider>
             </UIProvider>
           </CopyContextServer>
         </WorkContextServer>

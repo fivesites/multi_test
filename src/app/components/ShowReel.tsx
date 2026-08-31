@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
 import { cn } from "@/lib/utils";
 import { useReel } from "@/context/ReelContext";
+import { useSound } from "@/context/SoundContext";
 
 // TODO: swap back to the real reel. Test footage while wiring the transport.
 const REEL_SRC =
@@ -17,7 +18,6 @@ const REEL_SRC =
 export default function ShowReel({ className = "" }: { className?: string }) {
   const {
     playing,
-    muted,
     setPlaying,
     setCurrentTime,
     setDuration,
@@ -25,6 +25,7 @@ export default function ShowReel({ className = "" }: { className?: string }) {
     setReelEl,
     setPlayedThrough,
   } = useReel();
+  const { muted, volume } = useSound();
 
   // the controls are inert while no reel is mounted, so flag it either way
   useEffect(() => {
@@ -60,6 +61,7 @@ export default function ShowReel({ className = "" }: { className?: string }) {
         // muted autoplay is the one form browsers permit without a gesture
         autoPlay
         muted={muted}
+        volume={volume}
         loop
         playsInline
         // native media events pass straight through in react-player v3

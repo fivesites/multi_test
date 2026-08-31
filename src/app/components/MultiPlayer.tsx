@@ -6,6 +6,7 @@ import { Pause } from "@/components/animate-ui/icons/pause";
 import { Volume2 } from "@/components/animate-ui/icons/volume-2";
 import { VolumeOff } from "@/components/animate-ui/icons/volume-off";
 import { useReel } from "@/context/ReelContext";
+import { useSound } from "@/context/SoundContext";
 
 const ICON_SIZE = 18;
 
@@ -27,8 +28,8 @@ export default function MultiPlayer({
   label?: string;
   className?: string;
 }) {
-  const { playing, muted, currentTime, duration, toggle, toggleMute, ready } =
-    useReel();
+  const { playing, currentTime, duration, toggle, ready } = useReel();
+  const { muted, toggleMute } = useSound();
   const progress = duration ? (currentTime / duration) * 100 : 0;
 
   return (

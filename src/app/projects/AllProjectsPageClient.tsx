@@ -109,9 +109,9 @@ export default function AllProjectsPageClient() {
   return (
     <div
       id="projects"
-      className="relative min-h-dvh w-full px-3 lg:px-3 bg-background"
+      className="relative min-h-dvh w-full px-3 lg:px-3 mt-36 py-3 bg-background"
     >
-      <section className=" h-full w-full mt-15">
+      <section className=" h-full w-full ">
         <FilterOverlay />
 
         {/* Preview overlay — desktop list-only mode */}

@@ -227,3 +227,183 @@ export function Square57({ className }: MarkProps) {
     </svg>
   );
 }
+
+/** Cursor frames: Loading1 rests under the pointer, 2–5 cycle while busy.
+ *  Drawn in currentColor; the cells the source art filled white are holes. */
+export function Loading1({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect width="48" height="48" fill="currentColor"/>
+    </svg>
+  );
+}
+
+export function Loading2({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="15" y="15" width="9" height="9" transform="rotate(90 15 15)" fill="currentColor"/>
+      <rect x="15" y="33" width="9" height="9" transform="rotate(90 15 33)" fill="currentColor"/>
+      <rect x="33" y="15" width="9" height="9" transform="rotate(90 33 15)" fill="currentColor"/>
+      <rect x="33" y="33" width="9" height="9" transform="rotate(90 33 33)" fill="currentColor"/>
+      <rect x="24" y="6" width="9" height="9" transform="rotate(90 24 6)" fill="currentColor"/>
+      <rect x="24" y="24" width="9" height="9" transform="rotate(90 24 24)" fill="currentColor"/>
+      <rect x="42" y="6" width="9" height="9" transform="rotate(90 42 6)" fill="currentColor"/>
+      <rect x="42" y="24" width="9" height="9" transform="rotate(90 42 24)" fill="currentColor"/>
+      <path d="M48 42V48H0V42H48Z" fill="currentColor"/>
+      <path d="M48 0V6H0V0H48Z" fill="currentColor"/>
+      <path d="M48 48H42V0H48V48Z" fill="currentColor"/>
+      <path d="M6 48H0V0H6V48Z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+export function Loading3({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="15" y="6" width="9" height="9" transform="rotate(90 15 6)" fill="currentColor"/>
+      <rect x="15" y="24" width="9" height="9" transform="rotate(90 15 24)" fill="currentColor"/>
+      <rect x="33" y="6" width="9" height="9" transform="rotate(90 33 6)" fill="currentColor"/>
+      <rect x="33" y="24" width="9" height="9" transform="rotate(90 33 24)" fill="currentColor"/>
+      <rect x="24" y="15" width="9" height="9" transform="rotate(90 24 15)" fill="currentColor"/>
+      <rect x="24" y="33" width="9" height="9" transform="rotate(90 24 33)" fill="currentColor"/>
+      <rect x="42" y="15" width="9" height="9" transform="rotate(90 42 15)" fill="currentColor"/>
+      <rect x="42" y="33" width="9" height="9" transform="rotate(90 42 33)" fill="currentColor"/>
+      <path d="M48 42V48H0V42H48Z" fill="currentColor"/>
+      <path d="M48 0V6H0V0H48Z" fill="currentColor"/>
+      <path d="M48 48H42V0H48V48Z" fill="currentColor"/>
+      <path d="M6 48H0V0H6V48Z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+export function Loading4({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="6" y="6" width="18" height="18" fill="currentColor"/>
+      <rect x="24" y="24" width="18" height="18" fill="currentColor"/>
+      <path d="M42 0H48V48H42V0Z" fill="currentColor"/>
+      <path d="M0 0H6V48H0V0Z" fill="currentColor"/>
+      <path d="M48 0V6H0V0H48Z" fill="currentColor"/>
+      <path d="M48 42V48H0V42H48Z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+export function Loading5({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path d="M42 0H48V48H42V0Z" fill="currentColor"/>
+      <path d="M0 0H6V48H0V0Z" fill="currentColor"/>
+      <path d="M48 0V6H0V0H48Z" fill="currentColor"/>
+      <path d="M48 42V48H0V42H48Z" fill="currentColor"/>
+      <rect x="24" y="6" width="18" height="18" fill="currentColor"/>
+      <rect x="6" y="24" width="18" height="18" fill="currentColor"/>
+    </svg>
+  );
+}
+
+/** The hover pair, inverted: filled exactly where Loading4/Loading5 are
+ *  transparent, and transparent where they draw — the border included. Since
+ *  the interior is a 2×2 grid of 18px cells, each inversion is the other
+ *  frame's interior. */
+export function Loading4Inverted({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="24" y="6" width="18" height="18" fill="currentColor"/>
+      <rect x="6" y="24" width="18" height="18" fill="currentColor"/>
+    </svg>
+  );
+}
+
+export function Loading5Inverted({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect x="6" y="6" width="18" height="18" fill="currentColor"/>
+      <rect x="24" y="24" width="18" height="18" fill="currentColor"/>
+    </svg>
+  );
+}
+
+/** Palette swatches for the theme rows — colorCheck.svg's quartered square,
+ *  once per palette. Both are drawn in literal colours, not currentColor: a
+ *  swatch has to show the palette it switches to, not the one already on
+ *  screen — except the light one's ground, which is left transparent. The
+ *  row's own box supplies the border. */
+export function BlackOnGreen({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect width="24" height="24" fill="black"/>
+      <rect x="24" y="24" width="24" height="24" fill="black"/>
+      <rect x="24" width="24" height="24" fill="#00FF00"/>
+      <rect y="24" width="24" height="24" fill="#00FF00"/>
+    </svg>
+  );
+}
+
+export function RedOnWhite({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect width="24" height="24" fill="#FF0000"/>
+      <rect x="24" y="24" width="24" height="24" fill="#FF0000"/>
+    </svg>
+  );
+}
+
+export function BlackOnWhite({ className }: MarkProps) {
+  return (
+    <svg
+      viewBox="0 0 48 48"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <rect width="24" height="24" fill="black"/>
+      <rect x="24" y="24" width="24" height="24" fill="black"/>
+    </svg>
+  );
+}

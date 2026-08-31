@@ -4,13 +4,15 @@ import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useReel } from "@/context/ReelContext";
+import { useSound } from "@/context/SoundContext";
 import CookieAndSound from "./CookieAndSound";
 import MultiPlayer from "./MultiPlayer";
 
 const TRACK_LABEL = "Multi² — Showreel";
 
 export default function BottomNav() {
-  const { setMuted, overReel, playedThrough } = useReel();
+  const { overReel, playedThrough } = useReel();
+  const { setMuted } = useSound();
 
   // desktop only: motion animates a value, so the breakpoint can't be a class
   const [isDesktop, setIsDesktop] = useState(false);

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { useUI } from "@/context/UIContext";
+import { useBusyCursor } from "@/context/CursorContext";
 import {
   Frame58,
   Frame71,
@@ -96,6 +97,9 @@ export default function MultiNav() {
   const [ready, setReady] = useState(false);
   const [navigating, setNavigating] = useState(false);
   const loading = !ready || navigating;
+  // The nav already knows when the site is busy; the cursor cycles on the
+  // same signal.
+  useBusyCursor(loading);
 
   // A committed route change ends the pending navigation and puts the label
   // back into the waiting state until the new page reports in.
@@ -125,7 +129,7 @@ export default function MultiNav() {
   return (
     <>
       <div className="fixed top-0 left-0 z-50 w-full      p-3  ">
-        <div className="relative h-9 lg:h-9 flex border-b border-b-red-600  items-start gap-x-3 justify-between  lg:items-start">
+        <div className="relative h-9 lg:h-9 flex border-b border-b-primary  items-start gap-x-3 justify-between  lg:items-start">
           <div className="flex gap-x-1.5   lg:justify-start   lg:items-baseline">
             <button
               type="button"
@@ -162,38 +166,40 @@ export default function MultiNav() {
           </div>
 
           <nav className="flex gap-x-3">
-            <Button
-              className={`hidden lg:block   } `}
-              variant="secondary"
-              size="xs"
-              asChild
-            >
-              <Link href="/">Home</Link>
-            </Button>
-            <Button
-              className={` hidden lg:block   } `}
-              variant="secondary"
-              size="xs"
-              asChild
-            >
-              <Link href="/projects">Projects</Link>
-            </Button>
-            <Button
-              className={` hidden lg:block  } `}
-              variant="secondary"
-              size="xs"
-              asChild
-            >
-              <Link href="/about">About</Link>
-            </Button>
-            <Button
-              className={` hidden lg:block  }`}
-              variant="secondary"
-              size="xs"
-              asChild
-            >
-              <Link href="/studio">Log In</Link>
-            </Button>
+            <span className=" gap-x-3 hidden">
+              <Button
+                className={`hidden lg:block   } `}
+                variant="ghost"
+                size="xs"
+                asChild
+              >
+                <Link href="/">Home</Link>
+              </Button>
+              <Button
+                className={` hidden lg:block   } `}
+                variant="ghost"
+                size="xs"
+                asChild
+              >
+                <Link href="/projects">Projects</Link>
+              </Button>
+              <Button
+                className={` hidden lg:block  } `}
+                variant="ghost"
+                size="xs"
+                asChild
+              >
+                <Link href="/about">About</Link>
+              </Button>
+              <Button
+                className={` hidden lg:block  }`}
+                variant="ghost"
+                size="xs"
+                asChild
+              >
+                <Link href="/studio">Log In</Link>
+              </Button>
+            </span>
             <Button
               className={` hidden lg:block  `}
               variant="default"

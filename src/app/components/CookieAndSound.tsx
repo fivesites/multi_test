@@ -6,7 +6,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Volume2 } from "@/components/animate-ui/icons/volume-2";
 import { VolumeOff } from "@/components/animate-ui/icons/volume-off";
-import { useReel } from "@/context/ReelContext";
+import { useSound } from "@/context/SoundContext";
 import { cn } from "@/lib/utils";
 
 /** How long the visitor gets to look at the page before we ask anything. */
@@ -33,7 +33,7 @@ export default function CookieAndSound({
   className?: string;
 }) {
   const [step, setStep] = useState<Step>("idle");
-  const { muted, toggleMute, setMuted } = useReel();
+  const { muted, toggleMute, setMuted } = useSound();
 
   const settle = useCallback(
     (soundAccepted: boolean) => {
@@ -111,11 +111,14 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 lg:top-13 lg:left-3 lg:right-3 lg:bottom-auto left-auto right-0  py-3 lg:py-1.5 flex    gap-3 items-center lg:items-baseline    ",
+            "fixed z-50 bottom-0 lg:top-13 lg:right-3 lg:bottom-auto left-auto right-0  py-3 lg:py-1.5 flex    gap-3 items-center lg:items-baseline    ",
 
             step === "volume"
-              ? "justify-start bg-transparent px-3  lg:px-0"
-              : "justify-center lg:justify-start  bg-transparent lg:bg-transparent px-3    ",
+              ? "justify-end bg-transparent px-3  lg:px-0"
+              : "justify-center lg:justify-end  bg-transparent lg:bg-transparent px-3    ",
+            // Desktop has MultiVertNav's Sound On checkbox, so the sound
+            // question and the volume toggle are mobile-only there.
+            step !== "cookie" && "lg:hidden",
             className,
           )}
         >
@@ -140,8 +143,8 @@ export default function CookieAndSound({
                   Accept
                 </Button>
                 <Button
+                  variant="outline"
                   size="xs"
-                  variant="secondary"
                   className={action}
                   onClick={declineCookies}
                 >
@@ -174,11 +177,11 @@ export default function CookieAndSound({
             /* Answered: nothing left to say, just the volume toggle. */
             <div className="flex items-center gap-3">
               <Button
-                variant="secondary"
+                variant="link"
                 size="xs"
                 aria-label={muted ? "Unmute" : "Mute"}
                 onClick={toggleMute}
-                className="flex  justify-center items-center  "
+                className="flex  justify-center items-center text-primary  "
               >
                 {muted ? "Sound On" : "Sound Off"}
               </Button>

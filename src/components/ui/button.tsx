@@ -5,7 +5,7 @@ import { Slot } from "radix-ui";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-start gap-2 cursor-pointer rounded-md text-sm font-diatype font-medium whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "inline-flex shrink-0 items-center justify-start gap-2 cursor-pointer rounded-md text-sm font-visual font-light  whitespace-nowrap transition-all outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
@@ -13,12 +13,12 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40",
         outline:
-          "border  border bg-background text-foreground shadow-xs hover:bg-secondary hover:text-secondary-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50",
+          "border  border bg-transparent border-primary text-primary hover:bg-primary hover:text-primary-foreground hover:border-primary  ",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-        link: " ",
+          "border-transparent text-primary bg-transparent hover:bg-transparent  hover:text-primary hover:border-primary",
+        link: " text-primary ",
         nav: " text-primary btnText underline-none hover:underline-none border-b border-b-primary  hover:bg-primary hover:text-primary-foreground transition-all ",
       },
       size: {

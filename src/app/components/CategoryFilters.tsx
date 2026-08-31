@@ -75,13 +75,12 @@ export default function CategoryFilters({
           >
             <Button
               variant="link"
-              size="filter"
               onClick={() => handleFilterChange(cat)}
               className={cn(
-                "transition-all h-min text-left duration-150    w-full uppercase  font-medium text-sm tracking-wide justify-start",
+                "transition-all font-diatype text-xs uppercase  px-0 py-0 leading-[1]",
                 activeFilter === cat
-                  ? "text-primary hover:text-primary px-1.5"
-                  : "text-foreground px-0 hover:px-1.5 hover:text-primary",
+                  ? "text-primary hover:text-primary "
+                  : "text-foreground px-0  hover:text-primary",
               )}
             >
               {getFilterLabel(cat)}
