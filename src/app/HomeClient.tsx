@@ -88,24 +88,25 @@ function HomeClientInner() {
               pinning its top to 0 puts the wordmark on the viewport floor.
               Mobile keeps the plain hero: no pin, no travel. */}
           <section className="relative z-10 h-dvh  flex flex-col items-start justify-center lg:justify-center   ">
-            <div className="flex flex-col items-center justify-center lg:justify-start lg:items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
+            <div className="grid grid-cols-4 items-center justify-center lg:justify-start lg:items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
               {/* Its own container, so the wordmark measures against this box
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
-              <h2 className="text-center  h2Text  font-thin text-primary">
+              <h2 className="col-start-3 lg:col-start-2 text-center  h2Text  font-thin text-primary">
                 multisquared
               </h2>
             </div>
           </section>
           {/* ABOUT — the last thing the pinned wordmark scrolls behind. */}
-          <section className="  relative  w-full flex flex-col justify-start items-start  pt-3  gap-3 min-h-[75dvh] bg-secondary text-primary ">
-            {/* Pinned to the section's top-left corner. The positioning sits
+          <section className="  relative  w-full flex flex-col justify-center items-center  pt-3  gap-3 min-h-[75dvh] bg-secondary text-primary ">
+            {/* Sits above the heading, on the same quarter-width gutter as the
+                Selected Projects label. The positioning sits
                 on a wrapper rather than on CheckButton: CheckButton puts its
                 className on both its outer link and its inner box, so an
                 `absolute` passed straight in would take the inner box out of
                 flow and collapse the link around it. */}
-            <div className="absolute top-0 left-1 z-20">
+            <div className="absolute top-0 right-0 left-auto lg:left-1/4 lg:right-auto z-20">
               <CheckButton
                 label="about us"
                 href="/about"
@@ -117,7 +118,7 @@ function HomeClientInner() {
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
               text={aboutBody ?? undefined}
-              className=" "
+              className="w-full justify-center lg:content-center"
             />
           </section>
         </div>
@@ -133,6 +134,9 @@ function HomeClientInner() {
             />
           </div>
 
+          <h2 className="col-start-4 col-span-5   h2Text  font-thin text-primary">
+            experience our work
+          </h2>
           {/* selected projects 1 */}
           <Link
             href="/projects"

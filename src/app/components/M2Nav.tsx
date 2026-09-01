@@ -327,7 +327,7 @@ export default function M2Nav() {
           />
           {/* desktopmenu button */}
           <CheckButton
-            className="hidden border  lg:flex     w-full  "
+            className="hidden   lg:flex     w-full  "
             size="lg"
             label={open ? "close menu" : "multisquared"}
             active={open}
