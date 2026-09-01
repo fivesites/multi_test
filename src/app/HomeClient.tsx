@@ -12,13 +12,9 @@ import { useWork } from "@/context/WorkContext";
 import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "motion/react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { cn } from "@/lib/utils";
-import TypedRotator from "./components/TypedRotator";
 import AboutSectionText from "./components/AboutSectionText";
 import { getCategoryLabel } from "@/lib/categories";
+import CheckButton from "./components/CheckButton";
 
 import HomeFooter from "./components/HomeFooter";
 
@@ -77,17 +73,8 @@ function HomeClientInner() {
   // Falls back to the first media image for works that have no cover set.
   const atgCover = atg?.coverUrl ?? atg?.url;
 
-  // One work entry per image, so the same client shows up many times.
-  const clients = useMemo(
-    () =>
-      Array.from(
-        new Set(items.map((i) => i.client).filter((c): c is string => !!c)),
-      ).sort((a, b) => a.localeCompare(b)),
-    [items],
-  );
-
   return (
-    <div className="w-full bg-secondary ">
+    <div className="w-full bg-background ">
       <div className="relative flex min-h-dvh flex-col w-full px-0">
         {/* HERO + ABOUT share a wrapper. A sticky box can only travel inside
             its own containing block, so this wrapper's bottom edge is where
@@ -100,175 +87,80 @@ function HomeClientInner() {
               one viewport tall with the wordmark on its bottom edge, so
               pinning its top to 0 puts the wordmark on the viewport floor.
               Mobile keeps the plain hero: no pin, no travel. */}
-          <section className="relative z-10 h-dvh  flex flex-col items-start justify-center lg:justify-end   ">
-            <div className="flex flex-col items-center justify-center lg:justify-start lg:items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal text-red-600">
+          <section className="relative z-10 h-dvh  flex flex-col items-start justify-center lg:justify-center   ">
+            <div className="flex flex-col items-center justify-center lg:justify-start lg:items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
               {/* Its own container, so the wordmark measures against this box
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
-              <span className="block lg:hidden px-6 text-center">
-                <TypedRotator
-                  className="text-center"
-                  words={["multi2.co", "we multiply what matters..."]}
-                />
-              </span>
-              <div className="hidden  @container w-full overflow-x-clip px-3">
-                <h1 className="heroWordmark mb-0 text-center lg:text-left text-primary">
-                  {/* One word, so the rotator types it in and holds it rather
-                    than cycling — its invisible sizing copy keeps the line from
-                    reflowing mid-type. */}
-                  multi2.co
-                </h1>
-              </div>
+              <h2 className="text-center  h2Text  font-thin text-primary">
+                multisquared
+              </h2>
             </div>
           </section>
           {/* ABOUT — the last thing the pinned wordmark scrolls behind. */}
-          <section className="  relative z-10  w-full flex flex-col justify-start items-start  pt-3  gap-3 min-h-dvh ">
-            <div className="w-full   p-3 flex flex-col gap-8 lg:gap-0 items-start justify-start  text-primary h-full">
-              <AboutSectionText
-                plainText={aboutEntry?.plainText ?? ""}
-                text={aboutBody ?? undefined}
-                className=" "
+          <section className="  relative  w-full flex flex-col justify-start items-start  pt-3  gap-3 min-h-[75dvh] bg-secondary text-primary ">
+            {/* Pinned to the section's top-left corner. The positioning sits
+                on a wrapper rather than on CheckButton: CheckButton puts its
+                className on both its outer link and its inner box, so an
+                `absolute` passed straight in would take the inner box out of
+                flow and collapse the link around it. */}
+            <div className="absolute top-0 left-1 z-20">
+              <CheckButton
+                label="about us"
+                href="/about"
+                size="lg"
+                active
+                className="text-primary"
               />
             </div>
+            <AboutSectionText
+              plainText={aboutEntry?.plainText ?? ""}
+              text={aboutBody ?? undefined}
+              className=" "
+            />
           </section>
         </div>
 
-        {/* SELECTED PROJECTS — outside the wrapper, so arriving here is what
-            releases the wordmark. */}
-        <section className="  relative z-10  w-full flex flex-col justify-start items-start  pt-3  gap-3 ">
-          <div className="  min-w-0 flex-col items-start justify-start gap-0 w-full p-3 ">
-            <h3 className="h3Text lg:pText text-primary mb-1.5   ">
-              Selected Projects
-            </h3>
-
-            <div className="lg:grid flex flex-col   gap-x-3 w-full border-t border-primary  pt-3 lg:grid-cols-12 gap-3 ">
-              {/* BOX */}
-              <Link
-                href="/projects"
-                className="flex flex-col lg:flex-row-reverse  gap-3 lg:col-span-12  w-full"
-              >
-                {/* TEXT */}
-                <span className="flex flex-col lg:flex-col-reverse lg:items-start lg:justify-between w-full">
-                  <h2 className="h2Text text-primary max-w-sm mb-3 lg:mb-0 lg:max-w-xl lg:p-3  ">
-                    When We Multiplied the Potential Winners for ATG
-                  </h2>{" "}
-                  <span className="flex  gap-y-0 flex-col lg:flex-row justify-between items-start w-full">
-                    <h3 className=" h3Text text-primary  ">ATG</h3>
-                    <div className="hidden lg:flex flex-wrap uppercase items-start justify-end gap-x-2">
-                      {atgCategories.map((c) => (
-                        <h3 key={c} className="h3Text  text-primary  ">
-                          {getCategoryLabel(c)}
-                        </h3>
-                      ))}
-                    </div>
-                  </span>
-                </span>
-                {/* `fill` needs a positioned box to measure against, and the
-                    aspect ratio has to live on that box so the square holds
-                    while the image is still loading. */}
-                <div className="relative w-full aspect-square overflow-hidden bg-primary max-w-1/3">
-                  {atgCover ? (
-                    <Image
-                      src={atgCover}
-                      alt={atg?.alt ?? "ATG"}
-                      fill
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                      className="object-cover"
-                    />
-                  ) : (
-                    <span className="absolute inset-0 flex items-center justify-center font-diatype text-primary-foreground text-xs uppercase">
-                      ATG
-                    </span>
-                  )}
-                </div>
-              </Link>
-            </div>
+        <section className="  relative z-10  min-h-[200dvh] w-full flex flex-col lg:grid lg:grid-cols-12 lg:pt-[25dvh]  gap-3 px-5 pt-5 pb-5 lg:px-3  ">
+          <div className="absolute top-5 lg:top-0 left-1 lg:left-1/4  z-20">
+            <CheckButton
+              label="selected projects"
+              href="/projects"
+              size="lg"
+              active
+              className="text-primary"
+            />
           </div>
+
+          {/* selected projects 1 */}
+          <Link
+            href="/projects"
+            className="relative flex flex-col-reverse  mt-[25dvh]  gap-3 col-start-1 col-span-12  w-full"
+          >
+            <div className=" relative w-full px-1 lg:w-1/2 mx-auto aspect-square">
+              <Image
+                src={atgCover}
+                alt={atg?.alt ?? "ATG"}
+                fill
+                sizes="(max-width: 1024px) 100vw, 50vw"
+                className="object-cover"
+              />
+            </div>
+            {/* TEXT */}
+            <span className="relative lg:grid grid-cols-12 flex flex-row items-baseline justify-between   lg:justify-start   w-full ">
+              <h3 className="col-start-4 h3Text text-primary max-w-sm mb-0 px-2 lg:mb-0 lg:max-w-xl  lg:px-3 lg:pt-6 lg:pb-4 lowercase  ">
+                Generating Wins
+              </h3>{" "}
+              <h3 className=" col-start-8 h3Text text-primary px-5 lg:px-3 space-x-3 ">
+                jureskogs
+              </h3>
+            </span>
+          </Link>
         </section>
       </div>
       <HomeFooter />
     </div>
-  );
-}
-
-type SubscribeStatus = "idle" | "submitting" | "done" | "error";
-
-function NewsletterSection() {
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<SubscribeStatus>("idle");
-
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (status === "submitting") return;
-    setStatus("submitting");
-    try {
-      // The route 501s until NEWSLETTER_ENDPOINT is set — see
-      // src/app/api/newsletter/route.ts.
-      const res = await fetch("/api/newsletter", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!res.ok) throw new Error(String(res.status));
-      setStatus("done");
-      setEmail("");
-    } catch {
-      setStatus("error");
-    }
-  }
-
-  return (
-    <section className="relative z-10 min-h-dvh w-full flex flex-col justify-center gap-8 px-6 py-24 lg:px-6">
-      <div className="flex flex-col gap-3">
-        <h3 className="btnText uppercase tracking-widest text-muted-foreground">
-          Newsletter
-        </h3>
-        <h2 className="font-visual text-3xl lg:text-6xl font-thin lowercase leading-tight text-secondary-foreground max-w-2xl">
-          What we make, once in a while.
-        </h2>
-      </div>
-
-      {status === "done" ? (
-        <p className="tracking-wide font-diatype text-base lg:text-lg text-secondary-foreground">
-          You&apos;re on the list. Talk soon.
-        </p>
-      ) : (
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col lg:flex-row gap-3 w-full max-w-xl"
-        >
-          <label htmlFor="newsletter-email" className="sr-only">
-            Email
-          </label>
-          <Input
-            id="newsletter-email"
-            type="email"
-            required
-            autoComplete="email"
-            placeholder="Enter your email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-invalid={status === "error"}
-            className="lg:h-14 bg-chart-1 border-transparent"
-          />
-          <Button
-            type="submit"
-            size="lg"
-            disabled={status === "submitting"}
-            className="btnText w-full lg:h-14 lg:w-48"
-          >
-            {status === "submitting" ? "Subscribing…" : "Subscribe"}
-          </Button>
-        </form>
-      )}
-
-      {status === "error" && (
-        <p role="status" className="btnText text-destructive">
-          That didn&apos;t go through. Try again in a moment.
-        </p>
-      )}
-    </section>
   );
 }
 

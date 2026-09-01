@@ -190,7 +190,7 @@ export default function CustomCursor() {
       className="pointer-events-none fixed top-0 left-0 z-[999] text-primary will-change-transform"
       style={{ opacity: visible ? 1 : 0 }}
     >
-      <Frame className="block h-3 w-3 -translate-x-1/2 -translate-y-1/2" />
+      <Frame className="block h-4 w-4 -translate-x-1/2 -translate-y-1/2" />
     </div>
   );
 }

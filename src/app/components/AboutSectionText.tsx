@@ -51,15 +51,17 @@ export default function AboutSectionText({
   return (
     <div
       className={cn(
-        "min-h-full lg:h-[66.6dvh] flex mt-44 lg:mt-6 flex-col items-start justify-start   pb-6 px-0 lg:px-6 lg:items-baseline  overflow-y-scroll lg:grid lg:grid-cols-12 gap-6   ",
+        "min-h-full lg:h-dvh flex   flex-col lg:grid lg:grid-cols-4  items-center justify-start   pb-6 px-0 lg:px-6   overflow-y-scroll  gap-6   ",
         className,
       )}
     >
-      <h2 className="hidden  h2Text  lg:col-span-6 lg:text-left lg:col-start-1 lg:flex justify-start  ">
+      <h2 className="  h2Text  lg:col-span-4 text-left  lg:text-center   ">
         We Multiply What Matters
       </h2>
       {text && (
-        <p className="lg:col-span-6 pText max-w-md lg:max-w-full ">{text}</p>
+        <p className="lg:col-start-2 lg:col-span-2 pText p-6 lg:p-0  lg:max-w-full ">
+          {text}
+        </p>
       )}
     </div>
   );
