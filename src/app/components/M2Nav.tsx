@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { useSound } from "@/context/SoundContext";
@@ -9,6 +9,7 @@ import { useBusyCursor } from "@/context/CursorContext";
 import VolumeSlider from "./VolumeSlider";
 import CheckButton from "./CheckButton";
 import TerminalM2Button from "./TerminalM2Button";
+import { Loading5 } from "./marks";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -32,12 +33,19 @@ function NavVertical({
   onNavigate,
   onOpenSettings,
   settingsOpen,
+  theme,
+  onCycleTheme,
 }: {
   onNavigate: (href: string) => void;
   onOpenSettings: () => void;
   settingsOpen: boolean;
+  theme: ThemeId;
+  onCycleTheme: () => void;
 }) {
   const pathname = usePathname();
+  // The swatch always shows the palette that is on; tapping it steps to the
+  // next one, so the row doubles as the readout and the control.
+  const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   return (
     <motion.div
@@ -59,6 +67,12 @@ function NavVertical({
             onClick={() => onNavigate(item.href)}
           />
         ))}
+        <ColorButton
+          label={current.label}
+          swatch={current.swatch}
+          active
+          onClick={onCycleTheme}
+        />
       </nav>
       <nav className="flex lg:hidden  w-full flex-col gap-y-0 px-1  ">
         {NAV_ITEMS.map((item) => (
@@ -72,23 +86,13 @@ function NavVertical({
             onClick={() => onNavigate(item.href)}
           />
         ))}
-      </nav>
-      <span className="flex lg:hidden px-2  ">
-        <CheckButton
-          className="  lowercase pb-0 "
-          size="lg"
-          label="Settings"
-          active={settingsOpen}
-          onClick={onOpenSettings}
+        <ColorButton
+          label={current.label}
+          swatch={current.swatch}
+          active
+          onClick={onCycleTheme}
         />
-      </span>
-      <CheckButton
-        className="hidden    lg:flex font-visual tracking-wide text-primary pb-0  text-xl lowercase whitespace-nowrap lg:text-3xl font-thin   w-full "
-        size="lg"
-        label="Settings"
-        active={settingsOpen}
-        onClick={onOpenSettings}
-      />
+      </nav>
     </motion.div>
   );
 }
@@ -107,66 +111,48 @@ function SettingsHeader({
   );
 }
 
-/** One row per palette: the two swatch halves, and the class globals.css
- *  hangs the palette off. The swatches are literal colours rather than
- *  bg-primary/bg-secondary — token-based ones would restyle themselves on
- *  every theme change, so the red chip would look blue in the blue theme.
- *  Written out in full because Tailwind only emits classes it can find as
- *  complete strings in the source. */
+/** One row per palette: the colour its mark is drawn in, and the class
+ *  globals.css hangs the palette off. The swatch is a literal colour rather
+ *  than text-primary — a token-based one would restyle itself on every theme
+ *  change, so the red mark would look blue in the blue theme. Written out in
+ *  full because Tailwind only emits classes it can find as complete strings in
+ *  the source. */
 const THEMES = [
   {
     id: "red",
     label: "Red",
     className: "multi2_red",
-    swatch: [
-      "bg-[oklch(0.628_0.2577_29.2339)]",
-      "bg-[oklch(0.628_0.2577_29.2339)]/10",
-    ],
+    swatch: "text-[oklch(0.628_0.2577_29.2339)]",
   },
   {
     id: "blue",
     label: "Blue",
     className: "multi2_blue",
-    swatch: [
-      "bg-[oklch(0.452_0.3132_264.05)]",
-      "bg-[oklch(0.452_0.3132_264.05)]/10",
-    ],
+    swatch: "text-[oklch(0.452_0.3132_264.05)]",
   },
   {
     id: "green",
     label: "Green",
     className: "multi2_green",
-    // The only pair that is two real colours rather than a colour and its
-    // tint: pure green beside #003500.
-    swatch: [
-      "bg-[oklch(0.8664_0.2948_142.5)]",
-      "bg-[oklch(0.285_0.097_142.5)]",
-    ],
+    swatch: "text-[oklch(0.8664_0.2948_142.5)]",
   },
   {
     id: "pink",
     label: "Pink",
     className: "multi2_pink",
-    swatch: [
-      "bg-[oklch(0.7017_0.3225_328.36)]",
-      "bg-[oklch(0.7017_0.3225_328.36)]/10",
-    ],
+    swatch: "text-[oklch(0.7017_0.3225_328.36)]",
   },
   {
     id: "teal",
     label: "Teal",
     className: "multi2_teal",
-    // Teal #008080 beside #CCFFFF, the same dark/light pairing as green.
-    swatch: [
-      "bg-[oklch(0.5431_0.0927_194.77)]",
-      "bg-[oklch(0.965_0.0516_196.33)]",
-    ],
+    swatch: "text-[oklch(0.5431_0.0927_194.77)]",
   },
   {
     id: "bw",
     label: "B/W",
     className: "multi2_bw",
-    swatch: ["bg-[oklch(0_0_0)]", "bg-[oklch(0_0_0)]/10"],
+    swatch: "text-[oklch(0_0_0)]",
   },
 ] as const;
 
@@ -183,35 +169,48 @@ function ColorButton({
 }: {
   label: string;
   active: boolean;
-  swatch: readonly [string, string];
+  swatch: string;
   onClick: () => void;
 }) {
+  // Counted up rather than wrapped at 4, so the mark keeps turning the same
+  // way instead of snapping back to zero on every fourth click.
+  const [turns, setTurns] = useState(0);
+
   return (
     <button
       type="button"
       role="radio"
       aria-checked={active}
-      onClick={onClick}
-      className={`flex cursor-pointer items-center gap-x-3 w-full ${active ? "border" : "border border-transparent"}`}
+      onClick={() => {
+        setTurns((t) => t + 1);
+        onClick();
+      }}
+      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-5 lg:px-4 h-14 `}
     >
-      <div
-        className={`flex items-center gap-x-0 ${active ? "border-r" : "border-transparent"}`}
+      {/* The mark draws in currentColor, so the palette's colour rides in as a
+          text colour. The quarter turn sits on a wrapper: the svg is inline,
+          so it needs a block box of its own to rotate about its own centre. */}
+      <motion.span
+        className="flex shrink-0"
+        animate={{ rotate: turns * 90 }}
+        transition={{ duration: 0.25, ease: "easeOut" }}
       >
-        <div className={`h-6 w-3 ${swatch[0]}`} />
-        <div className={`h-6 w-3 ${swatch[1]}`} />
-      </div>
-      <label className="shrink-0 cursor-pointer font-visual text-xs text-primary">
+        <Loading5 className={`h-4 w-4 ${swatch}`} />
+      </motion.span>
+      <label className="hidden shrink-0 cursor-pointer font-visual text-xs lowercase text-primary">
         {label}
       </label>
     </button>
   );
 }
 
-function SettingsVerticalOverlay({ className }: { className?: string }) {
-  const { muted, toggleMute } = useSound();
+/** Owned by M2Nav rather than by either panel: the nav column and the settings
+ *  overlay are on screen together, so a copy of this state in each would let
+ *  one of them fall out of step with the class actually on <html>. */
+function useTheme() {
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
 
-  // The class lives on <html>, so it outlives this panel unmounting — read it
+  // The class lives on <html>, so it outlives any panel unmounting — read it
   // back rather than assuming the default.
   useEffect(() => {
     const found = THEMES.find((t) =>
@@ -222,12 +221,31 @@ function SettingsVerticalOverlay({ className }: { className?: string }) {
 
   // Every class is set explicitly rather than just adding the new one: the
   // palettes are exclusive, and a leftover class would win on cascade order.
-  function selectTheme(next: ThemeId) {
+  const selectTheme = useCallback((next: ThemeId) => {
     for (const t of THEMES) {
       document.documentElement.classList.toggle(t.className, t.id === next);
     }
     setTheme(next);
-  }
+  }, []);
+
+  const cycleTheme = useCallback(() => {
+    const i = THEMES.findIndex((t) => t.id === theme);
+    selectTheme(THEMES[(i + 1) % THEMES.length].id);
+  }, [theme, selectTheme]);
+
+  return { theme, selectTheme, cycleTheme };
+}
+
+function SettingsVerticalOverlay({
+  className,
+  theme,
+  onSelectTheme,
+}: {
+  className?: string;
+  theme: ThemeId;
+  onSelectTheme: (next: ThemeId) => void;
+}) {
+  const { muted, toggleMute } = useSound();
 
   return (
     <motion.div
@@ -235,10 +253,13 @@ function SettingsVerticalOverlay({ className }: { className?: string }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`${className} fixed bottom-4 lg:top-24 right-0  lg:bottom-auto flex flex-col gap-4 p-4 w-full lg:w-1/4`}
+      // Mobile keeps it in the bottom-left corner. Desktop pins it under the
+      // nav bar on the right, opposite the menu column it is opened from —
+      // top-16 clears the bar's own height.
+      className={`${className} fixed bottom-4  left-4  lg:bottom-auto lg:left-auto lg:top-16 lg:right-4 flex flex-col gap-4 p-4 lg:p-0 w-full lg:w-[calc(25vw-1rem)]`}
     >
       {!muted && (
-        <div className="grid grid-cols-2 lg:flex lg:flex-col gap-x-4 flex-col   pr-4 lg:p-4 border">
+        <div className="grid grid-cols-2 lg:flex lg:flex-col gap-x-4 flex-col   pr-4 lg:p-2 border  bg-secondary">
           <CheckButton
             className="lg:hidden font-visual font-thin lowercase text-xl whitespace-nowrap lg:text-3xl   "
             size="lg"
@@ -246,10 +267,9 @@ function SettingsVerticalOverlay({ className }: { className?: string }) {
             active={!muted}
             onClick={toggleMute}
           />
-          <VolumeSlider label="Volume" />
         </div>
       )}
-      <div className="flex flex-col p-4 border gap-4">
+      <div className="flex flex-col  gap-4 bg-transparent">
         <div className="grid grid-cols-3 lg:grid-cols-2 grid-rows-3 gap-2">
           {THEMES.map((t) => (
             <ColorButton
@@ -257,7 +277,7 @@ function SettingsVerticalOverlay({ className }: { className?: string }) {
               label={t.label}
               swatch={t.swatch}
               active={theme === t.id}
-              onClick={() => selectTheme(t.id)}
+              onClick={() => onSelectTheme(t.id)}
             />
           ))}
         </div>
@@ -270,6 +290,7 @@ export default function M2Nav() {
   const pathname = usePathname();
   const { contentDoneKey } = useUI();
   const { muted, toggleMute } = useSound();
+  const { theme, selectTheme, cycleTheme } = useTheme();
 
   // The column is opened from the menu button at every width.
   const [open, setOpen] = useState(false);
@@ -360,9 +381,17 @@ export default function M2Nav() {
             onNavigate={handleNavigate}
             onOpenSettings={() => setOpenSettings((o) => !o)}
             settingsOpen={openSettings}
+            theme={theme}
+            onCycleTheme={cycleTheme}
           />
         )}
-        {openSettings && <SettingsVerticalOverlay key="settings" />}
+        {openSettings && (
+          <SettingsVerticalOverlay
+            key="settings"
+            theme={theme}
+            onSelectTheme={selectTheme}
+          />
+        )}
       </AnimatePresence>
     </div>
   );

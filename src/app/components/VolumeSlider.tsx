@@ -82,7 +82,7 @@ export default function VolumeSlider({
             setVolume(volume - STEP);
           }
         }}
-        className="relative h-6 w-full flex-1 cursor-pointer touch-none overflow-hidden bg-secondary select-none"
+        className="relative h-6 w-full flex-1 cursor-pointer touch-none overflow-hidden bg-secondary select-none border"
       >
         <motion.div
           aria-hidden
@@ -97,13 +97,13 @@ export default function VolumeSlider({
         <motion.span
           aria-hidden
           style={{ clipPath: clip }}
-          className="absolute inset-0 flex items-center justify-center font-visual text-xs text-primary-foreground tabular-nums"
+          className="absolute inset-0 flex items-center justify-center font-visual text-[0.5rem] text-primary-foreground tabular-nums"
         >
           {amount}
         </motion.span>
       </div>
       {label ? (
-        <span className="shrink-0 font-visual text-xs text-primary">
+        <span className="shrink-0 font-visual text-xs text-primary lowercase pr-3">
           {label}
         </span>
       ) : null}

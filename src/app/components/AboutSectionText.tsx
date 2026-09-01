@@ -55,7 +55,7 @@ export default function AboutSectionText({
         className,
       )}
     >
-      <h2 className="  h2Text col-start-1 col-span-4 lg:col-start-2 lg:col-span-3  mb-4  ">
+      <h2 className="  h2Text col-start-2 col-span-3 lg:col-start-2 lg:col-span-3  mb-4  ">
         We Multiply What Matters
       </h2>
       {text && (

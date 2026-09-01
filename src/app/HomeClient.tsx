@@ -14,7 +14,7 @@ import Link from "next/link";
 import Image from "next/image";
 import AboutSectionText from "./components/AboutSectionText";
 import { getCategoryLabel } from "@/lib/categories";
-import CheckButton from "./components/CheckButton";
+import LandningBlock from "./components/LandningBlock";
 
 import HomeFooter from "./components/HomeFooter";
 
@@ -87,81 +87,87 @@ function HomeClientInner() {
               one viewport tall with the wordmark on its bottom edge, so
               pinning its top to 0 puts the wordmark on the viewport floor.
               Mobile keeps the plain hero: no pin, no travel. */}
-          <section className="relative z-10 h-dvh  flex flex-col items-start justify-center lg:justify-center   ">
-            <div className="grid grid-cols-4 items-center justify-center lg:justify-start lg:items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
-              {/* Its own container, so the wordmark measures against this box
+          <LandningBlock className="h-dvh content-center">
+            {/* Its own container, so the wordmark measures against this box
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
+            <div className="grid grid-cols-4 items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
               <h2 className="col-start-3 lg:col-start-2 text-center  h2Text  font-thin text-primary">
                 multisquared
               </h2>
             </div>
-          </section>
+          </LandningBlock>
           {/* ABOUT — the last thing the pinned wordmark scrolls behind. */}
-          <section className="  relative  w-full flex flex-col justify-center items-center  pt-3  gap-3 min-h-[75dvh] bg-secondary text-primary ">
-            {/* Sits above the heading, on the same quarter-width gutter as the
-                Selected Projects label. The positioning sits
-                on a wrapper rather than on CheckButton: CheckButton puts its
-                className on both its outer link and its inner box, so an
-                `absolute` passed straight in would take the inner box out of
-                flow and collapse the link around it. */}
-            <div className="absolute top-0 right-0 left-auto lg:left-1/4 lg:right-auto z-20">
-              <CheckButton
-                label="about us"
-                href="/about"
-                size="lg"
-                active
-                className="text-primary"
-              />
-            </div>
+          <LandningBlock
+            label="about us"
+            href="/about"
+            bg="bg-secondary text-primary"
+            className="min-h-[75dvh] pt-3"
+          >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
               text={aboutBody ?? undefined}
               className="w-full justify-center lg:content-center"
             />
-          </section>
+          </LandningBlock>
         </div>
 
-        <section className="  relative z-10  min-h-[200dvh] w-full flex flex-col lg:grid lg:grid-cols-12 lg:pt-[25dvh]  gap-3 px-5 pt-5 pb-5 lg:px-3  ">
-          <div className="absolute top-5 lg:top-0 left-1 lg:left-1/4  z-20">
-            <CheckButton
-              label="selected projects"
+        <LandningBlock
+          label="selected projects"
+          href="/projects"
+          className="min-h-[200dvh] px-5 pt-5 pb-5 lg:px-3 lg:pt-[25dvh]"
+        >
+          <div className="grid lg:grid-cols-12 grid-cols-4 gap-3 w-full">
+            <h2 className="col-start-2 lg:col-start-4 col-span-5   h2Text  font-thin text-primary">
+              experience our work
+            </h2>
+            {/* selected projects 1 */}
+            <Link
               href="/projects"
-              size="lg"
-              active
-              className="text-primary"
-            />
+              className="relative flex flex-col-reverse  mt-[25dvh]  gap-3 col-start-1 col-span-12  w-full"
+            >
+              <div className=" relative w-full px-1 lg:w-1/2 mx-auto aspect-square">
+                <Image
+                  src={atgCover}
+                  alt={atg?.alt ?? "ATG"}
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
+              {/* TEXT */}
+              <span className="relative lg:grid grid-cols-12 flex flex-row items-baseline justify-between   lg:justify-start   w-full ">
+                <h3 className="col-start-4 h3Text text-primary max-w-sm mb-0 px-2 lg:mb-0 lg:max-w-xl  lg:px-3 lg:pt-6 lg:pb-4 lowercase  ">
+                  Generating Wins
+                </h3>{" "}
+                <h3 className=" col-start-8 h3Text text-primary px-5 lg:px-3 space-x-3 ">
+                  jureskogs
+                </h3>
+              </span>
+            </Link>
           </div>
-
-          <h2 className="col-start-4 col-span-5   h2Text  font-thin text-primary">
-            experience our work
-          </h2>
-          {/* selected projects 1 */}
-          <Link
-            href="/projects"
-            className="relative flex flex-col-reverse  mt-[25dvh]  gap-3 col-start-1 col-span-12  w-full"
-          >
-            <div className=" relative w-full px-1 lg:w-1/2 mx-auto aspect-square">
-              <Image
-                src={atgCover}
-                alt={atg?.alt ?? "ATG"}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </div>
-            {/* TEXT */}
-            <span className="relative lg:grid grid-cols-12 flex flex-row items-baseline justify-between   lg:justify-start   w-full ">
-              <h3 className="col-start-4 h3Text text-primary max-w-sm mb-0 px-2 lg:mb-0 lg:max-w-xl  lg:px-3 lg:pt-6 lg:pb-4 lowercase  ">
-                Generating Wins
-              </h3>{" "}
-              <h3 className=" col-start-8 h3Text text-primary px-5 lg:px-3 space-x-3 ">
-                jureskogs
-              </h3>
-            </span>
-          </Link>
-        </section>
+        </LandningBlock>
+        <LandningBlock
+          label="connect with us"
+          href="/connect"
+          bg="bg-secondary text-primary"
+          className="min-h-[75dvh] flex-col items-center justify-center pt-3"
+        >
+          <div className="grid lg:grid-cols-12 grid-cols-4 gap-3 w-full">
+            <h2 className="col-start-2 lg:col-start-4 col-span-8   h2Text  font-thin text-primary mb-4">
+              lets start talking today
+            </h2>
+            <p className="text-primary pText col-start-2 lg:col-start-4 col-span-5 lg:col-span-8 ">
+              Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
+              faucibus ex sapien vitae pellentesque sem placerat. In id cursus
+              mi pretium tellus duis convallis.{" "}
+            </p>
+            <button className="mt-4 col-start-2 lg:col-start-4 col-span-5 lg:col-span-6 h3Text bg-primary text-primary-foreground lg:text-xl px-5 py-3 rounded-md">
+              connect
+            </button>
+          </div>
+        </LandningBlock>
       </div>
       <HomeFooter />
     </div>
