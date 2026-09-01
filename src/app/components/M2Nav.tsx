@@ -22,6 +22,9 @@ const NAV_ITEMS = [
 /** Routes that never call notifyContentDone (e.g. /studio) still have to settle. */
 const READY_FALLBACK_MS = 2500;
 
+/** How far down the page counts as "the reader has moved on". */
+const SCROLLED_PX = 40;
+
 /** Home only matches exactly; the rest keep their mark on child routes too,
  *  so /projects/[slug] still reads as projects. */
 function isActive(pathname: string | null, href: string) {
@@ -134,7 +137,10 @@ const THEMES = [
     id: "green",
     label: "Green",
     className: "multi2_green",
-    swatch: "text-[oklch(0.8664_0.2948_142.5)]",
+    // The one palette whose primary is the dark half rather than the saturated
+    // one — taking the bright green here would paint the mark in this theme's
+    // own background colour.
+    swatch: "text-[oklch(0.285_0.097_142.5)]",
   },
   {
     id: "pink",
@@ -288,7 +294,7 @@ function SettingsVerticalOverlay({
 
 export default function M2Nav() {
   const pathname = usePathname();
-  const { contentDoneKey } = useUI();
+  const { contentDoneKey, setNavLoading } = useUI();
   const { muted, toggleMute } = useSound();
   const { theme, selectTheme, cycleTheme } = useTheme();
 
@@ -318,10 +324,37 @@ export default function M2Nav() {
     return () => clearTimeout(t);
   }, [pathname]);
 
+  // Scrolling is its own answer to "is the page still loading?" — once the
+  // reader has moved off the top the bar goes back to its own name, whether or
+  // not the route ever reported in. Scoped to the label: `loading` still drives
+  // the busy cursor until the page actually settles. Re-armed per route, and
+  // read once on mount so a restored scroll position counts too.
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    setScrolled(false);
+    const onScroll = () => {
+      if (window.scrollY > SCROLLED_PX) setScrolled(true);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [pathname]);
+
   // Home/About/Connect bump this once their content has finished typing.
   useEffect(() => {
     if (contentDoneKey > 0) setReady(true);
   }, [contentDoneKey]);
+
+  // "loading" wins over both: the bar reports the site's state before it
+  // reports the menu's.
+  const menuLoading = loading && !scrolled;
+
+  // Published so pages can line their own intro typing up behind the bar's.
+  useEffect(() => {
+    setNavLoading(menuLoading);
+  }, [menuLoading, setNavLoading]);
+
+  const menuLabel = menuLoading ? "loading" : open ? "close" : "multisquared";
 
   function handleNavigate(href: string) {
     setOpen(false);
@@ -338,39 +371,34 @@ export default function M2Nav() {
         className={`grid grid-cols-3 lg:grid-cols-12 gap-x-2 lg:gap-x-0 items-center justify-start   px-1 lg:px-0 h-16 lg:h-16 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
       >
         <div className="col-start-1 lg:col-start-1 lg:col-span-2 flex items-center gap-x-3">
-          {/* mobile menu button */}
+          {/* The label rides in as a child rather than through CheckButton's
+              own `terminal` flag, which has no way to pass the loading state
+              through. Keyed on the label so each change remounts and retypes
+              instead of swapping the letters in place. */}
           <CheckButton
-            className="flex lg:hidden font-visual    w-full  "
+            className="flex font-visual w-full"
             size="lg"
-            label={open ? "close" : "menu"}
+            label={menuLabel}
             active={open}
             onClick={() => setOpen((o) => !o)}
-          />
-          {/* desktopmenu button */}
-          <CheckButton
-            className="hidden   lg:flex     w-full  "
-            size="lg"
-            label={open ? "close menu" : "multisquared"}
-            active={open}
-            onClick={() => setOpen((o) => !o)}
-          />
+          >
+            <TerminalM2Button
+              className="tracking-wide"
+              key={menuLabel}
+              text={open ? "close" : "menu"}
+              visible
+              delay={0}
+              loading={menuLoading}
+              loadingText="loading"
+            />
+          </CheckButton>
         </div>
         <CheckButton
-          className="hidden col-start-11  col-span-2 lg:flex font-visual text-xl lg:text-3xl font-thin lg:justify-end  "
-          size="md"
+          className="hidden col-start-11  col-span-2 lg:flex font-visual  lg:justify-end   "
+          size="lg"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
           onClick={toggleMute}
-        />
-
-        <TerminalM2Button
-          className="hidden lg:col-start-6 lg:col-span-2 font-visual text-xl lg:text-3xl font-thin  text-primary text-left lg:text-center justify-start lg:justify-center px-5 pb-0.5 lg:px-4 lg:pb-1 h-14 items-center  lg:h-16 border"
-          text="multisquared"
-          visible
-          delay={0}
-          loading={loading}
-          loadingText="Loading"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
         />
       </div>
 

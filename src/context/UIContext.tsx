@@ -12,6 +12,10 @@ import {
 type UIContextType = {
   contentDoneKey: number;
   notifyContentDone: () => void;
+  /** M2Nav's own "loading…" state, published so a page can hold its intro
+   *  back until the bar has finished saying it. */
+  navLoading: boolean;
+  setNavLoading: (v: boolean) => void;
   showGrid: boolean;
   setShowGrid: (v: boolean) => void;
   showList: boolean;
@@ -47,6 +51,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
   const [contentDoneKey, setContentDoneKey] = useState(0);
+  const [navLoading, setNavLoading] = useState(true);
   const notifyContentDone = useCallback(
     () => setContentDoneKey((k) => k + 1),
     [],
@@ -85,6 +90,8 @@ export function UIProvider({ children }: { children: ReactNode }) {
         setNumCols,
         contentDoneKey,
         notifyContentDone,
+        navLoading,
+        setNavLoading,
       }}
     >
       {children}

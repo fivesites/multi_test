@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePresence } from "motion/react";
-import TypedWord from "./TypedWord";
+import TypedHeading from "./TypedHeading";
 import { useUI } from "@/context/UIContext";
 import { cn } from "@/lib/utils";
 import { Http2ServerRequest } from "node:http2";
@@ -55,9 +55,10 @@ export default function AboutSectionText({
         className,
       )}
     >
-      <h2 className="  h2Text col-start-2 col-span-3 lg:col-start-2 lg:col-span-3  mb-4  ">
-        We Multiply What Matters
-      </h2>
+      <TypedHeading
+        text="We Multiply What Matters"
+        className="  h2Text col-start-2 col-span-3 lg:col-start-2 lg:col-span-3  mb-4  "
+      />
       {text && (
         <p className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-3 pText p-6 lg:p-0  lg:max-w-full ">
           {text}

@@ -136,6 +136,7 @@ export default async function RootLayout({
                   <CursorProvider>
                     <CustomCursor />
                     <M2Nav />
+                    <CookieAndSound />
 
                     {children}
                   </CursorProvider>

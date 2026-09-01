@@ -8,6 +8,7 @@ import { Volume2 } from "@/components/animate-ui/icons/volume-2";
 import { VolumeOff } from "@/components/animate-ui/icons/volume-off";
 import { useSound } from "@/context/SoundContext";
 import { cn } from "@/lib/utils";
+import CheckButton from "./CheckButton";
 
 /** How long the visitor gets to look at the page before we ask anything. */
 const PROMPT_DELAY_MS = 6000;
@@ -98,8 +99,8 @@ export default function CookieAndSound({
   // `w-full` on the copy — in this flex row it would stretch and push the
   // buttons to the far edge, which is what justify-start is trying to avoid.
   const copy =
-    "  text-xs font-diatype text-primary    lg:max-w-lg lg:whitespace-nowrap";
-  const action = " flex-1  ";
+    "  text-sm font-visual lowercase tracking-wide text-primary    lg:max-w-lg lg:whitespace-nowrap";
+  const action = " flex-1 h-6 font-normal border  ";
 
   return (
     <AnimatePresence mode="wait">
@@ -128,8 +129,8 @@ export default function CookieAndSound({
                 We use cookies to improve your{" "}
                 <Button
                   variant="link"
-                  size="xs"
-                  className="underline underline-offset-4 px-0 text-primary"
+                  size="sm"
+                  className="underline underline-offset-4 px-0 text-primary font-normal"
                   asChild
                 >
                   <Link href="/privacy-policy" className="">
@@ -139,12 +140,12 @@ export default function CookieAndSound({
                 .
               </p>
               <div className="flex flex-row-reverse  gap-3 justify-start w-min">
-                <Button size="xs" className={action} onClick={acceptCookies}>
+                <Button size="sm" className={action} onClick={acceptCookies}>
                   Accept
                 </Button>
                 <Button
-                  variant="outline"
-                  size="xs"
+                  variant="secondary"
+                  size="sm"
                   className={action}
                   onClick={declineCookies}
                 >
@@ -157,14 +158,14 @@ export default function CookieAndSound({
               <p className={copy}>Enable sound?</p>
               <div className="flex flex-row-reverse  gap-3">
                 <Button
-                  size="xs"
+                  size="sm"
                   className={action}
                   onClick={() => answerSound(true)}
                 >
                   Yes
                 </Button>
                 <Button
-                  size="xs"
+                  size="sm"
                   variant="secondary"
                   className={action}
                   onClick={() => answerSound(false)}
@@ -176,15 +177,13 @@ export default function CookieAndSound({
           ) : (
             /* Answered: nothing left to say, just the volume toggle. */
             <div className="flex items-center gap-3">
-              <Button
-                variant="link"
-                size="xs"
-                aria-label={muted ? "Unmute" : "Mute"}
+              <CheckButton
+                className="lg:hidden "
+                size="md"
+                label={muted ? "sound off" : "sound on"}
+                active={!muted}
                 onClick={toggleMute}
-                className="flex  justify-center items-center text-primary  "
-              >
-                {muted ? "Sound On" : "Sound Off"}
-              </Button>
+              />
             </div>
           )}
         </motion.div>
