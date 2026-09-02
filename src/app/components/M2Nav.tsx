@@ -56,12 +56,12 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto`}
+      className={` space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-1.5 lg:px-3`}
     >
-      <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2">
+      <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
-            className=" tracking-wide text-primary pb-0 font-visual lowercase     w-full"
+            className="  text-primary pb-0 font-visual     w-full"
             size="lg"
             key={item.href}
             label={item.label}
@@ -77,7 +77,7 @@ function NavVertical({
           onClick={onCycleTheme}
         />
       </nav>
-      <nav className="flex lg:hidden  w-full flex-col gap-y-0 px-1  ">
+      <nav className="flex lg:hidden  w-full flex-col gap-y-0   ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className="f  lowercase pb-0"
@@ -191,7 +191,7 @@ function ColorButton({
         setTurns((t) => t + 1);
         onClick();
       }}
-      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-5 lg:px-4 h-14 `}
+      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-3 lg:px-3 h-12 lg:h-15 `}
     >
       {/* The mark draws in currentColor, so the palette's colour rides in as a
           text colour. The quarter turn sits on a wrapper: the svg is inline,
@@ -201,7 +201,7 @@ function ColorButton({
         animate={{ rotate: turns * 90 }}
         transition={{ duration: 0.25, ease: "easeOut" }}
       >
-        <Loading5 className={`h-4 w-4 ${swatch}`} />
+        <Loading5 className={`h-3 w-3 ${swatch}`} />
       </motion.span>
       <label className="hidden shrink-0 cursor-pointer font-visual text-xs lowercase text-primary">
         {label}
@@ -262,7 +262,7 @@ function SettingsVerticalOverlay({
       // Mobile keeps it in the bottom-left corner. Desktop pins it under the
       // nav bar on the right, opposite the menu column it is opened from —
       // top-16 clears the bar's own height.
-      className={`${className} fixed bottom-4  left-4  lg:bottom-auto lg:left-auto lg:top-16 lg:right-4 flex flex-col gap-4 p-4 lg:p-0 w-full lg:w-[calc(25vw-1rem)]`}
+      className={`${className} fixed bottom-4  left-4  lg:bottom-auto lg:left-auto lg:top-15 lg:right-4 flex flex-col gap-4 p-4 lg:p-0 w-full lg:w-[calc(25vw-1rem)]`}
     >
       {!muted && (
         <div className="grid grid-cols-2 lg:flex lg:flex-col gap-x-4 flex-col   pr-4 lg:p-2 border  bg-secondary">
@@ -368,7 +368,7 @@ export default function M2Nav() {
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-2 lg:gap-x-0 items-center justify-start   px-1 lg:px-0 h-16 lg:h-16 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
+        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-2 lg:gap-x-0 items-center justify-start  px-1.5   lg:px-3 h-12 lg:h-15 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
       >
         <div className="col-start-1 lg:col-start-1 lg:col-span-2 flex items-center gap-x-3">
           {/* The label rides in as a child rather than through CheckButton's

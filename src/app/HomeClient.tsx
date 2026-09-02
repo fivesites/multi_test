@@ -11,11 +11,12 @@ import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import Link from "next/link";
-import Image from "next/image";
 import AboutSectionText from "./components/AboutSectionText";
 import { getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "./components/LandningBlock";
+import PixelFrame from "./components/PixelFrame";
 import TypedHeading from "./components/TypedHeading";
+import { Button } from "@/components/ui/button";
 
 import HomeFooter from "./components/HomeFooter";
 
@@ -59,14 +60,14 @@ function HomeClientInner() {
   const atgCover = atg?.coverUrl ?? atg?.url;
 
   return (
-    <div className="w-full bg-background ">
-      <div className="relative flex min-h-dvh flex-col w-full px-0">
+    <div className="w-full bg-background px-1.5 lg:px-3 ">
+      <div className="relative flex min-h-dvh flex-col w-full ">
         <LandningBlock className="h-dvh content-center">
           {/* Its own container, so the wordmark measures against this box
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
-          <div className="grid grid-cols-4 items-center w-full font-visual text-4xl leading-tight font-light lg:leading-[0.77] tracking-normal ">
+          <div className="grid grid-cols-4 items-center w-full">
             {/* Held back until the bar has stopped saying "loading", so the
                 two aren't typing at each other. */}
             <TypedHeading
@@ -81,7 +82,7 @@ function HomeClientInner() {
           label="about us"
           href="/about"
           bg="bg-secondary text-primary"
-          className="min-h-[75dvh] pt-3"
+          className="  "
         >
           <AboutSectionText
             plainText={aboutEntry?.plainText ?? ""}
@@ -94,7 +95,7 @@ function HomeClientInner() {
       <LandningBlock
         label="selected projects"
         href="/projects"
-        className="min-h-[200dvh] px-5 pt-5 pb-5 lg:px-3 lg:pt-[25dvh]"
+        className="min-h-[200dvh] px-0"
       >
         <div className="grid lg:grid-cols-12 grid-cols-4 gap-3 w-full">
           <TypedHeading
@@ -104,19 +105,16 @@ function HomeClientInner() {
           {/* selected projects 1 */}
           <Link
             href="/projects"
-            className="relative flex flex-col-reverse  mt-[25dvh]  gap-3 col-start-1 col-span-12  w-full"
+            className="relative flex flex-col   gap-3 col-start-1 col-span-4   w-full"
           >
-            <div className=" relative w-full px-1 lg:w-1/2 mx-auto aspect-square">
-              <Image
-                src={atgCover}
-                alt={atg?.alt ?? "ATG"}
-                fill
-                sizes="(max-width: 1024px) 100vw, 50vw"
-                className="object-cover"
-              />
-            </div>
+            <PixelFrame
+              src={atgCover}
+              alt={atg?.alt ?? "ATG"}
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="w-full px-1  mx-auto aspect-square"
+            />
             {/* TEXT */}
-            <span className="relative lg:grid grid-cols-12 flex flex-row items-baseline justify-between   lg:justify-start   w-full ">
+            <span className="relative flex flex- items-baseline justify-between   lg:justify-start   w-full ">
               <h3 className="col-start-4 h3Text text-primary max-w-sm mb-0 px-2 lg:mb-0 lg:max-w-xl  lg:px-3 lg:pt-6 lg:pb-4 lowercase  ">
                 Generating Wins
               </h3>{" "}
@@ -131,9 +129,9 @@ function HomeClientInner() {
         label="connect with us"
         href="/connect"
         bg="bg-secondary text-primary"
-        className="min-h-[75dvh] flex-col items-center justify-center pt-3"
+        className="min-h-[75dvh] flex-col items-center justify-center pt-3 w-full"
       >
-        <div className="grid lg:grid-cols-12 grid-cols-4 gap-3 w-full">
+        <div className="grid lg:grid-cols-12 grid-cols-4 items-center justify-center gap-3 w-full">
           <TypedHeading
             text="lets start talking today"
             className="col-start-2 lg:col-start-4 col-span-8   h2Text  font-thin text-primary mb-4"
@@ -146,10 +144,10 @@ function HomeClientInner() {
           {/* Full-bleed on mobile: the cell already covers all four columns,
               so the side padding is what has to go for the button to reach
               them. Desktop keeps it, where col-span-6 sets the width instead. */}
-          <span className="mt-4 col-start-1 lg:col-start-4 col-span-4 lg:col-span-6 px-0 lg:px-5 py-3 rounded-md">
-            <button className=" bg-primary h3Text text-primary-foreground lg:text-xl w-full h-16   ">
+          <span className="mt-4 flex lg:col-start-4 col-span-4 lg:col-span-6 items-center justify-center p-5">
+            <Button size="lg" className="  w-full   ">
               connect
-            </button>
+            </Button>
           </span>
         </div>
       </LandningBlock>

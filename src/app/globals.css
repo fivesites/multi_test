@@ -19,8 +19,8 @@
   --muted-foreground: oklch(0.788 0.123 20);
   --accent: oklch(0.968 0.211 109.7692);
   --accent-foreground: oklch(0.3108 0.0678 109.7692);
-  --destructive: oklch(0.396 0.141 25.723);
-  --destructive-foreground: oklch(0.936 0.032 17.717);
+  --destructive: oklch(0 0 0);
+  --destructive-foreground: oklch(100 0 0);
   --border: oklch(0.6283 0.2574 29.2947);
   --input: oklch(0.9435 0.0286 12.3566);
   --ring: oklch(0.6283 0.2574 29.2947);
@@ -89,8 +89,8 @@
   --muted-foreground: oklch(0.708 0 0);
   --accent: oklch(0.577 0.245 27.325);
   --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --destructive-foreground: oklch(0.985 0 0);
+  --destructive: oklch(100 0 0);
+  --destructive-foreground: oklch(0 0 0);
   --border: oklch(0.269 0 0);
   --input: oklch(0.439 0 0);
   --ring: oklch(0.556 0 0);
@@ -217,16 +217,16 @@
   }
 
   .pText {
-    @apply text-lg leading-snug tracking-normal  lg:text-2xl  font-visual font-normal lg:font-thin;
+    @apply text-lg leading-tight tracking-normal  lg:text-xl lg:leading-tight  font-visual font-normal;
   }
   .h2Text {
-    @apply font-visual text-[2rem] lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
+    @apply font-visual text-3xl lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
   .h3Text {
-    @apply font-visual text-[2rem] lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;
+    @apply font-visual text-3xl lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
   .h4Text {
-    @apply font-visual text-[2rem] lg:text-lg  tracking-wide lg:tracking-wider font-thin lg:font-normal;
+    @apply font-visual text-3xl lg:text-lg  tracking-wide lg:tracking-wider font-thin lg:font-normal;
   }
 
   /* Mobile keeps it an ordinary heading; the full-bleed treatment is desktop
@@ -252,6 +252,30 @@
 
   .borderBtn {
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
+  }
+
+  /* Pixelated corners. pixel_sm.svg is a solid fill with 18-unit square notches
+     at each corner; used as a 9-slice mask so the element's own background
+     (bg-primary) shows through the shape while the corner notches stay a fixed
+     18px regardless of how wide or tall the element gets. */
+  /* pixel_xs.svg is a solid fill with square corner notches, used as a 9-slice
+     mask so the element's own bg-primary shows through the shape. The corner
+     notches render at --pixel-size (square, fixed px) no matter how wide/tall
+     the element is — set that var per element with the usePixelCorners hook so
+     it scales with the button. Falls back to 8px if the hook isn't attached. */
+  .pixelCorners {
+    -webkit-mask-box-image: url("/pixel_xs.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_xs.svg") 18 fill / var(--pixel-size, 8px) stretch;
+  }
+
+  /* pixel_top.svg is pixel_xs.svg with the two bottom corners left square, so
+     only the top-left and top-right corners get notched. Same --pixel-size
+     scaling via the usePixelCorners hook. */
+  .pixelCornersTop {
+    -webkit-mask-box-image: url("/pixel_top.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
   }
 }
 

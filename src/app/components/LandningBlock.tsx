@@ -2,6 +2,7 @@
 
 import type { ReactNode } from "react";
 import { cn } from "@/lib/utils";
+import { usePixelCorners } from "@/app/hooks/usePixelCorners";
 import CheckButton from "./CheckButton";
 
 type Props = {
@@ -31,10 +32,15 @@ export default function LandningBlock({
   className,
   children,
 }: Props) {
+  // Notches the block's four corners, scaled to its size — same treatment the
+  // buttons get, so the sections read as part of the same family.
+  const pixelRef = usePixelCorners<HTMLElement>();
+
   return (
     <section
+      ref={pixelRef}
       className={cn(
-        "relative z-10 w-full grid grid-cols-4 content-start gap-3",
+        "pixelCorners relative z-10 w-full grid grid-cols-4 items-start justify-start gap-3 mb-2 px-3  lg:p-0 ",
         bg,
         className,
       )}
@@ -45,8 +51,8 @@ export default function LandningBlock({
         // box, so column classes passed straight in would move the inner box
         // out of place too. Mobile has no room for a quarter-width gutter at
         // this type size, so the label only steps in to column two on desktop.
-        <div className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-3">
-          <CheckButton label={label} href={href} size="lg" active />
+        <div className="col-start-2 col-span-3 lg:col-start-2 lg:col-span-3 flex items-start justify-start pt-3">
+          <CheckButton label={label} href={href} size="label" active />
         </div>
       )}
       <div className="col-start-1 col-span-4 w-full">{children}</div>

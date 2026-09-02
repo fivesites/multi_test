@@ -100,7 +100,7 @@ export default function CookieAndSound({
   // buttons to the far edge, which is what justify-start is trying to avoid.
   const copy =
     "  text-sm font-visual lowercase tracking-wide text-primary    lg:max-w-lg lg:whitespace-nowrap";
-  const action = " flex-1 h-6 font-normal border  ";
+  const action = " flex-1 h-6 font-normal   ";
 
   return (
     <AnimatePresence mode="wait">
@@ -112,7 +112,7 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 lg:top-13 lg:right-3 lg:bottom-auto left-auto right-0  py-3 lg:py-1.5 flex    gap-3 items-center lg:items-baseline    ",
+            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-4.5 lg:px-6 flex  h-12 lg:h-12  gap-3 items-center lg:items-baseline    ",
 
             step === "volume"
               ? "justify-end bg-transparent px-3  lg:px-0"
@@ -144,7 +144,7 @@ export default function CookieAndSound({
                   Accept
                 </Button>
                 <Button
-                  variant="secondary"
+                  variant="outline"
                   size="sm"
                   className={action}
                   onClick={declineCookies}
@@ -166,7 +166,7 @@ export default function CookieAndSound({
                 </Button>
                 <Button
                   size="sm"
-                  variant="secondary"
+                  variant="outline"
                   className={action}
                   onClick={() => answerSound(false)}
                 >
