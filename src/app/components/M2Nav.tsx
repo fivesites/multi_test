@@ -9,6 +9,7 @@ import { useBusyCursor } from "@/context/CursorContext";
 import VolumeSlider from "./VolumeSlider";
 import CheckButton from "./CheckButton";
 import TerminalM2Button from "./TerminalM2Button";
+import SettingsOverlay from "./SettingsOverlay";
 import { Loading5 } from "./marks";
 
 const NAV_ITEMS = [
@@ -56,7 +57,7 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={` space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-1.5 lg:px-3`}
+      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-1.5 lg:px-6`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -70,14 +71,8 @@ function NavVertical({
             onClick={() => onNavigate(item.href)}
           />
         ))}
-        <ColorButton
-          label={current.label}
-          swatch={current.swatch}
-          active
-          onClick={onCycleTheme}
-        />
       </nav>
-      <nav className="flex lg:hidden  w-full flex-col gap-y-0   ">
+      <nav className="flex lg:hidden  w-full flex-col gap-y-0 px-0  ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className="f  lowercase pb-0"
@@ -172,15 +167,26 @@ function ColorButton({
   active,
   swatch,
   onClick,
+  className = "",
+  labelSide,
 }: {
   label: string;
   active: boolean;
   swatch: string;
   onClick: () => void;
+  className?: string;
+  /** Which side of the swatch the label sits on. Omit to keep it hidden. */
+  labelSide?: "left" | "right";
 }) {
   // Counted up rather than wrapped at 4, so the mark keeps turning the same
   // way instead of snapping back to zero on every fourth click.
   const [turns, setTurns] = useState(0);
+
+  const labelEl = labelSide ? (
+    <span className="shrink-0 cursor-pointer font-visual text-lg font-normal tracking-wide lowercase text-primary">
+      {label}
+    </span>
+  ) : null;
 
   return (
     <button
@@ -191,8 +197,9 @@ function ColorButton({
         setTurns((t) => t + 1);
         onClick();
       }}
-      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-3 lg:px-3 h-12 lg:h-15 `}
+      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-3 lg:px-3 h-12 lg:h-12 ${className}`}
     >
+      {labelSide === "left" && labelEl}
       {/* The mark draws in currentColor, so the palette's colour rides in as a
           text colour. The quarter turn sits on a wrapper: the svg is inline,
           so it needs a block box of its own to rotate about its own centre. */}
@@ -203,9 +210,7 @@ function ColorButton({
       >
         <Loading5 className={`h-3 w-3 ${swatch}`} />
       </motion.span>
-      <label className="hidden shrink-0 cursor-pointer font-visual text-xs lowercase text-primary">
-        {label}
-      </label>
+      {labelSide === "right" && labelEl}
     </button>
   );
 }
@@ -242,61 +247,14 @@ function useTheme() {
   return { theme, selectTheme, cycleTheme };
 }
 
-function SettingsVerticalOverlay({
-  className,
-  theme,
-  onSelectTheme,
-}: {
-  className?: string;
-  theme: ThemeId;
-  onSelectTheme: (next: ThemeId) => void;
-}) {
-  const { muted, toggleMute } = useSound();
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: -8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
-      // Mobile keeps it in the bottom-left corner. Desktop pins it under the
-      // nav bar on the right, opposite the menu column it is opened from —
-      // top-16 clears the bar's own height.
-      className={`${className} fixed bottom-4  left-4  lg:bottom-auto lg:left-auto lg:top-15 lg:right-4 flex flex-col gap-4 p-4 lg:p-0 w-full lg:w-[calc(25vw-1rem)]`}
-    >
-      {!muted && (
-        <div className="grid grid-cols-2 lg:flex lg:flex-col gap-x-4 flex-col   pr-4 lg:p-2 border  bg-secondary">
-          <CheckButton
-            className="lg:hidden font-visual font-thin lowercase text-xl whitespace-nowrap lg:text-3xl   "
-            size="lg"
-            label={muted ? "Sound Off" : "Sound On"}
-            active={!muted}
-            onClick={toggleMute}
-          />
-        </div>
-      )}
-      <div className="flex flex-col  gap-4 bg-transparent">
-        <div className="grid grid-cols-3 lg:grid-cols-2 grid-rows-3 gap-2">
-          {THEMES.map((t) => (
-            <ColorButton
-              key={t.id}
-              label={t.label}
-              swatch={t.swatch}
-              active={theme === t.id}
-              onClick={() => onSelectTheme(t.id)}
-            />
-          ))}
-        </div>
-      </div>
-    </motion.div>
-  );
-}
-
 export default function M2Nav() {
   const pathname = usePathname();
-  const { contentDoneKey, setNavLoading } = useUI();
+  const { contentDoneKey, setNavLoading, filtersOpen, setFiltersOpen } =
+    useUI();
   const { muted, toggleMute } = useSound();
-  const { theme, selectTheme, cycleTheme } = useTheme();
+  const { theme, cycleTheme } = useTheme();
+  // The swatch shows the palette that is on; clicking it steps to the next one.
+  const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   // The column is opened from the menu button at every width.
   const [open, setOpen] = useState(false);
@@ -356,6 +314,10 @@ export default function M2Nav() {
 
   const menuLabel = menuLoading ? "loading" : open ? "close" : "multisquared";
 
+  // The settings menu only carries the projects view toggles for now, so it
+  // rides along only on that page.
+  const onProjects = pathname === "/projects";
+
   function handleNavigate(href: string) {
     setOpen(false);
     if (href !== pathname) setNavigating(true);
@@ -368,9 +330,9 @@ export default function M2Nav() {
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-2 lg:gap-x-0 items-center justify-start  px-1.5   lg:px-3 h-12 lg:h-15 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-1.5   lg:px-6 h-12 lg:h-24 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
       >
-        <div className="col-start-1 lg:col-start-1 lg:col-span-2 flex items-center gap-x-3">
+        <div className="col-start-1 lg:col-start-1 lg:col-span-2 flex items-center gap-x-3 t">
           {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
               through. Keyed on the label so each change remounts and retypes
@@ -394,11 +356,49 @@ export default function M2Nav() {
           </CheckButton>
         </div>
         <CheckButton
-          className="hidden col-start-11  col-span-2 lg:flex font-visual  lg:justify-end   "
-          size="lg"
+          className="hidden col-start-4  col-span-2 lg:flex font-visual  lg:justify-start  "
+          size="label"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
           onClick={toggleMute}
+        />
+        {/* Projects only. Mobile: a fixed button in the bottom-left corner that
+            opens the full-screen filter/settings sheet. Desktop: sits in the
+            bar at column ten with the settings menu dropping straight below. */}
+        {onProjects && (
+          <div className="fixed bottom-3 left-3 z-[95] flex flex-col items-start lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:col-start-10 lg:col-span-2 lg:h-full lg:justify-center">
+            <CheckButton
+              className="lg:hidden flex font-visual pixelCorners px-6 bg-secondary w-full text-secondary-foreground"
+              size="lg"
+              label="filter settings"
+              active={filtersOpen}
+              onClick={() => setFiltersOpen((v) => !v)}
+            />
+            <CheckButton
+              className="hidden lg:flex font-visual lg:justify-start"
+              size="label"
+              label="settings"
+              active={openSettings}
+              onClick={() => setOpenSettings((o) => !o)}
+            />
+            <AnimatePresence initial={false}>
+              {openSettings && (
+                <SettingsOverlay
+                  key="settings"
+                  className="hidden lg:flex absolute left-0 top-full z-[95] w-full"
+                />
+              )}
+            </AnimatePresence>
+          </div>
+        )}
+        {/* The palette swatch, top-right corner — clicking it cycles the
+            theme. */}
+        <ColorButton
+          label={current.label}
+          swatch={current.swatch}
+          active
+          onClick={cycleTheme}
+          className="col-start-4 col-span-1 flex justify-end lg:col-start-12 lg:col-span-2 lg:justify-end"
         />
       </div>
 
@@ -411,13 +411,6 @@ export default function M2Nav() {
             settingsOpen={openSettings}
             theme={theme}
             onCycleTheme={cycleTheme}
-          />
-        )}
-        {openSettings && (
-          <SettingsVerticalOverlay
-            key="settings"
-            theme={theme}
-            onSelectTheme={selectTheme}
           />
         )}
       </AnimatePresence>

@@ -21,6 +21,10 @@ type Props = {
   hoverFill?: boolean;
   tabIndex?: number;
   size?: "sm" | "md" | "lg" | "label";
+  /** Which side of the box the label sits on. Omitted (or "right") keeps the
+   *  default — box first, label after it. "left" puts the label first and
+   *  pushes the box out to the far end of the row. */
+  labelSide?: "left" | "right";
 };
 
 /** `size` is geometry only — box, gutter and gap. Whether a
@@ -33,7 +37,7 @@ type Props = {
 const SIZE_BOX = {
   sm: "h-auto items-center",
   md: "px-3 lg:px-6 h-12 items-center  lg:h-16",
-  lg: "px-3 lg:px-3 h-12 lg:h-15 items-center",
+  lg: "px-3 lg:px-3 h-12 lg:h-12 items-center justify-start",
   label: "h-3 px-0 justify-start items-center",
 } as const;
 
@@ -87,13 +91,14 @@ export default function CheckButton({
   terminal = false,
   children,
   hoverFill = false,
+  labelSide,
 
   toggleOpen,
 }: Props) {
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal   ",
+        "flex font-visual font-normal    ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,
@@ -106,7 +111,13 @@ export default function CheckButton({
           // its bottom edge — it sits on the label's baseline the way a letter
           // does. This group is shrink-to-fit, so the outer items-center is
           // what centres the pair as a unit inside the button.
-          "flex justify-start items-baseline",
+          "flex items-baseline",
+          // "left" flips the pair so the label reads first and the box trails
+          // it, spread to the row's two ends — the settings-row pattern. Takes
+          // the full width to spread across.
+          labelSide === "left"
+            ? "flex-row-reverse justify-start w-full"
+            : "justify-start",
           SIZE_GAP[size],
         )}
       >

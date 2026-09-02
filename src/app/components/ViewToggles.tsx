@@ -5,6 +5,7 @@ import { useUI } from "@/context/UIContext";
 import M2Button from "./M2Button";
 import { getActiveFilterLabel } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
+import CheckButton from "./CheckButton";
 
 const BUTTON_CLASS = "btnText";
 
@@ -49,62 +50,54 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
 
   return (
     <span
-      className={cn("flex items-end h-min justify-between gap-x-3", className)}
+      className={cn(
+        "flex flex-col col-start-1 col-span-3  gap-x-3 pl-0",
+        className,
+      )}
     >
       {/* Zoom only steps the desktop grid, so it stays out of the mobile bar
           and hides whenever the list is the active view. */}
-      {showGrid && (
-        <span className="hidden items-end gap-x-3 lg:flex">
-          <Button
-            variant="ghost"
-            size="xs"
-            className="h-auto"
-            onClick={() => setNumCols(Math.max(MIN_COLS, numCols - 1))}
-            disabled={numCols <= MIN_COLS}
-          >
-            Zoom In
-          </Button>
+      <CheckButton
+        label="thumbnails"
+        size="label"
+        className="h-12 col-span-2"
+        onClick={showThumbnails}
+      />
 
-          <Button
-            variant="ghost"
-            size="xs"
-            className="h-auto"
+      <CheckButton
+        label="list"
+        size="label"
+        className="h-12"
+        onClick={showListView}
+      />
+      {showGrid && (
+        <span className="hidden  gap-x-3  lg:flex flex-col ">
+          <CheckButton
+            label="Zoom In"
+            size="label"
+            onClick={() => setNumCols(Math.max(MIN_COLS, numCols - 1))}
+            className="col-span-2 h-12"
+          />
+
+          <CheckButton
+            label="Zoom Out"
+            size="label"
+            className="h-12"
             onClick={() => setNumCols(Math.min(MAX_COLS, numCols + 1))}
-            disabled={numCols >= MAX_COLS}
-          >
-            Zoom Out
-          </Button>
+          />
         </span>
       )}
-      <Button
-        variant="ghost"
-        size="xs"
-        className="h-auto"
-        onClick={showThumbnails}
-      >
-        Thumbnails
-      </Button>
-
-      <Button
-        variant="ghost"
-        size="xs"
-        className="h-auto"
-        onClick={showListView}
-      >
-        List
-      </Button>
     </span>
   );
 }
 
 /**
- * Mobile bar: the projects heading on the left, view toggles on the right.
- * Scrolls away with the section it heads.
+ * Mobile bar: the projects heading. Scrolls away with the section it heads.
  *
  * There is no room for a separate filter toggle below lg, so the heading is the
- * toggle — it names the active filter and opens the category overlay. Desktop
- * keeps the two apart: the category column is always on screen there, and the
- * heading belongs to the projects grid's own header row.
+ * toggle — it names the active filter and opens the category overlay. The view
+ * toggles (thumbnails / list / zoom) live in the nav's settings menu now, not
+ * in this row.
  */
 export default function ViewToggles({
   className = "",
@@ -124,20 +117,15 @@ export default function ViewToggles({
         className,
       )}
     >
-      <h2 className="flex items-baseline gap-x-3">
-        <span className={cn(BUTTON_CLASS, "text-muted-foreground")}>
-          Projects:
-        </span>
-        <M2Button
-          text={getActiveFilterLabel(activeFilter)}
-          visible
-          delay={0}
+      <h2 className="flex items-baseline gap-x-3 justify-end w-full">
+        <CheckButton
+          size="lg"
+          label={getActiveFilterLabel(activeFilter)}
           active={filtersOpen}
           onClick={() => setFiltersOpen((v) => !v)}
           className={viewClass(filtersOpen)}
         />
       </h2>
-      <ViewToggleButtons />
     </div>
   );
 }

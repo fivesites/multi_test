@@ -12,37 +12,55 @@ export default function HomeFooter() {
   return (
     <div
       ref={pixelRef}
-      className="pixelCornersTop bg-secondary  w-full p-6 gap-0 grid grid-cols-4 h-[66.6dvh] text-secondary-foreground"
+      className="pixelCornersTop bg-secondary  w-full pt-6 gap-0 grid grid-cols-4 lg:grid-cols-12 items-start justify-start h-dvh text-secondary-foreground px-6 lg:px-0"
     >
-      <div className="col-start-2 col-span-2 flex flex-col items-baseline h-full">
-        <div className="flex justify-start gap-6 items-baseline ">
-          <h3 className="font-visual text-sm font-normal tracking-wide  ">
-            GET IN TOUCH
-          </h3>
-          <Button
-            size="xs"
-            className="px-0 text-secondary-foreground"
-            variant="link"
-            asChild
-          >
-            <Link href="connect@multi2.co">info@multi2.co</Link>
-          </Button>
-        </div>
-        <span className="flex justify-start gap-6 items-baseline">
-          <h3 className="font-visual text-sm font-normal tracking-wide  ">
-            DESIGN & DEV
-          </h3>
-          <Button
-            size="xs"
-            variant="link"
-            className="px-0 text-secondary-foreground "
-            asChild
-          >
-            <Link href="connect@multi2.co">Joel Järvi</Link>
-          </Button>
-        </span>
+      <h3 className="col-start-2 lg:col-start-4  font-visual text-sm font-normal tracking-wide  whitespace-nowrap ">
+        GET IN TOUCH
+      </h3>
+      <Button
+        size="xs"
+        className="px-0 text-secondary-foreground "
+        variant="link"
+        asChild
+      >
+        <Link href="connect@multi2.co">info@multi2.co</Link>
+      </Button>
+
+      <h3 className="col-start-2 lg:col-start-8 font-visual text-sm font-normal tracking-wide uppercase whitespace-nowrap  ">
+        multisquared members
+      </h3>
+      <div className="flex-col col-start-4 lg:col-start-10 justify-end lg:justify-start">
+        <Button
+          size="xs"
+          variant="link"
+          className="px-0 text-secondary-foreground "
+          asChild
+        >
+          <Link href="connect@multi2.co">Adam Odelfelt</Link>
+        </Button>
+        <Button
+          size="xs"
+          variant="link"
+          className="px-0 text-secondary-foreground "
+          asChild
+        >
+          <Link href="connect@multi2.co">Daniel von Malmborg</Link>
+        </Button>
       </div>
-      <div className="flex flex-row-reverse lg:flex-row col-start-1 col-span-12  justify-between w-full items-end ">
+
+      <h3 className="col-start-2 lg:col-start-4 font-visual text-sm font-normal tracking-wide  ">
+        DESIGN & DEV
+      </h3>
+      <Button
+        size="xs"
+        variant="link"
+        className="px-0 text-secondary-foreground "
+        asChild
+      >
+        <Link href="connect@multi2.co">Joel Järvi</Link>
+      </Button>
+
+      <div className="flex flex-row-reverse lg:flex-row col-start-1 col-span-12  justify-between w-full items-baseline lg:p-6 ">
         <h3 className="ml-0 lg:-ml-5 font-visual tracking-normal text-4xl leading-tight lg:text-[16rem] font-light lg:leading-[0.77] text-secondary-foreground mb-0  ">
           multi2.co
         </h3>

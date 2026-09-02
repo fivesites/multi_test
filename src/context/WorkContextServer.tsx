@@ -7,9 +7,9 @@ import { WorkProvider, type GridItem } from "./WorkContext";
 const PLACEHOLDER_IMG = "https://placehold.co/1200x1200/111111/111111";
 
 const MOCK_ITEMS: import("./WorkContext").GridItem[] = [
-  { key: "mock-1", url: PLACEHOLDER_IMG, alt: "Norrlands Guld", slug: "norrlands-guld-summer", title: "Summer Campaign", client: "Norrlands Guld", year: 2024, categories: ["photo", "art-direction"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-1-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
-  { key: "mock-2", url: PLACEHOLDER_IMG, alt: "Volvo Cars", slug: "volvo-electric", title: "Electric Future", client: "Volvo Cars", year: 2024, categories: ["video", "concept"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-2-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
-  { key: "mock-3", url: PLACEHOLDER_IMG, alt: "H&M", slug: "hm-spring", title: "Spring Collection", client: "H&M", year: 2024, categories: ["photo", "production"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-3-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-1", url: PLACEHOLDER_IMG, alt: "Norrlands Guld", slug: "norrlands-guld-summer", title: "Summer Campaign", client: "Norrlands Guld", year: 2024, categories: ["photo", "art-direction"], featured: true, isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-1-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-2", url: PLACEHOLDER_IMG, alt: "Volvo Cars", slug: "volvo-electric", title: "Electric Future", client: "Volvo Cars", year: 2024, categories: ["video", "concept"], featured: true, isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-2-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
+  { key: "mock-3", url: PLACEHOLDER_IMG, alt: "H&M", slug: "hm-spring", title: "Spring Collection", client: "H&M", year: 2024, categories: ["photo", "production"], featured: true, isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-3-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
   { key: "mock-4", url: PLACEHOLDER_IMG, alt: "Spotify", slug: "spotify-wrapped", title: "Wrapped", client: "Spotify", year: 2023, categories: ["concept", "art-direction"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-4-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
   { key: "mock-5", url: PLACEHOLDER_IMG, alt: "Audi", slug: "audi-the-drive", title: "The Drive", client: "Audi", year: 2023, categories: ["video", "dop"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-5-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
   { key: "mock-6", url: PLACEHOLDER_IMG, alt: "IKEA", slug: "ikea-home-stories", title: "Home Stories", client: "IKEA", year: 2023, categories: ["photo", "concept"], isPrimary: true, aspectRatio: 1, projectImages: [{ key: "mock-6-img", url: PLACEHOLDER_IMG, aspectRatio: 1 }] },
@@ -35,6 +35,7 @@ type WorkData = {
   credits?: unknown;
   description?: string;
   categories?: string[];
+  featured?: boolean;
   slug: string;
   coverImage?: { asset: { _ref: string }; aspectRatio?: number };
   media?: MediaItem[];
@@ -89,6 +90,7 @@ export async function WorkContextServer({
           categories: work.categories ?? [],
           aspectRatio: img.aspectRatio ?? 1,
           coverUrl,
+          featured: work.featured ?? false,
           isPrimary: idx === 0,
           projectImages,
         });
@@ -108,6 +110,7 @@ export async function WorkContextServer({
         categories: work.categories ?? [],
         aspectRatio: work.coverImage?.aspectRatio ?? 1,
         coverUrl,
+        featured: work.featured ?? false,
         isPrimary: true,
         projectImages: [
           {

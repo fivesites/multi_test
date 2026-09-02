@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { usePixelCorners } from "@/app/hooks/usePixelCorners";
 import { useUI } from "@/context/UIContext";
 import type { GridItem } from "@/context/WorkContext";
 import { formatCategories } from "@/lib/categories";
@@ -18,6 +19,10 @@ export default function ProjectCard({
   className?: string;
 }) {
   const categories = formatCategories(item.categories);
+  // Notches the card's corners like the buttons and landing blocks. On the
+  // Link itself so the image and the hover overlay are clipped to the same
+  // shape.
+  const pixelRef = usePixelCorners<HTMLAnchorElement>();
   const { openedCard, setOpenedCard } = useUI();
   // Clicking hands off to the project page, which can take a beat to load.
   // Until it does, the card claims the whole tile and centres its own label.
@@ -25,10 +30,11 @@ export default function ProjectCard({
 
   return (
     <Link
+      ref={pixelRef}
       href={`/projects/${item.slug}`}
       onClick={() => setOpenedCard(item.slug)}
       className={cn(
-        "relative group flex flex-col  aspect-square justify-center  items-center ",
+        "pixelCorners relative group flex flex-col  aspect-square justify-center  items-center overflow-hidden ",
         className,
       )}
     >
@@ -48,10 +54,10 @@ export default function ProjectCard({
       <div
         className={cn(
           "absolute left-0 top-0 h-full w-full flex flex-col items-center justify-center font-diatype font-medium p-6 text-primary-foreground text-sm leading-snug tracking-wide",
-          "opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:bg-secondary group-focus-visible:bg-secondary",
+          "opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:bg-primary group-focus-visible:bg-secondary",
         )}
       >
-        <Button className="h-auto w-min bg-background text-primary hover:bg-primary hover:text-primary-foreground whitespace-nowrap">
+        <Button className="h-auto w-min bg-secondary text-secondary-foreground h2Text whitespace-nowrap">
           {item.title}
         </Button>
       </div>

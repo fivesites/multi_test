@@ -18,6 +18,9 @@ export type GridItem = {
   /** The work's own coverImage — a different asset from the media
    *  images, so `url` is not a stand-in for it. */
   coverUrl?: string;
+  /** "Featured on homepage" toggle in the CMS — drives the selected-projects
+   *  block on the landing page. */
+  featured?: boolean;
   isPrimary: boolean;
   projectImages: { key: string; url: string; aspectRatio: number }[];
 };

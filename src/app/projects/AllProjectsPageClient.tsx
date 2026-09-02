@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import Link from "next/link";
 import { useUI } from "@/context/UIContext";
@@ -9,10 +8,12 @@ import { useWork } from "@/context/WorkContext";
 import ProjectCard from "@/app/components/ProjectCard";
 import CategoryFilters from "@/app/components/CategoryFilters";
 import FilterOverlay from "@/app/components/FilterOverlay";
-import ViewToggles, { ViewToggleButtons } from "@/app/components/ViewToggles";
+import ViewToggles from "@/app/components/ViewToggles";
 import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
 import { getActiveFilterLabel, getCategoryLabel } from "@/lib/categories";
-import { Button } from "@/components/ui/button";
+import LandningBlock from "@/app/components/LandningBlock";
+import TypedHeading from "@/app/components/TypedHeading";
+import CheckButton from "@/app/components/CheckButton";
 
 export default function AllProjectsPageClient() {
   const { items, categories } = useWork();
@@ -24,6 +25,9 @@ export default function AllProjectsPageClient() {
     notifyContentDone,
     setOpenedCard,
     numCols,
+    navLoading,
+    filtersOpen,
+    setFiltersOpen,
   } = useUI();
 
   // Coming back from a project: drop the opened card so its tile isn't still
@@ -47,8 +51,6 @@ export default function AllProjectsPageClient() {
     }, delay);
     return () => clearTimeout(t);
   }, [categories, notifyContentDone]);
-
-  const [hoveredClient, setHoveredClient] = useState<string | null>(null);
 
   const query = search.toLowerCase().trim();
   const slugsSeen = new Set<string>();
@@ -102,176 +104,150 @@ export default function AllProjectsPageClient() {
     });
   }
 
-  const previewClient = hoveredClient
-    ? clients.find((c) => c.key === hoveredClient)
-    : null;
-
   return (
-    <div
-      id="projects"
-      className="relative min-h-dvh w-full px-3 lg:px-3 mt-36 py-3 bg-background"
-    >
-      <section className=" h-full w-full ">
-        <FilterOverlay />
+    <div id="projects" className="relative w-full px-3 lg:px-6   ">
+      <LandningBlock
+        label="projects"
+        className="h-[80dvh] items-center w-full"
+        // Lines the "projects" label up with the topbar's "sound off": column 3
+        // of the block's eight-column grid is the same 25% as column 4 of the
+        // bar's twelve, both measured inside the shared px-6 gutter.
+        labelClassName="col-start-2 col-span-3 lg:col-start-3 lg:col-span-4"
+      >
+        {/* Its own grid, on the same eight columns the label sits on, so the
+            heading stays under it. */}
+        <div className="grid grid-cols-4 lg:grid-cols-8 w-full">
+          <TypedHeading
+            ready={!navLoading}
+            text="see our work"
+            className="col-start-2 col-span-3 lg:col-start-3 lg:col-span-5 text-left  h2Text  font-thin text-primary"
+          />
+        </div>
+      </LandningBlock>
+      <FilterOverlay />
 
-        {/* Preview overlay — desktop list-only mode */}
-        <AnimatePresence>
-          {showList && !showGrid && previewClient && (
-            <motion.div
-              key={previewClient.key}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              className="fixed inset-0 z-50 hidden items-center justify-center px-8 pointer-events-none lg:flex"
-            >
-              <div className="relative h-1/3 w-1/4">
-                <Image
-                  src={previewClient.url}
-                  alt={previewClient.alt}
-                  fill
-                  className="object-contain object-center"
-                  sizes="25vw"
-                />
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+      {/* Desktop: category sidebar left, projects right. */}
+      <div className=" mb-3 lg:mb-6 grid grid-cols-4 lg:grid-cols-12 ">
+        <h2 className="lg:hidden  col-start-2 col-span-3  items-baseline gap-x-3 px-0 lg:px-3">
+          {/* Names the active filter and toggles the mobile category overlay —
+              same job ViewToggles' heading does below lg. */}
+          <CheckButton
+            size="label"
+            label="filter category"
+            active={filtersOpen}
+            onClick={() => setFiltersOpen((v) => !v)}
+          />
+        </h2>
+        <CategoryFilters />
 
-        {/* Desktop: category sidebar left, projects right. */}
-        <div className="hidden w-full gap-x-6 lg:flex">
-          <div className="w-1/4 shrink-0 pt-0">
-            <CategoryFilters />
-          </div>
-
-          <div className="flex w-3/4 flex-col">
-            {/* Header for the list: active filter left, view toggles hard right. */}
-            <div className="z-40 flex items-baseline justify-between pb-0">
-              <h2 className="flex items-baseline gap-x-3">
-                <Button
-                  variant="ghost"
-                  size="xs"
-                  className="h-auto uppercase px-0  lg:hover:bg-transparent text-primary"
+        {listVisible && showList && (
+          <div className="col-start-4 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start  gap-6 mt-12 mb-12 ">
+            <AnimatePresence mode="popLayout">
+              {clients.map((client, idx) => (
+                <motion.div
+                  key={client.key}
+                  layout
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, delay: idx * 0.07 }}
+                  className="w-full"
                 >
-                  {" "}
-                  Projects: {getActiveFilterLabel(activeFilter)}
-                </Button>
-              </h2>
-              <ViewToggleButtons />
-            </div>
-
-            {listVisible && showList && (
-              <div className="flex w-full flex-col  justify-start items-start  gap-1.5 ">
-                <AnimatePresence mode="popLayout">
-                  {clients.map((client, idx) => (
-                    <motion.div
-                      key={client.key}
-                      layout
-                      initial={{ opacity: 0, y: 4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.25, delay: idx * 0.07 }}
-                      className="w-full"
-                    >
-                      <Link
-                        href={`/projects/${client.slug}`}
-                        className="borderBtn block w-full px-3 hover:px-6  bg-accent text-accent-foreground transition-all py-1 hover:text-primary hover:bg-transparent"
-                        onMouseEnter={() => setHoveredClient(client.key)}
-                        onMouseLeave={() => setHoveredClient(null)}
-                      >
-                        {client.label}
-                      </Link>
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            )}
-
-            {listVisible && showGrid && (
-              <div
-                className="grid w-full gap-3"
-                style={{
-                  gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
-                }}
-              >
-                <AnimatePresence mode="popLayout" initial={false}>
-                  {displayed.map((item, idx) => (
-                    <motion.div
-                      key={item.key}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                      transition={{
-                        duration: 0.35,
-                        delay: Math.min(idx * 0.07, 0.7),
-                        ease: "easeOut",
-                      }}
-                    >
-                      <ProjectCard
-                        item={item}
-                        sizes={`${Math.round(75 / numCols)}vw`}
-                        className=""
-                      />
-                    </motion.div>
-                  ))}
-                </AnimatePresence>
-              </div>
-            )}
+                  <Link
+                    href={`/projects/${client.slug}`}
+                    className=" transition-all h2Text text-primary lowercase hover:text-secondary hover:bg-transparent"
+                  >
+                    {client.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
           </div>
-        </div>
+        )}
 
-        {/* Mobile: heading + view toggle, then the grid or the client list. */}
-        <div className="flex w-full flex-col lg:hidden">
-          <ViewToggles className="pb-1.5" />
+        {listVisible && showGrid && (
+          <div
+            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-3 p-1.5 lg:grid lg:p-3"
+            style={{
+              gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
+            }}
+          >
+            <AnimatePresence mode="popLayout" initial={false}>
+              {displayed.map((item, idx) => (
+                <motion.div
+                  key={item.key}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: 0.35,
+                    delay: Math.min(idx * 0.07, 0.7),
+                    ease: "easeOut",
+                  }}
+                >
+                  <ProjectCard
+                    item={item}
+                    sizes={`${Math.round(75 / numCols)}vw`}
+                    className=""
+                  />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
 
-          {listVisible && showGrid && (
-            <div className="flex flex-col w-full  gap-y-3">
-              <AnimatePresence mode="popLayout" initial={false}>
-                {displayed.map((item, idx) => (
-                  <motion.div
-                    key={item.key}
-                    initial={{ opacity: 0, y: 12 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{
-                      duration: 0.35,
-                      delay: Math.min(idx * 0.07, 0.7),
-                      ease: "easeOut",
-                    }}
+      {/* Mobile: heading + view toggle, then the grid or the client list. */}
+      <div className="flex w-full flex-col lg:hidden">
+        <ViewToggles className="pb-1.5" />
+
+        {listVisible && showGrid && (
+          <div className="flex flex-col w-full  gap-y-3">
+            <AnimatePresence mode="popLayout" initial={false}>
+              {displayed.map((item, idx) => (
+                <motion.div
+                  key={item.key}
+                  initial={{ opacity: 0, y: 12 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{
+                    duration: 0.35,
+                    delay: Math.min(idx * 0.07, 0.7),
+                    ease: "easeOut",
+                  }}
+                >
+                  <ProjectCard item={item} sizes="100vw" className="w-full" />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+
+        {listVisible && showList && (
+          <div className="flex w-full flex-col gap-y-1.5">
+            <AnimatePresence mode="popLayout">
+              {clients.map((client, idx) => (
+                <motion.div
+                  key={client.key}
+                  layout
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.25, delay: idx * 0.07 }}
+                  className="w-full"
+                >
+                  <Link
+                    href={`/projects/${client.slug}`}
+                    className="borderBtn block w-full border-b border-muted-foreground text-center text-muted-foreground transition-colors duration-150"
                   >
-                    <ProjectCard item={item} sizes="100vw" className="w-full" />
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-
-          {listVisible && showList && (
-            <div className="flex w-full flex-col gap-y-1.5">
-              <AnimatePresence mode="popLayout">
-                {clients.map((client, idx) => (
-                  <motion.div
-                    key={client.key}
-                    layout
-                    initial={{ opacity: 0, y: 4 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    transition={{ duration: 0.25, delay: idx * 0.07 }}
-                    className="w-full"
-                  >
-                    <Link
-                      href={`/projects/${client.slug}`}
-                      className="borderBtn block w-full border-b border-muted-foreground text-center text-muted-foreground transition-colors duration-150"
-                    >
-                      {client.label}
-                    </Link>
-                  </motion.div>
-                ))}
-              </AnimatePresence>
-            </div>
-          )}
-        </div>
-      </section>
+                    {client.label}
+                  </Link>
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

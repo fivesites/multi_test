@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Volume2 } from "@/components/animate-ui/icons/volume-2";
@@ -35,6 +36,10 @@ export default function CookieAndSound({
 }) {
   const [step, setStep] = useState<Step>("idle");
   const { muted, toggleMute, setMuted } = useSound();
+  // The projects page carries its own sound toggle in the settings sheet, so
+  // the standing corner toggle stands down there.
+  const pathname = usePathname();
+  const onProjects = pathname?.startsWith("/projects") ?? false;
 
   const settle = useCallback(
     (soundAccepted: boolean) => {
@@ -104,7 +109,7 @@ export default function CookieAndSound({
 
   return (
     <AnimatePresence mode="wait">
-      {step !== "idle" && (
+      {step !== "idle" && !(step === "volume" && onProjects) && (
         <motion.div
           key={step}
           initial={{ opacity: 0, y: 8 }}
@@ -179,7 +184,7 @@ export default function CookieAndSound({
             <div className="flex items-center gap-3">
               <CheckButton
                 className="lg:hidden "
-                size="md"
+                size="lg"
                 label={muted ? "sound off" : "sound on"}
                 active={!muted}
                 onClick={toggleMute}

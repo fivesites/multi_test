@@ -6,6 +6,8 @@ import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import { getCategoryLabel } from "@/lib/categories";
+import CheckButton from "./CheckButton";
+import SettingsOverlay from "./SettingsOverlay";
 
 const TYPING_MS_PER_CHAR = 22;
 
@@ -63,30 +65,34 @@ export default function FilterOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex lg:hidden fixed inset-0 z-40 w-full h-dvh bg-background px-3 "
+          className="flex lg:hidden fixed inset-0 z-40 w-full h-dvh   "
         >
-          <div className="flex flex-col items-baseline justify-center overflow-y-auto pointer-events-auto px-3  pb-6 gap-y-1.5 w-full ">
-            {allCats.map((cat, i) => (
-              <span
-                key={cat}
-                className="inline-flex items-baseline whitespace-nowrap w-full"
-              >
-                <M2Button
-                  lg
-                  text={getFilterLabel(cat)}
-                  visible={filtersOpen}
-                  delay={filterDelays[i]}
-                  active={activeFilter === cat}
-                  onClick={() => handleFilterChange(cat)}
-                  className={cn(
-                    " transition-colors duration-150 font-diatype uppercase font-bold text-xl px-0 leading-snug w-full border-b   ",
-                    activeFilter === cat
-                      ? "text-primary-foreground hover:text-primary-background border-primary-foreground hover:primary-background"
-                      : "text-muted-foreground border-muted-foreground hover:border-muted-foreground hover:text-muted-background",
-                  )}
-                />
-              </span>
-            ))}
+          <div className="flex flex-col h-dvh pt-12 bg-secondary px-0">
+            {/* The settings sheet the "filter settings" button opens into,
+                stacked above the category list in the same overlay. */}
+            <SettingsOverlay className="border-b border-primary px-1.5 pb-3" />
+            <div className="columns-2 items-baseline justify-center overflow-y-auto pointer-events-auto px-1.5  pb-12 pt-3 gap-y-1.5 w-full ">
+              {allCats.map((cat, i) => (
+                <span
+                  key={cat}
+                  className="inline-flex items-baseline whitespace-nowrap w-full"
+                >
+                  <CheckButton
+                    size="lg"
+                    label={getFilterLabel(cat)}
+                    active={activeFilter === cat}
+                    onClick={() => handleFilterChange(cat)}
+                    className={cn(" transition-colors duration-150   ")}
+                  />
+                </span>
+              ))}
+            </div>
+            <CheckButton
+              label="Hide Filters"
+              size="lg"
+              onClick={() => setFiltersOpen(false)}
+              className=" px-1.5 w-full"
+            />
           </div>
         </motion.div>
       )}

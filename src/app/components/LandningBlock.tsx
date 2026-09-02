@@ -15,6 +15,10 @@ type Props = {
   /** Height, padding and row alignment — whatever this block needs on top of
    *  the shared grid. */
   className?: string;
+  /** Overrides the label wrapper's column placement when a block's content
+   *  sits on a different column than the default second one — pass the
+   *  matching `col-start-*` / `col-span-*` so the label lines up with it. */
+  labelClassName?: string;
   children: ReactNode;
 };
 
@@ -30,6 +34,7 @@ export default function LandningBlock({
   label,
   href,
   className,
+  labelClassName,
   children,
 }: Props) {
   // Notches the block's four corners, scaled to its size — same treatment the
@@ -40,7 +45,7 @@ export default function LandningBlock({
     <section
       ref={pixelRef}
       className={cn(
-        "pixelCorners relative z-10 w-full grid grid-cols-4 items-start justify-start gap-3 mb-2 px-3  lg:p-0 ",
+        "pixelCorners relative z-10 w-full grid grid-cols-4 lg:grid-cols-8    mb-3 lg:mb-12  ",
         bg,
         className,
       )}
@@ -51,11 +56,19 @@ export default function LandningBlock({
         // box, so column classes passed straight in would move the inner box
         // out of place too. Mobile has no room for a quarter-width gutter at
         // this type size, so the label only steps in to column two on desktop.
-        <div className="col-start-2 col-span-3 lg:col-start-2 lg:col-span-3 flex items-start justify-start pt-3">
+        <div
+          className={cn(
+            "flex items-start justify-start pt-6 lg:pt-9",
+            labelClassName ??
+              "col-start-2 col-span-3 lg:col-start-2 lg:col-span-3",
+          )}
+        >
           <CheckButton label={label} href={href} size="label" active />
         </div>
       )}
-      <div className="col-start-1 col-span-4 w-full">{children}</div>
+      <div className="mt-6 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
+        {children}
+      </div>
     </section>
   );
 }

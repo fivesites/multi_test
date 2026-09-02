@@ -5,6 +5,7 @@ import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import M2Button from "./M2Button";
 import { Button } from "@/components/ui/button";
+import CheckButton from "./CheckButton";
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -64,27 +65,26 @@ export default function CategoryFilters({
   }
 
   return (
-    <div className={cn("hidden lg:block w-full", className)}>
+    <div
+      className={cn(
+        "hidden lg:block w-full col-start-3 col-span-9 bg-secondary pixelCorners",
+        className,
+      )}
+    >
       {/* The sidebar column on /projects — the parent decides where it sits.
           It scrolls with the list rather than sticking. */}
-      <div className="flex flex-col items-baseline gap-y-0 w-full">
+      <div className="grid grid-cols-4 gap-x-3 gap-y-0 items-baseline  w-full p-6">
         {allCats.map((cat, i) => (
           <span
             key={cat}
-            className="inline-flex items-baseline whitespace-nowrap w-min "
+            className="inline-flex items-baseline whitespace-nowrap w-min  "
           >
-            <Button
-              variant="link"
+            <CheckButton
+              label={getFilterLabel(cat)}
+              size="lg"
               onClick={() => handleFilterChange(cat)}
-              className={cn(
-                "transition-all font-diatype text-xs uppercase  px-0 py-0 leading-[1]",
-                activeFilter === cat
-                  ? "text-primary hover:text-primary "
-                  : "text-foreground px-0  hover:text-primary",
-              )}
-            >
-              {getFilterLabel(cat)}
-            </Button>
+              active={activeFilter === cat}
+            />
           </span>
         ))}
       </div>
