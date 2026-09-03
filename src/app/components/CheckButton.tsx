@@ -37,7 +37,7 @@ type Props = {
 const SIZE_BOX = {
   sm: "h-auto items-center",
   md: "px-3 lg:px-6 h-12 items-center  lg:h-16",
-  lg: "px-3 lg:px-3 h-12 lg:h-12 items-center justify-start",
+  lg: "px-6 lg:px-3 h-16 lg:h-12 items-center justify-start",
   label: "h-3 px-0 justify-start items-center",
 } as const;
 
@@ -98,7 +98,7 @@ export default function CheckButton({
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal    ",
+        "flex font-visual font-normal border    ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,

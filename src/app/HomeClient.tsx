@@ -51,113 +51,119 @@ function HomeClientInner() {
   }, [items]);
 
   return (
-    <div className="w-full bg-background px-3 lg:px-6">
-      <div className="relative flex min-h-dvh flex-col w-full ">
-        <LandningBlock className="h-dvh content-center">
+    <div className="w-full bg-blue-900 px-0 ">
+      <div className="relative flex min-h-dvh flex-col gap-y-24 w-full ">
+        <LandningBlock className="h-dvh content-center bg-blue-900">
           {/* Its own container, so the wordmark measures against this box
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
-          <h1 className="grid grid-cols-4 items-center w-full">
+          <div className="grid grid-cols-3 items-center w-full">
             {/* Held back until the bar has stopped saying "loading", so the
                 two aren't typing at each other. */}
             <TypedHeading
               ready={!navLoading}
               text="multisquared"
-              className="col-start-2 lg:col-start-2 text-left  h2Text  font-thin text-primary"
+              className="col-start-2  lg:col-start-2 text-left  h2Text  font-thin text-primary"
             />
-          </h1>
+          </div>
         </LandningBlock>
-        <div className="grid grid-cols-12 ">
+        <div className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 ">
           <LandningBlock
             label="about us"
             href="/about"
-            bg="bg-secondary   text-primary "
-            className="col-start-1 col-span-12 lg:col-start-3 lg:col-span-8 h-dvh    lg:h-[80dvh]  "
+            bg="   text-primary bg-secondary "
+            className="col-start-1 col-span-3 lg:col-start-3 lg:col-span-8 h-auto  "
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
               text={aboutBody ?? undefined}
-              className="w-full justify-center lg:content-center lg:pb-6"
+              className="w-full justify-center lg:content-center pb-6 lg:pb-12"
             />
           </LandningBlock>
         </div>
-      </div>
 
-      <div className="grid grid-cols-12 ">
-        <LandningBlock
-          label="selected projects"
-          href="/projects"
-          className="min-h-[100dvh] lg:h-[50dvh]  px- col-start-1 lg:col-start-3 col-span-12 lg:col-span-8 bg-background px-0   "
-        >
-          {/* Same four/eight-column grid the block's label sits on, so the
+        <div className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 pl-3 lg:px-6 ">
+          <LandningBlock
+            label="selected projects"
+            href="/projects"
+            className="h-auto   col-start-1 col-span-3 lg:col-start-3  lg:col-span-8     "
+          >
+            {/* Same four/eight-column grid the block's label sits on, so the
               heading lines up under "selected projects" in column two. */}
-          <div className="grid grid-cols-4 lg:grid-cols-8 w-full">
-            <TypedHeading
-              text="experience our work"
-              className="mb-12 h2Text flex col-start-2 col-span-3 lg:col-start-2 lg:col-span-6 font-thin text-primary"
-            />
-          </div>
-        </LandningBlock>
-      </div>
-      {/* The featured works as their own grid: one per row on mobile,
-              three per row on desktop, under the heading. */}
-      <div className="grid grid-cols-12">
-        <div className="col-start-1 lg:col-start-2 col-span-12 lg:col-span-10 grid grid-cols-1 lg:grid-cols-6 gap-3 mb-12">
-          {featuredProjects.map((project) => (
-            <Link
-              key={project.key}
-              href={`/projects/${project.slug}`}
-              className="col-span-2 bg-background pixelCorners  group relative flex flex-col gap-3 w-full mb-6 "
-            >
-              <PixelFrame
-                src={project.coverUrl ?? project.url}
-                alt={project.alt}
-                sizes="(max-width: 1024px) 100vw, 33vw"
-                className="w-full aspect-square"
+            <div className="grid grid-cols-3 lg:grid-cols-8 w-full">
+              <TypedHeading
+                text="experience our work"
+                className=" h2Text flex col-start-2 col-span-3 lg:col-start-2 lg:col-span-6 pr-3 lg:pr-0 mb-6 lg:mb-12 font-thin text-primary"
               />
+            </div>
+          </LandningBlock>
+          <div className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-10  grid grid-cols-3 lg:grid-cols-6 gap-3 mt-12 ">
+            {featuredProjects.map((project) => (
+              <Link
+                key={project.key}
+                href={`/projects/${project.slug}`}
+                className="col-span-3 grid grid-cols-3 bg-background pixelCorners  group relative lg:flex lg:flex-col gap-3 lg:gap-6 w-full mb-6 "
+              >
+                <PixelFrame
+                  src={project.coverUrl ?? project.url}
+                  alt={project.alt}
+                  sizes="(max-width: 1024px) 100vw, 33vw"
+                  className="w-full aspect-square col-span-3"
+                />
 
-              <h3 className=" h3Text text-primary px-6 mb-6 lg:mb-0 lowercase indent-[calc(25vw-1.8rem)] lg:indent-0">
-                {project.title}
-              </h3>
-            </Link>
-          ))}
+                <h3 className=" h3Text text-primary col-start-2 col-span-2 lg:px-6 mb-6 pr-3 lg:pr-0  lg:mb-6 lowercase ">
+                  {project.title}
+                </h3>
+              </Link>
+            ))}
+          </div>
+          <Button
+            variant="link"
+            size="lgLink"
+            className=" h2Text flex col-start-2 col-span-3 lg:col-start-6 lg:col-span- pr-0 lg:pr-0 gap-x-3  font-thin text-primary w-min lg:mt-12"
+          >
+            see more work <span className="font-normal ">↗</span>
+          </Button>
         </div>
+        {/* The featured works as their own grid: one per row on mobile,
+              three per row on desktop, under the heading. */}
+        <div className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 px-3 lg:px-6 ">
+          <LandningBlock
+            label="connect with us"
+            href="/connect"
+            bg=" text-primary"
+            className="col-span-3 lg:col-start-3 lg:col-span-8 h-auto  flex-col items-center justify-center  w-full pb-6 px-3 lg:px-0 mt-24 bg-secondary grid grid-cols-3 lg:grid-cols-8 "
+            // The content sits on its own 12-column grid starting at column 4
+            // (25%). Column 3 of the block's 8-column grid is the same 25%, so the
+            // label lines up above the heading, copy and button.
+            labelClassName="col-start-2 col-span-3 lg:col-start-2 lg:col-span-4"
+          >
+            <div className="col-start-2 lg:col-start-2 lg:col-span-8 grid lg:grid-cols-8 grid-cols-3 items-center justify-center gap-y-6 w-full pb- lg:pb-12">
+              <TypedHeading
+                text="lets start talking today"
+                className="col-start-2 lg:col-start-2 col-span-3 lg:col-span-8   h2Text  font-thin text-primary mb-6  "
+              />
+              <p className="text-primary pText col-start-1 lg:col-start-2 col-span-4 indent-[calc(33.3vw-1rem)] lg:indent-0 lg:col-span-6  lg:p-0 lowercase ">
+                Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
+                faucibus ex sapien vitae pellentesque sem placerat. In id cursus
+                mi pretium tellus duis convallis.{" "}
+              </p>
+
+              <span className="col-start-2 col-span-3 lg:col-start-2 lg:col-span-6  ">
+                <Button
+                  variant="link"
+                  size="lgLink"
+                  className=" h2Text flex col-start-2 col-span-3 lg:col-start-6 lg:col-span- px-3 h-24 gap-x-3  font-thin text-secondary pixelCorners w-full justify-center lg:mt-12 bg-primary "
+                >
+                  connect now <span className="font-normal ">↗</span>
+                </Button>
+              </span>
+            </div>
+          </LandningBlock>
+        </div>
+        <HomeFooter />
       </div>
-      <LandningBlock
-        label="connect with us"
-        href="/connect"
-        bg="bg-secondary text-primary"
-        className="lg:h-auto h-dvh flex-col items-center justify-center pt-3 w-full"
-        // The content sits on its own 12-column grid starting at column 4
-        // (25%). Column 3 of the block's 8-column grid is the same 25%, so the
-        // label lines up above the heading, copy and button.
-        labelClassName="col-start-2 col-span-3 lg:col-start-3 lg:col-span-4"
-      >
-        <div className="grid lg:grid-cols-12 grid-cols-4 items-center justify-center gap-3 w-full">
-          <TypedHeading
-            text="lets start talking today"
-            className="col-start-2 lg:col-start-4 col-span-3 lg:col-span-8   h2Text  font-thin text-primary mb-4"
-          />
-          <p className="text-primary pText col-start-1 lg:col-start-4 col-span-4 indent-[calc(25vw-1.5rem)] lg:indent-0 px-6 lg:px-0 lg:col-span-8 py-5 lg:p-0 lowercase ">
-            Lorem ipsum dolor sit amet consectetur adipiscing elit. Quisque
-            faucibus ex sapien vitae pellentesque sem placerat. In id cursus mi
-            pretium tellus duis convallis.{" "}
-          </p>
-          <span className="col-start-1 lg:col-start-4 col-span-4 px-6 lg:x-0 mt-0 lg:mt-12 pb-6 lg:col-span-2 flex items-centerjustify-center ">
-            <Button size="lg" className="  w-full  ">
-              connect{" "}
-            </Button>
-          </span>
-          <span className="hidden lg:flex lg:col-start-6 px-0 mt-6 pb-6 lg:col-span-2 items-center justify-center ">
-            <Button size="lg" variant="outline" className="  w-full  ">
-              continue to projects
-            </Button>
-          </span>
-        </div>
-      </LandningBlock>
-
-      <HomeFooter />
     </div>
   );
 }

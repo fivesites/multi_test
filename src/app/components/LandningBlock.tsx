@@ -45,7 +45,7 @@ export default function LandningBlock({
     <section
       ref={pixelRef}
       className={cn(
-        "pixelCorners relative z-10 w-full grid grid-cols-4 lg:grid-cols-8    mb-3 lg:mb-12  ",
+        "pixelCorners relative z-10 w-full grid grid-cols-3 lg:grid-cols-8 space-y-12 lg:space-y-12  ",
         bg,
         className,
       )}
@@ -58,7 +58,7 @@ export default function LandningBlock({
         // this type size, so the label only steps in to column two on desktop.
         <div
           className={cn(
-            "flex items-start justify-start pt-6 lg:pt-9",
+            "flex items-start justify-start pt-6 lg:pt-12",
             labelClassName ??
               "col-start-2 col-span-3 lg:col-start-2 lg:col-span-3",
           )}
@@ -66,7 +66,7 @@ export default function LandningBlock({
           <CheckButton label={label} href={href} size="label" active />
         </div>
       )}
-      <div className="mt-6 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
+      <div className="mt-0 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
         {children}
       </div>
     </section>

@@ -51,16 +51,16 @@ export default function AboutSectionText({
   return (
     <div
       className={cn(
-        " grid grid-cols-4 lg:grid-cols-8  items-center justify-start   pb-0 px-0 lg:px-0   overflow-y-scroll  gap-0 w-full  ",
+        " grid grid-cols-3 lg:grid-cols-8  items-start justify-start space-y-12 lg:space-y-12   pb-3 px-0 lg:px-0   overflow-y-scroll  gap-0 w-full  ",
         className,
       )}
     >
       <TypedHeading
         text="We Multiply What Matters"
-        className=" lg:leading-[1] h2Text leading-tight mb-12 lg:mb-12 col-start-2 col-span-3 lg:col-start-2 lg:col-span-6   "
+        className="  h2Text  col-start-2 col-span-2 lg:col-start-2 lg:col-span-6 pr-4.5 lg:pr-0    "
       />
       {text && (
-        <p className="col-start-1 col-span-4 lg:col-start-2 lg:col-span-6 indent-[calc(25vw-1.5rem)] lowercase lg:indent-0 pText tracking-wide px-6 lg:px-0 mb-6 lg:mb-0   lg:max-w-4xl ">
+        <p className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-6 indent-[calc(33.3vw-1rem)]  lg:indent-0 pText  px-3 lg:px-0  lg:mb-0 lowercase  lg:max-w-4xl ">
           {text}
         </p>
       )}

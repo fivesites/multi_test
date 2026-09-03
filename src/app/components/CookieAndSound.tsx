@@ -117,11 +117,11 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-4.5 lg:px-6 flex  h-12 lg:h-12  gap-3 items-center lg:items-baseline    ",
+            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-6 pb-6 lg:px-6 flex   lg:h-12  gap-3 items-center lg:items-baseline    ",
 
             step === "volume"
-              ? "justify-end bg-transparent px-3  lg:px-0"
-              : "justify-center lg:justify-end  bg-transparent lg:bg-transparent px-3    ",
+              ? "justify-end bg-transparent "
+              : "justify-center lg:justify-end  bg-transparent lg:bg-transparent    ",
             // Desktop has MultiVertNav's Sound On checkbox, so the sound
             // question and the volume toggle are mobile-only there.
             step !== "cookie" && "lg:hidden",
@@ -135,7 +135,7 @@ export default function CookieAndSound({
                 <Button
                   variant="link"
                   size="sm"
-                  className="underline underline-offset-4 px-0 text-primary font-normal"
+                  className=" border-none underline underline-offset-6 px-0 text-primary font-normal"
                   asChild
                 >
                   <Link href="/privacy-policy" className="">
@@ -161,7 +161,7 @@ export default function CookieAndSound({
           ) : step === "sound" ? (
             <>
               <p className={copy}>Enable sound?</p>
-              <div className="flex flex-row-reverse  gap-3">
+              <div className="flex flex-row-reverse   gap-3">
                 <Button
                   size="sm"
                   className={action}

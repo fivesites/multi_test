@@ -217,7 +217,7 @@
   }
 
   .pText {
-    @apply text-lg leading-tight tracking-normal  lg:text-xl lg:leading-tight  font-visual font-normal;
+    @apply text-3xl font-thin  lg:text-lg leading-tight tracking-normal   lg:leading-tight  font-visual lg:font-normal;
   }
 
   .h1Text {
@@ -225,7 +225,7 @@
   }
 
   .h2Text {
-    @apply font-visual text-3xl lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
+    @apply font-visual text-3xl leading-tight lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
   .h3Text {
     @apply font-visual text-3xl lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;

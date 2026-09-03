@@ -57,7 +57,7 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-1.5 lg:px-6`}
+      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-3 lg:px-6`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -191,7 +191,7 @@ function ColorButton({
         setTurns((t) => t + 1);
         onClick();
       }}
-      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-3 lg:px-3 h-12 lg:h-12 ${className}`}
+      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-6 lg:px-3 h-16 lg:h-12 ${className}`}
     >
       {labelSide === "left" && labelEl}
       {/* The mark draws in currentColor, so the palette's colour rides in as a
@@ -328,7 +328,7 @@ export default function M2Nav() {
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-1.5   lg:px-6 h-12 lg:h-24 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 ${open ? "bg-accent lg:bg-transparent" : "bg-accent"}`}
       >
         {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
@@ -338,7 +338,7 @@ export default function M2Nav() {
           className=" col-start-1 col-span-2 lg:col-start-1 lg:col-span-2 flex font-visual w-full"
           size="lg"
           label={menuLabel}
-          active={open}
+          active
           onClick={() => setOpen((o) => !o)}
         >
           <TerminalM2Button
@@ -351,14 +351,14 @@ export default function M2Nav() {
             loadingText="loading"
             // Once the reader has scrolled, the closed button keeps cycling
             // between "menu" and the wordmark so the bar still says who it is.
-            phrases={cycleMenuLabel ? ["multiplying", "multi2.co"] : []}
+            phrases={cycleMenuLabel ? ["loading", "multi2.co"] : []}
             loop={cycleMenuLabel}
             trigger={cycleMenuLabel ? "scrolled" : "idle"}
           />
         </CheckButton>
 
         <CheckButton
-          className="hidden col-start-8  col-span-2 lg:flex font-visual  lg:justify-start  "
+          className="hidden col-start-4  col-span-2 lg:flex font-visual  lg:justify-start  "
           size="label"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
