@@ -42,49 +42,13 @@ export default function Footer() {
               </Button>
             ))}
           </nav>
-          <div className="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
-            <h3 className="h3Text">GET IN TOUCH</h3>
-            <Button
-              size="sm"
-              variant="link"
-              className="px-0 text-secondary-foreground border-transparent"
-              asChild
-            >
-              <Link href="mailto:info@multi2.co">info@multi2.co</Link>
-            </Button>
-          </div>
 
-          <div className="col-start-2 col-span-3 lg:col-start-7 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
-            <h3 className="h3Text whitespace-nowrap"> members</h3>
-            <div className="flex flex-col items-start gap-y-0">
-              <Button
-                size="sm"
-                variant="link"
-                className="px-0 text-secondary-foreground border-transparent h-auto"
-                asChild
-              >
-                <Link href="mailto:info@multi2.co">Adam Odelfelt</Link>
-              </Button>
-              <Button
-                size="sm"
-                variant="link"
-                className="px-0 text-secondary-foreground border-transparent h-auto"
-                asChild
-              >
-                <Link href="mailto:info@multi2.co">Daniel von Malmborg</Link>
-              </Button>
-            </div>
-          </div>
-
-          <div className="col-start-2 col-span-3 lg:col-start-10 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
-            <h3 className="h3Text">DESIGN &amp; DEV</h3>
+          <div className="flex flex-col">
             <Button
-              size="sm"
               variant="link"
-              className="px-0 text-secondary-foreground border-transparent h-auto"
-              asChild
+              className="px-0 text-secondary-foreground border-transparent h3Text"
             >
-              <Link href="mailto:info@multi2.co">Joel Järvi</Link>
+              <Link href="/">Instagram</Link>
             </Button>
           </div>
         </div>

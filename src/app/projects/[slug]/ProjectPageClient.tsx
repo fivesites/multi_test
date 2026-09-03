@@ -184,7 +184,7 @@ function ProjectPageInner({
                 {[0, 1].map((i) => (
                   <div
                     key={i}
-                    className={`relative aspect-square bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6${
+                    className={`relative aspect-square bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6 ${
                       i % 2 === 0 ? "lg:col-start-2" : ""
                     }`}
                   >
@@ -217,7 +217,7 @@ function ProjectPageInner({
           </motion.div>
         </div>
         {categories.length > 0 && (
-          <ul className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-9 grid grid-cols-3 lg:grid-cols-subgrid gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
+          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-9 grid grid-cols-3 lg:grid-cols-subgrid gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
             {categories.map((c) => (
               <li key={c} className="col-span-1 lg:col-span-3">
                 <CheckButton

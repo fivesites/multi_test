@@ -358,7 +358,7 @@ export default function M2Nav() {
         </CheckButton>
 
         <CheckButton
-          className="hidden col-start-4  col-span-2 lg:flex font-visual  lg:justify-start  "
+          className="hidden col-start-4  col-span-2  font-visual  lg:justify-start  "
           size="label"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
