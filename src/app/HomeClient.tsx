@@ -5,10 +5,12 @@ import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import { useSound } from "@/context/SoundContext";
+import { useLenis } from "lenis/react";
 import Link from "next/link";
 import AboutSectionText from "./components/AboutSectionText";
 import CheckButton from "./components/CheckButton";
 import LandningBlock from "./components/LandningBlock";
+import { Reveal } from "./components/Reveal";
 import PixelFrame from "./components/PixelFrame";
 import TypedHeading from "./components/TypedHeading";
 import { Button } from "@/components/ui/button";
@@ -19,6 +21,7 @@ function HomeClientInner() {
   const { items } = useWork();
   const { notifyContentDone, navLoading } = useUI();
   const { muted, toggleMute, consentSettled } = useSound();
+  const lenis = useLenis();
 
   const [revealed, setRevealed] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
@@ -86,7 +89,7 @@ function HomeClientInner() {
             </div>
           )}
         </div>
-        <div className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 ">
+        <Reveal className="grid grid-cols-3 lg:grid-cols-12 px-0 lg:px-6 ">
           <LandningBlock
             label="about us"
             href="/about"
@@ -99,9 +102,9 @@ function HomeClientInner() {
               className="w-full justify-center lg:content-center pb-6 lg:pb-12"
             />
           </LandningBlock>
-        </div>
+        </Reveal>
 
-        <div className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 pl-3 lg:px-6 ">
+        <Reveal className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 pl-3 lg:px-6 ">
           <LandningBlock
             label="selected projects"
             href="/projects"
@@ -117,7 +120,7 @@ function HomeClientInner() {
             </div>
           </LandningBlock>
           <div className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-10  grid grid-cols-3 lg:grid-cols-6 gap-3 mt-12 lg:mt-6 ">
-            {featuredProjects.map((project) => (
+            {featuredProjects.map((project, i) => (
               <Link
                 key={project.key}
                 href={`/projects/${project.slug}`}
@@ -128,6 +131,8 @@ function HomeClientInner() {
                   alt={project.alt}
                   sizes="(max-width: 1024px) 100vw, 33vw"
                   className="w-full aspect-square col-span-3"
+                  revealOnView
+                  revealDelay={i * 0.08}
                 />
 
                 <h3 className=" h3Text text-primary col-start-2 col-span-2 lg:px-6 mb-6 pr-3 lg:pr-0  lg:mb-6 lowercase ">
@@ -143,10 +148,10 @@ function HomeClientInner() {
           >
             see more work <span className="font-normal ">↗</span>
           </Button>
-        </div>
+        </Reveal>
         {/* The featured works as their own grid: one per row on mobile,
               three per row on desktop, under the heading. */}
-        <div className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 px-3 lg:px-6 ">
+        <Reveal className="grid grid-cols-3 lg:grid-cols-12 gap-x-3 px-3 lg:px-6 ">
           <LandningBlock
             label="connect with us"
             href="/connect"
@@ -179,13 +184,17 @@ function HomeClientInner() {
               </span>
             </div>
           </LandningBlock>
-        </div>
-        <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6">
+        </Reveal>
+        <Reveal className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6">
           <Button
             variant="link"
             size="lgLink"
             className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
-            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onClick={() =>
+              lenis
+                ? lenis.scrollTo(0)
+                : window.scrollTo({ top: 0, behavior: "smooth" })
+            }
           >
             top <span className="font-normal ">↑</span>
           </Button>
@@ -199,9 +208,11 @@ function HomeClientInner() {
               next <span className="font-normal ">→</span>
             </Link>
           </Button>
-        </span>
+        </Reveal>
 
-        <Footer />
+        <Reveal>
+          <Footer />
+        </Reveal>
       </div>
     </div>
   );

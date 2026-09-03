@@ -2,6 +2,7 @@
 
 import { useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
+import { useLenis } from "lenis/react";
 import useEmblaCarousel from "embla-carousel-react";
 import Image from "next/image";
 import { motion } from "motion/react";
@@ -26,10 +27,13 @@ export default function Lightbox({
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
+  const lenis = useLenis();
 
   useEffect(() => {
     const prev = document.body.style.overflow;
     document.body.style.overflow = "hidden";
+    // Freeze the smoothed page scroll behind the overlay.
+    lenis?.stop();
     const handler = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
       if (e.key === "ArrowLeft") emblaApi?.scrollPrev();
@@ -38,9 +42,10 @@ export default function Lightbox({
     window.addEventListener("keydown", handler);
     return () => {
       document.body.style.overflow = prev;
+      lenis?.start();
       window.removeEventListener("keydown", handler);
     };
-  }, [emblaApi, onClose]);
+  }, [emblaApi, onClose, lenis]);
 
   return createPortal(
     <motion.div

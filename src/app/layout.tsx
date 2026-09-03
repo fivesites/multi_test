@@ -15,6 +15,7 @@ import MultiVertNav from "@/app/components/MultiVertNav";
 import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
 import CustomCursor from "@/app/components/CustomCursor";
+import SmoothScroll from "@/app/components/SmoothScroll";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -138,7 +139,7 @@ export default async function RootLayout({
                     <M2Nav />
                     <CookieAndSound />
 
-                    {children}
+                    <SmoothScroll>{children}</SmoothScroll>
                   </CursorProvider>
                 </ReelProvider>
               </SoundProvider>
