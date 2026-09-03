@@ -84,12 +84,6 @@ function NavVertical({
             onClick={() => onNavigate(item.href)}
           />
         ))}
-        <ColorButton
-          label={current.label}
-          swatch={current.swatch}
-          active
-          onClick={onCycleTheme}
-        />
       </nav>
     </motion.div>
   );
@@ -314,6 +308,10 @@ export default function M2Nav() {
 
   const menuLabel = menuLoading ? "loading" : open ? "close" : "multisquared";
 
+  // Past the top of the page, the closed menu button alternates "menu" and the
+  // wordmark rather than sitting on one.
+  const cycleMenuLabel = scrolled && !open && !menuLoading;
+
   // The settings menu only carries the projects view toggles for now, so it
   // rides along only on that page.
   const onProjects = pathname === "/projects";
@@ -332,31 +330,35 @@ export default function M2Nav() {
         // so filling the bar too would box the page in.
         className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-1.5   lg:px-6 h-12 lg:h-24 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
       >
-        <div className="col-start-1 lg:col-start-1 lg:col-span-2 flex items-center gap-x-3 t">
-          {/* The label rides in as a child rather than through CheckButton's
+        {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
               through. Keyed on the label so each change remounts and retypes
               instead of swapping the letters in place. */}
-          <CheckButton
-            className="flex font-visual w-full"
-            size="lg"
-            label={menuLabel}
-            active={open}
-            onClick={() => setOpen((o) => !o)}
-          >
-            <TerminalM2Button
-              className="tracking-wide"
-              key={menuLabel}
-              text={open ? "close" : "menu"}
-              visible
-              delay={0}
-              loading={menuLoading}
-              loadingText="loading"
-            />
-          </CheckButton>
-        </div>
         <CheckButton
-          className="hidden col-start-4  col-span-2 lg:flex font-visual  lg:justify-start  "
+          className=" col-start-1 col-span-2 lg:col-start-1 lg:col-span-2 flex font-visual w-full"
+          size="lg"
+          label={menuLabel}
+          active={open}
+          onClick={() => setOpen((o) => !o)}
+        >
+          <TerminalM2Button
+            className="tracking-wide"
+            key={menuLabel}
+            text={open ? "close" : "menu"}
+            visible
+            delay={0}
+            loading={menuLoading}
+            loadingText="loading"
+            // Once the reader has scrolled, the closed button keeps cycling
+            // between "menu" and the wordmark so the bar still says who it is.
+            phrases={cycleMenuLabel ? ["multiplying", "multi2.co"] : []}
+            loop={cycleMenuLabel}
+            trigger={cycleMenuLabel ? "scrolled" : "idle"}
+          />
+        </CheckButton>
+
+        <CheckButton
+          className="hidden col-start-8  col-span-2 lg:flex font-visual  lg:justify-start  "
           size="label"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
@@ -366,14 +368,7 @@ export default function M2Nav() {
             opens the full-screen filter/settings sheet. Desktop: sits in the
             bar at column ten with the settings menu dropping straight below. */}
         {onProjects && (
-          <div className="fixed bottom-3 left-3 z-[95] flex flex-col items-start lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:col-start-10 lg:col-span-2 lg:h-full lg:justify-center">
-            <CheckButton
-              className="lg:hidden flex font-visual pixelCorners px-6 bg-secondary w-full text-secondary-foreground"
-              size="lg"
-              label="filter settings"
-              active={filtersOpen}
-              onClick={() => setFiltersOpen((v) => !v)}
-            />
+          <div className="flex flex-col items-start lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:col-start-10 lg:col-span-2 lg:h-full lg:justify-center">
             <CheckButton
               className="hidden lg:flex font-visual lg:justify-start"
               size="label"

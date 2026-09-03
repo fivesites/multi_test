@@ -38,7 +38,7 @@ export default function TerminalM2Button({
   stopTrigger = 0,
   loop = false,
 }: Props) {
-  const [dots, setDots] = useState(".");
+  const [dots, setDots] = useState("");
   const [activePhrase, setActivePhrase] = useState<string | null>(null);
   const [phraseVisible, setPhraseVisible] = useState(false);
   const [phraseKey, setPhraseKey] = useState(0);
@@ -177,7 +177,11 @@ export default function TerminalM2Button({
           visible={phraseVisible}
           delay={0}
         />
-        <span className="whitespace-nowrap">{` (${dots})`}</span>
+        {/* The wordmark stands on its own — the trailing dots are for the
+            working-status phrases, not the brand. */}
+        {activePhrase !== "multi2.co" && (
+          <span className="whitespace-nowrap">{`${dots}`}</span>
+        )}
       </>
     );
   } else {

@@ -8,7 +8,6 @@ import { useWork } from "@/context/WorkContext";
 import ProjectCard from "@/app/components/ProjectCard";
 import CategoryFilters from "@/app/components/CategoryFilters";
 import FilterOverlay from "@/app/components/FilterOverlay";
-import ViewToggles from "@/app/components/ViewToggles";
 import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
 import { getActiveFilterLabel, getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "@/app/components/LandningBlock";
@@ -128,12 +127,12 @@ export default function AllProjectsPageClient() {
 
       {/* Desktop: category sidebar left, projects right. */}
       <div className=" mb-3 lg:mb-6 grid grid-cols-4 lg:grid-cols-12 ">
-        <h2 className="lg:hidden  col-start-2 col-span-3  items-baseline gap-x-3 px-0 lg:px-3">
-          {/* Names the active filter and toggles the mobile category overlay —
-              same job ViewToggles' heading does below lg. */}
+        <h2 className="lg:hidden col-start-2 col-span-3 items-baseline gap-x-3 px-0">
+          {/* The one mobile control: names the active filter and opens the
+              category / settings sheet. */}
           <CheckButton
             size="label"
-            label="filter category"
+            label={getActiveFilterLabel(activeFilter)}
             active={filtersOpen}
             onClick={() => setFiltersOpen((v) => !v)}
           />
@@ -167,7 +166,7 @@ export default function AllProjectsPageClient() {
 
         {listVisible && showGrid && (
           <div
-            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-3 p-1.5 lg:grid lg:p-3"
+            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-3 px-1.5 pt-3 lg:grid lg:px-3"
             style={{
               gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
             }}
@@ -197,10 +196,9 @@ export default function AllProjectsPageClient() {
         )}
       </div>
 
-      {/* Mobile: heading + view toggle, then the grid or the client list. */}
+      {/* Mobile: the grid or the client list. The category button that heads
+          this section lives in the grid above so it can sit in column two. */}
       <div className="flex w-full flex-col lg:hidden">
-        <ViewToggles className="pb-1.5" />
-
         {listVisible && showGrid && (
           <div className="flex flex-col w-full  gap-y-3">
             <AnimatePresence mode="popLayout" initial={false}>

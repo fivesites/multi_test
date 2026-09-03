@@ -26,7 +26,7 @@ const buttonVariants = cva(
       size: {
         default: "h-10   px-2 py-1 whitespace-nowrap  has-[>svg]:px-3 btnText ",
         xs: "h-6 gap-1  px-2.5 py-1 text-xs has-[>svg]:px-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-7 py-1 gap-1.5  px-2 text-sm has-[>svg]:px-2.5",
+        sm: "h-7 py-1 gap-1.5  px-2 h4BtnText has-[>svg]:px-2.5",
         lg: "h-12 lg:h-16 text-base lg:text-xl  px-6 has-[>svg]:px-4",
         icon: "size-9",
         "icon-xs": "size-6  [&_svg:not([class*='size-'])]:size-3",

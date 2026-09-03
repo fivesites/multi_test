@@ -53,13 +53,13 @@ export default function ProjectCard({
       {/* Absolute, so revealing these on hover can't reflow the masonry */}
       <div
         className={cn(
-          "absolute left-0 top-0 h-full w-full flex flex-col items-center justify-center font-diatype font-medium p-6 text-primary-foreground text-sm leading-snug tracking-wide",
-          "opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-focus-visible:opacity-100 group-hover:bg-primary group-focus-visible:bg-secondary",
+          "absolute left-0 top-0 h-full w-full flex flex-col items-start justify-end  p-6 text-primary-foreground  leading-snug tracking-wide",
+          "opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:bg-secondary group-focus-visible:bg-secondary",
         )}
       >
-        <Button className="h-auto w-min bg-secondary text-secondary-foreground h2Text whitespace-nowrap">
+        <button className="h-auto w-min bg-transparent  text-secondary-foreground h3Text whitespace-nowrap">
           {item.title}
-        </Button>
+        </button>
       </div>
     </Link>
   );

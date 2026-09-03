@@ -219,14 +219,19 @@
   .pText {
     @apply text-lg leading-tight tracking-normal  lg:text-xl lg:leading-tight  font-visual font-normal;
   }
+
+  .h1Text {
+    @apply font-visual tracking-normal text-4xl leading-tight lg:text-[16rem] font-light lg:leading-[0.77];
+  }
+
   .h2Text {
     @apply font-visual text-3xl lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
   .h3Text {
     @apply font-visual text-3xl lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
-  .h4Text {
-    @apply font-visual text-3xl lg:text-lg  tracking-wide lg:tracking-wider font-thin lg:font-normal;
+  .h4BtnText {
+    @apply font-visual text-base lg:text-lg lowercase tracking-wide font-normal;
   }
 
   /* Mobile keeps it an ordinary heading; the full-bleed treatment is desktop

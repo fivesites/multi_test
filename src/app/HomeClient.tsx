@@ -11,7 +11,7 @@ import PixelFrame from "./components/PixelFrame";
 import TypedHeading from "./components/TypedHeading";
 import { Button } from "@/components/ui/button";
 
-import HomeFooter from "./components/HomeFooter";
+import HomeFooter from "./components/Footer";
 
 function HomeClientInner() {
   const { items } = useWork();
@@ -58,7 +58,7 @@ function HomeClientInner() {
                 and not the viewport — and so container-type's layout
                 containment stays off the section, whose fixed children still
                 have to anchor to the viewport. */}
-          <div className="grid grid-cols-4 items-center w-full">
+          <h1 className="grid grid-cols-4 items-center w-full">
             {/* Held back until the bar has stopped saying "loading", so the
                 two aren't typing at each other. */}
             <TypedHeading
@@ -66,7 +66,7 @@ function HomeClientInner() {
               text="multisquared"
               className="col-start-2 lg:col-start-2 text-left  h2Text  font-thin text-primary"
             />
-          </div>
+          </h1>
         </LandningBlock>
         <div className="grid grid-cols-12 ">
           <LandningBlock
