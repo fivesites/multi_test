@@ -57,7 +57,7 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-3 lg:px-6`}
+      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-0 lg:px-6`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -328,7 +328,7 @@ export default function M2Nav() {
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 ${open ? "bg-accent lg:bg-transparent" : "bg-accent"}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
       >
         {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state

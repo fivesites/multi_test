@@ -1,5 +1,5 @@
 import React from "react";
-import { client } from "../../sanity/lib/client";
+import { sanityFetch } from "../../sanity/lib/client";
 import { allCopyQuery } from "../../sanity/lib/queries";
 import { CopyProvider, type CopyEntry } from "./CopyContext";
 
@@ -8,7 +8,13 @@ export async function CopyContextServer({
 }: {
   children: React.ReactNode;
 }) {
-  const copyEntries = await client.fetch<CopyEntry[]>(allCopyQuery);
+  let copyEntries: CopyEntry[] = [];
+  try {
+    copyEntries = await sanityFetch<CopyEntry[]>(allCopyQuery);
+  } catch (error) {
+    // Sanity unreachable — render with no copy overrides rather than crashing.
+    console.error("CopyContextServer: Sanity fetch failed", error);
+  }
 
   const copyMap: Record<string, CopyEntry> = {};
   for (const entry of copyEntries) {

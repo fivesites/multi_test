@@ -98,7 +98,7 @@ export default function CheckButton({
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal border    ",
+        "flex font-visual font-normal   ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,

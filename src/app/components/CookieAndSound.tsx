@@ -35,20 +35,22 @@ export default function CookieAndSound({
   className?: string;
 }) {
   const [step, setStep] = useState<Step>("idle");
-  const { muted, toggleMute, setMuted } = useSound();
-  // The projects page carries its own sound toggle in the settings sheet, so
-  // the standing corner toggle stands down there.
+  const { muted, toggleMute, setMuted, markConsentSettled } = useSound();
+  // The projects page (settings sheet) and the homepage (hero corner) carry
+  // their own sound toggle, so the standing corner toggle stands down there.
   const pathname = usePathname();
-  const onProjects = pathname?.startsWith("/projects") ?? false;
+  const hasOwnSoundToggle =
+    (pathname?.startsWith("/projects") ?? false) || pathname === "/";
 
   const settle = useCallback(
     (soundAccepted: boolean) => {
       // "volume", not "idle": living in the layout makes this the only
       // site-wide sound control, so the toggle has to outlive the questions.
       setStep(ALWAYS_SHOW ? "cookie" : "volume");
+      markConsentSettled();
       onDone?.(soundAccepted);
     },
-    [onDone],
+    [onDone, markConsentSettled],
   );
 
   useEffect(() => {
@@ -70,6 +72,7 @@ export default function CookieAndSound({
     // toggle, which is how they supply that gesture.
     if (cookie === "declined" || sound) {
       setStep("volume");
+      markConsentSettled();
       onDone?.(false);
       return;
     }
@@ -79,7 +82,7 @@ export default function CookieAndSound({
       PROMPT_DELAY_MS,
     );
     return () => clearTimeout(t);
-  }, [onDone]);
+  }, [onDone, markConsentSettled]);
 
   function acceptCookies() {
     localStorage.setItem("cookie-consent", "accepted");
@@ -97,6 +100,7 @@ export default function CookieAndSound({
     localStorage.setItem("sound-consent", accepted ? "accepted" : "declined");
     setMuted(!accepted);
     setStep("volume");
+    markConsentSettled();
     onDone?.(accepted);
   }
 
@@ -109,7 +113,7 @@ export default function CookieAndSound({
 
   return (
     <AnimatePresence mode="wait">
-      {step !== "idle" && !(step === "volume" && onProjects) && (
+      {step !== "idle" && !(step === "volume" && hasOwnSoundToggle) && (
         <motion.div
           key={step}
           initial={{ opacity: 0, y: 8 }}

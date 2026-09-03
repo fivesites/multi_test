@@ -17,84 +17,89 @@ export default function Footer() {
 
   return (
     <div
-      ref={pixelRef}
-      className="pixelCornersTop bg-secondary w-full flex flex-col justify-between items-stretch h-dvh text-secondary-foreground pt-6 px-3 lg:px-0"
+      className="
+      "
     >
-      {/* Contact columns. Each heading + its links is one grid cell, placed on
+      <div
+        ref={pixelRef}
+        className="pixelCornersTop bg-secondary w-full flex flex-col justify-between items-stretch h-dvh text-secondary-foreground pt-6 "
+      >
+        {/* Contact columns. Each heading + its links is one grid cell, placed on
           an explicit column so the groups all sit on the top row and line up
           regardless of how many links they hold. Mobile stacks them in
           column two. */}
-      <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline px-0">
-        <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start lg:px-6 ">
-          {NAV_LINKS.map((link) => (
+        <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline ">
+          <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start lg:px-6 mb-12 lg:mb-0  ">
+            {NAV_LINKS.map((link) => (
+              <Button
+                key={link.href}
+                size="sm"
+                variant="link"
+                className="px-0 text-secondary-foreground border-transparent"
+                asChild
+              >
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
+            ))}
+          </nav>
+          <div className="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
+            <h3 className="h3Text">GET IN TOUCH</h3>
             <Button
-              key={link.href}
               size="sm"
               variant="link"
               className="px-0 text-secondary-foreground border-transparent"
               asChild
             >
-              <Link href={link.href}>{link.label}</Link>
+              <Link href="mailto:info@multi2.co">info@multi2.co</Link>
             </Button>
-          ))}
-        </nav>
-        <div className="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
-          <h3 className="h3Text">GET IN TOUCH</h3>
-          <Button
-            size="sm"
-            variant="link"
-            className="px-0 text-secondary-foreground border-transparent"
-            asChild
-          >
-            <Link href="mailto:info@multi2.co">info@multi2.co</Link>
-          </Button>
-        </div>
+          </div>
 
-        <div className="col-start-2 col-span-3 lg:col-start-7 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
-          <h3 className="h3Text whitespace-nowrap"> members</h3>
-          <div className="flex flex-col items-start gap-y-0">
+          <div className="col-start-2 col-span-3 lg:col-start-7 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
+            <h3 className="h3Text whitespace-nowrap"> members</h3>
+            <div className="flex flex-col items-start gap-y-0">
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 text-secondary-foreground border-transparent h-auto"
+                asChild
+              >
+                <Link href="mailto:info@multi2.co">Adam Odelfelt</Link>
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 text-secondary-foreground border-transparent h-auto"
+                asChild
+              >
+                <Link href="mailto:info@multi2.co">Daniel von Malmborg</Link>
+              </Button>
+            </div>
+          </div>
+
+          <div className="col-start-2 col-span-3 lg:col-start-10 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
+            <h3 className="h3Text">DESIGN &amp; DEV</h3>
             <Button
               size="sm"
               variant="link"
               className="px-0 text-secondary-foreground border-transparent h-auto"
               asChild
             >
-              <Link href="mailto:info@multi2.co">Adam Odelfelt</Link>
-            </Button>
-            <Button
-              size="sm"
-              variant="link"
-              className="px-0 text-secondary-foreground border-transparent h-auto"
-              asChild
-            >
-              <Link href="mailto:info@multi2.co">Daniel von Malmborg</Link>
+              <Link href="mailto:info@multi2.co">Joel Järvi</Link>
             </Button>
           </div>
         </div>
 
-        <div className="col-start-2 col-span-3 lg:col-start-10 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
-          <h3 className="h3Text">DESIGN &amp; DEV</h3>
-          <Button
-            size="sm"
-            variant="link"
-            className="px-0 text-secondary-foreground border-transparent h-auto"
-            asChild
-          >
-            <Link href="mailto:info@multi2.co">Joel Järvi</Link>
-          </Button>
-        </div>
-      </div>
-
-      {/* Sits flush against the bottom edge of the footer. leading-none trims
+        {/* Sits flush against the bottom edge of the footer. leading-none trims
           the wordmark's line box so the glyphs, not the line box, meet the
           edge; items-end drops the copyright onto the same baseline. */}
-      <div className="flex flex-row-reverse lg:flex-row justify-between w-full items-end px-0 lg:px-6 pb-4 lg:pb-6">
-        <h1 className="ml-0 lg:-ml-5 h1Text leading-none text-secondary-foreground mb-0">
-          multi2.co
-        </h1>
-        <h4 className="text-sm font-visual tracking-wide lowercase text-secondary-foreground">
-          Copyright © 2026
-        </h4>
+        <div className="flex flex-row-reverse lg:flex-row justify-between w-full items-end px-3 lg:px-6 pb-4 lg:pb-6">
+          <h1 className="ml-0 lg:-ml-5 h1Text leading-none text-secondary-foreground mb-0">
+            multi2.co
+          </h1>
+          <h4 className="text-sm font-visual tracking-wide lowercase text-secondary-foreground">
+            Copyright © 2026
+          </h4>
+        </div>
       </div>
     </div>
   );

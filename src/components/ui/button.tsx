@@ -20,7 +20,7 @@ const buttonVariants = cva(
           "bg-secondary text-secondary-foreground hover:bg-secondary/80 pixelCorners",
         ghost:
           "border-transparent text-primary bg-transparent hover:bg-transparent  hover:text-primary hover:border-primary",
-        link: " text-primary  justify-start border-b  ",
+        link: " text-primary  justify-start border-transparent hover:border-b-primary  cursor-pointer ",
         nav: " text-primary btnText underline-none hover:underline-none border-b border-b-primary  hover:bg-primary hover:text-primary-foreground transition-all ",
       },
       size: {
@@ -34,8 +34,7 @@ const buttonVariants = cva(
         "icon-lg": "size-10",
         "nav-lg": "h-10 lg:h-14 btnTextLG px-0  hover:px-3 has-[>svg]:px-4",
         filter: "h-auto   has-[>svg]:px-4",
-        lgLink:
-          "h-auto  text-3xl   has-[>svg]:px-4 underline-offset-8 decoration-2",
+        lgLink: "h-auto  text-3xl   has-[>svg]:px-4 ",
       },
     },
     defaultVariants: {

@@ -231,7 +231,7 @@
     @apply font-visual text-3xl lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;
   }
   .h4BtnText {
-    @apply font-visual text-sm lg:text-lg lowercase tracking-wide font-normal;
+    @apply font-visual text-sm lg:text-sm lowercase tracking-wide font-normal;
   }
 
   /* Mobile keeps it an ordinary heading; the full-bleed treatment is desktop

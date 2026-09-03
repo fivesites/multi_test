@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { client } from "../../../../sanity/lib/client";
+import { sanityFetch } from "../../../../sanity/lib/client";
 import {
   workBySlugQuery,
   allWorkSlugsQuery,
@@ -8,8 +8,14 @@ import { urlFor } from "../../../../sanity/lib/image";
 import WorkPageClient from "./ProjectPageClient";
 
 export async function generateStaticParams() {
-  const slugs = await client.fetch<{ slug: string }[]>(allWorkSlugsQuery);
-  return slugs.map(({ slug }) => ({ slug }));
+  try {
+    const slugs = await sanityFetch<{ slug: string }[]>(allWorkSlugsQuery);
+    return slugs.map(({ slug }) => ({ slug }));
+  } catch (error) {
+    // Sanity unreachable at build time — let the routes render on demand.
+    console.error("generateStaticParams: Sanity fetch failed", error);
+    return [];
+  }
 }
 
 type MediaItem = {
@@ -51,7 +57,7 @@ export default async function WorkPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const work = await client.fetch<WorkData | null>(workBySlugQuery, { slug });
+  const work = await sanityFetch<WorkData | null>(workBySlugQuery, { slug });
   if (!work) notFound();
 
   const images = (work.media ?? [])

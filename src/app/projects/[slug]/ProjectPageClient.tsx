@@ -6,6 +6,9 @@ import { motion, AnimatePresence } from "motion/react";
 import Lightbox from "@/app/components/Lightbox";
 import LandningBlock from "@/app/components/LandningBlock";
 import CheckButton from "@/app/components/CheckButton";
+import Footer from "@/app/components/Footer";
+import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 type ProjectImage = { key: string; url: string; aspectRatio: number };
 
@@ -83,8 +86,8 @@ function ProjectPageInner({
   const lightboxImages = coverUrl && hero ? [hero, ...images] : images;
 
   return (
-    <div className="mt-16 lg:mt-24 pt-12 px-6 relative w-full ">
-      <span className="grid grid-cols-3 lg:grid-cols-12 mb-6">
+    <div className="mt-16 lg:mt-24 pt-12 relative w-full px-3 ">
+      <span className="grid grid-cols-3 lg:grid-cols-12 mb-6 ">
         <h2 className="h2Text col-start-2 lg:col-start-4 col-span-8 text-primary ">
           {title}
         </h2>
@@ -96,7 +99,7 @@ function ProjectPageInner({
       <LandningBlock
         label={client}
         className="min-h-dvh  items-start w-full  lg:grid-cols-12 lg:px-0 "
-        labelClassName="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 "
+        labelClassName="col-start-2  col-span-3 lg:col-start-4 lg:col-span-3 "
         background={
           hero ? (
             <div
@@ -116,15 +119,6 @@ function ProjectPageInner({
         }
       />
 
-      <span className="grid grid-cols-3 lg:grid-cols-12 w-full mb-12 lg:mb-12 text-primary">
-        <h4 className="h4BtnText col-start-1 col-span-1 lg:col-start-4">
-          fig.1
-        </h4>
-        <h4 className=" col-start-2 col-span-2 lg:col-start-6 lg:col-span-2 h4BtnText">
-          {title}
-        </h4>
-      </span>
-
       <motion.div
         className=" w-full relative pb-4"
         initial={{ opacity: 0 }}
@@ -134,7 +128,13 @@ function ProjectPageInner({
         {/* Description — reached by scrolling past the hero */}
 
         <div className="grid grid-cols-3 lg:grid-cols-12  mb-12 lg:mb-6 justify-start items-baseline text-primary">
-          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-4 indent-[calc(33.3vw-1rem)] lg:indent-0  ">
+          <h4 className="h4BtnText  col-start-1 col-span-1 lg:col-start-1 px-3">
+            fig.1
+          </h4>
+          <h4 className=" col-start-2 col-span-1 lg:col-start-2 lg:col-span-1 h4BtnText">
+            moa larsson for {title}
+          </h4>
+          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-7 indent-[calc(33.3vw-1rem)] lowercase lg:indent-12 mt-12  ">
             {description ? (
               <p className="pText  ">{description}</p>
             ) : (
@@ -150,49 +150,31 @@ function ProjectPageInner({
           </span>
 
           {/* Categories then credits: from column 9 on desktop, stacked below
-              the description on mobile. */}
-          {(categories.length > 0 || credits) && (
-            <div className="col-start-1 col-span-3 lg:col-start-9 lg:col-span-4 mt-12 lg:mt-0 flex flex-col gap-y-6 text-primary">
-              {categories.length > 0 && (
-                <ul className="fgrid grid grid-cols-3 lg:grid-cols-2 gap-x-0 gap-y-6 items-baseline pText uppercase">
-                  {categories.map((c) => (
-                    <li key={c}>
-                      <CheckButton
-                        size="label"
-                        active
-                        label={CATEGORY_LABELS[c] ?? c}
-                      />
-                    </li>
-                  ))}
-                </ul>
-              )}
+        
 
-              {credits && (
-                <dl className="grid grid-cols-2 gap-x-3 gap-y-1 h4BtnText">
-                  {credits
-                    .split("\n")
-                    .filter(Boolean)
-                    .map((line, i) => {
-                      const { role, name } = parseCredit(line);
-                      return (
-                        <Fragment key={i}>
-                          <dt className="uppercase text-muted-foreground">
-                            {role}
-                          </dt>
-                          <dd className="m-0">{name}</dd>
-                        </Fragment>
-                      );
-                    })}
-                </dl>
-              )}
-            </div>
+          {/* Credits: directly below the description, in the same column. */}
+          {credits && (
+            <dl className="col-start-1 col-span-2 lg:col-start-4 lg:col-span-6 mt-12 grid grid-cols-2 gap-x-3 gap-y-1 h4BtnText text-primary">
+              {credits
+                .split("\n")
+                .filter(Boolean)
+                .map((line, i) => {
+                  const { role, name } = parseCredit(line);
+                  return (
+                    <Fragment key={i}>
+                      <dt className="lowercase col-span-1">{role}</dt>
+                      <dd className="m-0 col-span-1">{name}</dd>
+                    </Fragment>
+                  );
+                })}
+            </dl>
           )}
         </div>
 
-        <div className="w-full">
+        <div className="w-full mt-24 ">
           {/* Gallery */}
           <motion.div
-            className="grid grid-cols-1 lg:grid-cols-4 gap-3 w-full "
+            className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full "
             initial="hidden"
             animate="visible"
             variants={{ visible: { transition: { staggerChildren: 0.03 } } }}
@@ -202,7 +184,9 @@ function ProjectPageInner({
                 {[0, 1].map((i) => (
                   <div
                     key={i}
-                    className="relative aspect-square bg-lyx flex items-center justify-center font-visual text-lava uppercase tracking-widest text-sm lg:col-start-2 lg:col-span-2"
+                    className={`relative aspect-square bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6${
+                      i % 2 === 0 ? "lg:col-start-2" : ""
+                    }`}
                   >
                     Placeholder
                   </div>
@@ -214,7 +198,9 @@ function ProjectPageInner({
                   key={img.key}
                   variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
                   transition={{ duration: 0.2 }}
-                  className="relative aspect-square cursor-zoom-in overflow-hidden lg:col-start-2 lg:col-span-2"
+                  className={`relative aspect-square cursor-zoom-in overflow-hidden mb-6 lg:col-span-5 ${
+                    i % 2 === 0 ? "lg:col-start-2" : ""
+                  }`}
                   // +1: the hero is images[0]
                   onClick={() => setLightboxIndex(i + 1)}
                 >
@@ -230,14 +216,19 @@ function ProjectPageInner({
             )}
           </motion.div>
         </div>
-
-        {/* WORK FOOTER */}
-        <div className="flex  flex-col justify-center items-start lg:grid-cols-4 w-full  lg:items-baseline ">
-          <div className="flex flex-col col-span-2"></div>
-          <h4 className="w-full  lg:justify-start whitespace-normal lg:whitespace-nowrap lg:items-baseline gap-x-0 gap-y-0 max-w-sm  mb-4">
-            Services provided by Multi² in this project:
-          </h4>
-        </div>
+        {categories.length > 0 && (
+          <ul className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-9 grid grid-cols-3 lg:grid-cols-subgrid gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
+            {categories.map((c) => (
+              <li key={c} className="col-span-1 lg:col-span-3">
+                <CheckButton
+                  size="label"
+                  active
+                  label={CATEGORY_LABELS[c] ?? c}
+                />
+              </li>
+            ))}
+          </ul>
+        )}
 
         <AnimatePresence>
           {lightboxIndex !== null && (
@@ -249,6 +240,29 @@ function ProjectPageInner({
           )}
         </AnimatePresence>
       </motion.div>
+
+      <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 mt-12 lg:mt-24 mb-12 lg:mb-24">
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          top <span className="font-normal ">↑</span>
+        </Button>
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+          asChild
+        >
+          <Link href="/projects">
+            next <span className="font-normal ">→</span>
+          </Link>
+        </Button>
+      </span>
+
+      <Footer />
     </div>
   );
 }

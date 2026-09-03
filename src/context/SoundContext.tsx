@@ -4,6 +4,7 @@ import {
   createContext,
   useCallback,
   useContext,
+  useEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -16,7 +17,26 @@ type SoundContextType = {
   /** 0–1, independent of `muted`: muting keeps the level to come back to. */
   volume: number;
   setVolume: (v: number) => void;
+  /** True once the visitor has been through the cookie + sound consent flow
+   *  (or was a returning visitor with nothing left to answer). Standing sound
+   *  controls that would otherwise cover the prompt wait on this. */
+  consentSettled: boolean;
+  markConsentSettled: () => void;
 };
+
+/** Returning visitors have already resolved the flow — read that straight from
+ *  storage so the standing controls don't flash in and out on first paint. */
+function readConsentSettled(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return (
+      localStorage.getItem("sound-consent") !== null ||
+      localStorage.getItem("cookie-consent") === "declined"
+    );
+  } catch {
+    return false;
+  }
+}
 
 const SoundContext = createContext<SoundContextType | null>(null);
 
@@ -28,6 +48,15 @@ const SoundContext = createContext<SoundContextType | null>(null);
 export function SoundProvider({ children }: { children: ReactNode }) {
   const [muted, setMuted] = useState(true);
   const [volume, setVolumeState] = useState(1);
+  const [consentSettled, setConsentSettled] = useState(false);
+
+  // Post-mount only: the server render has no localStorage, so seeding this
+  // during useState would desync hydration.
+  useEffect(() => {
+    if (readConsentSettled()) setConsentSettled(true);
+  }, []);
+
+  const markConsentSettled = useCallback(() => setConsentSettled(true), []);
 
   const toggleMute = useCallback(() => setMuted((m) => !m), []);
 
@@ -41,7 +70,15 @@ export function SoundProvider({ children }: { children: ReactNode }) {
 
   return (
     <SoundContext.Provider
-      value={{ muted, setMuted, toggleMute, volume, setVolume }}
+      value={{
+        muted,
+        setMuted,
+        toggleMute,
+        volume,
+        setVolume,
+        consentSettled,
+        markConsentSettled,
+      }}
     >
       {children}
     </SoundContext.Provider>

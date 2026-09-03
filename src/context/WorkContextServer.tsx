@@ -1,5 +1,5 @@
 import React from "react";
-import { client } from "../../sanity/lib/client";
+import { sanityFetch } from "../../sanity/lib/client";
 import { workCardsQuery } from "../../sanity/lib/queries";
 import { urlFor } from "../../sanity/lib/image";
 import { WorkProvider, type GridItem } from "./WorkContext";
@@ -46,7 +46,14 @@ export async function WorkContextServer({
 }: {
   children: React.ReactNode;
 }) {
-  const works = await client.fetch<WorkData[]>(workCardsQuery);
+  let works: WorkData[] = [];
+  try {
+    works = await sanityFetch<WorkData[]>(workCardsQuery);
+  } catch (error) {
+    // Sanity unreachable — fall through to the mock data below rather than
+    // crashing every page that renders inside this provider.
+    console.error("WorkContextServer: Sanity fetch failed", error);
+  }
 
   const items: GridItem[] = [];
   const categorySet = new Set<string>();

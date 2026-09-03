@@ -4,8 +4,10 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
+import { useSound } from "@/context/SoundContext";
 import Link from "next/link";
 import AboutSectionText from "./components/AboutSectionText";
+import CheckButton from "./components/CheckButton";
 import LandningBlock from "./components/LandningBlock";
 import PixelFrame from "./components/PixelFrame";
 import TypedHeading from "./components/TypedHeading";
@@ -16,6 +18,7 @@ import Footer from "./components/Footer";
 function HomeClientInner() {
   const { items } = useWork();
   const { notifyContentDone, navLoading } = useUI();
+  const { muted, toggleMute, consentSettled } = useSound();
 
   const [revealed, setRevealed] = useState(false);
   const [timerDone, setTimerDone] = useState(false);
@@ -51,28 +54,43 @@ function HomeClientInner() {
   }, [items]);
 
   return (
-    <div className="w-full bg-blue-900 px-0 ">
+    <div className="w-full  px-0 ">
       <div className="relative flex min-h-dvh flex-col gap-y-24 w-full ">
-        <LandningBlock className="h-dvh content-center bg-blue-900">
-          {/* Its own container, so the wordmark measures against this box
-                and not the viewport — and so container-type's layout
-                containment stays off the section, whose fixed children still
-                have to anchor to the viewport. */}
-          <div className="grid grid-cols-3 items-center w-full">
-            {/* Held back until the bar has stopped saying "loading", so the
-                two aren't typing at each other. */}
-            <TypedHeading
-              ready={!navLoading}
-              text="multisquared"
-              className="col-start-2  lg:col-start-2 text-left  h2Text  font-thin text-primary"
-            />
-          </div>
-        </LandningBlock>
+        {/* Relative wrapper so the mobile sound toggle can anchor to the hero's
+            bottom corner and scroll away with it, rather than sitting fixed
+            over the whole page. Desktop keeps the nav's own Sound On control. */}
+        <div className="relative h-dvh">
+          <LandningBlock className="h-dvh content-center ">
+            {/* Its own container, so the wordmark measures against this box
+                  and not the viewport — and so container-type's layout
+                  containment stays off the section, whose fixed children still
+                  have to anchor to the viewport. */}
+            <div className="grid grid-cols-3 lg:grid-cols-12 items-center w-full">
+              {/* Held back until the bar has stopped saying "loading", so the
+                  two aren't typing at each other. */}
+              <TypedHeading
+                ready={!navLoading}
+                text="multisquared"
+                className="col-start-2  lg:col-start-4 px-3 text-left  h2Text  font-thin text-primary"
+              />
+            </div>
+          </LandningBlock>
+          {consentSettled && (
+            <div className="absolute bottom-0 right-0 z-20 px-6 pb-6 lg:hidden">
+              <CheckButton
+                size="label"
+                label={muted ? "sound off" : "sound on"}
+                active={!muted}
+                onClick={toggleMute}
+              />
+            </div>
+          )}
+        </div>
         <div className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 ">
           <LandningBlock
             label="about us"
             href="/about"
-            bg="   text-primary bg-secondary "
+            bg="   text-primary  "
             className="col-start-1 col-span-3 lg:col-start-3 lg:col-span-8 h-auto  "
           >
             <AboutSectionText
@@ -94,11 +112,11 @@ function HomeClientInner() {
             <div className="grid grid-cols-3 lg:grid-cols-8 w-full">
               <TypedHeading
                 text="experience our work"
-                className=" h2Text flex col-start-2 col-span-3 lg:col-start-2 lg:col-span-6 pr-3 lg:pr-0 mb-6 lg:mb-12 font-thin text-primary"
+                className=" h2Text flex col-start-2 col-span-3 lg:col-start-2 lg:col-span-6 pr-3 lg:pr-0 mb-6 lg:mb-0 font-thin text-primary"
               />
             </div>
           </LandningBlock>
-          <div className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-10  grid grid-cols-3 lg:grid-cols-6 gap-3 mt-12 ">
+          <div className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-10  grid grid-cols-3 lg:grid-cols-6 gap-3 mt-12 lg:mt-6 ">
             {featuredProjects.map((project) => (
               <Link
                 key={project.key}
@@ -133,7 +151,7 @@ function HomeClientInner() {
             label="connect with us"
             href="/connect"
             bg=" text-primary"
-            className="col-span-3 lg:col-start-3 lg:col-span-8 h-auto  flex-col items-center justify-center  w-full pb-6 px-3 lg:px-0 mt-24 bg-secondary grid grid-cols-3 lg:grid-cols-8 "
+            className="col-span-3 lg:col-start-3 lg:col-span-8 h-auto  flex-col items-center justify-center  w-full pb-6 px-3 lg:px-0 mt-24  grid grid-cols-3 lg:grid-cols-8 "
             // The content sits on its own 12-column grid starting at column 4
             // (25%). Column 3 of the block's 8-column grid is the same 25%, so the
             // label lines up above the heading, copy and button.
@@ -174,7 +192,7 @@ function HomeClientInner() {
           <Button
             variant="link"
             size="lgLink"
-            className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+            className=" col-start-3 lg:col-start-10 h2Text flex px-0    gap-x-3  font-thin  justify-start w-min "
             asChild
           >
             <Link href="/projects">
