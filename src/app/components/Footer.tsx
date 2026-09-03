@@ -4,6 +4,12 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { usePixelCorners } from "@/app/hooks/usePixelCorners";
 
+const NAV_LINKS = [
+  { href: "/projects", label: "Projects" },
+  { href: "/about", label: "About" },
+  { href: "/connect", label: "Connect" },
+] as const;
+
 export default function Footer() {
   // Only the top edge meets the page — the bottom sits at the viewport edge —
   // so just the top two corners get notched.
@@ -12,56 +18,81 @@ export default function Footer() {
   return (
     <div
       ref={pixelRef}
-      className="pixelCornersTop bg-secondary  w-full pt-6 gap-0 flex flex-col justify-between  items-start h-dvh text-secondary-foreground px-6 lg:px-0"
+      className="pixelCornersTop bg-secondary w-full flex flex-col justify-between items-stretch h-dvh text-secondary-foreground pt-6 px-3 lg:px-0"
     >
-      <div className="grid grid-cols-4 lg:grid-cols-12 items-baseline justify-start h-min">
-        <h4 className="col-start-2 lg:col-start-4  h4BtnText ">GET IN TOUCH</h4>
-        <Button
-          size="sm"
-          className="px-0 text-secondary-foreground "
-          variant="link"
-          asChild
-        >
-          <Link href="connect@multi2.co">info@multi2.co</Link>
-        </Button>
-
-        <h4 className="col-start-2 lg:col-start-8 h4BtnText whitespace-nowrap  ">
-          multisquared members
-        </h4>
-        <div className="flex-col col-start-4 lg:col-start-10 justify-end lg:justify-start">
+      {/* Contact columns. Each heading + its links is one grid cell, placed on
+          an explicit column so the groups all sit on the top row and line up
+          regardless of how many links they hold. Mobile stacks them in
+          column two. */}
+      <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline px-0">
+        <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start ">
+          {NAV_LINKS.map((link) => (
+            <Button
+              key={link.href}
+              size="sm"
+              variant="link"
+              className="px-0 text-secondary-foreground border-transparent"
+              asChild
+            >
+              <Link href={link.href}>{link.label}</Link>
+            </Button>
+          ))}
+        </nav>
+        <div className="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
+          <h3 className="h3Text">GET IN TOUCH</h3>
           <Button
             size="sm"
             variant="link"
-            className="px-0 text-secondary-foreground "
+            className="px-0 text-secondary-foreground border-transparent"
             asChild
           >
-            <Link href="connect@multi2.co">Adam Odelfelt</Link>
-          </Button>
-          <Button
-            size="sm"
-            variant="link"
-            className="px-0 text-secondary-foreground "
-            asChild
-          >
-            <Link href="connect@multi2.co">Daniel von Malmborg</Link>
+            <Link href="mailto:info@multi2.co">info@multi2.co</Link>
           </Button>
         </div>
 
-        <h4 className="col-start-2 lg:col-start-4 h4BtnText  ">DESIGN & DEV</h4>
-        <Button
-          size="sm"
-          variant="link"
-          className="px-0 text-secondary-foreground "
-          asChild
-        >
-          <Link href="connect@multi2.co">Joel Järvi</Link>
-        </Button>
+        <div className="col-start-2 col-span-3 lg:col-start-8 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
+          <h3 className="h3Text whitespace-nowrap"> members</h3>
+          <div className="flex flex-col items-start gap-y-0">
+            <Button
+              size="sm"
+              variant="link"
+              className="px-0 text-secondary-foreground border-transparent h-auto"
+              asChild
+            >
+              <Link href="mailto:info@multi2.co">Adam Odelfelt</Link>
+            </Button>
+            <Button
+              size="sm"
+              variant="link"
+              className="px-0 text-secondary-foreground border-transparent h-auto"
+              asChild
+            >
+              <Link href="mailto:info@multi2.co">Daniel von Malmborg</Link>
+            </Button>
+          </div>
+        </div>
+
+        <div className="col-start-2 col-span-3 lg:col-start-11 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
+          <h3 className="h3Text">DESIGN &amp; DEV</h3>
+          <Button
+            size="sm"
+            variant="link"
+            className="px-0 text-secondary-foreground border-transparent h-auto"
+            asChild
+          >
+            <Link href="mailto:info@multi2.co">Joel Järvi</Link>
+          </Button>
+        </div>
       </div>
-      <div className="flex flex-row-reverse lg:flex-row col-start-1 col-span-12  justify-between w-full items-baseline lg:p-6 ">
-        <h1 className="ml-0 lg:-ml-5 h1Text text-secondary-foreground mb-0  ">
+
+      {/* Sits flush against the bottom edge of the footer. leading-none trims
+          the wordmark's line box so the glyphs, not the line box, meet the
+          edge; items-end drops the copyright onto the same baseline. */}
+      <div className="flex flex-row-reverse lg:flex-row justify-between w-full items-end px-0 lg:px-6 pb-4 lg:pb-6">
+        <h1 className="ml-0 lg:-ml-5 h1Text leading-none text-secondary-foreground mb-0">
           multi2.co
         </h1>
-        <h4 className="h4BtnText text-secondary-foreground ">
+        <h4 className="text-sm font-visual tracking-wide lowercase text-secondary-foreground">
           Copyright © 2026
         </h4>
       </div>

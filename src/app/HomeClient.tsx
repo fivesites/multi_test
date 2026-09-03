@@ -11,7 +11,7 @@ import PixelFrame from "./components/PixelFrame";
 import TypedHeading from "./components/TypedHeading";
 import { Button } from "@/components/ui/button";
 
-import HomeFooter from "./components/Footer";
+import Footer from "./components/Footer";
 
 function HomeClientInner() {
   const { items } = useWork();
@@ -162,7 +162,28 @@ function HomeClientInner() {
             </div>
           </LandningBlock>
         </div>
-        <HomeFooter />
+        <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6">
+          <Button
+            variant="link"
+            size="lgLink"
+            className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
+            onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          >
+            top <span className="font-normal ">↑</span>
+          </Button>
+          <Button
+            variant="link"
+            size="lgLink"
+            className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+            asChild
+          >
+            <Link href="/projects">
+              next <span className="font-normal ">→</span>
+            </Link>
+          </Button>
+        </span>
+
+        <Footer />
       </div>
     </div>
   );

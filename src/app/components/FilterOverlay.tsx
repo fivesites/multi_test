@@ -65,13 +65,13 @@ export default function FilterOverlay() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
-          className="flex lg:hidden fixed inset-0 z-40 w-full h-dvh   "
+          className="flex lg:hidden fixed inset-0 z-40 w-full h-dvh overflow-y-scroll   "
         >
-          <div className="flex flex-col h-dvh pt-12 bg-secondary px-0">
+          <div className="flex flex-col h-dvh mt-16 pt-12 bg-secondary px-0 w-full">
             {/* The settings sheet the "filter settings" button opens into,
                 stacked above the category list in the same overlay. */}
-            <SettingsOverlay className="border-b border-primary px-1.5 pb-3" />
-            <div className="columns-2 items-baseline justify-center overflow-y-auto pointer-events-auto px-1.5  pb-12 pt-3 gap-y-1.5 w-full ">
+
+            <div className="grid grid-cols-3 gap-x-0 items-baseline justify-center overflow-y-auto pointer-events-auto px-0  mb-12 pt-0 gap-y-0 w-full ">
               {allCats.map((cat, i) => (
                 <span
                   key={cat}
@@ -87,12 +87,15 @@ export default function FilterOverlay() {
                 </span>
               ))}
             </div>
-            <CheckButton
-              label="Hide Filters"
-              size="lg"
-              onClick={() => setFiltersOpen(false)}
-              className=" px-1.5 w-full"
-            />
+            <SettingsOverlay className=" px-0" />
+            <span className="fixed bottom-0 left-0 grid grid-cols-3 w-full z-90">
+              <CheckButton
+                label="Hide Filters"
+                size="lg"
+                onClick={() => setFiltersOpen(false)}
+                className="col-start-2 w-full"
+              />
+            </span>
           </div>
         </motion.div>
       )}

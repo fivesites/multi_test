@@ -13,6 +13,8 @@ import { getActiveFilterLabel, getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "@/app/components/LandningBlock";
 import TypedHeading from "@/app/components/TypedHeading";
 import CheckButton from "@/app/components/CheckButton";
+import { Button } from "@/components/ui/button";
+import Footer from "@/app/components/Footer";
 
 export default function AllProjectsPageClient() {
   const { items, categories } = useWork();
@@ -104,10 +106,13 @@ export default function AllProjectsPageClient() {
   }
 
   return (
-    <div id="projects" className="relative w-full px-3 lg:px-6   ">
+    <div
+      id="projects"
+      className="relative w-full px-3 lg:px-6 mt-16 lg:mt-24 pt-12   "
+    >
       <LandningBlock
         label="projects"
-        className="h-[80dvh] items-center w-full"
+        className="h-auto   items-center  w-full"
         // Lines the "projects" label up with the topbar's "sound off": column 3
         // of the block's eight-column grid is the same 25% as column 4 of the
         // bar's twelve, both measured inside the shared px-6 gutter.
@@ -115,7 +120,7 @@ export default function AllProjectsPageClient() {
       >
         {/* Its own grid, on the same eight columns the label sits on, so the
             heading stays under it. */}
-        <div className="grid grid-cols-4 lg:grid-cols-8 w-full">
+        <div className="grid grid-cols-3 lg:grid-cols-8 w-full mb-3">
           <TypedHeading
             ready={!navLoading}
             text="see our work"
@@ -126,14 +131,18 @@ export default function AllProjectsPageClient() {
       <FilterOverlay />
 
       {/* Desktop: category sidebar left, projects right. */}
-      <div className=" mb-3 lg:mb-6 grid grid-cols-4 lg:grid-cols-12 ">
-        <h2 className="lg:hidden col-start-2 col-span-3 items-baseline gap-x-3 px-0">
+      <div className=" mt-12 mb-6 lg:mb-6 grid grid-cols-3 lg:grid-cols-12 ">
+        <h2 className="mt-12 lg:hidden col-start-2 col-span-3 items-baseline gap-x-3 px-0">
           {/* The one mobile control: names the active filter and opens the
               category / settings sheet. */}
           <CheckButton
             size="label"
-            label={getActiveFilterLabel(activeFilter)}
-            active={filtersOpen}
+            label={
+              activeFilter === "all"
+                ? "Filter and Settings"
+                : getActiveFilterLabel(activeFilter)
+            }
+            active
             onClick={() => setFiltersOpen((v) => !v)}
           />
         </h2>
@@ -166,7 +175,7 @@ export default function AllProjectsPageClient() {
 
         {listVisible && showGrid && (
           <div
-            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-3 px-1.5 pt-3 lg:grid lg:px-3"
+            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-6 pt-6  lg:grid lg:px-0"
             style={{
               gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
             }}
@@ -222,7 +231,7 @@ export default function AllProjectsPageClient() {
         )}
 
         {listVisible && showList && (
-          <div className="flex w-full flex-col gap-y-1.5">
+          <div className="flex w-full flex-col px-3 ">
             <AnimatePresence mode="popLayout">
               {clients.map((client, idx) => (
                 <motion.div
@@ -236,7 +245,7 @@ export default function AllProjectsPageClient() {
                 >
                   <Link
                     href={`/projects/${client.slug}`}
-                    className="borderBtn block w-full border-b border-muted-foreground text-center text-muted-foreground transition-colors duration-150"
+                    className=" text-primary hover:text-secondary transition-all h2Text duration-150"
                   >
                     {client.label}
                   </Link>
@@ -246,6 +255,28 @@ export default function AllProjectsPageClient() {
           </div>
         )}
       </div>
+      <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 mt-12 lg:mt-24 mb-12 lg:mb-24">
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          top <span className="font-normal ">↑</span>
+        </Button>
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+          asChild
+        >
+          <Link href="/projects">
+            next <span className="font-normal ">→</span>
+          </Link>
+        </Button>
+      </span>
+
+      <Footer />
     </div>
   );
 }

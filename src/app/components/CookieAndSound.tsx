@@ -117,7 +117,7 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-6 pb-6 lg:px-6 flex   lg:h-12  gap-3 items-center lg:items-baseline    ",
+            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-6 pb-6 lg:px-6 flex h-auto  lg:h-12  gap-3 items-center lg:items-baseline    ",
 
             step === "volume"
               ? "justify-end bg-transparent "
@@ -184,7 +184,7 @@ export default function CookieAndSound({
             <div className="flex items-center gap-3">
               <CheckButton
                 className="lg:hidden "
-                size="lg"
+                size="label"
                 label={muted ? "sound off" : "sound on"}
                 active={!muted}
                 onClick={toggleMute}

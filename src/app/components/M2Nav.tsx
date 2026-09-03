@@ -371,7 +371,7 @@ export default function M2Nav() {
           <div className="flex flex-col items-start lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:col-start-10 lg:col-span-2 lg:h-full lg:justify-center">
             <CheckButton
               className="hidden lg:flex font-visual lg:justify-start"
-              size="label"
+              size="lg"
               label="settings"
               active={openSettings}
               onClick={() => setOpenSettings((o) => !o)}

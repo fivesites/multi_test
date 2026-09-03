@@ -67,17 +67,17 @@ export default function CategoryFilters({
   return (
     <div
       className={cn(
-        "hidden lg:block w-full col-start-3 col-span-9 bg-secondary pixelCorners",
+        "hidden lg:block w-full col-start-4 col-span-9 ",
         className,
       )}
     >
       {/* The sidebar column on /projects — the parent decides where it sits.
           It scrolls with the list rather than sticking. */}
-      <div className="grid grid-cols-4 gap-x-3 gap-y-0 items-baseline  w-full p-6">
+      <div className="grid grid-cols-9 gap-x-0 gap-y-0 items-baseline  w-full p-0">
         {allCats.map((cat, i) => (
           <span
             key={cat}
-            className="inline-flex items-baseline whitespace-nowrap w-min  "
+            className="inline-flex items-baseline whitespace-nowrap w-min col-span-2  "
           >
             <CheckButton
               label={getFilterLabel(cat)}

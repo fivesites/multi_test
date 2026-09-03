@@ -25,7 +25,8 @@ const viewClass = (active: boolean) =>
  * grid's 4th column, the mobile bar puts it next to the filter toggle.
  */
 export function ViewToggleButtons({ className = "" }: { className?: string }) {
-  const { showGrid, setShowList, setShowGrid, numCols, setNumCols } = useUI();
+  const { showGrid, showList, setShowList, setShowGrid, numCols, setNumCols } =
+    useUI();
 
   function showThumbnails() {
     setShowGrid(true);
@@ -51,7 +52,7 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
   return (
     <span
       className={cn(
-        "flex flex-col col-start-1 col-span-3  gap-x-3 pl-0",
+        "grid grid-cols-3 lg:flex flex-col col-start-1 col-span-2  gap-x-0 pl-0",
         className,
       )}
     >
@@ -59,30 +60,32 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
           and hides whenever the list is the active view. */}
       <CheckButton
         label="thumbnails"
-        size="label"
-        className="h-12 col-span-2"
+        size="lg"
+        className=" col-span-1"
+        active={showGrid}
         onClick={showThumbnails}
       />
 
       <CheckButton
         label="list"
-        size="label"
-        className="h-12"
+        size="lg"
+        className="col-span-1"
+        active={showList}
         onClick={showListView}
       />
       {showGrid && (
         <span className="hidden  gap-x-3  lg:flex flex-col ">
           <CheckButton
             label="Zoom In"
-            size="label"
+            size="lg"
             onClick={() => setNumCols(Math.max(MIN_COLS, numCols - 1))}
-            className="col-span-2 h-12"
+            className="c"
           />
 
           <CheckButton
             label="Zoom Out"
-            size="label"
-            className="h-12"
+            size="lg"
+            className=""
             onClick={() => setNumCols(Math.min(MAX_COLS, numCols + 1))}
           />
         </span>

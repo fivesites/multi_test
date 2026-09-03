@@ -19,10 +19,10 @@ export default function ProjectCard({
   className?: string;
 }) {
   const categories = formatCategories(item.categories);
-  // Notches the card's corners like the buttons and landing blocks. On the
-  // Link itself so the image and the hover overlay are clipped to the same
-  // shape.
-  const pixelRef = usePixelCorners<HTMLAnchorElement>();
+  // Notches the box's corners like the buttons and landing blocks. On the
+  // media box so the image and the hover overlay are clipped to the same
+  // shape — the mobile title sits outside it, below.
+  const pixelRef = usePixelCorners<HTMLDivElement>();
   const { openedCard, setOpenedCard } = useUI();
   // Clicking hands off to the project page, which can take a beat to load.
   // Until it does, the card claims the whole tile and centres its own label.
@@ -30,37 +30,44 @@ export default function ProjectCard({
 
   return (
     <Link
-      ref={pixelRef}
       href={`/projects/${item.slug}`}
       onClick={() => setOpenedCard(item.slug)}
-      className={cn(
-        "pixelCorners relative group flex flex-col  aspect-square justify-center  items-center overflow-hidden ",
-        className,
-      )}
+      className={cn("group flex flex-col gap-3 w-full mb-6 lg:mb-0", className)}
     >
-      <div className="relative h-full aspect-square overflow-hidden ">
-        {/* group-hover, not hover: the scale should follow the whole card.
-            overflow-hidden on the parent crops the growth instead of letting
-            it push into the neighbouring masonry column. */}
-        <Image
-          src={item.url}
-          alt={item.alt}
-          fill
-          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          sizes={sizes}
-        />
-      </div>
-      {/* Absolute, so revealing these on hover can't reflow the masonry */}
       <div
-        className={cn(
-          "absolute left-0 top-0 h-full w-full flex flex-col items-start justify-end  p-6 text-primary-foreground  leading-snug tracking-wide",
-          "opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:bg-secondary group-focus-visible:bg-secondary",
-        )}
+        ref={pixelRef}
+        className="pixelCorners relative flex flex-col w-full aspect-square justify-center items-center overflow-hidden"
       >
-        <button className="h-auto w-min bg-transparent  text-secondary-foreground h3Text whitespace-nowrap">
+        <div className="relative h-full aspect-square overflow-hidden ">
+          {/* group-hover, not hover: the scale should follow the whole card.
+              overflow-hidden on the parent crops the growth instead of letting
+              it push into the neighbouring masonry column. */}
+          <Image
+            src={item.url}
+            alt={item.alt}
+            fill
+            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            sizes={sizes}
+          />
+        </div>
+        {/* Absolute, so revealing this on hover can't reflow the masonry */}
+        <div
+          className={cn(
+            "absolute left-0 top-0 h-full w-full flex flex-col items-start justify-end  p-6 text-primary-foreground  leading-snug tracking-wide",
+            "opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:bg-secondary group-focus-visible:bg-secondary",
+          )}
+        >
+          <button className="hidden lg:flex h-auto w-min bg-transparent  text-secondary-foreground h3Text whitespace-normal lg:whitespace-nowrap col-start-2">
+            {item.title}
+          </button>
+        </div>
+      </div>
+      {/* Mobile: title below the box rather than over the image */}
+      <span className="grid lg:hidden grid-cols-3 w-full">
+        <button className="h-auto  bg-transparent  text-secondary-foreground h3Text whitespace-normal lg:whitespace-nowrap col-start-2 col-span-2 text-left">
           {item.title}
         </button>
-      </div>
+      </span>
     </Link>
   );
 }

@@ -19,12 +19,13 @@ export default function SettingsOverlay({ className }: { className?: string }) {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.18, ease: "easeOut" }}
-      className={cn("flex flex-col gap-4", className)}
+      className={cn("flex flex-col gap-0", className)}
     >
+      <ViewToggleButtons className="" />
       {!muted && (
-        <div className="lg:hidden grid grid-cols-2 flex-col gap-x-4 border bg-secondary pr-4">
+        <div className="lg:hidden grid grid-cols-3   space-x-0 pr-0 mb-12">
           <CheckButton
-            className="font-visual font-thin lowercase text-xl whitespace-nowrap"
+            className=""
             size="lg"
             label={muted ? "Sound Off" : "Sound On"}
             active={!muted}
@@ -32,7 +33,6 @@ export default function SettingsOverlay({ className }: { className?: string }) {
           />
         </div>
       )}
-      <ViewToggleButtons className="" />
     </motion.div>
   );
 }
