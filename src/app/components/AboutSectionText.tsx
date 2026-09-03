@@ -57,7 +57,7 @@ export default function AboutSectionText({
     >
       <TypedHeading
         text="We Multiply What Matters"
-        className="  h2Text  col-start-2 col-span-2 lg:col-start-2 lg:col-span-6 pr-4.5 lg:pr-0    "
+        className=" hidden lg:flex  h2Text  col-start-2 col-span-2 lg:col-start-2 lg:col-span-6 pr-4.5 lg:pr-0    "
       />
       {text && (
         <p className="col-start-1 col-span-3 lg:col-start-2 lg:col-span-6 indent-[calc(33.3vw-1rem)]  lg:indent-0 pText  px-3 lg:px-0  lg:mb-0 lowercase  lg:max-w-4xl ">

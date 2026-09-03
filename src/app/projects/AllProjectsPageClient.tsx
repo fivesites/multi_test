@@ -2,10 +2,12 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
+import { useLenis } from "lenis/react";
 import Link from "next/link";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import ProjectCard from "@/app/components/ProjectCard";
+import FeaturedCard from "@/app/components/FeaturedCard";
 import CategoryFilters from "@/app/components/CategoryFilters";
 import FilterOverlay from "@/app/components/FilterOverlay";
 import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
@@ -13,11 +15,12 @@ import { getActiveFilterLabel, getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "@/app/components/LandningBlock";
 import TypedHeading from "@/app/components/TypedHeading";
 import CheckButton from "@/app/components/CheckButton";
-import { Button } from "@/components/ui/button";
+import IconButton from "@/app/components/IconButton";
 import Footer from "@/app/components/Footer";
 
 export default function AllProjectsPageClient() {
   const { items, categories } = useWork();
+  const lenis = useLenis();
   const {
     showGrid,
     showList,
@@ -112,7 +115,7 @@ export default function AllProjectsPageClient() {
     >
       <LandningBlock
         label="projects"
-        className="h-auto   items-center  w-full"
+        className="h-[66.6dvh]   items-center  w-full"
         // Lines the "projects" label up with the topbar's "sound off": column 3
         // of the block's eight-column grid is the same 25% as column 4 of the
         // bar's twelve, both measured inside the shared px-6 gutter.
@@ -209,21 +212,11 @@ export default function AllProjectsPageClient() {
           this section lives in the grid above so it can sit in column two. */}
       <div className="flex w-full flex-col lg:hidden">
         {listVisible && showGrid && (
-          <div className="flex flex-col w-full  gap-y-3">
+          <div className="flex flex-col w-full">
             <AnimatePresence mode="popLayout" initial={false}>
-              {displayed.map((item, idx) => (
-                <motion.div
-                  key={item.key}
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0 }}
-                  transition={{
-                    duration: 0.35,
-                    delay: Math.min(idx * 0.07, 0.7),
-                    ease: "easeOut",
-                  }}
-                >
-                  <ProjectCard item={item} sizes="100vw" className="w-full" />
+              {displayed.map((item) => (
+                <motion.div key={item.key} layout exit={{ opacity: 0 }}>
+                  <FeaturedCard project={item} revealOnView />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -256,24 +249,24 @@ export default function AllProjectsPageClient() {
         )}
       </div>
       <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 mt-12 lg:mt-24 mb-12 lg:mb-24">
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        >
-          top <span className="font-normal ">↑</span>
-        </Button>
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
-          asChild
-        >
-          <Link href="/projects">
-            next <span className="font-normal ">→</span>
-          </Link>
-        </Button>
+        <IconButton
+          size="label"
+          label="top"
+          icon="↑"
+          className="col-start-1 lg:col-start-4"
+          onClick={() =>
+            lenis
+              ? lenis.scrollTo(0)
+              : window.scrollTo({ top: 0, behavior: "smooth" })
+          }
+        />
+        <IconButton
+          size="label"
+          href="/projects"
+          label="next"
+          icon="→"
+          className="col-start-3 lg:col-start-9"
+        />
       </span>
 
       <Footer />

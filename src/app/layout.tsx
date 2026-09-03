@@ -3,7 +3,6 @@ import localFont from "next/font/local";
 import React from "react";
 
 import "./globals.css";
-import { cookies } from "next/headers";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
 import { UIProvider } from "@/context/UIContext";
@@ -95,32 +94,22 @@ const karl = localFont({
   display: "swap",
 });
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const cookieStore = await cookies();
-  const raw = cookieStore.get("theme-overrides")?.value;
-  let themeCSS = "";
-  if (raw) {
-    try {
-      const overrides: Record<string, string> = JSON.parse(
-        decodeURIComponent(raw),
-      );
-      const vars = Object.entries(overrides)
-        .map(([k, v]) => `${k}:${v}`)
-        .join(";");
-      themeCSS = `:root{${vars}}`;
-    } catch {}
-  }
-
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
-        {themeCSS ? (
-          <style dangerouslySetInnerHTML={{ __html: themeCSS }} />
-        ) : null}
+        {/* Re-applies the saved colour theme before first paint, so a chosen
+            palette survives reloads without a red flash. Bare :root is already
+            the red palette, so "red" / no value needs no class. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var t=localStorage.getItem('multi2-theme');var m={red:'multi2_red',blue:'multi2_blue',green:'multi2_green',pink:'multi2_pink',teal:'multi2_teal',bw:'multi2_bw'};if(t&&m[t])document.documentElement.classList.add(m[t]);}catch(e){}})();`,
+          }}
+        />
       </head>
       <body
         className={`${visualFont.variable} ${diatype.variable} ${karl.variable} antialiased`}

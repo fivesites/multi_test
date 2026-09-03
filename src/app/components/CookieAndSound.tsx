@@ -14,6 +14,31 @@ import CheckButton from "./CheckButton";
 /** How long the visitor gets to look at the page before we ask anything. */
 const PROMPT_DELAY_MS = 6000;
 
+/** localStorage that can't throw — private mode, disabled storage, SSR. A
+ *  failed write is surfaced rather than swallowed so a broken persist doesn't
+ *  go unnoticed. */
+const consentStore = {
+  get(key: string): string | null {
+    if (typeof window === "undefined") return null;
+    try {
+      return window.localStorage.getItem(key);
+    } catch {
+      return null;
+    }
+  },
+  set(key: string, value: string) {
+    if (typeof window === "undefined") return;
+    try {
+      window.localStorage.setItem(key, value);
+      if (window.localStorage.getItem(key) !== value) {
+        console.warn(`[consent] "${key}" did not persist to localStorage`);
+      }
+    } catch (err) {
+      console.warn(`[consent] could not write "${key}" to localStorage`, err);
+    }
+  },
+};
+
 /** Dev override: keep the box on screen no matter what — no delay, stored
  *  consent ignored, and answering loops back to the first question instead of
  *  dismissing it. Set to false to restore the real flow. */
@@ -62,8 +87,8 @@ export default function CookieAndSound({
       return;
     }
 
-    const cookie = localStorage.getItem("cookie-consent");
-    const sound = localStorage.getItem("sound-consent");
+    const cookie = consentStore.get("cookie-consent");
+    const sound = consentStore.get("sound-consent");
 
     // Returning visitors have nothing left to answer, so settle immediately
     // rather than after the delay — the Connect box waits on this. Always
@@ -85,19 +110,19 @@ export default function CookieAndSound({
   }, [onDone, markConsentSettled]);
 
   function acceptCookies() {
-    localStorage.setItem("cookie-consent", "accepted");
+    consentStore.set("cookie-consent", "accepted");
     setStep("sound");
   }
 
   function declineCookies() {
-    localStorage.setItem("cookie-consent", "declined");
+    consentStore.set("cookie-consent", "declined");
     settle(false);
   }
 
   // Either answer leaves the volume control in its place: "yes" unmutes and
   // offers Mute, "no" stays muted and offers Unmute.
   function answerSound(accepted: boolean) {
-    localStorage.setItem("sound-consent", accepted ? "accepted" : "declined");
+    consentStore.set("sound-consent", accepted ? "accepted" : "declined");
     setMuted(!accepted);
     setStep("volume");
     markConsentSettled();

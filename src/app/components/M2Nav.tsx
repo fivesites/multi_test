@@ -212,16 +212,28 @@ function ColorButton({
 /** Owned by M2Nav rather than by either panel: the nav column and the settings
  *  overlay are on screen together, so a copy of this state in each would let
  *  one of them fall out of step with the class actually on <html>. */
+const THEME_STORAGE_KEY = "multi2-theme";
+
 function useTheme() {
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
 
-  // The class lives on <html>, so it outlives any panel unmounting — read it
-  // back rather than assuming the default.
+  // Source of truth is the saved choice; the <html> class is just how it's
+  // applied. Fall back to whatever class is already on <html> (the pre-paint
+  // script), then to red.
   useEffect(() => {
-    const found = THEMES.find((t) =>
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(THEME_STORAGE_KEY);
+    } catch {}
+    const fromStore = THEMES.find((t) => t.id === stored)?.id;
+    const fromClass = THEMES.find((t) =>
       document.documentElement.classList.contains(t.className),
-    );
-    setTheme(found?.id ?? DEFAULT_THEME);
+    )?.id;
+    const next = fromStore ?? fromClass ?? DEFAULT_THEME;
+    for (const t of THEMES) {
+      document.documentElement.classList.toggle(t.className, t.id === next);
+    }
+    setTheme(next);
   }, []);
 
   // Every class is set explicitly rather than just adding the new one: the
@@ -230,6 +242,9 @@ function useTheme() {
     for (const t of THEMES) {
       document.documentElement.classList.toggle(t.className, t.id === next);
     }
+    try {
+      localStorage.setItem(THEME_STORAGE_KEY, next);
+    } catch {}
     setTheme(next);
   }, []);
 
@@ -387,10 +402,11 @@ export default function M2Nav() {
           </div>
         )}
         {/* The palette swatch, top-right corner — clicking it cycles the
-            theme. */}
+            theme. Drawn in `text-primary` so it is literally the palette that
+            is on, never a stale copy of it. */}
         <ColorButton
           label={current.label}
-          swatch={current.swatch}
+          swatch="text-primary"
           active
           onClick={cycleTheme}
           className="col-start-4 col-span-1 flex justify-end lg:col-start-12 lg:col-span-2 lg:justify-end"

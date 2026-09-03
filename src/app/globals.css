@@ -201,6 +201,19 @@
     @apply bg-background text-foreground;
   }
 
+  /* Hide the scrollbar everywhere — scrolling still works, the track just
+     isn't painted. Firefox / old Edge use properties; Chrome/Safari need the
+     pseudo-element. */
+  html {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  ::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+
   /* Lenis smooth scroll. Only active once <SmoothScroll> mounts and adds the
      .lenis classes to <html>; without JS or with reduced motion the page
      scrolls natively. */

@@ -10,6 +10,12 @@ const NAV_LINKS = [
   { href: "/connect", label: "Connect" },
 ] as const;
 
+const SOCIAL_LINKS = [
+  { href: "#", label: "Instagram" },
+  { href: "mailto:info@multi2.co", label: "Email" },
+  { href: "#", label: "LinkedIn" },
+] as const;
+
 export default function Footer() {
   // Only the top edge meets the page — the bottom sits at the viewport edge —
   // so just the top two corners get notched.
@@ -22,14 +28,14 @@ export default function Footer() {
     >
       <div
         ref={pixelRef}
-        className="pixelCornersTop bg-secondary w-full flex flex-col justify-between items-stretch h-dvh text-secondary-foreground pt-6 "
+        className="pixelCornersTop bg-secondary w-full flex flex-col justify-between items-stretch h-[50dvh] lg:h-[75dvh] text-secondary-foreground pt-6 "
       >
         {/* Contact columns. Each heading + its links is one grid cell, placed on
           an explicit column so the groups all sit on the top row and line up
           regardless of how many links they hold. Mobile stacks them in
           column two. */}
         <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline ">
-          <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start lg:px-6 mb-12 lg:mb-0  ">
+          <nav className="col-start-2 col-span-1 lg:col-start-4 lg:col-span-2 flex flex-col items-start lg:px-0 mb-12 lg:mb-0  ">
             {NAV_LINKS.map((link) => (
               <Button
                 key={link.href}
@@ -43,13 +49,17 @@ export default function Footer() {
             ))}
           </nav>
 
-          <div className="flex flex-col">
-            <Button
-              variant="link"
-              className="px-0 text-secondary-foreground border-transparent h3Text"
-            >
-              <Link href="/">Instagram</Link>
-            </Button>
+          <div className="col-start-3 lg:col-start-8 flex flex-col items-start gap-y-0">
+            {SOCIAL_LINKS.map((link) => (
+              <Button
+                key={link.label}
+                variant="link"
+                className="px-0 text-secondary-foreground border-transparent h3Text"
+                asChild
+              >
+                <Link href={link.href}>{link.label}</Link>
+              </Button>
+            ))}
           </div>
         </div>
 

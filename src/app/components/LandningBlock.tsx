@@ -50,7 +50,7 @@ export default function LandningBlock({
     <section
       ref={pixelRef}
       className={cn(
-        "pixelCorners relative z-10 w-full grid grid-cols-3 lg:grid-cols-8 space-y-12 lg:space-y-12  ",
+        "pixelCorners relative z-10 w-full grid grid-cols-3 lg:grid-cols-8 space-y-12 lg:space-y-6  ",
         bg,
         className,
       )}
