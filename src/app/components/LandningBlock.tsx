@@ -19,7 +19,11 @@ type Props = {
    *  sits on a different column than the default second one — pass the
    *  matching `col-start-*` / `col-span-*` so the label lines up with it. */
   labelClassName?: string;
-  children: ReactNode;
+  /** An absolutely-positioned layer behind the label and content — e.g. a hero
+   *  image that bleeds to the block's edges while the label keeps to the grid.
+   *  Clipped to the same notched-corner shape as the block. */
+  background?: ReactNode;
+  children?: ReactNode;
 };
 
 /** The one section shape the landing page is built from: a four-column grid
@@ -35,6 +39,7 @@ export default function LandningBlock({
   href,
   className,
   labelClassName,
+  background,
   children,
 }: Props) {
   // Notches the block's four corners, scaled to its size — same treatment the
@@ -50,6 +55,9 @@ export default function LandningBlock({
         className,
       )}
     >
+      {background && (
+        <div className="absolute inset-0 z-0 overflow-hidden">{background}</div>
+      )}
       {label && (
         // The placement sits on a wrapper rather than on CheckButton:
         // CheckButton puts its className on both its outer link and its inner
@@ -58,7 +66,7 @@ export default function LandningBlock({
         // this type size, so the label only steps in to column two on desktop.
         <div
           className={cn(
-            "flex items-start justify-start pt-6 lg:pt-12",
+            "relative z-10 flex items-start justify-start pt-6 lg:pt-12",
             labelClassName ??
               "col-start-2 col-span-3 lg:col-start-2 lg:col-span-3",
           )}
@@ -66,9 +74,11 @@ export default function LandningBlock({
           <CheckButton label={label} href={href} size="label" active />
         </div>
       )}
-      <div className="mt-0 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
-        {children}
-      </div>
+      {children && (
+        <div className="relative z-10 mt-0 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
+          {children}
+        </div>
+      )}
     </section>
   );
 }

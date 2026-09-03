@@ -1,7 +1,8 @@
 "use client";
 
 import { motion, type Variants } from "motion/react";
-import M2Button from "./M2Button";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const TYPING_MS_PER_CHAR = 22;
 
@@ -41,34 +42,27 @@ export default function WorkHeader({
       variants={container}
       initial="hidden"
       animate={visible ? "show" : "hidden"}
-      className={`overflow-hidden sticky left-0 right-0 z-30  top-row-2  lg:px-3  grid grid-cols-4 items-baseline  font-diatype font-normal text-base   ${className}`}
+      className={`overflow-hidden sticky left-0  text-primary right-0 z-30  top-row-2  px-3 lg:px-0 grid grid-cols-3 gap-y-6 lg:gap-y-3 lg:grid-cols-12 items-baseline     ${className}`}
     >
-      {client && (
-        <span className="col-span-1 inline-flex items-baseline whitespace-nowrap font-diatype font-normal text-base  ">
-          <M2Button text={client} visible={visible} delay={0} lg />
+      {title && (
+        <span className="col-start-2 lg:col-start-4 inline-flex items-baseline whitespace-nowrap h2Text text-primary ">
+          <h3> {title}</h3>
         </span>
       )}
-      <span className="hidden col-start-2 lg:inline-flex items-baseline whitespace-nowrap  px-0">
-        <M2Button text={title} visible={visible} delay={titleDelay} lg />
-      </span>
+
       {year && (
-        <span className="hidden lg:inline-flex items-baseline whitespace-nowrap ">
-          <M2Button
-            text={year.toString()}
-            visible={visible}
-            delay={yearDelay}
-            lg
-          />
+        <span className="hidden col-start-9 lg:inline-flex items-baseline whitespace-nowrap ">
+          <h3>{year.toString()}</h3>
         </span>
       )}
-      <M2Button
-        text="Back"
-        visible={visible}
-        delay={backDelay}
-        href="/"
-        lg
-        className="col-start-4 justify-self-end text-right"
-      />
+      <Button
+        variant="link"
+        size="sm"
+        className="border-transparent col-start-11 px-0"
+        asChild
+      >
+        <Link href="/projects">Back</Link>
+      </Button>
     </motion.div>
   );
 }

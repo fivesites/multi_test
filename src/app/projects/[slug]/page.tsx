@@ -41,6 +41,7 @@ type WorkData = {
   categories?: string[];
   year?: number;
   slug: { current: string };
+  coverImage?: { asset?: unknown };
   media?: MediaItem[];
 };
 
@@ -61,6 +62,12 @@ export default async function WorkPage({
       aspectRatio: img.aspectRatio ?? 1,
     }));
 
+  // The work's own cover asset, if it has one — the page falls back to the
+  // first media image otherwise.
+  const coverUrl = work.coverImage?.asset
+    ? urlFor(work.coverImage).width(1600).quality(85).url()
+    : undefined;
+
   return (
     <WorkPageClient
       title={work.title}
@@ -71,6 +78,7 @@ export default async function WorkPage({
       categories={work.categories ?? []}
       year={work.year}
       images={images}
+      coverUrl={coverUrl}
     />
   );
 }

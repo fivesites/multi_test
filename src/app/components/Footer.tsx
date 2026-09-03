@@ -25,7 +25,7 @@ export default function Footer() {
           regardless of how many links they hold. Mobile stacks them in
           column two. */}
       <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline px-0">
-        <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start ">
+        <nav className="col-start-2 col-span-3 lg:col-start-1 lg:col-span-2 flex flex-col items-start lg:px-6 ">
           {NAV_LINKS.map((link) => (
             <Button
               key={link.href}
@@ -50,7 +50,7 @@ export default function Footer() {
           </Button>
         </div>
 
-        <div className="col-start-2 col-span-3 lg:col-start-8 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
+        <div className="col-start-2 col-span-3 lg:col-start-7 lg:col-span-3 flex flex-col items-start gap-y-6 lg:gap-y-12">
           <h3 className="h3Text whitespace-nowrap"> members</h3>
           <div className="flex flex-col items-start gap-y-0">
             <Button
@@ -72,7 +72,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="col-start-2 col-span-3 lg:col-start-11 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
+        <div className="col-start-2 col-span-3 lg:col-start-10 lg:col-span-2 flex flex-col items-start gap-y-6 lg:gap-y-12">
           <h3 className="h3Text">DESIGN &amp; DEV</h3>
           <Button
             size="sm"

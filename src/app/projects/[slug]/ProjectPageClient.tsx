@@ -1,11 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import Lightbox from "@/app/components/Lightbox";
-import WorkHeader from "@/app/components/WorkHeader";
-import TypedWord from "@/app/components/TypedWord";
+import LandningBlock from "@/app/components/LandningBlock";
+import CheckButton from "@/app/components/CheckButton";
 
 type ProjectImage = { key: string; url: string; aspectRatio: number };
 
@@ -27,6 +27,16 @@ const CATEGORY_LABELS: Record<string, string> = {
 const TYPING_MS = 22;
 const NAVIGATING_MS = 700;
 
+/** One credit line — "Creative Director: David Andersson" — split into its role
+ *  and its name on the first `:` / `–` / `—`. A line with no delimiter is all
+ *  role. */
+function parseCredit(line: string): { role: string; name: string } {
+  const match = line.match(/^(.*?)\s*[:–—]\s*(.*)$/);
+  return match
+    ? { role: match[1].trim(), name: match[2].trim() }
+    : { role: line.trim(), name: "" };
+}
+
 function ProjectPageInner({
   client,
   title,
@@ -35,6 +45,7 @@ function ProjectPageInner({
   credits,
   categories,
   images,
+  coverUrl,
 }: {
   client?: string;
   title: string;
@@ -43,6 +54,7 @@ function ProjectPageInner({
   credits?: string;
   categories: string[];
   images: ProjectImage[];
+  coverUrl?: string;
 }) {
   const clientLen = client?.length ?? 0;
   const titleLen = title.length;
@@ -62,37 +74,56 @@ function ProjectPageInner({
     return () => clearTimeout(t);
   }, [revealDelayMs]);
 
-  const [hero, ...rest] = images;
+  // The hero is the work's own cover image when it has one; otherwise it falls
+  // back to the first media image, which then drops out of the gallery below.
+  const hero: ProjectImage | undefined = coverUrl
+    ? { key: "cover", url: coverUrl, aspectRatio: 1 }
+    : images[0];
+  const rest = coverUrl ? images : images.slice(1);
+  const lightboxImages = coverUrl && hero ? [hero, ...images] : images;
 
   return (
-    <div className="relative px-6 pb-6">
-      {/* WorkHeader hangs off this wrapper rather than off the title block: a
-          sticky box can only travel inside its own parent, so it needs one that
-          spans the hero and everything below it. */}
-      <WorkHeader client={client} title={title} year={year} className="pt-0" />
+    <div className="mt-16 lg:mt-24 pt-12 px-6 relative w-full ">
+      <span className="grid grid-cols-3 lg:grid-cols-12 mb-6">
+        <h2 className="h2Text col-start-2 lg:col-start-4 col-span-8 text-primary ">
+          {title}
+        </h2>
+      </span>
 
-      <div className=" h-[50dvh] bg-primary flex justify-start items-end p-6">
-        <h1 className="  w-full  font-visual font-normal text-3xl lg:text-6xl tracking-normal uppercase  text-secondary-foreground leading-tight lg:leading-snug    ">
-          <TypedWord text={title} visible={true} delay={0} />
-        </h1>
-      </div>
+      {/* Hero: the cover image fills the whole block, which spans the full 12
+          columns. lg:px-6 + lg:col-start-4 put the title label at the same x as
+          the nav's "sound off". */}
+      <LandningBlock
+        label={client}
+        className="min-h-dvh  items-start w-full  lg:grid-cols-12 lg:px-0 "
+        labelClassName="col-start-2 col-span-3 lg:col-start-4 lg:col-span-3 "
+        background={
+          hero ? (
+            <div
+              className="pixelCorners relative h-full w-full cursor-zoom-in"
+              onClick={() => setLightboxIndex(0)}
+            >
+              <Image
+                src={hero.url}
+                alt=""
+                fill
+                priority
+                className="object-cover"
+                sizes="100vw"
+              />
+            </div>
+          ) : undefined
+        }
+      />
 
-      {/* Hero: the first image fills the viewport */}
-      {hero && (
-        <div
-          className="relative h-dvh w-full cursor-zoom-in overflow-hidden"
-          onClick={() => setLightboxIndex(0)}
-        >
-          <Image
-            src={hero.url}
-            alt=""
-            fill
-            priority
-            className="object-cover"
-            sizes="100vw"
-          />
-        </div>
-      )}
+      <span className="grid grid-cols-3 lg:grid-cols-12 w-full mb-12 lg:mb-12 text-primary">
+        <h4 className="h4BtnText col-start-1 col-span-1 lg:col-start-4">
+          fig.1
+        </h4>
+        <h4 className=" col-start-2 col-span-2 lg:col-start-6 lg:col-span-2 h4BtnText">
+          {title}
+        </h4>
+      </span>
 
       <motion.div
         className=" w-full relative pb-4"
@@ -101,20 +132,61 @@ function ProjectPageInner({
         transition={{ duration: 0.4 }}
       >
         {/* Description — reached by scrolling past the hero */}
-        <div className="flex flex-col justify-center items-start p-6">
-          <div className="flex lg:grid lg:grid-cols-12 lg:mb-6 justify-start">
-            <span className="lg:col-span-4">
-              {description ? (
-                <p className=" ">{description}</p>
-              ) : (
-                <p className="">
-                  A bold visual concept rooted in craft and intention. Shot on
-                  location, refined in post. Every frame built around a singular
-                  idea — to make the ordinary feel inevitable.
-                </p>
+
+        <div className="grid grid-cols-3 lg:grid-cols-12  mb-12 lg:mb-6 justify-start items-baseline text-primary">
+          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-4 indent-[calc(33.3vw-1rem)] lg:indent-0  ">
+            {description ? (
+              <p className="pText  ">{description}</p>
+            ) : (
+              <p className="pText">
+                A bold visual concept rooted in craft and intention. Shot on
+                location, refined in post. Every frame built around a singular
+                idea — to make the ordinary feel inevitable. A bold visual
+                concept rooted in craft and intention. Shot on location, refined
+                in post. Every frame built around a singular idea — to make the
+                ordinary feel inevitable.
+              </p>
+            )}
+          </span>
+
+          {/* Categories then credits: from column 9 on desktop, stacked below
+              the description on mobile. */}
+          {(categories.length > 0 || credits) && (
+            <div className="col-start-1 col-span-3 lg:col-start-9 lg:col-span-4 mt-12 lg:mt-0 flex flex-col gap-y-6 text-primary">
+              {categories.length > 0 && (
+                <ul className="fgrid grid grid-cols-3 lg:grid-cols-2 gap-x-0 gap-y-6 items-baseline pText uppercase">
+                  {categories.map((c) => (
+                    <li key={c}>
+                      <CheckButton
+                        size="label"
+                        active
+                        label={CATEGORY_LABELS[c] ?? c}
+                      />
+                    </li>
+                  ))}
+                </ul>
               )}
-            </span>
-          </div>
+
+              {credits && (
+                <dl className="grid grid-cols-2 gap-x-3 gap-y-1 h4BtnText">
+                  {credits
+                    .split("\n")
+                    .filter(Boolean)
+                    .map((line, i) => {
+                      const { role, name } = parseCredit(line);
+                      return (
+                        <Fragment key={i}>
+                          <dt className="uppercase text-muted-foreground">
+                            {role}
+                          </dt>
+                          <dd className="m-0">{name}</dd>
+                        </Fragment>
+                      );
+                    })}
+                </dl>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="w-full">
@@ -165,31 +237,12 @@ function ProjectPageInner({
           <h4 className="w-full  lg:justify-start whitespace-normal lg:whitespace-nowrap lg:items-baseline gap-x-0 gap-y-0 max-w-sm  mb-4">
             Services provided by Multi² in this project:
           </h4>
-
-          {categories.map((c, i) => (
-            <span className=" uppercase" key={c}>
-              {i > 0 && ""}
-              {CATEGORY_LABELS[c] ?? c}
-            </span>
-          ))}
-          <div className="flex flex-col col-span-2">
-            {credits && (
-              <ul className=" col-span-2 list-none flex flex-col items-start justify-start ">
-                {credits
-                  .split("\n")
-                  .filter(Boolean)
-                  .map((line, i) => (
-                    <li key={i}>{line}</li>
-                  ))}
-              </ul>
-            )}
-          </div>
         </div>
 
         <AnimatePresence>
           {lightboxIndex !== null && (
             <Lightbox
-              images={images}
+              images={lightboxImages}
               initialIndex={lightboxIndex}
               onClose={() => setLightboxIndex(null)}
             />
@@ -209,6 +262,7 @@ export default function ProjectPageClient(props: {
   categories: string[];
   year?: number;
   images: ProjectImage[];
+  coverUrl?: string;
 }) {
   return <ProjectPageInner {...props} />;
 }
