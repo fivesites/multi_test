@@ -162,7 +162,7 @@ export default function CookieAndSound({
                 <Button
                   variant="default"
                   size="sm"
-                  className="  font-normal"
+                  className="  font-normal shadow-md"
                   onClick={() => acceptCookies()}
                 >
                   accept

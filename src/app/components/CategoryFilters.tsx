@@ -108,19 +108,22 @@ export default function CategoryFilters({
   return (
     <div
       className={cn(
-        // Mobile: a bottom-right drawer — a narrow tab holding just the
-        // "show filters" button until opened, growing upward into the full
-        // panel when it is. No fixed height here: only `bottom` is pinned, so
-        // the box sizes to its content and the drawer genuinely grows upward
-        // as the panel opens rather than getting clipped to the collapsed
-        // tab's height. Desktop drops all of that and becomes a static
-        // sidebar column of the /projects grid.
-        // right-3 always insets the tab from the screen edge; open, the width
-        // goes auto (via lg:grid) so the panel spans the full sidebar column
-        // rather than staying pinned to the tab's narrower w-1/3.
-        "fixed bottom-3 right-3 z-60 pixelCorners bg-transparent max-lg:[&_*]:!text-primary",
+        // Mobile: a bottom-left drawer — a narrow tab holding just the "show
+        // filters" button until opened, growing upward into the full panel
+        // when it is. Transparent while closed (it's just a floating label,
+        // paired with the sound toggle at the opposite corner); once open it
+        // fills in with bg-primary and the text flips to primary-foreground
+        // to stay legible over it — same treatment the topbar gives its own
+        // drawer. Desktop drops all of that and becomes a static sidebar
+        // column of the /projects grid.
+        // left-3 always insets the tab from the screen edge; open, right-3
+        // pairs with it so the panel spans between the two insets rather than
+        // a full 100vw that would overflow past them.
+        "fixed bottom-3 left-3 z-30 pixelCornersTop",
         "transition-[width] duration-300 ease-out",
-        showFilters ? "right-3 lg:grid lg:grid-cols-12 pb-3" : "w-1/3 pb-3",
+        showFilters
+          ? "right-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"
+          : "w-1/3 bg-transparent max-lg:[&_*]:!text-primary",
         "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
         className,
       )}
@@ -220,13 +223,10 @@ export default function CategoryFilters({
       </AnimatePresence>
 
       {/* Mobile: the toggle sits at the drawer's bottom edge so it holds its
-          position whether the panel is open or closed — sized and centred the
-          same way as the sound toggle at the opposite corner (h-10, px-4,
-          flex-centred) so the two floating pills line up. Desktop: it drops
-          into the panel grid's empty left columns, bottom-aligned
-          (lg:self-end) with matching lg:p-3 so its baseline lands on the last
-          sub-menu row. */}
-      <div className="flex items-center h-10 px-4 lg:h-auto lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
+          position whether the panel is open or closed. Desktop: it drops into
+          the panel grid's empty left columns, bottom-aligned (lg:self-end) with
+          matching lg:p-3 so its baseline lands on the last sub-menu row. */}
+      <div className="px-6 py-4 lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
         <CheckButton
           label={showFilters ? "close" : "show filters"}
           size="label"

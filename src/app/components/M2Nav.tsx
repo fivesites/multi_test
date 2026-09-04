@@ -390,10 +390,9 @@ export default function M2Nav() {
       </div>
 
       {/* The topbar grid has no spare column for this at mobile width, so the
-          sound toggle floats at the opposite corner instead — its own pill,
-          styled the same way the bar itself is (solid primary, foreground
-          text) rather than riding the grid's row height. */}
-      <div className="flex lg:hidden fixed bottom-3 left-3 z-50 h-10 items-center pixelCorners px-4">
+          sound toggle floats at the opposite corner instead — bottom-right,
+          paired with the filters tab at bottom-left on /projects. */}
+      <div className="flex lg:hidden fixed bottom-3 right-3 z-50 h-10 items-center pixelCorners px-4">
         <CheckButton
           size="label"
           label={muted ? "sound off" : "sound on"}
