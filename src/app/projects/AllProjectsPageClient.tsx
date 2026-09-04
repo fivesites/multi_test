@@ -126,7 +126,7 @@ export default function AllProjectsPageClient() {
         <div className="grid grid-cols-3 lg:grid-cols-8 w-full mb-3">
           <TypedHeading
             ready={!navLoading}
-            text="see our work"
+            text="welcome to the archive"
             className="col-start-2 col-span-3 lg:col-start-3 lg:col-span-5 text-left  h2Text  font-thin text-primary"
           />
         </div>

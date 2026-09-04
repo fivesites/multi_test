@@ -21,7 +21,7 @@ export default function SettingsOverlay({ className }: { className?: string }) {
       transition={{ duration: 0.18, ease: "easeOut" }}
       className={cn("flex flex-col gap-0", className)}
     >
-      <ViewToggleButtons className="" />
+      <ViewToggleButtons className="lg:col-span-4" />
       {!muted && (
         <div className="lg:hidden grid grid-cols-3   space-x-0 pr-0 mb-12">
           <CheckButton

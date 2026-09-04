@@ -99,7 +99,7 @@ function ProjectPageInner({
       <LandningBlock
         label={client}
         className="min-h-dvh  items-start w-full  lg:grid-cols-12 lg:px-0 "
-        labelClassName="col-start-2  col-span-3 lg:col-start-4 lg:col-span-3 "
+        labelClassName="col-start-2  col-span-3 px-0 lg:col-start-4 lg:col-span-3 "
         background={
           hero ? (
             <div
@@ -184,7 +184,7 @@ function ProjectPageInner({
                 {[0, 1].map((i) => (
                   <div
                     key={i}
-                    className={`relative aspect-square bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6 ${
+                    className={`relative aspect-square pixelCorners bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6 ${
                       i % 2 === 0 ? "lg:col-start-2" : ""
                     }`}
                   >

@@ -379,31 +379,7 @@ export default function M2Nav() {
           active={!muted}
           onClick={toggleMute}
         />
-        {/* Projects only. Mobile: a fixed button in the bottom-left corner that
-            opens the full-screen filter/settings sheet. Desktop: sits in the
-            bar at column ten with the settings menu dropping straight below. */}
-        {onProjects && (
-          <div className="flex flex-col items-start lg:relative lg:bottom-auto lg:left-auto lg:z-auto lg:col-start-10 lg:col-span-2 lg:h-full lg:justify-center">
-            <CheckButton
-              className="hidden lg:flex font-visual lg:justify-start"
-              size="lg"
-              label="settings"
-              active={openSettings}
-              onClick={() => setOpenSettings((o) => !o)}
-            />
-            <AnimatePresence initial={false}>
-              {openSettings && (
-                <SettingsOverlay
-                  key="settings"
-                  className="hidden lg:flex absolute left-0 top-full z-[95] w-full"
-                />
-              )}
-            </AnimatePresence>
-          </div>
-        )}
-        {/* The palette swatch, top-right corner — clicking it cycles the
-            theme. Drawn in `text-primary` so it is literally the palette that
-            is on, never a stale copy of it. */}
+
         <ColorButton
           label={current.label}
           swatch="text-primary"

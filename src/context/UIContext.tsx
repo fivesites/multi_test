@@ -47,7 +47,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [openedCard, setOpenedCard] = useState<string | null>(null);
-  const [showSettings, setShowSettings] = useState(false);
+  const [showSettings, setShowSettings] = useState(true);
   const [search, setSearch] = useState("");
   const [numCols, setNumCols] = useState(2);
   const [contentDoneKey, setContentDoneKey] = useState(0);

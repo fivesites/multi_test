@@ -34,7 +34,7 @@ type Props = {
  *
  *  `label` is `lg`'s type at no size of its own — `h-auto px-0` — for a
  *  heading that sits in a layout's own grid rather than in a control row. */
-const SIZE_BOX = {
+export const SIZE_BOX = {
   sm: "h-auto items-center",
   md: "px-3 lg:px-6 h-12 items-center  lg:h-16",
   lg: "px-6 lg:px-3 h-16 lg:h-12 items-center justify-start",
@@ -43,14 +43,14 @@ const SIZE_BOX = {
 
 /** Type scale. `sm` is a compact control — a filter chip, a dense row — so it
  *  drops to the small UI size rather than the display size the larger ones use. */
-const SIZE_TEXT = {
+export const SIZE_TEXT = {
   sm: "text-sm leading-[1]",
   md: "text-3xl lg:text-3xl",
   lg: "text-base lg:text-lg lowercase",
   label: "text-base lg:text-lg lowercase",
 } as const;
 
-const SIZE_GAP = {
+export const SIZE_GAP = {
   sm: "gap-x-2",
   md: "gap-x-3 lg:gap-x-4",
   lg: "gap-x-3 lg:gap-x-3",
@@ -61,7 +61,7 @@ const SIZE_GAP = {
  *  font size rather than a box. Sized in `em` so it tracks the label: the
  *  glyph body renders at roughly 0.7em, so ~2.2em keeps it at least twice the
  *  label's height. It renders in `font-visual` and shares the label baseline. */
-const SIZE_CHECK = {
+export const SIZE_CHECK = {
   sm: "text-[2.2em]",
   md: "text-[2.2em]",
   lg: "text-[1em]",
@@ -70,8 +70,10 @@ const SIZE_CHECK = {
 
 /** The checkbox marks, straight from the font: `filledbox` (U+25A0, &#9632;)
  *  when active, `uni25A1` (U+25A1, &#9633;) when not. */
-const MARK_ACTIVE = "■";
-const MARK_INACTIVE = "□";
+export const MARK_ACTIVE = "■";
+export const MARK_INACTIVE = "□";
+
+export type CheckButtonSize = "sm" | "md" | "lg" | "label";
 
 /** The square is the checkbox: primary when active, muted when not. The whole
  *  control is one hover target — `group` on the outer element means the square

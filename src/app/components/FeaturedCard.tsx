@@ -16,7 +16,8 @@ const MotionLink = motion.create(Link);
 /**
  * A project card with its title and client set over the cover image — used for
  * the home page's selected projects (two-up on desktop) and the projects
- * page's mobile list (one per row). Its horizontal inset breathes with scroll:
+ * page's mobile list (one per row). On mobile the client name sits above the
+ * cover image; on desktop it's set over it. Its horizontal inset breathes with scroll:
  * widest (px-6) off-centre, tightening to px-3 as the card crosses the middle
  * of the viewport, then easing back. Scroll-driven; steps aside for reduced
  * motion.
@@ -58,6 +59,12 @@ export default function FeaturedCard({
       className="col-span-3 lg:col-span-5 grid grid-cols-3 bg-background pixelCorners  group relative lg:flex lg:flex-col gap-3 lg:gap-6 w-full mb-3 lg:mb-6 "
       style={reduce ? undefined : { paddingLeft: inset, paddingRight: inset }}
     >
+      {project.client && (
+        <h2 className="lg:hidden col-span-3 h2Text text-primary lowercase">
+          {project.client}
+        </h2>
+      )}
+
       <div className="relative col-span-3 w-full">
         <PixelFrame
           src={project.coverUrl ?? project.url}
