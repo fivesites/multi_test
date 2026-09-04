@@ -9,6 +9,7 @@ import CheckButton from "@/app/components/CheckButton";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 type ProjectImage = { key: string; url: string; aspectRatio: number };
 
@@ -217,9 +218,15 @@ function ProjectPageInner({
           </motion.div>
         </div>
         {categories.length > 0 && (
-          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-9 grid grid-cols-3 lg:grid-cols-subgrid gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
-            {categories.map((c) => (
-              <li key={c} className="col-span-1 lg:col-span-3">
+          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
+            {categories.map((c, i) => (
+              <li
+                key={c}
+                className={cn(
+                  "col-span-1 lg:col-span-2",
+                  i === 0 && "lg:col-start-2",
+                )}
+              >
                 <CheckButton
                   size="label"
                   active

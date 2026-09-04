@@ -6,8 +6,7 @@ import { cn } from "@/lib/utils";
 import { usePixelCorners } from "@/app/hooks/usePixelCorners";
 import { useUI } from "@/context/UIContext";
 import type { GridItem } from "@/context/WorkContext";
-import { formatCategories } from "@/lib/categories";
-import { Button } from "@/components/ui/button";
+import CheckButton from "./CheckButton";
 
 export default function ProjectCard({
   item,
@@ -18,21 +17,22 @@ export default function ProjectCard({
   sizes: string;
   className?: string;
 }) {
-  const categories = formatCategories(item.categories);
-  // Notches the box's corners like the buttons and landing blocks. On the
-  // media box so the image and the hover overlay are clipped to the same
-  // shape — the mobile title sits outside it, below.
+  // Notches the box's corners like the buttons and landing blocks — on the
+  // media box so the image is clipped to the shape, with the caption below it.
   const pixelRef = usePixelCorners<HTMLDivElement>();
-  const { openedCard, setOpenedCard } = useUI();
-  // Clicking hands off to the project page, which can take a beat to load.
-  // Until it does, the card claims the whole tile and centres its own label.
-  const isOpened = openedCard === item.slug;
+  const captionRef = usePixelCorners<HTMLDivElement>();
+  const { setOpenedCard, numCols } = useUI();
+
+  // The caption only earns its space when the thumbnails are large enough to
+  // sit beside it — the 1- and 3-column zoom stops. Past that the grid is a
+  // dense contact sheet and the label would crowd it.
+  const showCaption = numCols <= 3;
 
   return (
     <Link
       href={`/projects/${item.slug}`}
       onClick={() => setOpenedCard(item.slug)}
-      className={cn("group flex flex-col gap-3 w-full mb-6 lg:mb-0", className)}
+      className={cn("group flex flex-col gap-0 w-full mb-6 lg:mb-3", className)}
     >
       <div
         ref={pixelRef}
@@ -46,28 +46,24 @@ export default function ProjectCard({
             src={item.url}
             alt={item.alt}
             fill
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            className="object-cover "
             sizes={sizes}
           />
         </div>
-        {/* Absolute, so revealing this on hover can't reflow the masonry */}
-        <div
-          className={cn(
-            "absolute left-0 top-0 h-full w-full flex flex-col items-start justify-end  p-6 text-primary-foreground  leading-snug tracking-wide",
-            "opacity-0 transition-all duration-200 group-hover:opacity-100 group-hover:bg-secondary group-focus-visible:bg-secondary",
-          )}
-        >
-          <button className="hidden lg:flex h-auto w-min bg-transparent  text-secondary-foreground h3Text whitespace-normal lg:whitespace-nowrap col-start-2">
-            {item.title}
-          </button>
-        </div>
       </div>
-      {/* Mobile: title below the box rather than over the image */}
-      <span className="grid lg:hidden grid-cols-3 w-full">
-        <button className="h-auto  bg-transparent  text-secondary-foreground h3Text whitespace-normal lg:whitespace-nowrap col-start-2 col-span-2 text-left">
-          {item.title}
-        </button>
-      </span>
+      {/* Client + title below the image — client in pText, title in h4BtnText.
+          The frame's border follows the notched corners, not a plain rectangle. */}
+      {showCaption && item.client && (
+        <div
+          ref={captionRef}
+          className="flex flex-col gap-1 lg:gap-2 w-full py-6 px-3  text-primary   "
+        >
+          <CheckButton label={item.client} active size="label" className="" />
+          <span className="h4BtnText text-primary lowercase hidden ">
+            {item.title}
+          </span>
+        </div>
+      )}
     </Link>
   );
 }

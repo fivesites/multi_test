@@ -53,11 +53,11 @@ function NavVertical({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -8 }}
+      initial={{ opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.18, ease: "easeOut" }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-secondary lg:bg-transparent flex flex-col h-dvh lg:h-auto px-0 lg:px-6`}
+      exit={{ opacity: 0, y: -24 }}
+      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+      className={`p-0 space-y-0 w-full lg:w-1/4 bg-primary lg:bg-transparent max-lg:[&_*]:!text-primary-foreground flex flex-col h-auto px-0 lg:px-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -76,7 +76,7 @@ function NavVertical({
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className="f  lowercase pb-0"
-            size="lg"
+            size="md"
             key={item.href}
             label={item.label}
             href={item.href}
@@ -337,13 +337,13 @@ export default function M2Nav() {
   }
 
   return (
-    <div className="fixed top-0 left-0 z-90 w-full">
+    <div className="fixed top-0 left-0 z-90 w-full px-3 pt-3 lg:px-0">
       <div
         // Opening the menu fills the bar on mobile, where the panel drops
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 ${open ? "bg-secondary lg:bg-transparent" : "bg-transparent"}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0 pixelCorners  lg:px-6 h-16 lg:h-24 bg-primary lg:bg-transparent max-lg:[&_*]:!text-primary-foreground ${open ? "" : "text-primary-foreground"}`}
       >
         {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
@@ -389,16 +389,27 @@ export default function M2Nav() {
         />
       </div>
 
+      {/* The panel unfolds as a drawer — the wrapper animates its height so the
+          menu slides down from under the bar, and NavVertical eases in behind
+          it. Mirrors the bottom drawer on /projects. */}
       <AnimatePresence initial={false}>
         {open && (
-          <NavVertical
-            key="nav"
-            onNavigate={handleNavigate}
-            onOpenSettings={() => setOpenSettings((o) => !o)}
-            settingsOpen={openSettings}
-            theme={theme}
-            onCycleTheme={cycleTheme}
-          />
+          <motion.div
+            key="nav-drawer"
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden"
+          >
+            <NavVertical
+              onNavigate={handleNavigate}
+              onOpenSettings={() => setOpenSettings((o) => !o)}
+              settingsOpen={openSettings}
+              theme={theme}
+              onCycleTheme={cycleTheme}
+            />
+          </motion.div>
         )}
       </AnimatePresence>
     </div>

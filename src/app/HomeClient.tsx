@@ -130,7 +130,7 @@ function HomeClientInner() {
   return (
     <div className="w-full  px-0 ">
       {/* One gutter for the whole page: px-3 on mobile, px-6 from lg up. */}
-      <div className="relative flex min-h-dvh flex-col gap-y-24 w-full px-3 lg:px-6">
+      <div className="relative flex min-h-dvh flex-col gap-y-24 w-full px-0 lg:px-6">
         {/* Relative wrapper so the mobile sound toggle can anchor to the hero's
             bottom corner and scroll away with it, rather than sitting fixed
             over the whole page. Desktop keeps the nav's own Sound On control. */}
@@ -168,7 +168,6 @@ function HomeClientInner() {
             label="our story"
             bg="   text-primary  "
             className="col-start-1 col-span-3 lg:col-start-3 lg:col-span-8 h-auto  "
-        
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -205,16 +204,23 @@ function HomeClientInner() {
           <div className="relative lg:z-10 bg-background grid grid-cols-3 lg:grid-cols-12 gap-x-3 mt-12 lg:mt-6 w-full">
             <div className="col-start-1 col-span-3 lg:col-start-3 lg:col-span-9  grid grid-cols-3 lg:grid-cols-6 gap-3 ">
               {featuredProjects.map((project) => (
-                <FeaturedCard key={project.key} project={project} />
+                <FeaturedCard
+                  key={project.key}
+                  project={project}
+                  className="col-span-3 lg:col-span-5"
+                />
               ))}
             </div>
-            <IconButton
-              size="label"
-              href="/projects"
-              label="see more work"
-              icon="↗"
-              className="col-start-2 col-span-3 lg:col-start-6 lg:mt-12"
-            />
+            <Button
+              variant="link"
+              size="lgLink"
+              className=" col-start-2 lg:col-start-4 text-3xl flex items-baseline h-auto py-0   gap-x-1.5  font-thin   justify-start w-min  "
+              asChild
+            >
+              <Link href="/projects">
+                see more work <span className="font-normal text-xl ">↗</span>
+              </Link>
+            </Button>
           </div>
         </section>
         {/* The featured works as their own grid: one per row on mobile,
@@ -246,24 +252,24 @@ function HomeClientInner() {
           <Button
             variant="link"
             size="lgLink"
-            className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
+            className=" col-start-1 lg:col-start-4 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min   "
             onClick={() =>
               lenis
                 ? lenis.scrollTo(0)
                 : window.scrollTo({ top: 0, behavior: "smooth" })
             }
           >
-            top <span className="font-normal ">↑</span>
+            top <span className="font-normal text-xl ">↑</span>
           </Button>
 
           <Button
             variant="link"
             size="lgLink"
-            className=" col-start-3 lg:col-start-8 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+            className=" col-start-3 lg:col-start-8 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min "
             asChild
           >
             <Link href="/projects">
-              next <span className="font-normal ">→</span>
+              next <span className="font-normal text-xl ">→</span>
             </Link>
           </Button>
         </Reveal>

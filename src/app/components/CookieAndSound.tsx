@@ -134,7 +134,6 @@ export default function CookieAndSound({
   // buttons to the far edge, which is what justify-start is trying to avoid.
   const copy =
     "  text-sm font-visual lowercase tracking-wide text-primary    lg:max-w-lg lg:whitespace-nowrap";
-  const action = " flex-1 h-6 font-normal   ";
 
   return (
     <AnimatePresence mode="wait">
@@ -146,21 +145,28 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 lg:right-0 left-auto right-0  px-6 pb-6 lg:px-6 flex h-auto  lg:h-12  gap-3 items-center lg:items-baseline    ",
+            "fixed z-50 bottom-0 right-3 lg:right-6 lg:left-auto w-2/3 lg:w-1/2  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-start pixelCornersTop lg:items-baseline     ",
 
             step === "volume"
-              ? "justify-end bg-transparent "
-              : "justify-center lg:justify-end  bg-transparent lg:bg-transparent    ",
-            // Desktop has MultiVertNav's Sound On checkbox, so the sound
-            // question and the volume toggle are mobile-only there.
-            step !== "cookie" && "lg:hidden",
+              ? "justify-between w-2/3 lg:w-1/2   "
+              : "justify-end lg:justify-between  bg-accent w-2/3 lg:w-1/2     ",
             className,
           )}
         >
           {step === "cookie" ? (
             <>
               <p className={copy}>
-                We use cookies to improve your{" "}
+                this site uses cookies to improve your experience.
+              </p>
+              <div className="flex flex-row-reverse  gap-3 justify-start w-min">
+                <Button
+                  variant="default"
+                  size="sm"
+                  className="  font-normal"
+                  onClick={() => acceptCookies()}
+                >
+                  accept
+                </Button>
                 <Button
                   variant="link"
                   size="sm"
@@ -168,22 +174,8 @@ export default function CookieAndSound({
                   asChild
                 >
                   <Link href="/privacy-policy" className="">
-                    experience
+                    learn more
                   </Link>
-                </Button>
-                .
-              </p>
-              <div className="flex flex-row-reverse  gap-3 justify-start w-min">
-                <Button size="sm" className={action} onClick={acceptCookies}>
-                  Accept
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={action}
-                  onClick={declineCookies}
-                >
-                  Decline
                 </Button>
               </div>
             </>
@@ -191,17 +183,13 @@ export default function CookieAndSound({
             <>
               <p className={copy}>Enable sound?</p>
               <div className="flex flex-row-reverse   gap-3">
-                <Button
-                  size="sm"
-                  className={action}
-                  onClick={() => answerSound(true)}
-                >
+                <Button size="sm" onClick={() => answerSound(true)}>
                   Yes
                 </Button>
                 <Button
+                  variant="link"
                   size="sm"
-                  variant="outline"
-                  className={action}
+                  className=" border-none underline underline-offset-6 px-0 text-primary font-normal"
                   onClick={() => answerSound(false)}
                 >
                   No
@@ -209,10 +197,13 @@ export default function CookieAndSound({
               </div>
             </>
           ) : (
-            /* Answered: nothing left to say, just the volume toggle. */
-            <div className="flex items-center gap-3">
+            /* Answered: nothing left to say, just the volume toggle. It takes
+               the full width and spreads label-left / box-right so the row's
+               justify-between has something to act on. */
+            <div className="flex w-full items-center gap-3">
               <CheckButton
-                className="lg:hidden "
+                className="w-full"
+                labelSide="left"
                 size="label"
                 label={muted ? "sound off" : "sound on"}
                 active={!muted}

@@ -36,7 +36,7 @@ export default function SearchCheck({
   value,
   onChange,
   className,
-  size = "lg",
+  size = "label",
   placeholder = "search",
 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -60,13 +60,18 @@ export default function SearchCheck({
   return (
     <div
       className={cn(
-        "group flex font-visual font-normal text-primary",
+        "group flex justify-start font-visual font-normal text-primary",
         SIZE_TEXT[size],
         className,
         SIZE_BOX[size],
       )}
     >
-      <div className={cn("flex items-baseline w-full", SIZE_GAP[size])}>
+      <div
+        className={cn(
+          "flex items-baseline justify-start w-full",
+          SIZE_GAP[size],
+        )}
+      >
         <button
           type="button"
           aria-label="close search"

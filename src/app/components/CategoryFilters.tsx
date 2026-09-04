@@ -1,5 +1,6 @@
 "use client";
 
+import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
@@ -7,7 +8,10 @@ import M2Button from "./M2Button";
 import { Button } from "@/components/ui/button";
 import CheckButton from "./CheckButton";
 import SearchCheck from "./SearchCheck";
+import { zoomInCols, zoomOutCols } from "@/lib/gridZoom";
 import { useState } from "react";
+
+const DRAWER_EASE = [0.22, 1, 0.36, 1] as const;
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -25,10 +29,6 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 const TYPING_MS_PER_CHAR = 22;
-
-// Desktop grid zoom range — one wide column up to eight thumbnails per row.
-const MIN_COLS = 1;
-const MAX_COLS = 8;
 
 // Same label + delay math as lib/navTiming, which times the project list reveal.
 const getFilterLabel = (cat: string) =>
@@ -60,7 +60,7 @@ export default function CategoryFilters({
 
   // `showFilters` is the master switch for the whole control area; `showCat`
   // toggles just the category list within it.
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(false);
   const [showCat, setShowCat] = useState(true);
 
   function showThumbnails() {
@@ -98,93 +98,126 @@ export default function CategoryFilters({
   return (
     <div
       className={cn(
-        "hidden lg:block w-full col-start-1 col-span-12 ",
+        // Mobile: a bottom-left drawer — a narrow tab holding just the "filters"
+        // button until opened, sliding up to the full panel when it is. It's a
+        // solid primary panel there, so everything inside it reads in
+        // primary-foreground. Desktop drops all of that and becomes a static
+        // sidebar column of the /projects grid.
+        // left-3 always insets the tab from the screen edge; open, right-3 pairs
+        // with it and the width goes auto so the panel spans between the two
+        // insets rather than a full 100vw that would overflow past them.
+        "fixed bottom-0 left-3 z-30 bg-primary max-lg:[&_*]:!text-primary-foreground pixelCornersTop",
+        "transition-[width] duration-300 ease-out",
+        showFilters ? "right-3 lg:grid lg:grid-cols-12 pb-3" : "w-1/3",
+        "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
         className,
       )}
     >
-      {/* The sidebar column on /projects — the parent decides where it sits.
-          It scrolls with the list rather than sticking. */}
-      <div className="grid grid-cols-12  gap-x-0 gap-y-12 items-baseline  w-full p-3">
-        <CheckButton
-          label={showFilters ? "hide filters" : "filter & settings"}
-          size="label"
-          active={showFilters}
-          onClick={() => setShowFilters((v) => !v)}
-          className="col-start-1 col-span-2 row-start-1"
-        />
+      <AnimatePresence initial={false}>
         {showFilters && (
-          <>
-            <CheckButton
-              label="categories"
-              size="label"
-              active={showCat}
-              className="col-start-3 row-start-1"
-              onClick={() => setShowCat((v) => !v)}
-            />
-            <div className="relative col-start-9 col-span-1 row-start-1">
+          <motion.div
+            key="panel"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: DRAWER_EASE }}
+            className="overflow-hidden lg:col-start-1 lg:col-span-12 lg:row-start-1"
+          >
+            <motion.div
+              initial={{ y: 32 }}
+              animate={{ y: 0 }}
+              exit={{ y: 32 }}
+              transition={{ duration: 0.4, ease: DRAWER_EASE }}
+              className="grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-12 items-baseline w-full px-6 pt-6 pb-6 lg:p-3"
+            >
               <CheckButton
-                label="settings"
+                label="categories"
                 size="label"
-                active={showSettings}
-                onClick={() => setShowSettings(!showSettings)}
+                active={showCat}
+                className="col-start-1 row-start-2 lg:col-start-3 lg:row-start-1"
+                onClick={() => setShowCat((v) => !v)}
               />
-            </div>
-            <SearchCheck
-              className="col-start-11 col-span-2 row-start-1"
-              open={searchOpen}
-              onToggle={() => setSearchOpen((v) => !v)}
-              value={search}
-              onChange={setSearch}
-            />
-          </>
-        )}
-        {showFilters && showCat && (
-          <div className="col-start-3  col-span-6 row-start-2 grid grid-cols-6 px-0 gap-y-6">
-            {allCats.map((cat, i) => (
-              <span
-                key={cat}
-                className="inline-flex items-baseline whitespace-nowrap w-min col-span-2  "
-              >
+              <div className="relative col-start-3 row-start-2 lg:col-start-9 col-span-1 lg:row-start-1">
                 <CheckButton
-                  label={getFilterLabel(cat)}
+                  label="settings"
                   size="label"
-                  onClick={() => handleFilterChange(cat)}
-                  active={activeFilter === cat}
-                />
-              </span>
-            ))}
-          </div>
-        )}
-        {showFilters && showSettings && (
-          <div className="col-start-9 col-span-2 row-start-2 flex flex-col px-0 gap-6">
-            <CheckButton
-              label="list"
-              size="label"
-              active={showList}
-              onClick={showListView}
-            />
-            <CheckButton
-              label="thumbnails"
-              size="label"
-              active={showGrid}
-              onClick={showThumbnails}
-            />
-            {showGrid && (
-              <div className="flex flex-col gap-6 ">
-                <CheckButton
-                  label="Zoom In"
-                  size="label"
-                  onClick={() => setNumCols(Math.max(MIN_COLS, numCols - 1))}
-                />
-                <CheckButton
-                  label="Zoom Out"
-                  size="label"
-                  onClick={() => setNumCols(Math.min(MAX_COLS, numCols + 1))}
+                  active={showSettings}
+                  onClick={() => setShowSettings(!showSettings)}
                 />
               </div>
-            )}
-          </div>
+              <SearchCheck
+                // Mobile: row 4 drops it below whichever sub-menu is open (both
+                // sit on row 3); -mt-6 trims the grid's 12 row gap back to 6 so
+                // it keeps the sub-menu's own 6 rhythm.
+                className="col-start-3 row-start-4 max-lg:-mt-6 lg:col-start-11 lg:col-span-2 lg:row-start-1"
+                open={searchOpen}
+                onToggle={() => setSearchOpen((v) => !v)}
+                value={search}
+                onChange={setSearch}
+              />
+              {showCat && (
+                <div className="col-start-1 row-start-3 lg:col-start-3 col-span-3 lg:col-span-6 lg:row-start-2 grid grid-cols-3 lg:grid-cols-6 px-0 gap-y-6">
+                  {allCats.map((cat) => (
+                    <span
+                      key={cat}
+                      className="inline-flex items-baseline whitespace-nowrap w-min col-span-2"
+                    >
+                      <CheckButton
+                        label={getFilterLabel(cat)}
+                        size="label"
+                        onClick={() => handleFilterChange(cat)}
+                        active={activeFilter === cat}
+                      />
+                    </span>
+                  ))}
+                </div>
+              )}
+              {showSettings && (
+                <div className="col-start-3 row-start-3 lg:col-start-9 col-span-2 lg:row-start-2 flex flex-col px-0 gap-6">
+                  <CheckButton
+                    label="list"
+                    size="label"
+                    active={showList}
+                    onClick={showListView}
+                  />
+                  <CheckButton
+                    label="thumbnails"
+                    size="label"
+                    active={showGrid}
+                    onClick={showThumbnails}
+                  />
+                  {showGrid && (
+                    <div className="flex flex-col gap-6">
+                      <CheckButton
+                        label="Zoom In"
+                        size="label"
+                        onClick={() => setNumCols(zoomInCols(numCols))}
+                      />
+                      <CheckButton
+                        label="Zoom Out"
+                        size="label"
+                        onClick={() => setNumCols(zoomOutCols(numCols))}
+                      />
+                    </div>
+                  )}
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
         )}
+      </AnimatePresence>
+
+      {/* Mobile: the toggle sits at the drawer's bottom edge so it holds its
+          position whether the panel is open or closed. Desktop: it drops into
+          the panel grid's empty left columns, bottom-aligned (lg:self-end) with
+          matching lg:p-3 so its baseline lands on the last sub-menu row. */}
+      <div className="px-6 py-4 lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
+        <CheckButton
+          label={showFilters ? "close" : "show filters"}
+          size="label"
+          active
+          onClick={() => setShowFilters((v) => !v)}
+        />
       </div>
     </div>
   );

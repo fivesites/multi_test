@@ -36,7 +36,7 @@ type Props = {
  *  heading that sits in a layout's own grid rather than in a control row. */
 export const SIZE_BOX = {
   sm: "h-auto items-center",
-  md: "px-3 lg:px-6 h-12 items-center  lg:h-16",
+  md: "px-6 lg:px-3 h-12 lg:h-12 items-center justify-start",
   lg: "px-6 lg:px-3 h-16 lg:h-12 items-center justify-start",
   label: "h-3 px-0 justify-start items-center",
 } as const;
@@ -45,14 +45,14 @@ export const SIZE_BOX = {
  *  drops to the small UI size rather than the display size the larger ones use. */
 export const SIZE_TEXT = {
   sm: "text-sm leading-[1]",
-  md: "text-3xl lg:text-3xl",
+  md: "text-base lg:text-lg lowercase",
   lg: "text-base lg:text-lg lowercase",
   label: "text-base lg:text-lg lowercase",
 } as const;
 
 export const SIZE_GAP = {
   sm: "gap-x-2",
-  md: "gap-x-3 lg:gap-x-4",
+  md: "gap-x-3 lg:gap-x-3",
   lg: "gap-x-3 lg:gap-x-3",
   label: "gap-x-3 lg:gap-x-3",
 } as const;
@@ -63,7 +63,7 @@ export const SIZE_GAP = {
  *  label's height. It renders in `font-visual` and shares the label baseline. */
 export const SIZE_CHECK = {
   sm: "text-[2.2em]",
-  md: "text-[2.2em]",
+  md: "text-[1em]",
   lg: "text-[1em]",
   label: "text-[1em]",
 } as const;
@@ -118,7 +118,7 @@ export default function CheckButton({
           // it, spread to the row's two ends — the settings-row pattern. Takes
           // the full width to spread across.
           labelSide === "left"
-            ? "flex-row-reverse justify-start w-full"
+            ? "flex-row-reverse justify-between w-full"
             : "justify-start",
           SIZE_GAP[size],
         )}

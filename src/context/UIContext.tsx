@@ -8,6 +8,7 @@ import {
   useCallback,
   type ReactNode,
 } from "react";
+import { DEFAULT_COLS } from "@/lib/gridZoom";
 
 type UIContextType = {
   contentDoneKey: number;
@@ -49,7 +50,7 @@ export function UIProvider({ children }: { children: ReactNode }) {
   const [openedCard, setOpenedCard] = useState<string | null>(null);
   const [showSettings, setShowSettings] = useState(true);
   const [search, setSearch] = useState("");
-  const [numCols, setNumCols] = useState(2);
+  const [numCols, setNumCols] = useState(DEFAULT_COLS);
   const [contentDoneKey, setContentDoneKey] = useState(0);
   const [navLoading, setNavLoading] = useState(true);
   const notifyContentDone = useCallback(
@@ -57,10 +58,10 @@ export function UIProvider({ children }: { children: ReactNode }) {
     [],
   );
 
-  // Thumbnails is the default view at every width; only the grid density
-  // differs — a touch denser on desktop.
+  // Thumbnails is the default view at every width. numCols only drives the
+  // desktop grid; below lg the list is one card per row.
   useEffect(() => {
-    setNumCols(window.innerWidth >= 1024 ? 3 : 2);
+    setNumCols(window.innerWidth >= 1024 ? DEFAULT_COLS : 2);
   }, []);
 
   return (

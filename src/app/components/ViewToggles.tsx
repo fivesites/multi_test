@@ -6,12 +6,9 @@ import M2Button from "./M2Button";
 import { getActiveFilterLabel } from "@/lib/categories";
 import { Button } from "@/components/ui/button";
 import CheckButton from "./CheckButton";
+import { zoomInCols, zoomOutCols } from "@/lib/gridZoom";
 
 const BUTTON_CLASS = "btnText";
-
-// Desktop grid zoom range — one wide column up to eight thumbnails per row.
-const MIN_COLS = 1;
-const MAX_COLS = 8;
 
 const viewClass = (active: boolean) =>
   cn(
@@ -78,7 +75,7 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
           <CheckButton
             label="Zoom In"
             size="lg"
-            onClick={() => setNumCols(Math.max(MIN_COLS, numCols - 1))}
+            onClick={() => setNumCols(zoomInCols(numCols))}
             className="c"
           />
 
@@ -86,7 +83,7 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
             label="Zoom Out"
             size="lg"
             className=""
-            onClick={() => setNumCols(Math.min(MAX_COLS, numCols + 1))}
+            onClick={() => setNumCols(zoomOutCols(numCols))}
           />
         </span>
       )}

@@ -315,6 +315,28 @@
     -webkit-mask-box-image-width: var(--pixel-size, 8px);
     mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
   }
+
+  /* pixel_bottom.svg mirrors pixel_top.svg: only the bottom-left and
+     bottom-right corners get notched, the top two stay square. */
+  .pixelCornersBottom {
+    -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px) stretch;
+  }
+
+  /* A border that traces the pixelCorners staircase — including the stepped
+     corner faces a plain `border` leaves open, since a CSS border only paints
+     the four straight edges. pixel_border_xs.svg is a one-unit stepped ring
+     (an even-odd fill between two staircase paths); as a 9-slice border-image
+     its corner tiles carry the steps while the straight runs stretch a thin
+     line. border-image-width tracks --pixel-size so it scales with the element
+     the same way the .pixelCorners mask does — set that var with the
+     usePixelCorners hook and pair the two classes on the same element. */
+  .pixelCornersBorder {
+    border: 1px solid transparent;
+    border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-size, 8px) / 0
+      stretch;
+  }
 }
 
 /* CustomCursor draws the pointer itself, so the native one goes away — including

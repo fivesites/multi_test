@@ -7,16 +7,15 @@ import Link from "next/link";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
 import ProjectCard from "@/app/components/ProjectCard";
-import FeaturedCard from "@/app/components/FeaturedCard";
 import CategoryFilters from "@/app/components/CategoryFilters";
 import FilterOverlay from "@/app/components/FilterOverlay";
 import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
-import { getActiveFilterLabel, getCategoryLabel } from "@/lib/categories";
+import { getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "@/app/components/LandningBlock";
 import TypedHeading from "@/app/components/TypedHeading";
-import CheckButton from "@/app/components/CheckButton";
-import IconButton from "@/app/components/IconButton";
 import Footer from "@/app/components/Footer";
+import { Reveal } from "@/app/components/Reveal";
+import { Button } from "@/components/ui/button";
 
 export default function AllProjectsPageClient() {
   const { items, categories } = useWork();
@@ -111,11 +110,11 @@ export default function AllProjectsPageClient() {
   return (
     <div
       id="projects"
-      className="relative w-full px-3 lg:px-6 mt-16 lg:mt-24 pt-12   "
+      className="relative bg-secondary  w-full px-3 lg:px-6 pt-28 lg:mt-0 lg:pt-36   "
     >
       <LandningBlock
         label="projects"
-        className="h-[66.6dvh]   items-center  w-full"
+        className="h-[25dvh]   items-center  w-full bg-transparent"
         // Lines the "projects" label up with the topbar's "sound off": column 3
         // of the block's eight-column grid is the same 25% as column 4 of the
         // bar's twelve, both measured inside the shared px-6 gutter.
@@ -134,25 +133,15 @@ export default function AllProjectsPageClient() {
       <FilterOverlay />
 
       {/* Desktop: category sidebar left, projects right. */}
-      <div className=" mt-12 mb-6 lg:mb-6 grid grid-cols-3 lg:grid-cols-12 ">
-        <h2 className="mt-12 lg:hidden col-start-2 col-span-3 items-baseline gap-x-3 px-0">
-          {/* The one mobile control: names the active filter and opens the
-              category / settings sheet. */}
-          <CheckButton
-            size="label"
-            label={
-              activeFilter === "all"
-                ? "Filter and Settings"
-                : getActiveFilterLabel(activeFilter)
-            }
-            active
-            onClick={() => setFiltersOpen((v) => !v)}
-          />
-        </h2>
-        <CategoryFilters />
+      <div className=" mt-12 mb-6 lg:mb-3 grid grid-cols-3 lg:grid-cols-12 ">
+        <CategoryFilters className="" />
+
+        <span className="hidden lg:block col-span-12 p-3">
+          <div className="border-b border-primary w-full"></div>
+        </span>
 
         {listVisible && showList && (
-          <div className="col-start-4 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start  gap-6 mt-12 mb-12 ">
+          <div className="col-start-1 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start px-1.5  gap-6 mt-3 mb-12 ">
             <AnimatePresence mode="popLayout">
               {clients.map((client, idx) => (
                 <motion.div
@@ -166,7 +155,7 @@ export default function AllProjectsPageClient() {
                 >
                   <Link
                     href={`/projects/${client.slug}`}
-                    className=" transition-all h2Text text-primary lowercase hover:text-secondary hover:bg-transparent"
+                    className=" transition-all h2Text text-primary lowercase hover:text-secondary  leading-[0.9] hover:bg-transparent"
                   >
                     {client.label}
                   </Link>
@@ -178,7 +167,7 @@ export default function AllProjectsPageClient() {
 
         {listVisible && showGrid && (
           <div
-            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full gap-6 pt-6  lg:grid lg:px-0"
+            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full mt-3  lg:grid gap-x-6 gap-y-6 lg:px-3"
             style={{
               gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
             }}
@@ -195,11 +184,13 @@ export default function AllProjectsPageClient() {
                     delay: Math.min(idx * 0.07, 0.7),
                     ease: "easeOut",
                   }}
+                  // Separators only, no outer frame: a rule above every row
+                  // after the first, and left of every column after the first.
                 >
                   <ProjectCard
                     item={item}
                     sizes={`${Math.round(75 / numCols)}vw`}
-                    className=""
+                    className="lg:mb-0"
                   />
                 </motion.div>
               ))}
@@ -216,7 +207,7 @@ export default function AllProjectsPageClient() {
             <AnimatePresence mode="popLayout" initial={false}>
               {displayed.map((item) => (
                 <motion.div key={item.key} layout exit={{ opacity: 0 }}>
-                  <FeaturedCard project={item} revealOnView />
+                  <ProjectCard item={item} sizes="100vw" />
                 </motion.div>
               ))}
             </AnimatePresence>
@@ -224,7 +215,7 @@ export default function AllProjectsPageClient() {
         )}
 
         {listVisible && showList && (
-          <div className="flex w-full flex-col px-3 ">
+          <div className="grid grid-cols-3 lg:grid-cols-12 w-full">
             <AnimatePresence mode="popLayout">
               {clients.map((client, idx) => (
                 <motion.div
@@ -234,7 +225,7 @@ export default function AllProjectsPageClient() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.25, delay: idx * 0.07 }}
-                  className="w-full"
+                  className="col-start-2 lg:col-start-2 col-span-2 lg:col-span-10"
                 >
                   <Link
                     href={`/projects/${client.slug}`}
@@ -248,26 +239,31 @@ export default function AllProjectsPageClient() {
           </div>
         )}
       </div>
-      <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 mt-12 lg:mt-24 mb-12 lg:mb-24">
-        <IconButton
-          size="label"
-          label="top"
-          icon="↑"
-          className="col-start-1 lg:col-start-4"
+      <Reveal className="grid grid-cols-3 lg:grid-cols-12">
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-1 lg:col-start-4 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min   "
           onClick={() =>
             lenis
               ? lenis.scrollTo(0)
               : window.scrollTo({ top: 0, behavior: "smooth" })
           }
-        />
-        <IconButton
-          size="label"
-          href="/projects"
-          label="next"
-          icon="→"
-          className="col-start-3 lg:col-start-9"
-        />
-      </span>
+        >
+          top <span className="font-normal text-xl ">↑</span>
+        </Button>
+
+        <Button
+          variant="link"
+          size="lgLink"
+          className=" col-start-3 lg:col-start-8 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min "
+          asChild
+        >
+          <Link href="/projects">
+            next <span className="font-normal text-xl ">→</span>
+          </Link>
+        </Button>
+      </Reveal>
 
       <Footer />
     </div>
