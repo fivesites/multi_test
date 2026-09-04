@@ -116,9 +116,9 @@ export default function CategoryFilters({
         // left-3 always insets the tab from the screen edge; open, right-3 pairs
         // with it and the width goes auto so the panel spans between the two
         // insets rather than a full 100vw that would overflow past them.
-        "fixed bottom-0 left-3 z-30 bg-primary max-lg:[&_*]:!text-primary-foreground pixelCornersTop",
+        "fixed bottom-3 right-3 z-60 h-10 items-center  pixelCorners   bg-transparent max-lg:[&_*]:!text-primary pixelCornersTop",
         "transition-[width] duration-300 ease-out",
-        showFilters ? "right-3 lg:grid lg:grid-cols-12 pb-3" : "w-1/3",
+        showFilters ? "right-3 lg:grid lg:grid-cols-12 pb-3" : "w-1/3 pb-3",
         "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
         className,
       )}
@@ -218,10 +218,13 @@ export default function CategoryFilters({
       </AnimatePresence>
 
       {/* Mobile: the toggle sits at the drawer's bottom edge so it holds its
-          position whether the panel is open or closed. Desktop: it drops into
-          the panel grid's empty left columns, bottom-aligned (lg:self-end) with
-          matching lg:p-3 so its baseline lands on the last sub-menu row. */}
-      <div className="px-6 py-4 lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
+          position whether the panel is open or closed — sized and centred the
+          same way as the sound toggle at the opposite corner (h-10, px-4,
+          flex-centred) so the two floating pills line up. Desktop: it drops
+          into the panel grid's empty left columns, bottom-aligned
+          (lg:self-end) with matching lg:p-3 so its baseline lands on the last
+          sub-menu row. */}
+      <div className="flex items-center h-10 px-4 lg:h-auto lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
         <CheckButton
           label={showFilters ? "close" : "show filters"}
           size="label"

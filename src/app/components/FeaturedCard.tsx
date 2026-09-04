@@ -15,20 +15,19 @@ import PixelFrame from "./PixelFrame";
 const MotionLink = motion.create(Link);
 
 /**
- * A project card with its title and client set over the cover image — used for
- * the home page's selected projects (two-up on desktop) and the projects page
- * (mobile list, one per row; desktop grid, one per cell). On mobile the client
- * name sits above the cover image; on desktop it's set over it. Its horizontal
- * inset breathes with scroll: widest (px-6) off-centre, tightening to px-3 as
- * the card crosses the middle of the viewport, then easing back. Scroll-driven;
- * steps aside for reduced motion.
+ * A project card for the home page's selected projects (two-up on desktop).
+ * Its horizontal inset breathes with scroll: widest (px-6) off-centre,
+ * tightening to px-3 as the card crosses the middle of the viewport, then
+ * easing back. Scroll-driven; steps aside for reduced motion.
  *
  * The grid span is the caller's — pass it through `className`; the card itself
  * only claims a single cell (`col-span-1`).
  *
- * With `captionBelow`, the client and title sit in a caption under the image
- * (client in `pText`, title in `h4BtnText`) rather than being set over it —
- * the treatment the projects-page grid uses.
+ * With `captionBelow` — the treatment the home page uses — the client and
+ * title sit in a caption under the image (client in `pText`, title in
+ * `h4BtnText`) instead of over it. Without it, the client sits above the
+ * image on mobile and both are set over it on desktop; no current caller
+ * uses that mode, but it's kept as the plain default.
  *
  * With `revealOnView`, the card also scales up from 0.9 and fades in the first
  * time it scrolls into view.
@@ -74,15 +73,6 @@ export default function FeaturedCard({
       )}
       style={reduce ? undefined : { paddingLeft: inset, paddingRight: inset }}
     >
-      {captionBelow && (
-        <div className="col-span-3 w-full flex flex-col gap-1 lg:gap-2">
-          {project.client && (
-            <span className="pText text-primary px-6 lowercase">
-              {project.client}
-            </span>
-          )}
-        </div>
-      )}
       {project.client && !captionBelow && (
         <h2 className="lg:hidden col-span-3 h2Text text-primary lowercase">
           {project.client}
@@ -111,6 +101,19 @@ export default function FeaturedCard({
           </>
         )}
       </div>
+
+      {captionBelow && (
+        <div className="col-span-3 w-full flex flex-col gap-1 lg:gap-2">
+          {project.client && (
+            <span className="pText text-primary px-6 lowercase">
+              {project.client}
+            </span>
+          )}
+          <h4 className="h4BtnText text-primary px-6 lowercase">
+            {project.title}
+          </h4>
+        </div>
+      )}
     </MotionLink>
   );
 }

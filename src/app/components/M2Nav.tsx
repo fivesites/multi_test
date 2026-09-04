@@ -57,7 +57,7 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -24 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-primary lg:bg-transparent max-lg:[&_*]:!text-primary-foreground flex flex-col h-auto px-0 lg:px-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
+      className={`p-0 space-y-0 w-full lg:w-1/4 bg-primary pb-3 lg:bg-transparent max-lg:[&_*]:!text-primary-foreground flex flex-col h-auto px-0 lg:px-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -343,7 +343,7 @@ export default function M2Nav() {
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0 pixelCorners  lg:px-6 h-16 lg:h-24 bg-transparent transition-colors ${open ? "max-lg:bg-primary max-lg:text-primary-foreground max-lg:[&_*]:!text-primary-foreground" : ""}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 bg-transparent transition-colors ${open ? "max-lg:bg-primary max-lg:text-primary-foreground max-lg:[&_*]:!text-primary-foreground" : ""}`}
       >
         {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
@@ -393,7 +393,7 @@ export default function M2Nav() {
           sound toggle floats at the opposite corner instead — its own pill,
           styled the same way the bar itself is (solid primary, foreground
           text) rather than riding the grid's row height. */}
-      <div className="flex lg:hidden fixed bottom-3 right-6 z-90 h-10 items-center  pixelCorners px-4 [&_*]">
+      <div className="flex lg:hidden fixed bottom-3 left-3 z-50 h-10 items-center pixelCorners px-4">
         <CheckButton
           size="label"
           label={muted ? "sound off" : "sound on"}

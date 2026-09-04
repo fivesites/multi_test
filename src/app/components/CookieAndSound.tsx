@@ -145,11 +145,11 @@ export default function CookieAndSound({
           exit={{ opacity: 0, y: 8 }}
           transition={{ duration: 0.25 }}
           className={cn(
-            "fixed z-50 bottom-0 right-3 lg:right-6 lg:left-auto w-2/3 lg:w-1/2  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-start pixelCornersTop lg:items-baseline     ",
+            "fixed z-90 bottom-3 right-6 lg:right-0 lg:left-auto  bg-background w-auto lg:w-1/2  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-start pixelCorners lg:items-baseline     ",
 
             step === "volume"
-              ? "justify-between w-2/3 lg:w-1/2   "
-              : "justify-end lg:justify-between  bg-accent w-2/3 lg:w-1/2     ",
+              ? "justify-between bg-background w-xs lg:w-1/2   "
+              : "justify-end lg:justify-between  bg-background w-xs lg:w-1/2     ",
             className,
           )}
         >

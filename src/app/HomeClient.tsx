@@ -207,6 +207,7 @@ function HomeClientInner() {
                 <FeaturedCard
                   key={project.key}
                   project={project}
+                  captionBelow
                   className="col-span-3 lg:col-span-5"
                 />
               ))}
