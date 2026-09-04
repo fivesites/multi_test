@@ -28,7 +28,7 @@ export default function Footer() {
     >
       <div
         ref={pixelRef}
-        className="pixelCornersTop w-full flex flex-col text-primary justify-between items-stretch h-[50dvh] lg:h-[75dvh]  bg-accent pt-6 pb-0"
+        className="pixelCornersTop w-full flex flex-col justify-between items-stretch h-[90dvh] lg:h-[75dvh] bg-primary pt-6 pb-0 [&_*]:!text-primary-foreground"
       >
         {/* Contact columns. Each heading + its links is one grid cell, placed on
           an explicit column so the groups all sit on the top row and line up
@@ -41,7 +41,7 @@ export default function Footer() {
                 key={link.href}
                 size="sm"
                 variant="link"
-                className="px-0 text-secondary-foreground border-transparent"
+                className="px-0 border-transparent"
                 asChild
               >
                 <Link href={link.href}>{link.label}</Link>
@@ -55,7 +55,7 @@ export default function Footer() {
                 key={link.label}
                 size="sm"
                 variant="link"
-                className="px-0 text-secondary-foreground border-transparent h3Text"
+                className="px-0 border-transparent h3Text"
                 asChild
               >
                 <Link href={link.href}>{link.label}</Link>
@@ -69,10 +69,10 @@ export default function Footer() {
           row; items-baseline then locks the copyright's baseline to the
           wordmark's rather than just bottom-aligning the two boxes. */}
         <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:px-6 pb-4 lg:pb-6">
-          <h1 className="ml-0 lg:-ml-5 h1Text leading-none text-secondary-foreground mb-0">
+          <h1 className="ml-0 lg:-ml-5 h1Text leading-none mb-0">
             multi2.co
           </h1>
-          <h4 className="hidden lg:block text-sm font-visual tracking-wide lowercase text-secondary-foreground">
+          <h4 className="hidden lg:block text-sm font-visual tracking-wide lowercase">
             Copyright © 2026
           </h4>
         </div>

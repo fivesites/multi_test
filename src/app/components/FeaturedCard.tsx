@@ -109,7 +109,7 @@ export default function FeaturedCard({
               {project.client}
             </span>
           )}
-          <h4 className="h4BtnText text-primary px-6 lowercase">
+          <h4 className="h4BtnText text-primary px-6 lowercase hidden ">
             {project.title}
           </h4>
         </div>

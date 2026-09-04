@@ -108,15 +108,17 @@ export default function CategoryFilters({
   return (
     <div
       className={cn(
-        // Mobile: a bottom-left drawer — a narrow tab holding just the "filters"
-        // button until opened, sliding up to the full panel when it is. It's a
-        // solid primary panel there, so everything inside it reads in
-        // primary-foreground. Desktop drops all of that and becomes a static
+        // Mobile: a bottom-right drawer — a narrow tab holding just the
+        // "show filters" button until opened, growing upward into the full
+        // panel when it is. No fixed height here: only `bottom` is pinned, so
+        // the box sizes to its content and the drawer genuinely grows upward
+        // as the panel opens rather than getting clipped to the collapsed
+        // tab's height. Desktop drops all of that and becomes a static
         // sidebar column of the /projects grid.
-        // left-3 always insets the tab from the screen edge; open, right-3 pairs
-        // with it and the width goes auto so the panel spans between the two
-        // insets rather than a full 100vw that would overflow past them.
-        "fixed bottom-3 right-3 z-60 h-10 items-center  pixelCorners   bg-transparent max-lg:[&_*]:!text-primary pixelCorners",
+        // right-3 always insets the tab from the screen edge; open, the width
+        // goes auto (via lg:grid) so the panel spans the full sidebar column
+        // rather than staying pinned to the tab's narrower w-1/3.
+        "fixed bottom-3 right-3 z-60 pixelCorners bg-transparent max-lg:[&_*]:!text-primary",
         "transition-[width] duration-300 ease-out",
         showFilters ? "right-3 lg:grid lg:grid-cols-12 pb-3" : "w-1/3 pb-3",
         "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
