@@ -110,7 +110,7 @@ export default function AllProjectsPageClient() {
   return (
     <div
       id="projects"
-      className="relative bg-secondary  w-full px-3 lg:px-6 pt-28 lg:mt-0 lg:pt-36   "
+      className="relative   w-full px-3 lg:px-6 pt-28 lg:mt-0 lg:pt-36   "
     >
       <LandningBlock
         label="projects"
@@ -239,7 +239,7 @@ export default function AllProjectsPageClient() {
           </div>
         )}
       </div>
-      <Reveal className="grid grid-cols-3 lg:grid-cols-12">
+      <Reveal className="grid grid-cols-3 lg:grid-cols-12 mb-12">
         <Button
           variant="link"
           size="lgLink"

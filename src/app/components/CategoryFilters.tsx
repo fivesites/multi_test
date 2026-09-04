@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import CheckButton from "./CheckButton";
 import SearchCheck from "./SearchCheck";
 import { zoomInCols, zoomOutCols } from "@/lib/gridZoom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const DRAWER_EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -59,8 +59,18 @@ export default function CategoryFilters({
   const { categories } = useWork();
 
   // `showFilters` is the master switch for the whole control area; `showCat`
-  // toggles just the category list within it.
+  // toggles just the category list within it. Starts closed — matching the
+  // mobile drawer's collapsed tab — then opens itself once on desktop, where
+  // this is a static sidebar rather than a drawer someone has to pull out.
+  // The breakpoint can't be known at render time (SSR has no viewport), so
+  // this only runs after mount and only sets the initial default; it doesn't
+  // fight a later manual close.
   const [showFilters, setShowFilters] = useState(false);
+  useEffect(() => {
+    if (window.matchMedia("(min-width: 1024px)").matches) {
+      setShowFilters(true);
+    }
+  }, []);
   const [showCat, setShowCat] = useState(true);
 
   function showThumbnails() {

@@ -337,13 +337,13 @@ export default function M2Nav() {
   }
 
   return (
-    <div className="fixed top-0 left-0 z-90 w-full px-3 pt-3 lg:px-0">
+    <div className="fixed top-0 left-0 z-90 w-full px-0 pt-0 lg:px-0">
       <div
         // Opening the menu fills the bar on mobile, where the panel drops
         // straight out of it and the two read as one surface. Desktop keeps the
         // bar transparent throughout: the column below carries its own ground,
         // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0 pixelCorners  lg:px-6 h-16 lg:h-24 bg-primary lg:bg-transparent max-lg:[&_*]:!text-primary-foreground ${open ? "" : "text-primary-foreground"}`}
+        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0 pixelCorners  lg:px-6 h-16 lg:h-24 bg-transparent transition-colors ${open ? "max-lg:bg-primary max-lg:text-primary-foreground max-lg:[&_*]:!text-primary-foreground" : ""}`}
       >
         {/* The label rides in as a child rather than through CheckButton's
               own `terminal` flag, which has no way to pass the loading state
@@ -373,7 +373,7 @@ export default function M2Nav() {
         </CheckButton>
 
         <CheckButton
-          className="hidden col-start-4  col-span-2  font-visual  lg:justify-start  "
+          className="hidden lg:flex lg:col-start-10 lg:col-span-2 font-visual lg:justify-start"
           size="label"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
@@ -386,6 +386,19 @@ export default function M2Nav() {
           active
           onClick={cycleTheme}
           className="col-start-4 col-span-1 flex justify-end lg:col-start-12 lg:col-span-2 lg:justify-end"
+        />
+      </div>
+
+      {/* The topbar grid has no spare column for this at mobile width, so the
+          sound toggle floats at the opposite corner instead — its own pill,
+          styled the same way the bar itself is (solid primary, foreground
+          text) rather than riding the grid's row height. */}
+      <div className="flex lg:hidden fixed bottom-3 right-6 z-90 h-10 items-center  pixelCorners px-4 [&_*]">
+        <CheckButton
+          size="label"
+          label={muted ? "sound off" : "sound on"}
+          active={!muted}
+          onClick={toggleMute}
         />
       </div>
 

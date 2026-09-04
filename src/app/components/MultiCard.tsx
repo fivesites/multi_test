@@ -105,7 +105,10 @@ export default function MultiCard({
       <AnimatePresence>
         {lightboxIndex !== null && (
           <Lightbox
-            images={projectImages}
+            media={projectImages.map((img) => ({
+              type: "image" as const,
+              ...img,
+            }))}
             initialIndex={lightboxIndex}
             onClose={() => setLightboxIndex(null)}
           />

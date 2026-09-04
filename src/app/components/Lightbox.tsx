@@ -8,15 +8,18 @@ import Image from "next/image";
 import { motion } from "motion/react";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import VideoPlayer from "./VideoPlayer";
 
-type LightboxImage = { key: string; url: string; aspectRatio: number };
+type LightboxItem =
+  | { type: "image"; key: string; url: string; aspectRatio: number }
+  | { type: "video"; key: string; url: string };
 
 export default function Lightbox({
-  images,
+  media,
   initialIndex,
   onClose,
 }: {
-  images: LightboxImage[];
+  media: LightboxItem[];
   initialIndex: number;
   onClose: () => void;
 }) {
@@ -74,27 +77,35 @@ export default function Lightbox({
         ref={emblaRef}
       >
         <div className="flex h-full">
-          {images.map((img) => (
+          {media.map((item) => (
             <div
-              key={img.key}
+              key={item.key}
               className="flex-none w-full h-full flex items-center justify-center"
               onClick={(e) => e.stopPropagation()}
             >
               <div className="relative w-full h-full">
-                <Image
-                  src={img.url}
-                  alt=""
-                  fill
-                  className="object-contain object-center"
-                  sizes="100vw"
-                />
+                {item.type === "video" ? (
+                  <VideoPlayer
+                    src={item.url}
+                    controls
+                    className="object-contain"
+                  />
+                ) : (
+                  <Image
+                    src={item.url}
+                    alt=""
+                    fill
+                    className="object-contain object-center"
+                    sizes="100vw"
+                  />
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
 
-      {images.length > 1 && (
+      {media.length > 1 && (
         <>
           <Button
             variant="ghost"

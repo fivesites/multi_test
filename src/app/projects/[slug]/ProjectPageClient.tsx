@@ -6,12 +6,15 @@ import { motion, AnimatePresence } from "motion/react";
 import Lightbox from "@/app/components/Lightbox";
 import LandningBlock from "@/app/components/LandningBlock";
 import CheckButton from "@/app/components/CheckButton";
+import VideoPlayer from "@/app/components/VideoPlayer";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-type ProjectImage = { key: string; url: string; aspectRatio: number };
+export type ProjectMedia =
+  | { type: "image"; key: string; url: string; aspectRatio: number }
+  | { type: "video"; key: string; url: string };
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -48,7 +51,7 @@ function ProjectPageInner({
   description,
   credits,
   categories,
-  images,
+  media,
   coverUrl,
 }: {
   client?: string;
@@ -57,7 +60,7 @@ function ProjectPageInner({
   description?: string;
   credits?: string;
   categories: string[];
-  images: ProjectImage[];
+  media: ProjectMedia[];
   coverUrl?: string;
 }) {
   const clientLen = client?.length ?? 0;
@@ -78,13 +81,18 @@ function ProjectPageInner({
     return () => clearTimeout(t);
   }, [revealDelayMs]);
 
-  // The hero is the work's own cover image when it has one; otherwise it falls
-  // back to the first media image, which then drops out of the gallery below.
-  const hero: ProjectImage | undefined = coverUrl
-    ? { key: "cover", url: coverUrl, aspectRatio: 1 }
-    : images[0];
-  const rest = coverUrl ? images : images.slice(1);
-  const lightboxImages = coverUrl && hero ? [hero, ...images] : images;
+  // A video in the media list beats everything as the hero — a moving cover
+  // sells the work harder than a still one. Otherwise it's the work's own
+  // cover image, falling back to the first media item. Whichever one gets
+  // used as the hero drops out of the gallery below it.
+  const heroVideo = media.find((m) => m.type === "video");
+  const hero: ProjectMedia | undefined =
+    heroVideo ??
+    (coverUrl
+      ? { type: "image", key: "cover", url: coverUrl, aspectRatio: 1 }
+      : media[0]);
+  const rest = hero ? media.filter((m) => m.key !== hero.key) : media;
+  const lightboxMedia = hero ? [hero, ...rest] : media;
 
   return (
     <div className="mt-16 lg:mt-24 pt-12 relative w-full px-3 ">
@@ -107,14 +115,18 @@ function ProjectPageInner({
               className="pixelCorners relative h-full w-full cursor-zoom-in"
               onClick={() => setLightboxIndex(0)}
             >
-              <Image
-                src={hero.url}
-                alt=""
-                fill
-                priority
-                className="object-cover"
-                sizes="100vw"
-              />
+              {hero.type === "video" ? (
+                <VideoPlayer src={hero.url} className="h-full w-full" />
+              ) : (
+                <Image
+                  src={hero.url}
+                  alt=""
+                  fill
+                  priority
+                  className="object-cover"
+                  sizes="100vw"
+                />
+              )}
             </div>
           ) : undefined
         }
@@ -135,7 +147,7 @@ function ProjectPageInner({
           <h4 className=" col-start-2 col-span-1 lg:col-start-2 lg:col-span-1 h4BtnText">
             moa larsson for {title}
           </h4>
-          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-7 indent-[calc(33.3vw-1rem)] lowercase lg:indent-12 mt-12  ">
+          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-7 indent-[calc(33.3vw-1rem)] lg:indent-0 lowercase  mt-12  ">
             {description ? (
               <p className="pText  ">{description}</p>
             ) : (
@@ -155,7 +167,7 @@ function ProjectPageInner({
 
           {/* Credits: directly below the description, in the same column. */}
           {credits && (
-            <dl className="col-start-1 col-span-2 lg:col-start-4 lg:col-span-6 mt-12 grid grid-cols-2 gap-x-3 gap-y-1 h4BtnText text-primary">
+            <dl className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-6 mt-12 grid grid-cols-6 gap-x-3 gap-y-1 h4BtnText text-primary">
               {credits
                 .split("\n")
                 .filter(Boolean)
@@ -163,7 +175,7 @@ function ProjectPageInner({
                   const { role, name } = parseCredit(line);
                   return (
                     <Fragment key={i}>
-                      <dt className="lowercase col-span-1">{role}</dt>
+                      <dt className="lowercase col-span-2">{role}</dt>
                       <dd className="m-0 col-span-1">{name}</dd>
                     </Fragment>
                   );
@@ -194,31 +206,35 @@ function ProjectPageInner({
                 ))}
               </>
             ) : (
-              rest.map((img, i) => (
+              rest.map((item, i) => (
                 <motion.div
-                  key={img.key}
+                  key={item.key}
                   variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
                   transition={{ duration: 0.2 }}
-                  className={`relative aspect-square cursor-zoom-in overflow-hidden mb-6 lg:col-span-5 ${
+                  className={`relative aspect-square pixelCorners cursor-zoom-in overflow-hidden  lg:col-span-5 ${
                     i % 2 === 0 ? "lg:col-start-2" : ""
                   }`}
-                  // +1: the hero is images[0]
+                  // +1: the hero is media[0]
                   onClick={() => setLightboxIndex(i + 1)}
                 >
-                  <Image
-                    src={img.url}
-                    alt=""
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 1024px) 100vw, 50vw"
-                  />
+                  {item.type === "video" ? (
+                    <VideoPlayer src={item.url} className="h-full w-full" />
+                  ) : (
+                    <Image
+                      src={item.url}
+                      alt=""
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 1024px) 100vw, 50vw"
+                    />
+                  )}
                 </motion.div>
               ))
             )}
           </motion.div>
         </div>
         {categories.length > 0 && (
-          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-6 items-baseline mt-12 mb-12 lg:mt-6 pText uppercase text-primary">
+          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-6 items-baseline mt-12 lg:mt-24 mb-12  pText uppercase text-primary">
             {categories.map((c, i) => (
               <li
                 key={c}
@@ -240,7 +256,7 @@ function ProjectPageInner({
         <AnimatePresence>
           {lightboxIndex !== null && (
             <Lightbox
-              images={lightboxImages}
+              media={lightboxMedia}
               initialIndex={lightboxIndex}
               onClose={() => setLightboxIndex(null)}
             />
@@ -282,7 +298,7 @@ export default function ProjectPageClient(props: {
   credits?: string;
   categories: string[];
   year?: number;
-  images: ProjectImage[];
+  media: ProjectMedia[];
   coverUrl?: string;
 }) {
   return <ProjectPageInner {...props} />;

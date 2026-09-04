@@ -28,7 +28,7 @@ export default function Footer() {
     >
       <div
         ref={pixelRef}
-        className="pixelCornersTop w-full flex flex-col text-primary justify-between items-stretch h-[50dvh] lg:h-[75dvh]  bg-accent pt-6 "
+        className="pixelCornersTop w-full flex flex-col text-primary justify-between items-stretch h-[50dvh] lg:h-[75dvh]  bg-accent pt-6 pb-0"
       >
         {/* Contact columns. Each heading + its links is one grid cell, placed on
           an explicit column so the groups all sit on the top row and line up
@@ -68,11 +68,11 @@ export default function Footer() {
           the wordmark's line box so its glyphs, not the line box, drive the
           row; items-baseline then locks the copyright's baseline to the
           wordmark's rather than just bottom-aligning the two boxes. */}
-        <div className="flex flex-row-reverse lg:flex-row justify-between w-full items-baseline px-3 lg:px-6 pb-4 lg:pb-6">
+        <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:px-6 pb-4 lg:pb-6">
           <h1 className="ml-0 lg:-ml-5 h1Text leading-none text-secondary-foreground mb-0">
             multi2.co
           </h1>
-          <h4 className="text-sm font-visual tracking-wide lowercase text-secondary-foreground">
+          <h4 className="hidden lg:block text-sm font-visual tracking-wide lowercase text-secondary-foreground">
             Copyright © 2026
           </h4>
         </div>
