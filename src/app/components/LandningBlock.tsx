@@ -66,9 +66,9 @@ export default function LandningBlock({
         // this type size, so the label only steps in to column two on desktop.
         <div
           className={cn(
-            "relative z-10 flex items-start justify-start pt-6 lg:pt-12",
+            "relative z-10 flex items-start justify-start pt-6 lg:pt-12 px-3 lg:px-0",
             labelClassName ??
-              "col-start-2 col-span-3 lg:col-start-2 lg:col-span-3",
+              "col-start-1 col-span-3 lg:col-start-2 lg:col-span-3 ",
           )}
         >
           <CheckButton label={label} href={href} size="label" active />

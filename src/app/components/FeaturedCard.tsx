@@ -38,14 +38,14 @@ export default function FeaturedCard({
     offset: ["start end", "end start"],
   });
   // 24px (px-6) → 12px (px-3) → 24px, peak tightening at viewport centre.
-  const inset = useTransform(scrollYProgress, [0, 0.5, 1], [24, 12, 24]);
+  const inset = useTransform(scrollYProgress, [0, 0.5, 1], [12, 3, 12]);
 
   const reveal =
     revealOnView && !reduce
       ? {
           initial: { opacity: 0, scale: 0.9 },
           whileInView: { opacity: 1, scale: 1 },
-          viewport: { once: true, margin: "0px 0px -12% 0px" },
+          viewport: { once: true, margin: "0px 0px -24% 0px" },
           transition: { duration: 0.6, ease: [0.22, 1, 0.36, 1] as const },
         }
       : {};
@@ -55,7 +55,7 @@ export default function FeaturedCard({
       {...reveal}
       ref={ref}
       href={`/projects/${project.slug}`}
-      className="col-span-3 lg:col-span-5 grid grid-cols-3 bg-background pixelCorners  group relative lg:flex lg:flex-col gap-3 lg:gap-6 w-full mb-3 "
+      className="col-span-3 lg:col-span-5 grid grid-cols-3 bg-background pixelCorners  group relative lg:flex lg:flex-col gap-3 lg:gap-6 w-full mb-3 lg:mb-6 "
       style={reduce ? undefined : { paddingLeft: inset, paddingRight: inset }}
     >
       <div className="relative col-span-3 w-full">
@@ -67,11 +67,11 @@ export default function FeaturedCard({
         />
 
         {/* Title centred across the top of the image, client centred over it. */}
-        <h4 className="absolute inset-x-0 top-0 z-10 p-6 h4BtnText text-primary lowercase text-center">
+        <h4 className="hidden lg:absolute inset-x-0 top-0 z-10 p-6 h4BtnText text-primary lowercase text-center">
           {project.title}
         </h4>
         {project.client && (
-          <span className="flex absolute inset-0 z-10 items-center justify-center px-6 text-center h2Text text-primary lowercase max-w-xl mx-auto">
+          <span className="hidden lg:flex absolute inset-0 z-10 items-center justify-center px-6 text-center h2Text text-primary lowercase max-w-xl mx-auto">
             {project.client}
           </span>
         )}

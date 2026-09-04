@@ -153,7 +153,7 @@ function HomeClientInner() {
           {/* Mobile sound toggle — hidden for now; flip SHOW_MOBILE_SOUND to
               bring it back. */}
           {SHOW_MOBILE_SOUND && consentSettled && (
-            <div className="absolute bottom-0 right-0 z-20 px-6 pb-6 lg:hidden">
+            <div className="absolute bottom-0 right-0 z-20 px-6 pb-6 hidden">
               <CheckButton
                 size="label"
                 label={muted ? "sound off" : "sound on"}
@@ -168,6 +168,7 @@ function HomeClientInner() {
             label="our story"
             bg="   text-primary  "
             className="col-start-1 col-span-3 lg:col-start-3 lg:col-span-8 h-auto  "
+        
           >
             <AboutSectionText
               plainText={aboutEntry?.plainText ?? ""}
@@ -258,7 +259,7 @@ function HomeClientInner() {
           <Button
             variant="link"
             size="lgLink"
-            className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
+            className=" col-start-3 lg:col-start-8 h2Text flex    gap-x-3  font-thin  justify-start w-min "
             asChild
           >
             <Link href="/projects">

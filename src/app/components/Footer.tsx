@@ -53,6 +53,7 @@ export default function Footer() {
             {SOCIAL_LINKS.map((link) => (
               <Button
                 key={link.label}
+                size="sm"
                 variant="link"
                 className="px-0 text-secondary-foreground border-transparent h3Text"
                 asChild
