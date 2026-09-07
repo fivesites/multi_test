@@ -68,10 +68,8 @@ export default function Footer() {
           the wordmark's line box so its glyphs, not the line box, drive the
           row; items-baseline then locks the copyright's baseline to the
           wordmark's rather than just bottom-aligning the two boxes. */}
-        <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:px-6 pb-4 lg:pb-6">
-          <h1 className="ml-0 lg:-ml-5 h1Text leading-none mb-0">
-            multi2.co
-          </h1>
+        <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:pl-6 lg:pr-12 pb-4 lg:pb-0">
+          <h1 className="ml-0 lg:ml-0 h1Text leading-none mb-0">multi2.co</h1>
           <h4 className="hidden lg:block text-sm font-visual tracking-wide lowercase">
             Copyright © 2026
           </h4>

@@ -6,16 +6,25 @@ import { cn } from "@/lib/utils";
 import { useReel } from "@/context/ReelContext";
 import { useSound } from "@/context/SoundContext";
 
-// TODO: swap back to the real reel. Test footage while wiring the transport.
-const REEL_SRC =
+// Fallback footage for when the CMS has no showreel uploaded yet.
+const FALLBACK_SRC =
   "https://test-videos.co.uk/vids/bigbuckbunny/mp4/h264/360/Big_Buck_Bunny_360_10s_1MB.mp4";
 
 /**
  * Full-height reel at the top of the home page. Scrolling past it reveals
  * the projects section underneath. The transport lives in MultiPlayer
  * (BottomNav) and talks to this through ReelContext.
+ *
+ * `src` comes from the `showreel` document in Sanity; the same file is used at
+ * every width.
  */
-export default function ShowReel({ className = "" }: { className?: string }) {
+export default function ShowReel({
+  className = "",
+  src,
+}: {
+  className?: string;
+  src?: string;
+}) {
   const {
     playing,
     setPlaying,
@@ -57,7 +66,7 @@ export default function ShowReel({ className = "" }: { className?: string }) {
     >
       <ReactPlayer
         ref={videoRef}
-        src={REEL_SRC}
+        src={src || FALLBACK_SRC}
         // muted autoplay is the one form browsers permit without a gesture
         autoPlay
         muted={muted}

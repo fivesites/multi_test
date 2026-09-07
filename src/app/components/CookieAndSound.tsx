@@ -66,6 +66,9 @@ export default function CookieAndSound({
   const pathname = usePathname();
   const hasOwnSoundToggle =
     (pathname?.startsWith("/projects") ?? false) || pathname === "/";
+  // Sanity Studio has its own chrome (the Publish button sits exactly here);
+  // the standing consent / sound box stays out of the way there.
+  const inStudio = pathname?.startsWith("/studio") ?? false;
 
   const settle = useCallback(
     (soundAccepted: boolean) => {
@@ -137,7 +140,7 @@ export default function CookieAndSound({
 
   return (
     <AnimatePresence mode="wait">
-      {step !== "idle" && !(step === "volume" && hasOwnSoundToggle) && (
+      {step !== "idle" && !inStudio && !(step === "volume" && hasOwnSoundToggle) && (
         <motion.div
           key={step}
           initial={{ opacity: 0, y: 8 }}

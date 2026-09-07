@@ -78,6 +78,14 @@ export const workCardsQuery = groq`
   }
 `;
 
+// Showreel — the single hero reel. One entry; mobile/desktop uploads.
+export const showreelQuery = groq`
+  *[_type == "showreel"][0] {
+    "mobileUrl": videoMobile.asset->url,
+    "desktopUrl": videoDesktop.asset->url
+  }
+`;
+
 // Sticky notes ordered manually
 export const stickyNotesQuery = groq`
   *[_type == "stickyNote"] | order(order asc) {

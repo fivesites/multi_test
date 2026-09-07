@@ -250,7 +250,7 @@
   }
 
   .pText {
-    @apply text-3xl font-thin  lg:text-lg leading-tight tracking-normal   lg:leading-tight  font-visual lg:font-normal;
+    @apply text-xl font-thin  lg:text-lg leading-tight tracking-normal   lg:leading-tight  font-visual lg:font-normal;
   }
 
   .h1Text {
@@ -321,7 +321,8 @@
   .pixelCornersBottom {
     -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
     -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px) stretch;
+    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px)
+      stretch;
   }
 
   /* A border that traces the pixelCorners staircase — including the stepped

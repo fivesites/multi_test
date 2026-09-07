@@ -336,6 +336,9 @@ export default function M2Nav() {
     if (href !== pathname) setNavigating(true);
   }
 
+  // The nav is hidden on /studio.
+  if (pathname?.startsWith("/studio")) return null;
+
   return (
     <div className="fixed top-0 left-0 z-90 w-full px-0 pt-0 lg:px-0">
       <div

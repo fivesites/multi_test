@@ -15,6 +15,7 @@ import FeaturedCard from "./components/FeaturedCard";
 import IconButton from "./components/IconButton";
 import LandningBlock from "./components/LandningBlock";
 import { Reveal } from "./components/Reveal";
+import ShowReel from "./components/ShowReel";
 import TypedHeading from "./components/TypedHeading";
 import { TYPING_INTERVAL } from "./components/TypedWord";
 
@@ -88,7 +89,7 @@ function ConnectLink({
   );
 }
 
-function HomeClientInner() {
+function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
   const { items } = useWork();
   const { notifyContentDone, navLoading } = useUI();
   const { muted, toggleMute, consentSettled } = useSound();
@@ -130,12 +131,24 @@ function HomeClientInner() {
   return (
     <div className="w-full  px-0 ">
       {/* One gutter for the whole page: px-3 on mobile, px-6 from lg up. */}
-      <div className="relative flex min-h-dvh flex-col gap-y-24 w-full px-0 lg:px-6">
+      <div className="relative flex  flex-col gap-y-24 w-full px-0 ">
         {/* Relative wrapper so the mobile sound toggle can anchor to the hero's
             bottom corner and scroll away with it, rather than sitting fixed
             over the whole page. Desktop keeps the nav's own Sound On control. */}
         <div className="relative h-dvh">
-          <LandningBlock className="h-dvh content-center ">
+          <LandningBlock
+            className="h-dvh content-center "
+            // The showreel bleeds to the hero's edges, behind the wordmark.
+            // Same reel on every width — ShowReel/ReelContext keep one player.
+            background={
+              <>
+                <ShowReel className="h-full" src={reelUrl} />
+                {/* Light scrim so the thin wordmark stays legible over the
+                    footage. */}
+                <div className="absolute inset-0 bg-foreground/30 backdrop-blur-3xl" />
+              </>
+            }
+          >
             {/* Its own container, so the wordmark measures against this box
                   and not the viewport — and so container-type's layout
                   containment stays off the section, whose fixed children still
@@ -146,7 +159,7 @@ function HomeClientInner() {
               <TypedHeading
                 ready={!navLoading}
                 text="multisquared"
-                className="col-start-2  lg:col-start-4 px-3 text-left  h2Text  font-thin text-primary"
+                className="col-start-2  lg:col-start-1 px-3 text-left h2Text    font-visual whitespace-normal font-thin text-background"
               />
             </div>
           </LandningBlock>
@@ -283,6 +296,6 @@ function HomeClientInner() {
   );
 }
 
-export default function HomeClient() {
-  return <HomeClientInner />;
+export default function HomeClient({ reelUrl }: { reelUrl?: string }) {
+  return <HomeClientInner reelUrl={reelUrl} />;
 }

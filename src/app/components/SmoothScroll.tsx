@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import { ReactLenis } from "lenis/react";
 import { useReducedMotion } from "motion/react";
+import { usePathname } from "next/navigation";
 
 /**
  * Site-wide smooth scrolling. Lenis intercepts wheel/touch and eases the real
@@ -14,8 +15,11 @@ import { useReducedMotion } from "motion/react";
  */
 export default function SmoothScroll({ children }: { children: ReactNode }) {
   const reduce = useReducedMotion();
+  const pathname = usePathname();
 
-  if (reduce) return <>{children}</>;
+  // Sanity Studio is a fixed full-viewport app with its own scroll panes;
+  // Lenis intercepting wheel/touch stops those panes from scrolling.
+  if (reduce || pathname?.startsWith("/studio")) return <>{children}</>;
 
   return (
     <ReactLenis
