@@ -83,7 +83,7 @@ export default function LoaderGrid() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-          className="fixed inset-0 z-[100] grid grid-cols-3 lg:grid-cols-12 p-6 grid-rows-5 lg:grid-rows-5 overflow-hidden bg-secondary"
+          className="fixed inset-0 z-[100] grid grid-cols-3 lg:grid-cols-12 p-6 grid-rows-5 lg:grid-rows-5 overflow-hidden bg-background"
           aria-hidden
         >
           {Array.from({ length: cols * rows }, (_, i) => {
