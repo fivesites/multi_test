@@ -110,25 +110,18 @@ export default function AllProjectsPageClient() {
   return (
     <div
       id="projects"
-      className="relative   w-full px-3 lg:px-6 pt-28 lg:mt-0 lg:pt-36   "
+      className="relative   w-full px-0 lg:px-0 pt-28 lg:mt-0 lg:pt-36   "
     >
       <LandningBlock
         label="projects"
-        className="h-[25dvh]   items-center  w-full bg-transparent"
-        // Lines the "projects" label up with the topbar's "sound off": column 3
-        // of the block's eight-column grid is the same 25% as column 4 of the
-        // bar's twelve, both measured inside the shared px-6 gutter.
-        labelClassName="col-start-2 col-span-3 lg:col-start-3 lg:col-span-4"
+        className="h-[25dvh]   content-center  w-full bg-transparent"
+        labelClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-3"
       >
-        {/* Its own grid, on the same eight columns the label sits on, so the
-            heading stays under it. */}
-        <div className="grid grid-cols-3 lg:grid-cols-8 w-full mb-3">
-          <TypedHeading
-            ready={!navLoading}
-            text="welcome to the archive"
-            className="col-start-2 col-span-3 lg:col-start-3 lg:col-span-5 text-left  h2Text  font-thin text-primary"
-          />
-        </div>
+        <TypedHeading
+          ready={!navLoading}
+          text="welcome to the archive"
+          className="text-left  h2Text px-6 font-thin text-primary mb-3"
+        />
       </LandningBlock>
       <FilterOverlay />
 
@@ -141,7 +134,7 @@ export default function AllProjectsPageClient() {
         </span>
 
         {listVisible && showList && (
-          <div className="col-start-1 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start px-1.5  gap-6 mt-3 mb-12 ">
+          <div className="col-start-1 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start px-3  gap-6 mt-3 mb-12 ">
             <AnimatePresence mode="popLayout">
               {clients.map((client, idx) => (
                 <motion.div
@@ -167,7 +160,7 @@ export default function AllProjectsPageClient() {
 
         {listVisible && showGrid && (
           <div
-            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full mt-3  lg:grid gap-x-6 gap-y-6 lg:px-3"
+            className="col-start-1 col-span-4 lg:col-start-1 lg:col-span-12 hidden w-full mt-3  lg:grid gap-x-6 gap-y-6 px-3 lg:px-3"
             style={{
               gridTemplateColumns: `repeat(${numCols}, minmax(0, 1fr))`,
             }}
@@ -201,7 +194,7 @@ export default function AllProjectsPageClient() {
 
       {/* Mobile: the grid or the client list. The category button that heads
           this section lives in the grid above so it can sit in column two. */}
-      <div className="flex w-full flex-col lg:hidden">
+      <div className="flex w-full flex-col px-6 lg:hidden">
         {listVisible && showGrid && (
           <div className="flex flex-col w-full">
             <AnimatePresence mode="popLayout" initial={false}>

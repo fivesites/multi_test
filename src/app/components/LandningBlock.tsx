@@ -15,10 +15,12 @@ type Props = {
   /** Height, padding and row alignment — whatever this block needs on top of
    *  the shared grid. */
   className?: string;
-  /** Overrides the label wrapper's column placement when a block's content
-   *  sits on a different column than the default second one — pass the
-   *  matching `col-start-*` / `col-span-*` so the label lines up with it. */
+  /** Overrides the label wrapper's column placement. The default is column one;
+   *  pass matching `col-start-*` / `col-span-*` to move it. */
   labelClassName?: string;
+  /** Overrides the content wrapper's column placement. The default starts it at
+   *  column four, on the label's baseline. */
+  contentClassName?: string;
   /** An absolutely-positioned layer behind the label and content — e.g. a hero
    *  image that bleeds to the block's edges while the label keeps to the grid.
    *  Clipped to the same notched-corner shape as the block. */
@@ -26,19 +28,21 @@ type Props = {
   children?: ReactNode;
 };
 
-/** The one section shape the landing page is built from: a four-column grid
- *  with the label in column two and the content flowing beneath it. Only the
- *  background, the label and the contents change between blocks.
+/** The one section shape the landing page is built from: a twelve-column grid
+ *  (three on mobile) with the label in column one and the content starting at
+ *  column four, the two sharing a baseline. Only the background, the label and
+ *  the contents change between blocks.
  *
- *  Children are wrapped in a full-width cell rather than dropped straight into
- *  the grid, so a block's contents can carry whatever inner grid they like
- *  without having to be aware of this one. */
+ *  Children are wrapped in a cell rather than dropped straight into the grid, so
+ *  a block's contents can carry whatever inner grid they like without having to
+ *  be aware of this one. */
 export default function LandningBlock({
   bg = "bg-background text-primary",
   label,
   href,
   className,
   labelClassName,
+  contentClassName,
   background,
   children,
 }: Props) {
@@ -50,7 +54,7 @@ export default function LandningBlock({
     <section
       ref={pixelRef}
       className={cn(
-        "relative z-10 w-full grid grid-cols-3 lg:grid-cols-8 space-y-12 lg:space-y-6   ",
+        "relative z-10 w-full grid grid-cols-3 lg:grid-cols-12 items-baseline gap-y-12 lg:gap-y-6   ",
         bg,
         className,
       )}
@@ -62,20 +66,25 @@ export default function LandningBlock({
         // The placement sits on a wrapper rather than on CheckButton:
         // CheckButton puts its className on both its outer link and its inner
         // box, so column classes passed straight in would move the inner box
-        // out of place too. Mobile has no room for a quarter-width gutter at
-        // this type size, so the label only steps in to column two on desktop.
+        // out of place too.
         <div
           className={cn(
-            "relative z-10 flex items-start justify-start pt-6 lg:pt-12 px-3 lg:px-0",
+            "relative z-10 flex items-baseline justify-start px-0 lg:px-0",
             labelClassName ??
-              "col-start-1 col-span-3 lg:col-start-2 lg:col-span-3 ",
+              "col-start-1 col-span-3 lg:col-start-1 lg:col-span-3 ",
           )}
         >
-          <CheckButton label={label} href={href} size="label" active />
+          <CheckButton label={label} href={href} size="lg" active />
         </div>
       )}
       {children && (
-        <div className="relative z-10 mt-0 lg:mt-0 col-start-1 lg:col-start-1 col-span-4 lg:col-span-10 w-full">
+        <div
+          className={cn(
+            "relative z-10 w-full",
+            contentClassName ??
+              "col-start-1 col-span-3 lg:col-start-4 lg:col-span-9",
+          )}
+        >
           {children}
         </div>
       )}

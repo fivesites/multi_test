@@ -5,7 +5,7 @@
 export const COL_STEPS = [1, 3, 6, 9, 12] as const;
 
 /** Column count the grid opens on. */
-export const DEFAULT_COLS = 6;
+export const DEFAULT_COLS = 3;
 
 /** Index of the stop nearest `cols` — keeps stepping sane if state ever holds
  *  an off-scale value. */

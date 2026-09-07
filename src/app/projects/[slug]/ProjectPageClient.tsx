@@ -1,12 +1,11 @@
 "use client";
 
 import { useState, useEffect, Fragment } from "react";
-import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import Lightbox from "@/app/components/Lightbox";
 import LandningBlock from "@/app/components/LandningBlock";
 import CheckButton from "@/app/components/CheckButton";
-import VideoPlayer from "@/app/components/VideoPlayer";
+import HeroCarousel from "@/app/components/HeroCarousel";
 import Footer from "@/app/components/Footer";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
@@ -81,57 +80,41 @@ function ProjectPageInner({
     return () => clearTimeout(t);
   }, [revealDelayMs]);
 
-  // A video in the media list beats everything as the hero — a moving cover
-  // sells the work harder than a still one. Otherwise it's the work's own
-  // cover image, falling back to the first media item. Whichever one gets
-  // used as the hero drops out of the gallery below it.
-  const heroVideo = media.find((m) => m.type === "video");
-  const hero: ProjectMedia | undefined =
-    heroVideo ??
-    (coverUrl
-      ? { type: "image", key: "cover", url: coverUrl, aspectRatio: 1 }
-      : media[0]);
-  const rest = hero ? media.filter((m) => m.key !== hero.key) : media;
-  const lightboxMedia = hero ? [hero, ...rest] : media;
+  // The whole media list rides in the hero carousel; the cover image is the
+  // fallback when a work has no media of its own yet.
+  const slides: ProjectMedia[] =
+    media.length > 0
+      ? media
+      : coverUrl
+        ? [{ type: "image", key: "cover", url: coverUrl, aspectRatio: 1 }]
+        : [];
 
   return (
-    <div className="mt-16 lg:mt-24 pt-12 relative w-full px-3 ">
-      <span className="grid grid-cols-3 lg:grid-cols-12 mb-6 ">
+    <div className="mt-16 lg:mt-24 pt-12 relative w-full px-0 ">
+      <div className="grid grid-cols-3 lg:grid-cols-12 mb-6 items-baseline">
+        {client && (
+          <div className="col-start-1 col-span-1 lg:col-start-1 lg:col-span-3 flex px-0">
+            <CheckButton size="lg" label={client} active />
+          </div>
+        )}
         <h2 className="h2Text col-start-2 lg:col-start-4 col-span-8 text-primary ">
           {title}
         </h2>
-      </span>
+      </div>
 
-      {/* Hero: the cover image fills the whole block, which spans the full 12
-          columns. lg:px-6 + lg:col-start-4 put the title label at the same x as
-          the nav's "sound off". */}
-      <LandningBlock
-        label={client}
-        className="min-h-dvh  items-start w-full  lg:grid-cols-12 lg:px-0 "
-        labelClassName="col-start-2  col-span-3 px-0 lg:col-start-4 lg:col-span-3 "
-        background={
-          hero ? (
-            <div
-              className="pixelCorners relative h-full w-full cursor-zoom-in"
-              onClick={() => setLightboxIndex(0)}
-            >
-              {hero.type === "video" ? (
-                <VideoPlayer src={hero.url} className="h-full w-full" />
-              ) : (
-                <Image
-                  src={hero.url}
-                  alt=""
-                  fill
-                  priority
-                  className="object-cover"
-                  sizes="100vw"
-                />
-              )}
-            </div>
-          ) : undefined
-        }
-      />
-
+      {/* Hero: the work's media as a full-bleed carousel spanning all 12
+          columns; the title label sits in column one. */}
+      <div className="relative px-3 w-full">
+        <LandningBlock
+          className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] min-h-dvh  items-start w-full  lg:px-3 "
+          labelClassName="col-start-1  col-span-3 px-3 lg:col-start-1 lg:col-span-3 "
+          background={
+            slides.length > 0 ? (
+              <HeroCarousel media={slides} onOpen={setLightboxIndex} />
+            ) : undefined
+          }
+        />
+      </div>
       <motion.div
         className=" w-full relative pb-4"
         initial={{ opacity: 0 }}
@@ -184,55 +167,6 @@ function ProjectPageInner({
           )}
         </div>
 
-        <div className="w-full mt-24 ">
-          {/* Gallery */}
-          <motion.div
-            className="grid grid-cols-1 lg:grid-cols-12 gap-6 w-full "
-            initial="hidden"
-            animate="visible"
-            variants={{ visible: { transition: { staggerChildren: 0.03 } } }}
-          >
-            {rest.length === 0 ? (
-              <>
-                {[0, 1].map((i) => (
-                  <div
-                    key={i}
-                    className={`relative aspect-square pixelCorners bg-secondary flex items-center justify-center font-visual lg:col-span-5  mb-6 ${
-                      i % 2 === 0 ? "lg:col-start-2" : ""
-                    }`}
-                  >
-                    Placeholder
-                  </div>
-                ))}
-              </>
-            ) : (
-              rest.map((item, i) => (
-                <motion.div
-                  key={item.key}
-                  variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-                  transition={{ duration: 0.2 }}
-                  className={`relative aspect-square pixelCorners cursor-zoom-in overflow-hidden  lg:col-span-5 ${
-                    i % 2 === 0 ? "lg:col-start-2" : ""
-                  }`}
-                  // +1: the hero is media[0]
-                  onClick={() => setLightboxIndex(i + 1)}
-                >
-                  {item.type === "video" ? (
-                    <VideoPlayer src={item.url} className="h-full w-full" />
-                  ) : (
-                    <Image
-                      src={item.url}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="(max-width: 1024px) 100vw, 50vw"
-                    />
-                  )}
-                </motion.div>
-              ))
-            )}
-          </motion.div>
-        </div>
         {categories.length > 0 && (
           <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-6 items-baseline mt-12 lg:mt-24 mb-12  pText uppercase text-primary">
             {categories.map((c, i) => (
@@ -256,7 +190,7 @@ function ProjectPageInner({
         <AnimatePresence>
           {lightboxIndex !== null && (
             <Lightbox
-              media={lightboxMedia}
+              media={slides}
               initialIndex={lightboxIndex}
               onClose={() => setLightboxIndex(null)}
             />

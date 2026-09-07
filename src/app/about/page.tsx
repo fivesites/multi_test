@@ -15,11 +15,8 @@ export default function AboutPage() {
     >
       <LandningBlock
         label="about"
-        className="h-[25dvh]   items-center  w-full bg-transparent"
-        // Lines the "projects" label up with the topbar's "sound off": column 3
-        // of the block's eight-column grid is the same 25% as column 4 of the
-        // bar's twelve, both measured inside the shared px-6 gutter.
-        labelClassName="col-start-2 col-span-3 lg:col-start-3 lg:col-span-4"
+        className="h-[25dvh]   content-center  w-full bg-transparent"
+        labelClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-3"
       ></LandningBlock>
     </div>
   );

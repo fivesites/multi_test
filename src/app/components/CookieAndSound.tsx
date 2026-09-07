@@ -136,86 +136,92 @@ export default function CookieAndSound({
   // `w-full` on the copy — in this flex row it would stretch and push the
   // buttons to the far edge, which is what justify-start is trying to avoid.
   const copy =
-    "  text-sm font-visual lowercase tracking-wide text-primary    lg:max-w-lg lg:whitespace-nowrap";
+    "  text-sm font-visual lowercase tracking-wide text-primary-foreground    lg:max-w-lg lg:whitespace-nowrap";
 
   return (
     <AnimatePresence mode="wait">
-      {step !== "idle" && !inStudio && !(step === "volume" && hasOwnSoundToggle) && (
-        <motion.div
-          key={step}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: 8 }}
-          transition={{ duration: 0.25 }}
-          className={cn(
-            "fixed z-90 bottom-3 right-6 lg:right-0 lg:left-auto  bg-background w-auto lg:w-1/2  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-start pixelCorners lg:items-baseline     ",
+      {step !== "idle" &&
+        !inStudio &&
+        !(step === "volume" && hasOwnSoundToggle) && (
+          <motion.div
+            key={step}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 8 }}
+            transition={{ duration: 0.25 }}
+            className={cn(
+              "fixed z-90 bottom-6 right-6 lg:right-6 lg:left-auto   w-auto lg:w-min  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-end  lg:items-baseline     ",
 
-            step === "volume"
-              ? "justify-between bg-background w-xs lg:w-1/2   "
-              : "justify-end lg:justify-between  bg-background w-xs lg:w-1/2     ",
-            className,
-          )}
-        >
-          {step === "cookie" ? (
-            <>
-              <p className={copy}>
-                this site uses cookies to improve your experience.
-              </p>
-              <div className="flex flex-row-reverse  gap-3 justify-start w-min">
-                <Button
-                  variant="default"
-                  size="sm"
-                  className="  font-normal shadow-md"
-                  onClick={() => acceptCookies()}
-                >
-                  accept
-                </Button>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className=" border-none underline underline-offset-6 px-0 text-primary font-normal"
-                  asChild
-                >
-                  <Link href="/privacy-policy" className="">
-                    learn more
-                  </Link>
-                </Button>
-              </div>
-            </>
-          ) : step === "sound" ? (
-            <>
-              <p className={copy}>Enable sound?</p>
-              <div className="flex flex-row-reverse   gap-3">
-                <Button size="sm" onClick={() => answerSound(true)}>
-                  Yes
-                </Button>
-                <Button
-                  variant="link"
-                  size="sm"
-                  className=" border-none underline underline-offset-6 px-0 text-primary font-normal"
-                  onClick={() => answerSound(false)}
-                >
-                  No
-                </Button>
-              </div>
-            </>
-          ) : (
-            /* Answered: nothing left to say, just the volume toggle. It takes
+              step === "volume"
+                ? "justify-between bg-primary w-xs lg:w-xs   "
+                : "justify-end lg:justify-end  bg-primary w-xs lg:w-sm    ",
+              className,
+            )}
+          >
+            {step === "cookie" ? (
+              <>
+                <p className={copy}>
+                  this site uses cookies to improve your experience.
+                </p>
+                <div className="flex flex-row-reverse  gap-3 justify-start  ">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="  font-normal shadow-md"
+                    onClick={() => acceptCookies()}
+                  >
+                    accept
+                  </Button>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className=" border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
+                    asChild
+                  >
+                    <Link href="/privacy-policy" className="">
+                      learn more
+                    </Link>
+                  </Button>
+                </div>
+              </>
+            ) : step === "sound" ? (
+              <>
+                <p className={copy}>Enable sound?</p>
+                <div className="flex flex-row-reverse   gap-3">
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    onClick={() => answerSound(true)}
+                  >
+                    Yes
+                  </Button>
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className=" border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
+                    onClick={() => answerSound(false)}
+                  >
+                    No
+                  </Button>
+                </div>
+              </>
+            ) : (
+              /* Answered: nothing left to say, just the volume toggle. It takes
                the full width and spreads label-left / box-right so the row's
                justify-between has something to act on. */
-            <div className="flex w-full items-center gap-3">
-              <CheckButton
-                className="w-full"
-                labelSide="left"
-                size="label"
-                label={muted ? "sound off" : "sound on"}
-                active={!muted}
-                onClick={toggleMute}
-              />
-            </div>
-          )}
-        </motion.div>
-      )}
+              <div className="flex w-full items-center gap-3">
+                <CheckButton
+                  className="w-full"
+                  labelSide="left"
+                  size="lg"
+                  label={muted ? "sound off" : "sound on"}
+                  active={!muted}
+                  onClick={toggleMute}
+                />
+              </div>
+            )}
+          </motion.div>
+        )}
     </AnimatePresence>
   );
 }

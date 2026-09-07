@@ -119,10 +119,10 @@ export default function CategoryFilters({
         // left-3 always insets the tab from the screen edge; open, right-3
         // pairs with it so the panel spans between the two insets rather than
         // a full 100vw that would overflow past them.
-        "fixed bottom-3 left-3 z-30 pixelCornersTop",
+        "fixed bottom-3 left-3 z-30 pixelCorners",
         "transition-[width] duration-300 ease-out",
         showFilters
-          ? "right-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"
+          ? "right-3 top-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"
           : "w-1/3 bg-transparent max-lg:[&_*]:!text-primary",
         "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
         className,
@@ -172,9 +172,19 @@ export default function CategoryFilters({
               />
               {showCat && (
                 <div className="col-start-1 row-start-3 lg:col-start-3 col-span-3 lg:col-span-6 lg:row-start-2 grid grid-cols-3 lg:grid-cols-6 px-0 gap-y-6">
-                  {allCats.map((cat) => (
-                    <span
+                  {allCats.map((cat, i) => (
+                    <motion.span
                       key={cat}
+                      // Reveal the categories one by one; the project list waits
+                      // for this whole sequence (getFilterDoneMs shares the
+                      // filterDelays math) before it fades in.
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.3,
+                        ease: DRAWER_EASE,
+                        delay: filterDelays[i] / 1000,
+                      }}
                       className="inline-flex items-baseline whitespace-nowrap w-min col-span-2"
                     >
                       <CheckButton
@@ -183,7 +193,7 @@ export default function CategoryFilters({
                         onClick={() => handleFilterChange(cat)}
                         active={activeFilter === cat}
                       />
-                    </span>
+                    </motion.span>
                   ))}
                 </div>
               )}

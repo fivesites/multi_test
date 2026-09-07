@@ -25,6 +25,10 @@ type Props = {
    *  default — box first, label after it. "left" puts the label first and
    *  pushes the box out to the far end of the row. */
   labelSide?: "left" | "right";
+  /** Swap the checkbox glyphs for another pair — e.g. a lozenge ◆/◇ for a
+   *  marker that reads as a tag rather than a toggle. Both glyphs should share
+   *  a width so the hover swap doesn't shift the row. */
+  marks?: { active: string; inactive: string };
 };
 
 /** `size` is geometry only — box, gutter and gap. Whether a
@@ -94,13 +98,16 @@ export default function CheckButton({
   children,
   hoverFill = false,
   labelSide,
+  marks,
 
   toggleOpen,
 }: Props) {
+  const markOn = marks?.active ?? MARK_ACTIVE;
+  const markOff = marks?.inactive ?? MARK_INACTIVE;
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal   ",
+        "flex font-visual font-normal bg-transparent   ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,
@@ -134,10 +141,10 @@ export default function CheckButton({
               fills in, the filled box empties out. Both glyphs are the same
               width, so the swap doesn't shift the row. */}
           <span className="group-hover:hidden">
-            {active ? MARK_ACTIVE : MARK_INACTIVE}
+            {active ? markOn : markOff}
           </span>
           <span className="hidden group-hover:inline">
-            {active ? MARK_INACTIVE : MARK_ACTIVE}
+            {active ? markOff : markOn}
           </span>
         </span>
         {children ??

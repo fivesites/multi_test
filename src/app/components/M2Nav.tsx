@@ -57,7 +57,7 @@ function NavVertical({
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -24 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className={`p-0 space-y-0 w-full lg:w-1/4 bg-primary pb-3 lg:bg-transparent max-lg:[&_*]:!text-primary-foreground flex flex-col h-auto px-0 lg:px-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
+      className={`p-0 space-y-0 w-full lg:w-full bg-primary pb-3 [&_*]:!text-primary-foreground flex flex-col h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] pr-0 lg:pr-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
       <nav className="hidden lg:flex w-full flex-col gap-y-0 lg:col-span-2 ">
         {NAV_ITEMS.map((item) => (
@@ -85,6 +85,24 @@ function NavVertical({
           />
         ))}
       </nav>
+
+      {/* Mobile: the palette control lives in the drawer (desktop moves it to
+          the top bar). The swatch shows the palette that is on; tapping it
+          steps to the next. */}
+      <ColorButton
+        label={current.label}
+        swatch="text-primary"
+        active
+        onClick={onCycleTheme}
+        labelSide="right"
+        className="w-full  lg:hidden"
+      />
+
+      {/* The wordmark, same as the footer's, pinned to the bottom of the
+          drawer — bottom-left on mobile, bottom-right on desktop. */}
+      <h1 className="h1Text leading-none mb-0 mt-auto self-start lg:self-end px-3 lg:px-6 pt-6">
+        multi2.co
+      </h1>
     </motion.div>
   );
 }
@@ -262,8 +280,7 @@ export default function M2Nav() {
     useUI();
   const { muted, toggleMute } = useSound();
   const { theme, cycleTheme } = useTheme();
-  // The swatch shows the palette that is on; clicking it steps to the next one.
-  const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
+  const currentTheme = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   // The column is opened from the menu button at every width.
   const [open, setOpen] = useState(false);
@@ -342,18 +359,21 @@ export default function M2Nav() {
   return (
     <div className="fixed top-0 left-0 z-90 w-full px-0 pt-0 lg:px-0">
       <div
-        // Opening the menu fills the bar on mobile, where the panel drops
-        // straight out of it and the two read as one surface. Desktop keeps the
-        // bar transparent throughout: the column below carries its own ground,
-        // so filling the bar too would box the page in.
-        className={`grid grid-cols-4 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-center justify-start  px-0   lg:px-6 h-16 lg:h-24 bg-transparent transition-colors ${open ? "max-lg:bg-primary max-lg:text-primary-foreground max-lg:[&_*]:!text-primary-foreground" : ""}`}
+        // The bar is transparent with text-primary throughout. Opening the menu
+        // fills it with bg-primary and flips it to text-primary-foreground, so
+        // the drawer that drops out of it reads as one surface.
+        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-baseline justify-start  px-0   lg:px-0 h-16 lg:h-auto transition-colors ${
+          open
+            ? "bg-primary text-primary-foreground [&_*]:!text-primary-foreground"
+            : "bg-transparent text-primary"
+        }`}
       >
-        {/* The label rides in as a child rather than through CheckButton's
-              own `terminal` flag, which has no way to pass the loading state
-              through. Keyed on the label so each change remounts and retypes
-              instead of swapping the letters in place. */}
+        {/* Mobile: one combined button in the bar — it types "menu"/"close",
+            reports "loading", and cycles the wordmark once scrolled. The label
+            rides in as a child because CheckButton's own `terminal` flag can't
+            pass the loading state through; keyed so each change retypes. */}
         <CheckButton
-          className=" col-start-1 col-span-2 lg:col-start-1 lg:col-span-2 flex font-visual w-full"
+          className="lg:hidden col-start-1 col-span-2 flex font-visual w-full"
           size="lg"
           label={menuLabel}
           active
@@ -367,13 +387,55 @@ export default function M2Nav() {
             delay={0}
             loading={menuLoading}
             loadingText="loading"
-            // Once the reader has scrolled, the closed button keeps cycling
-            // between "menu" and the wordmark so the bar still says who it is.
             phrases={cycleMenuLabel ? ["loading", "multi2.co"] : []}
             loop={cycleMenuLabel}
             trigger={cycleMenuLabel ? "scrolled" : "idle"}
           />
         </CheckButton>
+
+        {/* Desktop col-1: the logo/loading button. Types "loading" while the
+            site settles, then the wordmark; clicking it scrolls back to top. */}
+        <CheckButton
+          className="hidden lg:flex lg:col-start-1 lg:col-span-2 font-visual w-full"
+          size="lg"
+          label={menuLoading ? "loading" : "multisquared"}
+          active
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        >
+          <TerminalM2Button
+            className="tracking-wide"
+            key={menuLoading ? "loading" : "wordmark"}
+            text="multisquared"
+            visible
+            delay={0}
+            loading={menuLoading}
+            loadingText="loading"
+            // Once the reader has scrolled, the button keeps cycling between
+            // "loading" and the wordmark so the bar still says who it is.
+            phrases={cycleMenuLabel ? ["loading", "multi2.co"] : []}
+            loop={cycleMenuLabel}
+            trigger={cycleMenuLabel ? "scrolled" : "idle"}
+          />
+        </CheckButton>
+
+        {/* Mobile: the sound toggle sits in the bar's spare third column,
+            pushed to the top-right corner. */}
+        <CheckButton
+          className="lg:hidden col-start-3 col-span-1 font-visual justify-end"
+          size="lg"
+          label={muted ? "sound off" : "sound on"}
+          active={!muted}
+          onClick={toggleMute}
+        />
+
+        {/* Desktop col-4: a plain menu/close toggle for the nav drawer. */}
+        <CheckButton
+          className="hidden lg:flex lg:col-start-4 lg:col-span-2 font-visual w-full"
+          size="lg"
+          label={open ? "close" : "menu"}
+          active={open}
+          onClick={() => setOpen((o) => !o)}
+        />
 
         <CheckButton
           className="hidden lg:flex lg:col-start-10 lg:col-span-2 font-visual lg:justify-start"
@@ -383,24 +445,14 @@ export default function M2Nav() {
           onClick={toggleMute}
         />
 
+        {/* Desktop: the palette control sits at the far end of the bar — just
+            the swatch, no label. */}
         <ColorButton
-          label={current.label}
+          label={currentTheme.label}
           swatch="text-primary"
           active
           onClick={cycleTheme}
-          className="col-start-4 col-span-1 flex justify-end lg:col-start-12 lg:col-span-2 lg:justify-end"
-        />
-      </div>
-
-      {/* The topbar grid has no spare column for this at mobile width, so the
-          sound toggle floats at the opposite corner instead — bottom-right,
-          paired with the filters tab at bottom-left on /projects. */}
-      <div className="flex lg:hidden fixed bottom-3 right-3 z-50 h-10 items-center pixelCorners px-4">
-        <CheckButton
-          size="label"
-          label={muted ? "sound off" : "sound on"}
-          active={!muted}
-          onClick={toggleMute}
+          className="hidden lg:flex lg:col-start-12 justify-end"
         />
       </div>
 

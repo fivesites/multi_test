@@ -14,6 +14,7 @@ import MultiVertNav from "@/app/components/MultiVertNav";
 import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
 import CustomCursor from "@/app/components/CustomCursor";
+import LoaderGrid from "@/app/components/LoaderGrid";
 import SmoothScroll from "@/app/components/SmoothScroll";
 
 export const metadata: Metadata = {
@@ -126,6 +127,7 @@ export default function RootLayout({
                   <CursorProvider>
                     <CustomCursor />
                     <M2Nav />
+                    <LoaderGrid />
                     <CookieAndSound />
 
                     <SmoothScroll>{children}</SmoothScroll>
