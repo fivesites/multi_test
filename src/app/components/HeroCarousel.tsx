@@ -1,68 +1,81 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import Image from "next/image";
 import useEmblaCarousel from "embla-carousel-react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import VideoPlayer from "./VideoPlayer";
+import CheckButton from "./CheckButton";
 
 type HeroMedia =
-  | { type: "image"; key: string; url: string; aspectRatio: number }
-  | { type: "video"; key: string; url: string };
+  | {
+      type: "image";
+      key: string;
+      url: string;
+      aspectRatio: number;
+      description?: string;
+    }
+  | { type: "video"; key: string; url: string; description?: string };
 
 /**
- * The project page hero: the work's media as a full-bleed carousel. Arrows sit
- * centred on the left and right edges; a "1 / 3" counter sits bottom-right.
- * Clicking a slide opens the lightbox at that index.
+ * The project page hero: the work's media as a carousel. Each item is shown
+ * whole (`object-contain`, padded) — the same treatment the lightbox gave it.
+ * Prev/next are CheckButtons pinned to the vertical centre of each edge; a
+ * "1 / 3" counter sits bottom-right. `onSelect` reports the current index so the
+ * page can show that item's caption.
  */
 export default function HeroCarousel({
   media,
-  onOpen,
+  selected,
+  onSelect,
 }: {
   media: HeroMedia[];
-  onOpen: (index: number) => void;
+  selected: number;
+  onSelect: (index: number) => void;
 }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
-  const [selected, setSelected] = useState(0);
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   useEffect(() => {
     if (!emblaApi) return;
-    const onSelect = () => setSelected(emblaApi.selectedScrollSnap());
-    onSelect();
-    emblaApi.on("select", onSelect);
+    const sync = () => onSelect(emblaApi.selectedScrollSnap());
+    sync();
+    emblaApi.on("select", sync);
     return () => {
-      emblaApi.off("select", onSelect);
+      emblaApi.off("select", sync);
     };
-  }, [emblaApi]);
+  }, [emblaApi, onSelect]);
 
   if (media.length === 0) return null;
 
   return (
-    <div className="pixelCorners relative h-full w-full">
+    <div className="border border-primary relative h-full w-full ">
       <div className="h-full w-full overflow-hidden" ref={emblaRef}>
         <div className="flex h-full">
           {media.map((item, i) => (
             <div
               key={item.key}
-              className="relative flex-none w-full h-full cursor-zoom-in"
-              onClick={() => onOpen(i)}
+              className="flex-none w-full h-full flex items-center justify-center"
             >
-              {item.type === "video" ? (
-                <VideoPlayer src={item.url} className="h-full w-full" />
-              ) : (
-                <Image
-                  src={item.url}
-                  alt=""
-                  fill
-                  priority={i === 0}
-                  className="object-cover"
-                  sizes="100vw"
-                />
-              )}
+              <div className="relative h-full w-full">
+                {item.type === "video" ? (
+                  <VideoPlayer
+                    src={item.url}
+                    controls
+                    className="object-contain"
+                  />
+                ) : (
+                  <Image
+                    src={item.url}
+                    alt=""
+                    fill
+                    priority={i === 0}
+                    className="object-contain object-center"
+                    sizes="100vw"
+                  />
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -70,26 +83,29 @@ export default function HeroCarousel({
 
       {media.length > 1 && (
         <>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Previous"
-            className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]"
-            onClick={scrollPrev}
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label="Next"
-            className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-10 text-white hover:bg-white/10 drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]"
-            onClick={scrollNext}
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
+          <div className="absolute left-3 lg:left-6 top-1/2 -translate-y-1/2 z-10">
+            <CheckButton
+              onClick={scrollPrev}
+              label="previous"
+              markOnly
+              marks={{ active: "←", inactive: "←" }}
+              size="label"
+              className="text-primary"
+            />
+          </div>
 
-          <span className="absolute bottom-3 lg:bottom-6 right-3 lg:right-6 z-10 h4BtnText text-white drop-shadow-[0_1px_3px_rgba(0,0,0,0.4)]">
+          <div className="absolute right-3 lg:right-6 top-1/2 -translate-y-1/2 z-10">
+            <CheckButton
+              onClick={scrollNext}
+              label="next"
+              markOnly
+              marks={{ active: "→", inactive: "→" }}
+              size="label"
+              className="text-primary"
+            />
+          </div>
+
+          <span className="absolute bottom-3 lg:bottom-6 right-3 lg:right-6 z-10 h4BtnText text-primary">
             {selected + 1} / {media.length}
           </span>
         </>

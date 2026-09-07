@@ -80,6 +80,12 @@ export const work = defineType({
               type: "string",
               title: "Caption",
             }),
+            defineField({
+              name: "description",
+              type: "text",
+              rows: 3,
+              title: "Description",
+            }),
           ],
         },
         {
@@ -97,6 +103,12 @@ export const work = defineType({
               name: "caption",
               type: "string",
               title: "Caption",
+            }),
+            defineField({
+              name: "description",
+              type: "text",
+              rows: 3,
+              title: "Description",
             }),
           ],
           preview: {
@@ -121,6 +133,12 @@ export const work = defineType({
               name: "caption",
               type: "string",
               title: "Caption",
+            }),
+            defineField({
+              name: "description",
+              type: "text",
+              rows: 3,
+              title: "Description",
             }),
           ],
           preview: {

@@ -32,6 +32,7 @@ type MediaItem = {
   asset?: unknown;
   aspectRatio?: number;
   aspectRatioType?: keyof typeof ASPECT_RATIO_BY_TYPE;
+  description?: string;
   file?: { asset?: { url?: string } };
   url?: string;
 };
@@ -49,13 +50,19 @@ function toProjectMedia(m: MediaItem): ProjectMedia | null {
         m.aspectRatio ??
         (m.aspectRatioType && ASPECT_RATIO_BY_TYPE[m.aspectRatioType]) ??
         1,
+      description: m.description,
     };
   }
   if (m._type === "videoUpload" && m.file?.asset?.url) {
-    return { type: "video", key: m._key, url: m.file.asset.url };
+    return {
+      type: "video",
+      key: m._key,
+      url: m.file.asset.url,
+      description: m.description,
+    };
   }
   if (m._type === "videoUrl" && m.url) {
-    return { type: "video", key: m._key, url: m.url };
+    return { type: "video", key: m._key, url: m.url, description: m.description };
   }
   return null;
 }

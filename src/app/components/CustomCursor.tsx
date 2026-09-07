@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
+import { cn } from "@/lib/utils";
 import { useCursor } from "@/context/CursorContext";
 import {
   Loading1,
@@ -42,6 +43,10 @@ const INTERACTIVE = [
   ".cursor-zoom-in",
 ].join(",");
 
+/** Surfaces the cursor should flip its colours over — the nav drawer, the
+ *  filter overlay, the footer. Marked with `data-cursor-invert`. */
+const INVERT_SURFACE = "[data-cursor-invert]";
+
 export default function CustomCursor() {
   const pathname = usePathname();
   const { busy } = useCursor();
@@ -51,6 +56,7 @@ export default function CustomCursor() {
   const [enabled, setEnabled] = useState(false);
   const [visible, setVisible] = useState(false);
   const [hovering, setHovering] = useState(false);
+  const [inverted, setInverted] = useState(false);
   const [pressed, setPressed] = useState(false);
   const [frame, setFrame] = useState(0);
 
@@ -103,6 +109,7 @@ export default function CustomCursor() {
       if (target !== lastTarget) {
         lastTarget = target;
         setHovering(!!target?.closest(INTERACTIVE));
+        setInverted(!!target?.closest(INVERT_SURFACE));
       }
     };
     // relatedTarget is null only when the pointer actually left the window.
@@ -110,6 +117,7 @@ export default function CustomCursor() {
       if (!e.relatedTarget) {
         setVisible(false);
         setHovering(false);
+        setInverted(false);
         lastTarget = null;
       }
     };
@@ -187,10 +195,19 @@ export default function CustomCursor() {
     <div
       ref={ref}
       aria-hidden
-      className="pointer-events-none fixed top-0 left-0 z-[999] text-primary will-change-transform"
+      className="pointer-events-none fixed top-0 left-0 z-[999] will-change-transform"
       style={{ opacity: visible ? 1 : 0 }}
     >
-      <Frame className="block h-3 w-3 -translate-x-1/2 -translate-y-1/2" />
+      {/* Over an overlay or the footer the mark sits in a filled chip so it
+          stays legible against the primary ground. */}
+      <div
+        className={cn(
+          "-translate-x-1/2 -translate-y-1/2",
+          inverted ? "bg-primary-foreground text-primary" : "text-primary",
+        )}
+      >
+        <Frame className="block h-3 w-3" />
+      </div>
     </div>
   );
 }

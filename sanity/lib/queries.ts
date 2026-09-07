@@ -39,6 +39,7 @@ export const workBySlugQuery = groq`
       crop,
       alt,
       caption,
+      description,
       // videoUpload
       file { asset-> },
       // videoUrl

@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 const visualFont = localFont({
   src: [
     {
-      path: "../../public/fonts/visual/Visual-Light-trial.otf",
+      path: "../../public/fonts/visual/Visual-Light.woff2",
       weight: "300",
       style: "normal",
     },
@@ -108,7 +108,7 @@ export default function RootLayout({
             the red palette, so "red" / no value needs no class. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('multi2-theme');var m={red:'multi2_red',blue:'multi2_blue',green:'multi2_green',pink:'multi2_pink',teal:'multi2_teal',bw:'multi2_bw'};if(t&&m[t])document.documentElement.classList.add(m[t]);}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('multi2-theme');var m={red:'multi2_red',blue:'multi2_blue',green:'multi2_green',pink:'multi2_pink',teal:'multi2_teal',bw:'multi2_bw'};if(t&&m[t])document.documentElement.classList.add(m[t]);if(localStorage.getItem('multi2-dark')==='1')document.documentElement.classList.add('multi2_dark');}catch(e){}})();`,
           }}
         />
       </head>

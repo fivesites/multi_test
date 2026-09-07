@@ -97,7 +97,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
                 <ShowReel className=" h-full" src={reelUrl} />
                 {/* Light scrim so the thin wordmark stays legible over the
                     footage. */}
-                <div className="absolute inset-0 bg-foreground/50 backdrop-blur-xl" />
+                <div className="absolute inset-0 bg-black/50 backdrop-blur-xl" />
               </>
             }
           >
@@ -153,8 +153,8 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               {/* Sits at the content column's start (column four), on the
                   label's baseline. */}
               <TypedHeading
-                text="experience our work"
-                className=" h2Text flex px-6 mb-6 lg:mb-24 font-thin text-primary"
+                text="experience our work↗"
+                className=" hover:underline underline-offset-9 decoration-[4px] h2Text flex px-6 mb-6 lg:mb-24 font-thin text-primary"
               />
             </LandningBlock>
           </div>
@@ -167,7 +167,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
                 <FeaturedCard
                   key={project.key}
                   project={project}
-                  className="col-span-3 lg:col-span-6"
+                  className="col-span-3 lg:col-span-5"
                 />
               ))}
               <Button

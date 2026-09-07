@@ -29,6 +29,9 @@ type Props = {
    *  marker that reads as a tag rather than a toggle. Both glyphs should share
    *  a width so the hover swap doesn't shift the row. */
   marks?: { active: string; inactive: string };
+  /** Show only the mark — the `label` still names the control for
+   *  screen readers but isn't drawn. */
+  markOnly?: boolean;
 };
 
 /** `size` is geometry only — box, gutter and gap. Whether a
@@ -57,7 +60,7 @@ export const SIZE_TEXT = {
 export const SIZE_GAP = {
   sm: "gap-x-2",
   md: "gap-x-3 lg:gap-x-3",
-  lg: "gap-x-3 lg:gap-x-3",
+  lg: "gap-x-3 lg:gap-x-1.5",
   label: "gap-x-3 lg:gap-x-3",
 } as const;
 
@@ -68,7 +71,7 @@ export const SIZE_GAP = {
 export const SIZE_CHECK = {
   sm: "text-[2.2em]",
   md: "text-[1em]",
-  lg: "text-[1em]",
+  lg: "text-[0.7em]",
   label: "text-[1em]",
 } as const;
 
@@ -99,6 +102,7 @@ export default function CheckButton({
   hoverFill = false,
   labelSide,
   marks,
+  markOnly = false,
 
   toggleOpen,
 }: Props) {
@@ -107,7 +111,7 @@ export default function CheckButton({
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal bg-transparent   ",
+        "flex font-visual font-normal tracking-wide bg-transparent    ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,
@@ -132,8 +136,11 @@ export default function CheckButton({
       >
         <span
           aria-hidden
+          // No colour of its own — it inherits the control's text colour, so
+          // passing e.g. `text-primary-foreground` in `className` tints the
+          // mark along with the label.
           className={cn(
-            "shrink-0 select-none font-visual font-normal leading-none text-primary",
+            "shrink-0 select-none  font-visual font-normal leading-none",
             SIZE_CHECK[size],
           )}
         >
@@ -155,7 +162,7 @@ export default function CheckButton({
               visible
               delay={0}
             />
-          ) : (
+          ) : markOnly ? null : (
             label
           ))}
       </div>

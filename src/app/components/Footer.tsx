@@ -28,6 +28,7 @@ export default function Footer() {
     >
       <div
         ref={pixelRef}
+        data-cursor-invert
         className=" w-full flex flex-col justify-between items-stretch h-[90dvh] lg:h-[75dvh] bg-primary pt-6 pb-0 [&_*]:!text-primary-foreground"
       >
         {/* Contact columns. Each heading + its links is one grid cell, placed on

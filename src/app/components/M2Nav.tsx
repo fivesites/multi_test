@@ -8,6 +8,8 @@ import { useUI } from "@/context/UIContext";
 import { useBusyCursor } from "@/context/CursorContext";
 import VolumeSlider from "./VolumeSlider";
 import CheckButton from "./CheckButton";
+import CheckToggle from "./CheckToggle";
+import ThemeToggle from "./ThemeToggle";
 import TerminalM2Button from "./TerminalM2Button";
 import SettingsOverlay from "./SettingsOverlay";
 import { Loading5 } from "./marks";
@@ -38,21 +40,23 @@ function NavVertical({
   onOpenSettings,
   settingsOpen,
   theme,
-  onCycleTheme,
+  onSelectTheme,
+  dark,
+  onToggleDark,
 }: {
   onNavigate: (href: string) => void;
   onOpenSettings: () => void;
   settingsOpen: boolean;
   theme: ThemeId;
-  onCycleTheme: () => void;
+  onSelectTheme: (id: ThemeId) => void;
+  dark: boolean;
+  onToggleDark: () => void;
 }) {
   const pathname = usePathname();
-  // The swatch always shows the palette that is on; tapping it steps to the
-  // next one, so the row doubles as the readout and the control.
-  const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   return (
     <motion.div
+      data-cursor-invert
       initial={{ opacity: 0, y: -24 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -24 }}
@@ -86,18 +90,21 @@ function NavVertical({
         ))}
       </nav>
 
-      {/* Mobile: the palette control lives in the drawer (desktop moves it to
-          the top bar). The swatch shows the palette that is on; tapping it
-          steps to the next. */}
-      <ColorButton
-        label={current.label}
-        swatch="text-primary"
-        active
-        onClick={onCycleTheme}
-        labelSide="right"
-        className="w-full  lg:hidden"
+      {/* The palette picker — one flick per theme, sliding to the one on. In
+          the drawer at every width; the top bar keeps its compact swatch too. */}
+      <ThemeToggle
+        options={THEMES}
+        value={theme}
+        onChange={(id: string) => onSelectTheme(id as ThemeId)}
+        className="w-full px-6 lg:px-3 py-3"
       />
-
+      <CheckToggle
+        offLabel="light"
+        onLabel="dark"
+        active={dark}
+        onClick={onToggleDark}
+        className="w-full px-6 lg:hidden"
+      />
       {/* The wordmark, same as the footer's, pinned to the bottom of the
           drawer — bottom-left on mobile, bottom-right on desktop. */}
       <h1 className="h1Text leading-none mb-0 mt-auto self-start lg:self-end px-3 lg:px-6 pt-6">
@@ -232,8 +239,15 @@ function ColorButton({
  *  one of them fall out of step with the class actually on <html>. */
 const THEME_STORAGE_KEY = "multi2-theme";
 
+/** Dark mode rides alongside the palette: `multi2_dark` is added next to the
+ *  `multi2_*` class, and globals.css has a two-class block per palette that
+ *  inverts it. */
+const DARK_STORAGE_KEY = "multi2-dark";
+const DARK_CLASS = "multi2_dark";
+
 function useTheme() {
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
+  const [dark, setDark] = useState(false);
 
   // Source of truth is the saved choice; the <html> class is just how it's
   // applied. Fall back to whatever class is already on <html> (the pre-paint
@@ -252,6 +266,16 @@ function useTheme() {
       document.documentElement.classList.toggle(t.className, t.id === next);
     }
     setTheme(next);
+
+    let storedDark: string | null = null;
+    try {
+      storedDark = localStorage.getItem(DARK_STORAGE_KEY);
+    } catch {}
+    const isDark =
+      storedDark === "1" ||
+      document.documentElement.classList.contains(DARK_CLASS);
+    document.documentElement.classList.toggle(DARK_CLASS, isDark);
+    setDark(isDark);
   }, []);
 
   // Every class is set explicitly rather than just adding the new one: the
@@ -271,7 +295,18 @@ function useTheme() {
     selectTheme(THEMES[(i + 1) % THEMES.length].id);
   }, [theme, selectTheme]);
 
-  return { theme, selectTheme, cycleTheme };
+  const toggleDark = useCallback(() => {
+    setDark((d) => {
+      const next = !d;
+      document.documentElement.classList.toggle(DARK_CLASS, next);
+      try {
+        localStorage.setItem(DARK_STORAGE_KEY, next ? "1" : "0");
+      } catch {}
+      return next;
+    });
+  }, []);
+
+  return { theme, selectTheme, cycleTheme, dark, toggleDark };
 }
 
 export default function M2Nav() {
@@ -279,7 +314,7 @@ export default function M2Nav() {
   const { contentDoneKey, setNavLoading, filtersOpen, setFiltersOpen } =
     useUI();
   const { muted, toggleMute } = useSound();
-  const { theme, cycleTheme } = useTheme();
+  const { theme, selectTheme, cycleTheme, dark, toggleDark } = useTheme();
   const currentTheme = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   // The column is opened from the menu button at every width.
@@ -362,7 +397,8 @@ export default function M2Nav() {
         // The bar is transparent with text-primary throughout. Opening the menu
         // fills it with bg-primary and flips it to text-primary-foreground, so
         // the drawer that drops out of it reads as one surface.
-        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-baseline justify-start  px-0   lg:px-0 h-16 lg:h-auto transition-colors ${
+        {...(open ? { "data-cursor-invert": "" } : {})}
+        className={`grid grid-cols-3 lg:grid-cols-12 gap-x-0 lg:gap-x-0 items-baseline justify-start  px-0 pt-0   lg:px-0 h-16 lg:h-auto transition-colors ${
           open
             ? "bg-primary text-primary-foreground [&_*]:!text-primary-foreground"
             : "bg-transparent text-primary"
@@ -438,15 +474,22 @@ export default function M2Nav() {
         />
 
         <CheckButton
-          className="hidden lg:flex lg:col-start-10 lg:col-span-2 font-visual lg:justify-start"
-          size="label"
+          className="hidden lg:flex lg:col-start-7 lg:col-span-2 font-visual lg:justify-start"
+          size="lg"
           label={muted ? "sound off" : "sound on"}
           active={!muted}
           onClick={toggleMute}
         />
 
-        {/* Desktop: the palette control sits at the far end of the bar — just
-            the swatch, no label. */}
+        {/* Desktop: the dark toggle and the palette swatch sit at the far end
+            of the bar. */}
+        <CheckToggle
+          offLabel="light"
+          onLabel="dark"
+          active={dark}
+          onClick={toggleDark}
+          className="hidden lg:flex lg:col-start-9 lg:col-span-2 justify-end"
+        />
         <ColorButton
           label={currentTheme.label}
           swatch="text-primary"
@@ -474,7 +517,9 @@ export default function M2Nav() {
               onOpenSettings={() => setOpenSettings((o) => !o)}
               settingsOpen={openSettings}
               theme={theme}
-              onCycleTheme={cycleTheme}
+              onSelectTheme={selectTheme}
+              dark={dark}
+              onToggleDark={toggleDark}
             />
           </motion.div>
         )}

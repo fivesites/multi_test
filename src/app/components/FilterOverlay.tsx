@@ -67,7 +67,10 @@ export default function FilterOverlay() {
           transition={{ duration: 0.2 }}
           className="flex lg:hidden fixed inset-0 z-40 w-full h-dvh overflow-y-scroll   "
         >
-          <div className="flex flex-col h-dvh mt-16 pt-12 bg-secondary px-0 w-full">
+          <div
+            data-cursor-invert
+            className="flex flex-col h-dvh mt-16 pt-12 bg-secondary px-0 w-full"
+          >
             {/* The settings sheet the "filter settings" button opens into,
                 stacked above the category list in the same overlay. */}
 

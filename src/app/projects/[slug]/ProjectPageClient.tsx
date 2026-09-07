@@ -1,19 +1,24 @@
 "use client";
 
 import { useState, useEffect, Fragment } from "react";
-import { motion, AnimatePresence } from "motion/react";
-import Lightbox from "@/app/components/Lightbox";
+import Image from "next/image";
+import { motion } from "motion/react";
 import LandningBlock from "@/app/components/LandningBlock";
 import CheckButton from "@/app/components/CheckButton";
 import HeroCarousel from "@/app/components/HeroCarousel";
+import VideoPlayer from "@/app/components/VideoPlayer";
+import ProjectsNav from "@/app/components/ProjectsNav";
 import Footer from "@/app/components/Footer";
-import { Button } from "@/components/ui/button";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
 
 export type ProjectMedia =
-  | { type: "image"; key: string; url: string; aspectRatio: number }
-  | { type: "video"; key: string; url: string };
+  | {
+      type: "image";
+      key: string;
+      url: string;
+      aspectRatio: number;
+      description?: string;
+    }
+  | { type: "video"; key: string; url: string; description?: string };
 
 const CATEGORY_LABELS: Record<string, string> = {
   photo: "Photo",
@@ -72,16 +77,25 @@ function ProjectPageInner({
     : wTitleDelay + (titleLen + 2) * TYPING_MS;
   const revealDelayMs = NAVIGATING_MS + wBackDelay + (4 + 2) * TYPING_MS + 100;
 
-  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
   const [revealed, setRevealed] = useState(false);
+  // Which carousel slide is showing — drives the caption below the hero.
+  const [activeSlide, setActiveSlide] = useState(0);
 
   useEffect(() => {
     const t = setTimeout(() => setRevealed(true), revealDelayMs);
     return () => clearTimeout(t);
   }, [revealDelayMs]);
 
-  // The whole media list rides in the hero carousel; the cover image is the
-  // fallback when a work has no media of its own yet.
+  // The hero is a single still (or the first video): the cover image, falling
+  // back to the first media item.
+  const hero: ProjectMedia | undefined =
+    media.find((m) => m.type === "video") ??
+    (coverUrl
+      ? { type: "image", key: "cover", url: coverUrl, aspectRatio: 1 }
+      : media[0]);
+
+  // The gallery carousel further down runs the whole media list; the cover is
+  // the fallback when a work has no media of its own yet.
   const slides: ProjectMedia[] =
     media.length > 0
       ? media
@@ -90,49 +104,55 @@ function ProjectPageInner({
         : [];
 
   return (
-    <div className="mt-16 lg:mt-24 pt-12 relative w-full px-0 ">
-      <div className="grid grid-cols-3 lg:grid-cols-12 mb-6 items-baseline">
+    <div className=" relative w-full px-0 mt-24 ">
+      <div className="grid grid-cols-3 lg:grid-cols-12 mb-3 lg:mb-0 items-baseline">
         {client && (
-          <div className="col-start-1 col-span-1 lg:col-start-1 lg:col-span-3 flex px-0">
+          <div className="hidden lg:flex col-start-1 col-span-1 lg:col-start-1 lg:col-span-3  px-0">
             <CheckButton size="lg" label={client} active />
           </div>
         )}
-        <h2 className="h2Text col-start-2 lg:col-start-4 col-span-8 text-primary ">
+        <h2 className="h2Text col-start-2 lg:col-start-4 col-span-3 lg:col-span-8 text-primary lg:px-3 ">
           {title}
         </h2>
       </div>
 
-      {/* Hero: the work's media as a full-bleed carousel spanning all 12
-          columns; the title label sits in column one. */}
-      <div className="relative px-3 w-full">
+      {/* Hero: a single still filling the block, which spans all 12 columns. */}
+      <div className="relative px-0 w-full">
         <LandningBlock
-          className="h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] min-h-dvh  items-start w-full  lg:px-3 "
+          className="h-dvh  items-start w-full  lg:px-3 "
           labelClassName="col-start-1  col-span-3 px-3 lg:col-start-1 lg:col-span-3 "
           background={
-            slides.length > 0 ? (
-              <HeroCarousel media={slides} onOpen={setLightboxIndex} />
+            hero ? (
+              <div className=" relative h-full w-full">
+                {hero.type === "video" ? (
+                  <VideoPlayer src={hero.url} className="h-full w-full" />
+                ) : (
+                  <Image
+                    src={hero.url}
+                    alt=""
+                    fill
+                    priority
+                    className="object-cover"
+                    sizes="100vw"
+                  />
+                )}
+              </div>
             ) : undefined
           }
         />
       </div>
+
+      {/* Description + credits — reached by scrolling past the hero. */}
       <motion.div
-        className=" w-full relative pb-4"
+        className=" w-full relative pb-4 mt-6"
         initial={{ opacity: 0 }}
         animate={{ opacity: revealed ? 1 : 0 }}
         transition={{ duration: 0.4 }}
       >
-        {/* Description — reached by scrolling past the hero */}
-
-        <div className="grid grid-cols-3 lg:grid-cols-12  mb-12 lg:mb-6 justify-start items-baseline text-primary">
-          <h4 className="h4BtnText  col-start-1 col-span-1 lg:col-start-1 px-3">
-            fig.1
-          </h4>
-          <h4 className=" col-start-2 col-span-1 lg:col-start-2 lg:col-span-1 h4BtnText">
-            moa larsson for {title}
-          </h4>
-          <span className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-7 indent-[calc(33.3vw-1rem)] lg:indent-0 lowercase  mt-12  ">
+        <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-12 mb-12 lg:mb-6 items-start text-primary">
+          <div className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-8 flex flex-col gap-y-6 px-3 lg:px-0 lowercase">
             {description ? (
-              <p className="pText  ">{description}</p>
+              <p className="pText">{description}</p>
             ) : (
               <p className="pText">
                 A bold visual concept rooted in craft and intention. Shot on
@@ -143,81 +163,85 @@ function ProjectPageInner({
                 ordinary feel inevitable.
               </p>
             )}
-          </span>
+          </div>
 
-          {/* Categories then credits: from column 9 on desktop, stacked below
-        
-
-          {/* Credits: directly below the description, in the same column. */}
-          {credits && (
-            <dl className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-6 mt-12 grid grid-cols-6 gap-x-3 gap-y-1 h4BtnText text-primary">
-              {credits
-                .split("\n")
-                .filter(Boolean)
-                .map((line, i) => {
-                  const { role, name } = parseCredit(line);
-                  return (
-                    <Fragment key={i}>
-                      <dt className="lowercase col-span-2">{role}</dt>
-                      <dd className="m-0 col-span-1">{name}</dd>
-                    </Fragment>
-                  );
-                })}
-            </dl>
-          )}
+          <dl className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-8 grid grid-cols-[auto_1fr] lg:grid-cols-8 gap-x-6 gap-y-2 px-3 lg:px-0 h4BtnText lowercase text-primary">
+            <dt className="text-primary/50 lg:col-span-2">project</dt>
+            <dd className="m-0 lg:col-span-6">{title}</dd>
+            {client && (
+              <>
+                <dt className="text-primary/50 lg:col-span-2">client</dt>
+                <dd className="m-0 lg:col-span-6">{client}</dd>
+              </>
+            )}
+            {year && (
+              <>
+                <dt className="text-primary/50 lg:col-span-2">year</dt>
+                <dd className="m-0 lg:col-span-6">{year}</dd>
+              </>
+            )}
+            {categories.length > 0 && (
+              <>
+                <dt className="text-primary/50 lg:col-span-2">categories</dt>
+                <dd className="m-0 lg:col-span-6 flex flex-col">
+                  {categories.map((c) => (
+                    <span key={c}>{CATEGORY_LABELS[c] ?? c}</span>
+                  ))}
+                </dd>
+              </>
+            )}
+            {credits && (
+              <>
+                <dt className="text-primary/50 lg:col-span-2">credits</dt>
+                <dd className="m-0 lg:col-span-6 grid grid-cols-[auto_1fr] gap-x-3 gap-y-1">
+                  {credits
+                    .split("\n")
+                    .filter(Boolean)
+                    .map((line, i) => {
+                      const { role, name } = parseCredit(line);
+                      return (
+                        <Fragment key={i}>
+                          <span className="text-primary/50 col-span-2">
+                            {role}
+                          </span>
+                          <span>{name}</span>
+                        </Fragment>
+                      );
+                    })}
+                </dd>
+              </>
+            )}
+          </dl>
         </div>
-
-        {categories.length > 0 && (
-          <ul className="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 grid grid-cols-3 lg:grid-cols-12 gap-x-0 gap-y-6 items-baseline mt-12 lg:mt-24 mb-12  pText uppercase text-primary">
-            {categories.map((c, i) => (
-              <li
-                key={c}
-                className={cn(
-                  "col-span-1 lg:col-span-2",
-                  i === 0 && "lg:col-start-2",
-                )}
-              >
-                <CheckButton
-                  size="label"
-                  active
-                  label={CATEGORY_LABELS[c] ?? c}
-                />
-              </li>
-            ))}
-          </ul>
-        )}
-
-        <AnimatePresence>
-          {lightboxIndex !== null && (
-            <Lightbox
-              media={slides}
-              initialIndex={lightboxIndex}
-              onClose={() => setLightboxIndex(null)}
-            />
-          )}
-        </AnimatePresence>
       </motion.div>
 
-      <span className="grid grid-cols-3 lg:grid-cols-12 px-3 lg:px-6 mt-12 lg:mt-24 mb-12 lg:mb-24">
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-1 lg:col-start-4 h2Text flex    gap-x-3  font-thin   justify-start w-min   "
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        >
-          top <span className="font-normal ">↑</span>
-        </Button>
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-3 lg:col-start-9 h2Text flex    gap-x-3  font-thin  justify-start w-min "
-          asChild
-        >
-          <Link href="/projects">
-            next <span className="font-normal ">→</span>
-          </Link>
-        </Button>
-      </span>
+      {/* Gallery: the work's media as a carousel, with the figure caption
+          directly below it. */}
+
+      {slides.length > 0 && (
+        <div className="w-full px-3 grid grid-cols-3 lg:grid-cols-12">
+          <div className="col-start-1 col-span-3 lg:col-span-8 relative h-[70dvh] lg:h-[80dvh] w-full">
+            <HeroCarousel
+              media={slides}
+              selected={activeSlide}
+              onSelect={setActiveSlide}
+            />
+          </div>
+
+          <div className="mt-6 lg:mt-0col-start-1 lg:col-start-9 col-span-3 ">
+            <h4 className="col-start-1 col-span-3 lg:col-start-4 lg:col-span-8 h4BtnText grid grid-cols-3 gap-x-2 lowercase text-primary">
+              <span className="col-span-1 pl-6">fig.{activeSlide + 1}</span>
+              <span className="col-span-2 pr-6">
+                {slides[activeSlide]?.description ?? `moa larsson for ${title}`}
+              </span>
+            </h4>
+          </div>
+        </div>
+      )}
+
+      <div className="w-full mb-6 mt-24">
+        <ProjectsNav />
+      </div>
 
       <Footer />
     </div>

@@ -254,11 +254,11 @@
   }
 
   .h1Text {
-    @apply font-visual tracking-normal text-7xl leading-tight lg:tracking-tight lg:text-[12rem] font-light lg:leading-[0.77];
+    @apply font-visual tracking-normal text-7xl leading-tight lg:tracking-tight lg:text-[12rem] font-thin lg:leading-[0.77];
   }
 
   .h2Text {
-    @apply font-visual text-3xl leading-tight lg:text-7xl lowercase tracking-wide lg:tracking-normal font-thin;
+    @apply font-visual text-3xl leading-tight lg:text-7xl  tracking-wide lg:tracking-normal font-thin;
   }
   .h3Text {
     @apply font-visual text-3xl lg:text-3xl lowercase tracking-wide lg:tracking-normal font-thin;
@@ -476,4 +476,131 @@ html.multi2_bw {
   --border: oklch(0 0 0);
   --input: oklch(0.9435 0 0);
   --ring: oklch(0 0 0);
+}
+
+/* Dark mode: an inverted take on each palette, toggled by the dark control in
+   the nav (it adds .multi2_dark alongside the palette class). The neutral
+   ground goes dark and the light tint that was --primary-foreground becomes
+   the text colour; --primary keeps the hue, lifted for the two palettes whose
+   primary was the dark carrier (green, teal). Two classes plus the element
+   outweigh the single-class palette blocks above. The bare .multi2_dark block
+   is the red palette's dark form, matching how :root is the red palette. */
+html.multi2_dark {
+  --background: oklch(0.16 0.018 29.23);
+  --foreground: oklch(0.943 0.0286 29.23);
+  --card: oklch(0.16 0.018 29.23);
+  --card-foreground: oklch(0.943 0.0286 29.23);
+  --popover: oklch(0.16 0.018 29.23);
+  --popover-foreground: oklch(0.943 0.0286 29.23);
+  --muted: oklch(0.22 0.03 29.23);
+  --muted-foreground: oklch(0.72 0.13 29.23);
+  --accent: oklch(0.22 0.03 29.23);
+  --accent-foreground: oklch(0.943 0.0286 29.23);
+  --primary: oklch(0.628 0.2577 29.2339);
+  --primary-foreground: oklch(0.16 0.018 29.23);
+  --secondary: oklch(0.3 0.09 29.23);
+  --secondary-foreground: oklch(0.943 0.0286 29.23);
+  --border: oklch(0.66 0.24 29.23);
+  --input: oklch(0.3 0.09 29.23);
+  --ring: oklch(0.66 0.24 29.23);
+}
+
+html.multi2_blue.multi2_dark {
+  --background: oklch(0.16 0.03 264.05);
+  --foreground: oklch(0.943 0.0286 264.05);
+  --card: oklch(0.16 0.03 264.05);
+  --card-foreground: oklch(0.943 0.0286 264.05);
+  --popover: oklch(0.16 0.03 264.05);
+  --popover-foreground: oklch(0.943 0.0286 264.05);
+  --muted: oklch(0.22 0.05 264.05);
+  --muted-foreground: oklch(0.74 0.14 264.05);
+  --accent: oklch(0.22 0.05 264.05);
+  --accent-foreground: oklch(0.943 0.0286 264.05);
+  --primary: oklch(0.62 0.22 264.05);
+  --primary-foreground: oklch(0.16 0.03 264.05);
+  --secondary: oklch(0.3 0.12 264.05);
+  --secondary-foreground: oklch(0.943 0.0286 264.05);
+  --border: oklch(0.62 0.22 264.05);
+  --input: oklch(0.3 0.12 264.05);
+  --ring: oklch(0.62 0.22 264.05);
+}
+
+html.multi2_green.multi2_dark {
+  --background: oklch(0.16 0.04 142.5);
+  --foreground: oklch(0.8664 0.2948 142.5);
+  --card: oklch(0.16 0.04 142.5);
+  --card-foreground: oklch(0.8664 0.2948 142.5);
+  --popover: oklch(0.16 0.04 142.5);
+  --popover-foreground: oklch(0.8664 0.2948 142.5);
+  --muted: oklch(0.24 0.08 142.5);
+  --muted-foreground: oklch(0.7 0.2 142.5);
+  --accent: oklch(0.24 0.08 142.5);
+  --accent-foreground: oklch(0.8664 0.2948 142.5);
+  --primary: oklch(0.8664 0.2948 142.5);
+  --primary-foreground: oklch(0.16 0.04 142.5);
+  --secondary: oklch(0.32 0.12 142.5);
+  --secondary-foreground: oklch(0.8664 0.2948 142.5);
+  --border: oklch(0.8664 0.2948 142.5);
+  --input: oklch(0.32 0.12 142.5);
+  --ring: oklch(0.8664 0.2948 142.5);
+}
+
+html.multi2_pink.multi2_dark {
+  --background: oklch(0.17 0.04 328.36);
+  --foreground: oklch(0.943 0.0286 328.36);
+  --card: oklch(0.17 0.04 328.36);
+  --card-foreground: oklch(0.943 0.0286 328.36);
+  --popover: oklch(0.17 0.04 328.36);
+  --popover-foreground: oklch(0.943 0.0286 328.36);
+  --muted: oklch(0.24 0.07 328.36);
+  --muted-foreground: oklch(0.76 0.16 328.36);
+  --accent: oklch(0.24 0.07 328.36);
+  --accent-foreground: oklch(0.943 0.0286 328.36);
+  --primary: oklch(0.72 0.3 328.36);
+  --primary-foreground: oklch(0.17 0.04 328.36);
+  --secondary: oklch(0.32 0.13 328.36);
+  --secondary-foreground: oklch(0.943 0.0286 328.36);
+  --border: oklch(0.72 0.3 328.36);
+  --input: oklch(0.32 0.13 328.36);
+  --ring: oklch(0.72 0.3 328.36);
+}
+
+html.multi2_teal.multi2_dark {
+  --background: oklch(0.16 0.02 194.77);
+  --foreground: oklch(0.965 0.0516 196.33);
+  --card: oklch(0.16 0.02 194.77);
+  --card-foreground: oklch(0.965 0.0516 196.33);
+  --popover: oklch(0.16 0.02 194.77);
+  --popover-foreground: oklch(0.965 0.0516 196.33);
+  --muted: oklch(0.24 0.04 194.77);
+  --muted-foreground: oklch(0.74 0.08 195);
+  --accent: oklch(0.24 0.04 194.77);
+  --accent-foreground: oklch(0.965 0.0516 196.33);
+  --primary: oklch(0.74 0.11 194.77);
+  --primary-foreground: oklch(0.16 0.02 194.77);
+  --secondary: oklch(0.3 0.06 194.77);
+  --secondary-foreground: oklch(0.965 0.0516 196.33);
+  --border: oklch(0.74 0.11 194.77);
+  --input: oklch(0.3 0.06 194.77);
+  --ring: oklch(0.74 0.11 194.77);
+}
+
+html.multi2_bw.multi2_dark {
+  --background: oklch(0.15 0 0);
+  --foreground: oklch(0.96 0 0);
+  --card: oklch(0.15 0 0);
+  --card-foreground: oklch(0.96 0 0);
+  --popover: oklch(0.15 0 0);
+  --popover-foreground: oklch(0.96 0 0);
+  --muted: oklch(0.24 0 0);
+  --muted-foreground: oklch(0.68 0 0);
+  --accent: oklch(0.24 0 0);
+  --accent-foreground: oklch(0.96 0 0);
+  --primary: oklch(0.96 0 0);
+  --primary-foreground: oklch(0.15 0 0);
+  --secondary: oklch(0.28 0 0);
+  --secondary-foreground: oklch(0.96 0 0);
+  --border: oklch(0.96 0 0);
+  --input: oklch(0.28 0 0);
+  --ring: oklch(0.96 0 0);
 }

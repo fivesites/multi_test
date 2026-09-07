@@ -153,8 +153,8 @@ export default function CookieAndSound({
               "fixed z-90 bottom-6 right-6 lg:right-6 lg:left-auto   w-auto lg:w-min  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-end  lg:items-baseline     ",
 
               step === "volume"
-                ? "justify-between bg-primary w-xs lg:w-xs   "
-                : "justify-end lg:justify-end  bg-primary w-xs lg:w-sm    ",
+                ? "justify-between border bg-primary border-primary-1 w-xs lg:w-xs   "
+                : "justify-end lg:justify-end border  bg-primary w-xs lg:w-sm border-primary   ",
               className,
             )}
           >
