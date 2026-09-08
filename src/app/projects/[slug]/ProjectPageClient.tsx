@@ -111,7 +111,7 @@ function ProjectPageInner({
             <CheckButton size="lg" label={client} active />
           </div>
         )}
-        <h2 className="h2Text col-start-2 lg:col-start-4 col-span-3 lg:col-span-8 text-primary lg:px-3 ">
+        <h2 className="h2Text col-start-2 lg:col-start-4 col-span-3 lg:col-span-8 text-primary lowercase lg:px-3 ">
           {title}
         </h2>
       </div>

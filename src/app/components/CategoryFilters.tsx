@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
-import M2Button from "./M2Button";
-import { Button } from "@/components/ui/button";
 import CheckButton from "./CheckButton";
 import SearchCheck from "./SearchCheck";
 import { zoomInCols, zoomOutCols } from "@/lib/gridZoom";

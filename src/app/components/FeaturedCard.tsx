@@ -1,26 +1,16 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useReducedMotion,
-} from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import type { GridItem } from "@/context/WorkContext";
 import PixelFrame from "./PixelFrame";
 import CheckButton from "./CheckButton";
-import { getCategoryLabel } from "@/lib/categories";
 
 const MotionLink = motion.create(Link);
 
 /**
  * A project card for the home page's selected projects (two-up on desktop).
- * Its horizontal inset breathes with scroll: widest (px-6) off-centre,
- * tightening to px-3 as the card crosses the middle of the viewport, then
- * easing back. Scroll-driven; steps aside for reduced motion.
  *
  * The grid span is the caller's — pass it through `className`; the card itself
  * only claims a single cell (`col-span-1`).
@@ -46,14 +36,7 @@ export default function FeaturedCard({
   captionBelow?: boolean;
   className?: string;
 }) {
-  const ref = useRef<HTMLAnchorElement>(null);
   const reduce = useReducedMotion();
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start end", "end start"],
-  });
-  // 24px (px-6) → 12px (px-3) → 24px, peak tightening at viewport centre.
-  const inset = useTransform(scrollYProgress, [0, 0.5, 1], [12, 3, 12]);
 
   const reveal =
     revealOnView && !reduce
@@ -68,7 +51,6 @@ export default function FeaturedCard({
   return (
     <MotionLink
       {...reveal}
-      ref={ref}
       href={`/projects/${project.slug}`}
       className={cn(
         "col-span-1 grid grid-cols-3   group relative lg:flex lg:flex-row lg:items-stretch gap-3 lg:gap-3 w-full mb-3 lg:mb-6",

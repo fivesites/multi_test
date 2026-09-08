@@ -7,13 +7,11 @@ import { useSound } from "@/context/SoundContext";
 import { useUI } from "@/context/UIContext";
 import { useBusyCursor } from "@/context/CursorContext";
 import { THEMES, useTheme, type ThemeId } from "@/context/ThemeContext";
-import VolumeSlider from "./VolumeSlider";
 import CheckButton from "./CheckButton";
 import CheckToggle from "./CheckToggle";
 import ThemeToggle from "./ThemeToggle";
 import ColorButton from "./ColorButton";
 import TerminalM2Button from "./TerminalM2Button";
-import SettingsOverlay from "./SettingsOverlay";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -38,16 +36,12 @@ function isActive(pathname: string | null, href: string) {
 
 function NavVertical({
   onNavigate,
-  onOpenSettings,
-  settingsOpen,
   theme,
   onSelectTheme,
   dark,
   onToggleDark,
 }: {
   onNavigate: (href: string) => void;
-  onOpenSettings: () => void;
-  settingsOpen: boolean;
   theme: ThemeId;
   onSelectTheme: (id: ThemeId) => void;
   dark: boolean;
@@ -115,32 +109,15 @@ function NavVertical({
   );
 }
 
-function SettingsHeader({
-  label,
-  className,
-}: {
-  label: string;
-  className?: string;
-}) {
-  return (
-    <div className="flex items-center h-6 border-b border-primary">
-      <h3 className={className}>{label}</h3>
-    </div>
-  );
-}
-
-
 export default function M2Nav() {
   const pathname = usePathname();
-  const { contentDoneKey, setNavLoading, filtersOpen, setFiltersOpen } =
-    useUI();
+  const { contentDoneKey, setNavLoading } = useUI();
   const { muted, toggleMute } = useSound();
   const { theme, selectTheme, cycleTheme, dark, toggleDark } = useTheme();
   const currentTheme = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   // The column is opened from the menu button at every width.
   const [open, setOpen] = useState(false);
-  const [openSettings, setOpenSettings] = useState(false);
 
   // "loading…" covers two things: the page's own intro typing hasn't finished
   // yet, and a route change is in flight.
@@ -159,7 +136,6 @@ export default function M2Nav() {
     setNavigating(false);
     setReady(false);
     setOpen(false);
-    setOpenSettings(false);
     const t = setTimeout(() => setReady(true), READY_FALLBACK_MS);
     return () => clearTimeout(t);
   }, [pathname]);
@@ -199,10 +175,6 @@ export default function M2Nav() {
   // Past the top of the page, the closed menu button alternates "menu" and the
   // wordmark rather than sitting on one.
   const cycleMenuLabel = scrolled && !open && !menuLoading;
-
-  // The settings menu only carries the projects view toggles for now, so it
-  // rides along only on that page.
-  const onProjects = pathname === "/projects";
 
   function handleNavigate(href: string) {
     setOpen(false);
@@ -335,8 +307,6 @@ export default function M2Nav() {
           >
             <NavVertical
               onNavigate={handleNavigate}
-              onOpenSettings={() => setOpenSettings((o) => !o)}
-              settingsOpen={openSettings}
               theme={theme}
               onSelectTheme={selectTheme}
               dark={dark}

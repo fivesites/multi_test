@@ -1,12 +1,10 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Volume2 } from "@/components/animate-ui/icons/volume-2";
-import { VolumeOff } from "@/components/animate-ui/icons/volume-off";
 import { useSound } from "@/context/SoundContext";
 import { cn } from "@/lib/utils";
 import CheckButton from "./CheckButton";
@@ -70,17 +68,6 @@ export default function CookieAndSound({
   // the standing consent / sound box stays out of the way there.
   const inStudio = pathname?.startsWith("/studio") ?? false;
 
-  const settle = useCallback(
-    (soundAccepted: boolean) => {
-      // "volume", not "idle": living in the layout makes this the only
-      // site-wide sound control, so the toggle has to outlive the questions.
-      setStep(ALWAYS_SHOW ? "cookie" : "volume");
-      markConsentSettled();
-      onDone?.(soundAccepted);
-    },
-    [onDone, markConsentSettled],
-  );
-
   useEffect(() => {
     // Still report in, so whatever waits on consent (the Connect box, the
     // player) settles as usual while the box stays up.
@@ -115,11 +102,6 @@ export default function CookieAndSound({
   function acceptCookies() {
     consentStore.set("cookie-consent", "accepted");
     setStep("sound");
-  }
-
-  function declineCookies() {
-    consentStore.set("cookie-consent", "declined");
-    settle(false);
   }
 
   // Either answer leaves the volume control in its place: "yes" unmutes and

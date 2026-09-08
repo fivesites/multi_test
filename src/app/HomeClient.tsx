@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import AboutSectionText from "./components/AboutSectionText";
 import CheckButton from "./components/CheckButton";
 import FeaturedCard from "./components/FeaturedCard";
-import IconButton from "./components/IconButton";
 import LandningBlock from "./components/LandningBlock";
 import { Reveal } from "./components/Reveal";
 import ShowReel from "./components/ShowReel";

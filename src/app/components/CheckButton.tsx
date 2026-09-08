@@ -16,10 +16,7 @@ type Props = {
   terminal?: boolean;
   /** Replaces the label entirely — a swatch, a mark, a nested control. */
   children?: ReactNode;
-  toggleOpen?: () => void;
-  checkSize?: string;
   hoverFill?: boolean;
-  tabIndex?: number;
   size?: "sm" | "md" | "lg" | "label";
   /** Which side of the box the label sits on. Omitted (or "right") keeps the
    *  default — box first, label after it. "left" puts the label first and
@@ -89,9 +86,7 @@ export type CheckButtonSize = "sm" | "md" | "lg" | "label";
  *  when it is only a marker. Links carry the square too — on a nav row it is
  *  what marks the current route. */
 export default function CheckButton({
-  tabIndex,
   className,
-  checkSize = "",
   label,
   onClick,
   size = "md",
@@ -103,8 +98,6 @@ export default function CheckButton({
   labelSide,
   marks,
   markOnly = false,
-
-  toggleOpen,
 }: Props) {
   const markOn = marks?.active ?? MARK_ACTIVE;
   const markOff = marks?.inactive ?? MARK_INACTIVE;

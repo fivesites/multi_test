@@ -1,6 +1,5 @@
 "use client";
 
-import M2Button from "./M2Button";
 import { motion, AnimatePresence } from "motion/react";
 import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
@@ -8,8 +7,6 @@ import { useWork } from "@/context/WorkContext";
 import { getCategoryLabel } from "@/lib/categories";
 import CheckButton from "./CheckButton";
 import SettingsOverlay from "./SettingsOverlay";
-
-const TYPING_MS_PER_CHAR = 22;
 
 const getFilterLabel = (cat: string) =>
   cat === "all" ? "All" : getCategoryLabel(cat);
@@ -43,12 +40,6 @@ export default function FilterOverlay() {
     seenLabels.add(key);
     return true;
   });
-  const filterDelays = allCats.reduce<number[]>((acc, _cat, i) => {
-    if (i === 0) return [0];
-    const prevLabel = getFilterLabel(allCats[i - 1]);
-    return [...acc, acc[i - 1] + (prevLabel.length + 2) * TYPING_MS_PER_CHAR];
-  }, []);
-
   function handleFilterChange(cat: string) {
     setActiveFilter(cat);
     setOpenedCard(null);
@@ -75,7 +66,7 @@ export default function FilterOverlay() {
                 stacked above the category list in the same overlay. */}
 
             <div className="grid grid-cols-3 gap-x-0 items-baseline justify-center overflow-y-auto pointer-events-auto px-0  mb-12 pt-0 gap-y-0 w-full ">
-              {allCats.map((cat, i) => (
+              {allCats.map((cat) => (
                 <span
                   key={cat}
                   className="inline-flex items-baseline whitespace-nowrap w-full"

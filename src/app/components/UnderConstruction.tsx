@@ -1,14 +1,39 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { THEMES, useTheme } from "@/context/ThemeContext";
 import CheckButton from "./CheckButton";
 import ColorButton from "./ColorButton";
 
+/** Only shown when the build opts in — set NEXT_PUBLIC_UNDER_CONSTRUCTION=1 for
+ *  the deployed site, leave it unset in dev. */
+const ENABLED = process.env.NEXT_PUBLIC_UNDER_CONSTRUCTION === "1";
+
+/** Dismissal sticks across reloads. */
+const STORAGE_KEY = "multi2-under-construction-dismissed";
+
 export default function UnderConstruction() {
-  const [dismissed, setDismissed] = useState(false);
   const { theme, cycleTheme } = useTheme();
-  if (dismissed) return null;
+  const [dismissed, setDismissed] = useState(false);
+  // Hold the gate closed until we've read localStorage, so returning visitors
+  // don't get a flash of the overlay before the effect clears it.
+  const [checked, setChecked] = useState(false);
+
+  useEffect(() => {
+    try {
+      if (localStorage.getItem(STORAGE_KEY) === "1") setDismissed(true);
+    } catch {}
+    setChecked(true);
+  }, []);
+
+  function dismiss() {
+    setDismissed(true);
+    try {
+      localStorage.setItem(STORAGE_KEY, "1");
+    } catch {}
+  }
+
+  if (!ENABLED || !checked || dismissed) return null;
 
   const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
@@ -18,7 +43,7 @@ export default function UnderConstruction() {
         label="close"
         active
         size="label"
-        onClick={() => setDismissed(true)}
+        onClick={dismiss}
         className="absolute top-6 left-6"
       />
       <ColorButton

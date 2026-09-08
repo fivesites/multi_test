@@ -5,7 +5,6 @@ import { usePresence } from "motion/react";
 import TypedHeading from "./TypedHeading";
 import { useUI } from "@/context/UIContext";
 import { cn } from "@/lib/utils";
-import { Http2ServerRequest } from "node:http2";
 
 const TYPING_MS_PER_CHAR = 22;
 const ERASING_MS_PER_CHAR = 14;
@@ -45,8 +44,6 @@ export default function AboutSectionText({
     const t = setTimeout(safeToRemove, eraseMs);
     return () => clearTimeout(t);
   }, [isPresent, safeToRemove, plainText, text]);
-
-  const paraDelay = plainText.length * TYPING_MS_PER_CHAR;
 
   return (
     <div

@@ -29,8 +29,6 @@ export default function AllProjectsPageClient() {
     setOpenedCard,
     numCols,
     navLoading,
-    filtersOpen,
-    setFiltersOpen,
   } = useUI();
 
   // Coming back from a project: drop the opened card so its tile isn't still

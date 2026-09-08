@@ -2,9 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { useUI } from "@/context/UIContext";
-import M2Button from "./M2Button";
 import { getActiveFilterLabel } from "@/lib/categories";
-import { Button } from "@/components/ui/button";
 import CheckButton from "./CheckButton";
 import { zoomInCols, zoomOutCols } from "@/lib/gridZoom";
 
@@ -34,17 +32,6 @@ export function ViewToggleButtons({ className = "" }: { className?: string }) {
     setShowList(true);
     setShowGrid(false);
   }
-
-  const separator = (
-    <Button
-      variant="ghost"
-      className="h-auto bg-transparent hover:bg-transparent hover:text-foreground cursor-none"
-      aria-hidden
-      tabIndex={-1}
-    >
-      /
-    </Button>
-  );
 
   return (
     <span
