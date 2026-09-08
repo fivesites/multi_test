@@ -178,7 +178,7 @@ export default function CookieAndSound({
                     className=" border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
                     asChild
                   >
-                    <Link href="/privacy-policy" className="">
+                    <Link href="/https://gdpr-info.eu/" target="_blank">
                       learn more
                     </Link>
                   </Button>

@@ -276,16 +276,6 @@
   .borderBtn {
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
   }
-
-  /* The `.pixelCorners*` classes used to notch corners with a mask-border SVG.
-     The SVGs are gone and the site is square-cornered anyway (--radius: 0), so
-     the rules are removed. The class names are left in the markup as harmless
-     no-ops rather than sweeping every file. */
-}
-
-html.cursor-none,
-html.cursor-none * {
-  cursor: none !important;
 }
 
 html.black-on-green {
