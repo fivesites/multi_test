@@ -11,7 +11,6 @@ import { CursorProvider } from "@/context/CursorContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
-import CustomCursor from "@/app/components/CustomCursor";
 import LoaderGrid from "@/app/components/LoaderGrid";
 import SmoothScroll from "@/app/components/SmoothScroll";
 import UnderConstruction from "./components/UnderConstruction";
@@ -73,11 +72,10 @@ export default function RootLayout({
                   state too, not just the page below them. */}
               <SoundProvider>
                 <ReelProvider>
-                  {/* Above the nav: the nav reports its loading state to the
-                    cursor. */}
+                  {/* CursorProvider stays for the busy-state signal the nav
+                      publishes; the custom cursor itself is off. */}
                   <CursorProvider>
                     <ThemeProvider>
-                      <CustomCursor />
                       <M2Nav />
                       <LoaderGrid />
                       <CookieAndSound />

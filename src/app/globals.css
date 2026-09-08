@@ -201,9 +201,6 @@
     @apply bg-background text-foreground;
   }
 
-  /* Hide the scrollbar everywhere — scrolling still works, the track just
-     isn't painted. Firefox / old Edge use properties; Chrome/Safari need the
-     pseudo-element. */
   html {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -236,11 +233,6 @@
 }
 
 @layer components {
-  /* Karl — Regular is the only cut in the repo right now. */
-  .karl-regular {
-    @apply font-karl font-normal;
-  }
-
   .btnText {
     @apply font-diatype   text-xs;
   }
@@ -274,13 +266,6 @@
     font-size: var(--text-4xl);
   }
 
-  /* lg and up: sized to span its container exactly. "multi2.co" advances
-     3.899em in Visual Light and the font has no kerning pairs for it;
-     tracking-tight takes 0.025em off each of the nine characters, and dropping
-     the leading 'm' and trailing 'o' side bearings leaves 3.573em of real ink.
-     Dividing the container's inline size by that, then pulling back the 0.08em
-     left bearing, lands the ink flush against the padding at every width.
-     Requires an @container ancestor — cqi resolves against its content box. */
   @media (width >= 64rem) {
     .heroWordmark {
       font-size: calc(100cqi / 3.573);
@@ -292,32 +277,18 @@
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
   }
 
-  /* Pixelated corners. pixel_sm.svg is a solid fill with 18-unit square notches
-     at each corner; used as a 9-slice mask so the element's own background
-     (bg-primary) shows through the shape while the corner notches stay a fixed
-     18px regardless of how wide or tall the element gets. */
-  /* pixel_xs.svg is a solid fill with square corner notches, used as a 9-slice
-     mask so the element's own bg-primary shows through the shape. The corner
-     notches render at --pixel-size (square, fixed px) no matter how wide/tall
-     the element is — set that var per element with the usePixelCorners hook so
-     it scales with the button. Falls back to 8px if the hook isn't attached. */
   .pixelCorners {
     -webkit-mask-box-image: url("/pixel_xs.svg") 18 fill stretch;
     -webkit-mask-box-image-width: var(--pixel-size, 8px);
     mask-border: url("/pixel_xs.svg") 18 fill / var(--pixel-size, 8px) stretch;
   }
 
-  /* pixel_top.svg is pixel_xs.svg with the two bottom corners left square, so
-     only the top-left and top-right corners get notched. Same --pixel-size
-     scaling via the usePixelCorners hook. */
   .pixelCornersTop {
     -webkit-mask-box-image: url("/pixel_top.svg") 18 fill stretch;
     -webkit-mask-box-image-width: var(--pixel-size, 8px);
     mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
   }
 
-  /* pixel_bottom.svg mirrors pixel_top.svg: only the bottom-left and
-     bottom-right corners get notched, the top two stay square. */
   .pixelCornersBottom {
     -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
     -webkit-mask-box-image-width: var(--pixel-size, 8px);
@@ -325,14 +296,6 @@
       stretch;
   }
 
-  /* A border that traces the pixelCorners staircase — including the stepped
-     corner faces a plain `border` leaves open, since a CSS border only paints
-     the four straight edges. pixel_border_xs.svg is a one-unit stepped ring
-     (an even-odd fill between two staircase paths); as a 9-slice border-image
-     its corner tiles carry the steps while the straight runs stretch a thin
-     line. border-image-width tracks --pixel-size so it scales with the element
-     the same way the .pixelCorners mask does — set that var with the
-     usePixelCorners hook and pair the two classes on the same element. */
   .pixelCornersBorder {
     border: 1px solid transparent;
     border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-size, 8px) / 0
@@ -340,19 +303,11 @@
   }
 }
 
-/* CustomCursor draws the pointer itself, so the native one goes away — including
-   the per-element cursors (pointer, zoom-in, text) set throughout the UI. The
-   class is only on <html> while that component is mounted. */
 html.cursor-none,
 html.cursor-none * {
   cursor: none !important;
 }
 
-/* Alternate palettes, set by MultiVertNav's theme rows. Only the tokens that
-   carry colour are overridden — everything downstream (buttons, borders, the
-   cursor, bg-background/text-primary anywhere on the site) follows from these,
-   so no component needs to know the theme exists. Beats .dark on specificity:
-   one class plus the element, against .dark's single class. */
 html.black-on-green {
   --background: rgb(0, 255, 0);
   --foreground: #000000;
@@ -398,12 +353,6 @@ html.black-and-white {
   --ring: #000000;
 }
 
-/* Multi2 colour themes, set by the Color Settings rows in M2Nav. Same shape as
-   the palettes above: only the tokens that carry colour are overridden, so
-   every component follows without knowing the theme exists. Each one keeps the
-   red palette's lightness and chroma relationships and moves only the hue, so
-   the family stays consistent. multi2_red matches the bare :root, which is the
-   palette before any class is set. */
 html.multi2_red {
   --primary: oklch(0.628 0.2577 29.2339);
   --primary-foreground: oklch(0.943 0.0286 29.23);
@@ -426,10 +375,6 @@ html.multi2_blue {
   --ring: oklch(0.452 0.3132 264.05);
 }
 
-/* The one theme built from two given colours rather than one hue: #003500
-   (oklch 0.285 0.097 142.5) carries text and borders, pure green
-   (oklch 0.8664 0.2948 142.5) fills. Same hue, so they still read as a pair —
-   and the dark one is legible on the light background, which pure green is not. */
 html.multi2_green {
   --primary: oklch(0.285 0.097 142.5);
   --primary-foreground: oklch(0.8664 0.2948 142.5);
@@ -452,9 +397,6 @@ html.multi2_pink {
   --ring: oklch(0.7017 0.3225 328.36);
 }
 
-/* Built from two given colours like the green theme: teal #008080
-   (oklch 0.5431 0.0927 194.77) carries text and borders, #CCFFFF
-   (oklch 0.965 0.0516 196.33) fills. */
 html.multi2_teal {
   --primary: oklch(0.5431 0.0927 194.77);
   --primary-foreground: oklch(0.965 0.0516 196.33);
@@ -478,13 +420,6 @@ html.multi2_bw {
   --ring: oklch(0 0 0);
 }
 
-/* Dark mode: an inverted take on each palette, toggled by the dark control in
-   the nav (it adds .multi2_dark alongside the palette class). The neutral
-   ground goes dark and the light tint that was --primary-foreground becomes
-   the text colour; --primary keeps the hue, lifted for the two palettes whose
-   primary was the dark carrier (green, teal). Two classes plus the element
-   outweigh the single-class palette blocks above. The bare .multi2_dark block
-   is the red palette's dark form, matching how :root is the red palette. */
 html.multi2_dark {
   --background: oklch(0.16 0.018 29.23);
   --foreground: oklch(0.943 0.0286 29.23);
