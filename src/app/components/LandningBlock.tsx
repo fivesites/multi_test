@@ -82,7 +82,7 @@ export default function LandningBlock({
           className={cn(
             "relative z-10 w-full",
             contentClassName ??
-              "col-start-1 col-span-3 lg:col-start-4 lg:col-span-9",
+              "col-start-1 col-span-3 lg:col-start-4 lg:col-span-9 lowercase",
           )}
         >
           {children}

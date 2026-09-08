@@ -95,7 +95,7 @@ export default function LoaderGrid() {
               // CheckButton checkbox glyph — ~0.7em of text-base / lg:text-lg.
               <span
                 key={i}
-                className="flex items-start justify-start text-base lg:text-lg"
+                className="flex items-start justify-start text-base "
               >
                 <span
                   className="block h-[0.7em] w-[0.7em] bg-primary [-webkit-mask-repeat:no-repeat] [-webkit-mask-size:100%_100%] [mask-repeat:no-repeat] [mask-size:100%_100%]"
