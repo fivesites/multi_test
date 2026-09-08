@@ -108,7 +108,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
             <TypedHeading
               ready={!navLoading}
               text="multisquared"
-              className="max-w-sm lg:max-w-full px-3 text-left h1Text min-w-0 lg:whitespace-nowrap rotate-90 lg:rotate-0 text-primary"
+              className="max-w-sm lg:max-w-full px-3 text-left h1Text min-w-0 lg:whitespace-nowrap tracking-normal lg:tracking-tight rotate-90 lg:rotate-0 text-primary"
             />
           </LandningBlock>
           {/* Mobile sound toggle — hidden for now; flip SHOW_MOBILE_SOUND to
