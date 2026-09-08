@@ -1,18 +1,19 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { useSound } from "@/context/SoundContext";
 import { useUI } from "@/context/UIContext";
 import { useBusyCursor } from "@/context/CursorContext";
+import { THEMES, useTheme, type ThemeId } from "@/context/ThemeContext";
 import VolumeSlider from "./VolumeSlider";
 import CheckButton from "./CheckButton";
 import CheckToggle from "./CheckToggle";
 import ThemeToggle from "./ThemeToggle";
+import ColorButton from "./ColorButton";
 import TerminalM2Button from "./TerminalM2Button";
 import SettingsOverlay from "./SettingsOverlay";
-import { Loading5 } from "./marks";
 
 const NAV_ITEMS = [
   { href: "/", label: "Home" },
@@ -128,186 +129,6 @@ function SettingsHeader({
   );
 }
 
-/** One row per palette: the colour its mark is drawn in, and the class
- *  globals.css hangs the palette off. The swatch is a literal colour rather
- *  than text-primary — a token-based one would restyle itself on every theme
- *  change, so the red mark would look blue in the blue theme. Written out in
- *  full because Tailwind only emits classes it can find as complete strings in
- *  the source. */
-const THEMES = [
-  {
-    id: "red",
-    label: "Red",
-    className: "multi2_red",
-    swatch: "text-[oklch(0.628_0.2577_29.2339)]",
-  },
-  {
-    id: "blue",
-    label: "Blue",
-    className: "multi2_blue",
-    swatch: "text-[oklch(0.452_0.3132_264.05)]",
-  },
-  {
-    id: "green",
-    label: "Green",
-    className: "multi2_green",
-    // The one palette whose primary is the dark half rather than the saturated
-    // one — taking the bright green here would paint the mark in this theme's
-    // own background colour.
-    swatch: "text-[oklch(0.285_0.097_142.5)]",
-  },
-  {
-    id: "pink",
-    label: "Pink",
-    className: "multi2_pink",
-    swatch: "text-[oklch(0.7017_0.3225_328.36)]",
-  },
-  {
-    id: "teal",
-    label: "Teal",
-    className: "multi2_teal",
-    swatch: "text-[oklch(0.5431_0.0927_194.77)]",
-  },
-  {
-    id: "bw",
-    label: "B/W",
-    className: "multi2_bw",
-    swatch: "text-[oklch(0_0_0)]",
-  },
-] as const;
-
-type ThemeId = (typeof THEMES)[number]["id"];
-
-/** The bare :root is already the red palette, so nothing is set until asked. */
-const DEFAULT_THEME: ThemeId = "red";
-
-function ColorButton({
-  label,
-  active,
-  swatch,
-  onClick,
-  className = "",
-  labelSide,
-}: {
-  label: string;
-  active: boolean;
-  swatch: string;
-  onClick: () => void;
-  className?: string;
-  /** Which side of the swatch the label sits on. Omit to keep it hidden. */
-  labelSide?: "left" | "right";
-}) {
-  // Counted up rather than wrapped at 4, so the mark keeps turning the same
-  // way instead of snapping back to zero on every fourth click.
-  const [turns, setTurns] = useState(0);
-
-  const labelEl = labelSide ? (
-    <span className="shrink-0 cursor-pointer font-visual text-lg font-normal tracking-wide lowercase text-primary">
-      {label}
-    </span>
-  ) : null;
-
-  return (
-    <button
-      type="button"
-      role="radio"
-      aria-checked={active}
-      onClick={() => {
-        setTurns((t) => t + 1);
-        onClick();
-      }}
-      className={`flex cursor-pointer items-center bg-transparnet gap-x-3 w-full px-6 lg:px-3 h-16 lg:h-12 ${className}`}
-    >
-      {labelSide === "left" && labelEl}
-      {/* The mark draws in currentColor, so the palette's colour rides in as a
-          text colour. The quarter turn sits on a wrapper: the svg is inline,
-          so it needs a block box of its own to rotate about its own centre. */}
-      <motion.span
-        className="flex shrink-0"
-        animate={{ rotate: turns * 90 }}
-        transition={{ duration: 0.25, ease: "easeOut" }}
-      >
-        <Loading5 className={`h-3 w-3 ${swatch}`} />
-      </motion.span>
-      {labelSide === "right" && labelEl}
-    </button>
-  );
-}
-
-/** Owned by M2Nav rather than by either panel: the nav column and the settings
- *  overlay are on screen together, so a copy of this state in each would let
- *  one of them fall out of step with the class actually on <html>. */
-const THEME_STORAGE_KEY = "multi2-theme";
-
-/** Dark mode rides alongside the palette: `multi2_dark` is added next to the
- *  `multi2_*` class, and globals.css has a two-class block per palette that
- *  inverts it. */
-const DARK_STORAGE_KEY = "multi2-dark";
-const DARK_CLASS = "multi2_dark";
-
-function useTheme() {
-  const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
-  const [dark, setDark] = useState(false);
-
-  // Source of truth is the saved choice; the <html> class is just how it's
-  // applied. Fall back to whatever class is already on <html> (the pre-paint
-  // script), then to red.
-  useEffect(() => {
-    let stored: string | null = null;
-    try {
-      stored = localStorage.getItem(THEME_STORAGE_KEY);
-    } catch {}
-    const fromStore = THEMES.find((t) => t.id === stored)?.id;
-    const fromClass = THEMES.find((t) =>
-      document.documentElement.classList.contains(t.className),
-    )?.id;
-    const next = fromStore ?? fromClass ?? DEFAULT_THEME;
-    for (const t of THEMES) {
-      document.documentElement.classList.toggle(t.className, t.id === next);
-    }
-    setTheme(next);
-
-    let storedDark: string | null = null;
-    try {
-      storedDark = localStorage.getItem(DARK_STORAGE_KEY);
-    } catch {}
-    const isDark =
-      storedDark === "1" ||
-      document.documentElement.classList.contains(DARK_CLASS);
-    document.documentElement.classList.toggle(DARK_CLASS, isDark);
-    setDark(isDark);
-  }, []);
-
-  // Every class is set explicitly rather than just adding the new one: the
-  // palettes are exclusive, and a leftover class would win on cascade order.
-  const selectTheme = useCallback((next: ThemeId) => {
-    for (const t of THEMES) {
-      document.documentElement.classList.toggle(t.className, t.id === next);
-    }
-    try {
-      localStorage.setItem(THEME_STORAGE_KEY, next);
-    } catch {}
-    setTheme(next);
-  }, []);
-
-  const cycleTheme = useCallback(() => {
-    const i = THEMES.findIndex((t) => t.id === theme);
-    selectTheme(THEMES[(i + 1) % THEMES.length].id);
-  }, [theme, selectTheme]);
-
-  const toggleDark = useCallback(() => {
-    setDark((d) => {
-      const next = !d;
-      document.documentElement.classList.toggle(DARK_CLASS, next);
-      try {
-        localStorage.setItem(DARK_STORAGE_KEY, next ? "1" : "0");
-      } catch {}
-      return next;
-    });
-  }, []);
-
-  return { theme, selectTheme, cycleTheme, dark, toggleDark };
-}
 
 export default function M2Nav() {
   const pathname = usePathname();
