@@ -254,7 +254,7 @@
   }
 
   .h1Text {
-    @apply font-visual tracking-normal text-7xl leading-tight lg:tracking-tight lg:text-[12rem] font-thin lg:leading-[0.77];
+    @apply font-visual tracking-normal text-7xl leading-tight lowercase lg:tracking-tight lg:text-[12rem] font-thin lg:leading-[0.77];
   }
 
   .h2Text {

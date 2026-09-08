@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import localFont from "next/font/local";
 import React from "react";
-
 import "./globals.css";
 import { WorkContextServer } from "@/context/WorkContextServer";
 import { CopyContextServer } from "@/context/CopyContextServer";
@@ -16,6 +15,7 @@ import CookieAndSound from "@/app/components/CookieAndSound";
 import CustomCursor from "@/app/components/CustomCursor";
 import LoaderGrid from "@/app/components/LoaderGrid";
 import SmoothScroll from "@/app/components/SmoothScroll";
+import UnderConstruction from "./components/UnderConstruction";
 
 export const metadata: Metadata = {
   title: "multi2",
@@ -49,52 +49,6 @@ const visualFont = localFont({
   display: "swap",
 });
 
-// Diatype ships 5 weights, all upright — no italic cuts.
-const diatype = localFont({
-  src: [
-    {
-      path: "../../public/fonts/diatype/ABCDiatypeEdu-Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/diatype/ABCDiatypeEdu-Medium.woff2",
-      weight: "500",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/diatype/ABCDiatypeEdu-Bold.woff2",
-      weight: "700",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/diatype/ABCDiatypeEdu-Heavy.woff2",
-      weight: "800",
-      style: "normal",
-    },
-    {
-      path: "../../public/fonts/diatype/ABCDiatypeEdu-Black.woff2",
-      weight: "900",
-      style: "normal",
-    },
-  ],
-  variable: "--font-diatype",
-  display: "swap",
-});
-
-// Karl currently ships Regular only.
-const karl = localFont({
-  src: [
-    {
-      path: "../../public/fonts/karl/KarlST_Regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-  ],
-  variable: "--font-karl",
-  display: "swap",
-});
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -112,9 +66,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body
-        className={`${visualFont.variable} ${diatype.variable} ${karl.variable} antialiased`}
-      >
+      <body className={`${visualFont.variable}  antialiased`}>
         <WorkContextServer>
           <CopyContextServer>
             <UIProvider>
@@ -129,7 +81,7 @@ export default function RootLayout({
                     <M2Nav />
                     <LoaderGrid />
                     <CookieAndSound />
-
+                    <UnderConstruction />
                     <SmoothScroll>{children}</SmoothScroll>
                   </CursorProvider>
                 </ReelProvider>
