@@ -153,7 +153,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               {/* Sits at the content column's start (column four), on the
                   label's baseline. */}
               <TypedHeading
-                text="experience our work↗"
+                text="experience our work"
                 className=" hover:underline underline-offset-9 decoration-[4px] h2Text flex px-6 mb-6 lg:mb-24 font-thin text-primary"
               />
             </LandningBlock>

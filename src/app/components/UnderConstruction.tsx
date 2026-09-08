@@ -13,7 +13,10 @@ export default function UnderConstruction() {
   const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 
   return (
-    <div className="fixed top-0 left-0 h-dvh w-full z-[300] flex flex-col items-start justify-center gap-y-6 py-12 px-6 text-left bg-background ">
+    <div
+      onClick={cycleTheme}
+      className="fixed top-0 left-0 h-dvh w-full z-[300] flex flex-col items-start justify-center gap-y-6 py-12 px-6 text-left bg-background "
+    >
       <CheckButton
         label="close"
         active
