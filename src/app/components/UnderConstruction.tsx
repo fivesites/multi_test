@@ -26,7 +26,7 @@ export default function UnderConstruction() {
         swatch="text-primary"
         active
         onClick={cycleTheme}
-        className="absolute top-6 right-6 w-auto px-0"
+        className="absolute top-6 right-6 w-auto h-auto px-0"
       />
       <h1 className="font-visual h1Text text-primary leading-[0.9]  ">
         under construction

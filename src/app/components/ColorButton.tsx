@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "motion/react";
+import { cn } from "@/lib/utils";
 import { Loading5 } from "./marks";
 
 /** A single palette control: the mark draws in `swatch`'s colour and takes a
@@ -42,7 +43,10 @@ export default function ColorButton({
         setTurns((t) => t + 1);
         onClick();
       }}
-      className={`flex cursor-pointer items-center bg-transparent gap-x-3 w-full px-6 lg:px-3 h-16 lg:h-12 ${className}`}
+      className={cn(
+        "flex cursor-pointer items-center bg-transparent gap-x-3 w-full px-6 lg:px-3 h-16 lg:h-12",
+        className,
+      )}
     >
       {labelSide === "left" && labelEl}
       {/* The mark draws in currentColor, so the palette's colour rides in as a
