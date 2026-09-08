@@ -5,12 +5,8 @@ import { THEMES, useTheme } from "@/context/ThemeContext";
 import CheckButton from "./CheckButton";
 import ColorButton from "./ColorButton";
 
-/** Only shown when the build opts in — set NEXT_PUBLIC_UNDER_CONSTRUCTION=1 for
- *  the deployed site, leave it unset in dev. */
-const ENABLED = process.env.NEXT_PUBLIC_UNDER_CONSTRUCTION === "1";
-
-/** Dismissal sticks across reloads. */
-const STORAGE_KEY = "multi2-under-construction-dismissed";
+/** Dismissal sticks across reloads (bump the suffix to re-show it to everyone). */
+const STORAGE_KEY = "multi2-under-construction-dismissed-v2";
 
 export default function UnderConstruction() {
   const { theme, cycleTheme } = useTheme();
@@ -33,7 +29,7 @@ export default function UnderConstruction() {
     } catch {}
   }
 
-  if (!ENABLED || !checked || dismissed) return null;
+  if (!checked || dismissed) return null;
 
   const current = THEMES.find((t) => t.id === theme) ?? THEMES[0];
 

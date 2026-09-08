@@ -252,7 +252,7 @@ export default function M2Nav() {
         <CheckButton
           className="lg:hidden col-start-3 col-span-1 font-visual justify-end"
           size="lg"
-          label={muted ? "sound off" : "sound on"}
+          label={muted ? "sound" : "sound"}
           active={!muted}
           onClick={toggleMute}
         />

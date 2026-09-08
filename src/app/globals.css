@@ -276,6 +276,36 @@
   .borderBtn {
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
   }
+
+  /* Notched ("pixel") corners via a mask-border SVG. The SVG is opaque
+     everywhere except a stair-stepped cut at each corner; `fill` keeps the
+     centre painted so only the corners are clipped. `--pixel-size` (set by
+     usePixelCorners in proportion to the element) is the rendered width of the
+     18-unit corner slice. */
+  .pixelCorners {
+    -webkit-mask-box-image: url("/pixel_xs.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_xs.svg") 18 fill / var(--pixel-size, 8px) stretch;
+  }
+
+  .pixelCornersTop {
+    -webkit-mask-box-image: url("/pixel_top.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
+  }
+
+  .pixelCornersBottom {
+    -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-size, 8px);
+    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px)
+      stretch;
+  }
+
+  .pixelCornersBorder {
+    border: 1px solid transparent;
+    border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-size, 8px) / 0
+      stretch;
+  }
 }
 
 html.black-on-green {
