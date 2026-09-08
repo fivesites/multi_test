@@ -277,30 +277,10 @@
     @apply font-visual  text-5xl font-normal tracking-normal  lg:text-4xl leading-snug;
   }
 
-  .pixelCorners {
-    -webkit-mask-box-image: url("/pixel_xs.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_xs.svg") 18 fill / var(--pixel-size, 8px) stretch;
-  }
-
-  .pixelCornersTop {
-    -webkit-mask-box-image: url("/pixel_top.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
-  }
-
-  .pixelCornersBottom {
-    -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px)
-      stretch;
-  }
-
-  .pixelCornersBorder {
-    border: 1px solid transparent;
-    border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-size, 8px) / 0
-      stretch;
-  }
+  /* The `.pixelCorners*` classes used to notch corners with a mask-border SVG.
+     The SVGs are gone and the site is square-cornered anyway (--radius: 0), so
+     the rules are removed. The class names are left in the markup as harmless
+     no-ops rather than sweeping every file. */
 }
 
 html.cursor-none,
