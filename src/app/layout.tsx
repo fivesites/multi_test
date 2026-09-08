@@ -9,8 +9,6 @@ import { ReelProvider } from "@/context/ReelContext";
 import { SoundProvider } from "@/context/SoundContext";
 import { CursorProvider } from "@/context/CursorContext";
 import { ThemeProvider } from "@/context/ThemeContext";
-import MultiNav from "@/app/components/MultiNav";
-import MultiVertNav from "@/app/components/MultiVertNav";
 import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
 import CustomCursor from "@/app/components/CustomCursor";
