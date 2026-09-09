@@ -53,16 +53,37 @@ export default function FeaturedCard({
       {...reveal}
       href={`/projects/${project.slug}`}
       className={cn(
-        "col-span-1 grid grid-cols-3   group relative lg:flex lg:flex-row lg:items-stretch gap-3 lg:gap-3 w-full mb-3 lg:mb-6",
+        "col-span-1 group relative w-full mb-3 lg:mb-6",
+        captionBelow
+          ? "flex flex-col gap-3 lg:gap-6"
+          : "grid grid-cols-3 lg:flex lg:flex-row lg:items-stretch gap-3 lg:gap-3",
         className,
       )}
     >
+      <div
+        className={cn(
+          "relative w-full pl-3",
+          !captionBelow && "col-span-3 lg:flex-1 lg:min-w-0",
+        )}
+      >
+        <PixelFrame
+          src={project.coverUrl ?? project.url}
+          alt={project.alt}
+          sizes={
+            captionBelow
+              ? "(max-width: 1024px) 100vw, 25vw"
+              : "(max-width: 1024px) 100vw, 33vw"
+          }
+          className="w-full aspect-square "
+        />
+      </div>
+
       {!captionBelow && (
         /* Desktop: caption column to the left of the image — client at the top,
            the project's categories listed at the bottom, level with the image
            edge. None are links; the whole card already is, and each CheckButton
            flips its fill on card hover via `group`. */
-        <div className="hidden lg:flex lg:flex-col lg:w-1/3 justify-between lg:shrink-0 gap-2">
+        <div className="hidden lg:flex lg:flex-col lg:w-1/2 justify-between lg:shrink-0 gap-2">
           {project.client && (
             <CheckButton
               size="lg"
@@ -73,16 +94,6 @@ export default function FeaturedCard({
           )}
         </div>
       )}
-
-      <div className="relative col-span-3 w-full lg:flex-1 lg:min-w-0">
-        <PixelFrame
-          src={project.coverUrl ?? project.url}
-          alt={project.alt}
-          sizes="(max-width: 1024px) 100vw, 33vw"
-          className="w-full aspect-square "
-        />
-      </div>
-
       {project.client && !captionBelow && (
         /* Mobile: client name as a checkbox marker below the card. */
         <div className="lg:hidden col-span-3">
@@ -96,15 +107,14 @@ export default function FeaturedCard({
       )}
 
       {captionBelow && (
-        <div className="col-span-3 w-full flex flex-col gap-1 lg:gap-2">
-          {project.client && (
-            <span className="pText text-primary px-6 lowercase">
-              {project.client}
-            </span>
-          )}
-          <h4 className="h4BtnText text-primary px-6 lowercase hidden ">
-            {project.title}
-          </h4>
+        /* The caption sits under the image: client above, title below. */
+        <div className="w-full flex flex-col gap-1 lg:gap-2">
+          <CheckButton
+            size="lg"
+            label={project.client}
+            active
+            className="h4BtnText"
+          />
         </div>
       )}
     </MotionLink>

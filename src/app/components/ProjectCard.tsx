@@ -56,7 +56,7 @@ export default function ProjectCard({
       {showCaption && item.client && (
         <div
           ref={captionRef}
-          className="flex flex-col gap-1 lg:gap-2 w-full py-6 px-3  text-primary   "
+          className="flex flex-col gap-1 lg:gap-2 w-full py-6 px-0  text-primary   "
         >
           <CheckButton label={item.client} active size="label" className="" />
           <span className="h4BtnText text-primary lowercase hidden ">

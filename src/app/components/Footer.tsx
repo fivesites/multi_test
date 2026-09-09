@@ -1,10 +1,12 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+
 import { usePixelCorners } from "@/app/hooks/usePixelCorners";
+import Link from "next/link";
 
 const NAV_LINKS = [
+  { href: "/", label: "Home" },
   { href: "/projects", label: "Projects" },
   { href: "/about", label: "About" },
   { href: "/connect", label: "Connect" },
@@ -36,7 +38,7 @@ export default function Footer() {
           regardless of how many links they hold. Mobile stacks them in
           column two. */}
         <div className="grid grid-cols-3 lg:grid-cols-12 gap-y-8 items-baseline ">
-          <nav className="col-start-2 col-span-1 lg:col-start-4 lg:col-span-2 flex flex-col items-start lg:px-0 mb-12 lg:mb-0  ">
+          <nav className="col-start-1 px-6 col-span-1 lg:col-start-1 lg:col-span-2 flex flex-col items-start lg:px-3 mb-12 lg:mb-0  ">
             {NAV_LINKS.map((link) => (
               <Button
                 key={link.href}
@@ -50,7 +52,7 @@ export default function Footer() {
             ))}
           </nav>
 
-          <div className="col-start-3 lg:col-start-8 flex flex-col items-start gap-y-0">
+          <div className="col-start-3 lg:col-start-4 flex flex-col items-start gap-y-0">
             {SOCIAL_LINKS.map((link) => (
               <Button
                 key={link.label}
@@ -63,17 +65,67 @@ export default function Footer() {
               </Button>
             ))}
           </div>
+          <div className="col-start-1 lg:col-start-7 flex flex-col items-start gap-y-12 px-6 lg:px-0">
+            <span className="flex flex-col items-start gap-y-0">
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+              >
+                Adam Odelfelt
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+              >
+                +46704952184
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+                asChild
+              >
+                <Link href="/">adam@multi2.co</Link>
+              </Button>
+            </span>
+            <span className="flex flex-col items-start gap-y-0">
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+              >
+                Daniel von Malmborg
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+              >
+                +46704952184
+              </Button>
+              <Button
+                size="sm"
+                variant="link"
+                className="px-0 border-transparent h3Text"
+                asChild
+              >
+                <Link href="/">daniel@multi2.co</Link>
+              </Button>
+            </span>
+          </div>
+          <h4 className="col-start-10 col-span-4 hidden lg:flex text-sm font-visual tracking-wide lowercase  ">
+            © 2026 Multisquared All rights reserved
+          </h4>
         </div>
 
         {/* Sits flush against the bottom edge of the footer. leading-none trims
-          the wordmark's line box so its glyphs, not the line box, drive the
-          row; items-baseline then locks the copyright's baseline to the
-          wordmark's rather than just bottom-aligning the two boxes. */}
-        <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:pl-6 lg:pr-12 pb-0">
-          <h1 className="ml-0 lg:ml-0 h1Text leading-none mb-0">multi2.co</h1>
-          <h4 className="hidden lg:block text-sm font-visual tracking-wide lowercase">
-            Copyright © 2026
-          </h4>
+          the wordmark's line box so its glyphs drive the row. */}
+        <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:pl-3 lg:pr-12 pb-0">
+          <h1 className="ml-0 lg:ml-0 font-multi-dots text-7xl lg:text-[8rem] leading-none lowercase mb-0">
+            multi2.co
+          </h1>
         </div>
       </div>
     </div>

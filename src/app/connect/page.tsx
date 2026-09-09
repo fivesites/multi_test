@@ -1,18 +1,18 @@
 "use client";
 
-import { usePixelCorners } from "@/app/hooks/usePixelCorners";
+import BottomNav from "@/app/components/BottomNav";
+import ConnectSection from "@/app/components/ConnectSection";
 
 export default function ConnectPage() {
-  const ref = usePixelCorners<HTMLButtonElement>();
-
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center">
-      <button
-        ref={ref}
-        className="pixelCorners bg-primary h3Text text-primary-foreground lg:text-xl w-full h-16 max-w-4xl"
-      >
-        connect
-      </button>
+    <div className="flex min-h-screen flex-col pt-28 lg:pt-36">
+      <div className="flex-1">
+        <ConnectSection />
+      </div>
+
+      <div className="w-full mb-12">
+        <BottomNav />
+      </div>
     </div>
   );
 }

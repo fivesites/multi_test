@@ -66,9 +66,11 @@ const THEME_STORAGE_KEY = "multi2-theme";
 
 /** Dark mode rides alongside the palette: `multi2_dark` is added next to the
  *  `multi2_*` class, and globals.css has a two-class block per palette that
- *  inverts it. */
+ *  inverts it. Dark is the site default for now — the class is on unless the
+ *  visitor has explicitly switched it off (stored value `"0"`). */
 const DARK_STORAGE_KEY = "multi2-dark";
 const DARK_CLASS = "multi2_dark";
+const DARK_DEFAULT = true;
 
 type ThemeContextType = {
   theme: ThemeId;
@@ -85,7 +87,7 @@ const ThemeContext = createContext<ThemeContextType | null>(null);
  *  on `<html>`. */
 export function ThemeProvider({ children }: { children: ReactNode }) {
   const [theme, setTheme] = useState<ThemeId>(DEFAULT_THEME);
-  const [dark, setDark] = useState(false);
+  const [dark, setDark] = useState(DARK_DEFAULT);
 
   // Source of truth is the saved choice; the <html> class is just how it's
   // applied. Fall back to whatever class is already on <html> (the pre-paint
@@ -109,9 +111,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     try {
       storedDark = localStorage.getItem(DARK_STORAGE_KEY);
     } catch {}
-    const isDark =
-      storedDark === "1" ||
-      document.documentElement.classList.contains(DARK_CLASS);
+    // Default-on: dark unless the visitor explicitly turned it off.
+    const isDark = storedDark === "0" ? false : DARK_DEFAULT;
     document.documentElement.classList.toggle(DARK_CLASS, isDark);
     setDark(isDark);
   }, []);

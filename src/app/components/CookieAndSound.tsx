@@ -132,11 +132,11 @@ export default function CookieAndSound({
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.25 }}
             className={cn(
-              "fixed z-90 bottom-6 right-6 lg:right-6 lg:left-auto   w-auto lg:w-min  px-6 py-6 lg:px-6 flex flex-wrap h-auto    gap-3 items-baseline justify-end  lg:items-baseline     ",
+              "fixed z-90 bottom-3 right-3 left-3  lg:right-6 lg:left-auto   w-auto lg:w-min  px-6 py-6 lg:px-6 flex flex-col lg:flex-wrap h-auto    gap-3 items-baseline justify-end  lg:items-baseline     ",
 
               step === "volume"
-                ? "justify-between border bg-primary border-primary-1 w-xs lg:w-xs   "
-                : "justify-end lg:justify-end border  bg-primary w-xs lg:w-sm border-primary   ",
+                ? "justify-between border bg-primary border-primary-1 w-auto lg:w-xs   "
+                : "justify-end lg:justify-end border  bg-primary w-auto lg:w-sm border-primary   ",
               className,
             )}
           >
@@ -145,45 +145,44 @@ export default function CookieAndSound({
                 <p className={copy}>
                   this site uses cookies to improve your experience.
                 </p>
-                <div className="flex flex-row-reverse  gap-3 justify-start  ">
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="  font-normal shadow-md"
-                    onClick={() => acceptCookies()}
-                  >
-                    accept
-                  </Button>
+                <div className="grid grid-cols-3    gap-3 justify-start w-full  ">
                   <Button
                     variant="link"
-                    size="sm"
-                    className=" border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
+                    className=" border-none underline underline-offset-6 px-0 w-full col-span-1 text-primary-foreground font-normal"
                     asChild
                   >
                     <Link href="/https://gdpr-info.eu/" target="_blank">
                       learn more
                     </Link>
                   </Button>
+                  <Button
+                    variant="secondary"
+                    className="  font-normal w-full col-span-2 shadow-md"
+                    onClick={() => acceptCookies()}
+                  >
+                    accept
+                  </Button>
                 </div>
               </>
             ) : step === "sound" ? (
               <>
                 <p className={copy}>Enable sound?</p>
-                <div className="flex flex-row-reverse   gap-3">
+                <div className="grid grid-cols-3    gap-3 justify-start w-full   ">
+                  <Button
+                    variant="link"
+                    size="sm"
+                    className=" col-span-1 border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
+                    onClick={() => answerSound(false)}
+                  >
+                    No
+                  </Button>
                   <Button
                     variant="secondary"
+                    className="col-span-2"
                     size="sm"
                     onClick={() => answerSound(true)}
                   >
                     Yes
-                  </Button>
-                  <Button
-                    variant="link"
-                    size="sm"
-                    className=" border-none underline underline-offset-6 px-0 text-primary-foreground font-normal"
-                    onClick={() => answerSound(false)}
-                  >
-                    No
                   </Button>
                 </div>
               </>

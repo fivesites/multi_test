@@ -2,12 +2,12 @@
 
 import { useState, useEffect, Fragment } from "react";
 import Image from "next/image";
-import { motion } from "motion/react";
+import { motion, AnimatePresence } from "motion/react";
 import LandningBlock from "@/app/components/LandningBlock";
 import CheckButton from "@/app/components/CheckButton";
 import HeroCarousel from "@/app/components/HeroCarousel";
 import VideoPlayer from "@/app/components/VideoPlayer";
-import ProjectsNav from "@/app/components/ProjectsNav";
+import BottomNav from "@/app/components/BottomNav";
 import Footer from "@/app/components/Footer";
 
 export type ProjectMedia =
@@ -78,13 +78,30 @@ function ProjectPageInner({
   const revealDelayMs = NAVIGATING_MS + wBackDelay + (4 + 2) * TYPING_MS + 100;
 
   const [revealed, setRevealed] = useState(false);
-  // Which carousel slide is showing — drives the caption below the hero.
+  // Which carousel slide is showing — drives the caption below the hero and is
+  // shared with the full-screen lightbox so the two carousels stay in step.
   const [activeSlide, setActiveSlide] = useState(0);
+  const [lightbox, setLightbox] = useState(false);
 
   useEffect(() => {
     const t = setTimeout(() => setRevealed(true), revealDelayMs);
     return () => clearTimeout(t);
   }, [revealDelayMs]);
+
+  // Lock the page and close on Escape while the lightbox is up.
+  useEffect(() => {
+    if (!lightbox) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [lightbox]);
 
   // The hero is a single still (or the first video): the cover image, falling
   // back to the first media item.
@@ -225,6 +242,7 @@ function ProjectPageInner({
               media={slides}
               selected={activeSlide}
               onSelect={setActiveSlide}
+              onOpen={() => setLightbox(true)}
             />
           </div>
 
@@ -240,10 +258,39 @@ function ProjectPageInner({
       )}
 
       <div className="w-full mb-6 mt-24">
-        <ProjectsNav />
+        <BottomNav />
       </div>
 
       <Footer />
+
+      {/* Full-screen lightbox — the same carousel, shared slide index. */}
+      <AnimatePresence>
+        {lightbox && slides.length > 0 && (
+          <motion.div
+            className="fixed inset-0 z-[100] flex flex-col bg-background p-3 lg:p-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <div className="flex justify-end pb-3">
+              <CheckButton
+                onClick={() => setLightbox(false)}
+                label="close"
+                size="lg"
+                marks={{ active: "×", inactive: "×" }}
+              />
+            </div>
+            <div className="relative min-h-0 w-full flex-1">
+              <HeroCarousel
+                media={slides}
+                selected={activeSlide}
+                onSelect={setActiveSlide}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

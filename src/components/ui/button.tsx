@@ -10,14 +10,13 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default:
-          " pixelCorners bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "  bg-primary text-primary-foreground hover:bg-primary/90",
         destructive:
           "bg-destructive text-destructive-foreground hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:bg-destructive/60 dark:focus-visible:ring-destructive/40 pixelCorners",
         outline:
-          "pixelCorners pixelCornersBorder bg-transparent text-primary hover:bg-primary hover:text-primary-foreground",
+          " bg-transparent text-primary hover:bg-primary hover:text-primary-foreground",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 pixelCorners",
+          "bg-secondary text-secondary-foreground hover:bg-secondary/80 ",
         ghost:
           "border-transparent text-primary bg-transparent hover:bg-transparent  hover:text-primary hover:border-primary",
         link: " text-primary  justify-start border-transparent hover:border-b-primary  cursor-pointer ",

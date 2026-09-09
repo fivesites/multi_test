@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { useLenis } from "lenis/react";
 import Link from "next/link";
 import { useUI } from "@/context/UIContext";
 import { useWork } from "@/context/WorkContext";
@@ -13,13 +12,12 @@ import { getFilterDoneMs, getPostLoadFilterDoneMs } from "@/lib/navTiming";
 import { getCategoryLabel } from "@/lib/categories";
 import LandningBlock from "@/app/components/LandningBlock";
 import TypedHeading from "@/app/components/TypedHeading";
+import BottomNav from "@/app/components/BottomNav";
 import Footer from "@/app/components/Footer";
 import { Reveal } from "@/app/components/Reveal";
-import { Button } from "@/components/ui/button";
 
 export default function AllProjectsPageClient() {
   const { items, categories } = useWork();
-  const lenis = useLenis();
   const {
     showGrid,
     showList,
@@ -112,8 +110,8 @@ export default function AllProjectsPageClient() {
     >
       <LandningBlock
         label="projects"
-        className="h-[25dvh]   content-center  w-full bg-transparent"
-        labelClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-3"
+        className="h-[66.6vh]    content-center lg:grid-rows-2 bg-transparent"
+        labelClassName="col-span-3 lg:col-start-1 lg:col-span-12 lg:row-start-1 lg:self-end w-full"
       >
         <TypedHeading
           ready={!navLoading}
@@ -126,10 +124,6 @@ export default function AllProjectsPageClient() {
       {/* Desktop: category sidebar left, projects right. */}
       <div className=" mt-12 mb-6 lg:mb-3 grid grid-cols-3 lg:grid-cols-12 ">
         <CategoryFilters className="" />
-
-        <span className="hidden lg:block col-span-12 p-3">
-          <div className="border-b border-primary w-full"></div>
-        </span>
 
         {listVisible && showList && (
           <div className="col-start-1 col-span-8 hidden w-full lg:flex flex-col  justify-start items-start px-3  gap-6 mt-3 mb-12 ">
@@ -230,30 +224,8 @@ export default function AllProjectsPageClient() {
           </div>
         )}
       </div>
-      <Reveal className="grid grid-cols-3 lg:grid-cols-12 mb-12">
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-1 lg:col-start-4 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min   "
-          onClick={() =>
-            lenis
-              ? lenis.scrollTo(0)
-              : window.scrollTo({ top: 0, behavior: "smooth" })
-          }
-        >
-          top <span className="font-normal text-xl ">↑</span>
-        </Button>
-
-        <Button
-          variant="link"
-          size="lgLink"
-          className=" col-start-3 lg:col-start-8 text-3xl flex items-center h-auto py-0   gap-x-1.5  font-thin   justify-start w-min "
-          asChild
-        >
-          <Link href="/projects">
-            next <span className="font-normal text-xl ">→</span>
-          </Link>
-        </Button>
+      <Reveal className="w-full mb-12">
+        <BottomNav />
       </Reveal>
 
       <Footer />

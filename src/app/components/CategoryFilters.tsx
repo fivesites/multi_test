@@ -100,7 +100,12 @@ export default function CategoryFilters({
     setActiveFilter(cat);
     setOpenedCard(null);
     setSearch("");
-    setShowSettings(false);
+    // Settings stays open — it should be there whenever the filter panel is.
+    // Mobile: the panel is a pull-out drawer over the results — collapse it on
+    // pick so the filtered list is visible. Desktop keeps its static sidebar.
+    if (!window.matchMedia("(min-width: 1024px)").matches) {
+      setShowFilters(false);
+    }
   }
 
   return (

@@ -17,7 +17,7 @@ type Props = {
   /** Replaces the label entirely — a swatch, a mark, a nested control. */
   children?: ReactNode;
   hoverFill?: boolean;
-  size?: "sm" | "md" | "lg" | "label";
+  size?: "sm" | "md" | "lg" | "label" | "xl";
   /** Which side of the box the label sits on. Omitted (or "right") keeps the
    *  default — box first, label after it. "left" puts the label first and
    *  pushes the box out to the far end of the row. */
@@ -43,6 +43,7 @@ export const SIZE_BOX = {
   md: "px-6 lg:px-3 h-12 lg:h-12 items-center justify-start",
   lg: "px-6 lg:px-3 h-16 lg:h-12 items-center justify-start",
   label: "h-3 px-0 justify-start items-center",
+  xl: "px-6 lg:px-3 h-16 lg:h-12 items-center justify-start",
 } as const;
 
 /** Type scale. `sm` is a compact control — a filter chip, a dense row — so it
@@ -50,15 +51,17 @@ export const SIZE_BOX = {
 export const SIZE_TEXT = {
   sm: "text-sm leading-[1]",
   md: "text-base lg:text-lg lowercase",
-  lg: "text-base lg:text-lg lowercase",
-  label: "text-base lg:text-lg lowercase",
+  lg: "font-normal text-base lg:text-base lowercase",
+  label: "font-normal text-base lg:text-base lowercase",
+  xl: "font-normal lg:font-thin text-base lg:text-3xl lowercase",
 } as const;
 
 export const SIZE_GAP = {
   sm: "gap-x-2",
   md: "gap-x-3 lg:gap-x-3",
   lg: "gap-x-3 lg:gap-x-1.5",
-  label: "gap-x-3 lg:gap-x-3",
+  label: "gap-x-3 lg:gap-x-1.5",
+  xl: "gap-x-3 lg:gap-x-1.5",
 } as const;
 
 /** The mark is a glyph now (■ / □ — U+25A0 / U+25A1), so its footprint is a
@@ -69,7 +72,8 @@ export const SIZE_CHECK = {
   sm: "text-[2.2em]",
   md: "text-[1em]",
   lg: "text-[0.7em]",
-  label: "text-[1em]",
+  label: "text-[0.7em]",
+  xl: "text-[0.7em]",
 } as const;
 
 /** The checkbox marks, straight from the font: `filledbox` (U+25A0, &#9632;)
@@ -77,7 +81,7 @@ export const SIZE_CHECK = {
 export const MARK_ACTIVE = "■";
 export const MARK_INACTIVE = "□";
 
-export type CheckButtonSize = "sm" | "md" | "lg" | "label";
+export type CheckButtonSize = "sm" | "md" | "lg" | "label" | "xl";
 
 /** The square is the checkbox: primary when active, muted when not. The whole
  *  control is one hover target — `group` on the outer element means the square
@@ -104,7 +108,7 @@ export default function CheckButton({
   const content = (
     <div
       className={cn(
-        "flex font-visual font-normal tracking-wide bg-transparent    ",
+        "flex font-visual  tracking-wide bg-transparent    ",
         SIZE_TEXT[size],
         hoverFill ? "hover:bg-primary hover:text-primary" : "",
         className,

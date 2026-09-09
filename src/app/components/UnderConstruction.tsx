@@ -44,7 +44,6 @@ export default function UnderConstruction() {
       />
       <ColorButton
         label={current.label}
-        swatch="text-primary"
         active
         onClick={cycleTheme}
         className="absolute top-6 right-6 w-auto h-auto px-0"

@@ -1,13 +1,10 @@
 "use client";
 
 import AboutSectionText from "@/app/components/AboutSectionText";
-import { useCopyEntry, useCopyBody } from "@/context/CopyContext";
 import LandningBlock from "@/app/components/LandningBlock";
+import BottomNav from "@/app/components/BottomNav";
 
 export default function AboutPage() {
-  const aboutEntry = useCopyEntry("about-intro");
-  const aboutBody = useCopyBody("about-intro");
-
   return (
     <div
       id="about"
@@ -18,12 +15,16 @@ export default function AboutPage() {
         className="h-[25dvh]   content-center  w-full bg-transparent"
         labelClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-3"
       >
+        {/* The full story — reads the `about-long` Copy entry. */}
         <AboutSectionText
-          plainText={aboutBody ?? ""}
-          text={aboutEntry?.plainText ?? ""}
+          copyKey="about-long"
           className="w-full justify-center lg:content-center pb-6 lg:pb-12"
         />
       </LandningBlock>
+
+      <div className="w-full mt-24 mb-12">
+        <BottomNav />
+      </div>
     </div>
   );
 }

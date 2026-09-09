@@ -11,7 +11,6 @@ import { CursorProvider } from "@/context/CursorContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import M2Nav from "@/app/components/M2Nav";
 import CookieAndSound from "@/app/components/CookieAndSound";
-import LoaderGrid from "@/app/components/LoaderGrid";
 import SmoothScroll from "@/app/components/SmoothScroll";
 import UnderConstruction from "./components/UnderConstruction";
 
@@ -47,6 +46,12 @@ const visualFont = localFont({
   display: "swap",
 });
 
+const multiDotsFont = localFont({
+  src: "../../public/fonts/multi-dots-4-Regular.woff2",
+  variable: "--font-multi-dots",
+  display: "swap",
+});
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -57,14 +62,18 @@ export default function RootLayout({
       <head>
         {/* Re-applies the saved colour theme before first paint, so a chosen
             palette survives reloads without a red flash. Bare :root is already
-            the red palette, so "red" / no value needs no class. */}
+            the red palette, so "red" / no value needs no class. Dark mode is
+            the site default for now — on unless the visitor has explicitly
+            switched it off ('multi2-dark' === '0'). */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('multi2-theme');var m={red:'multi2_red',blue:'multi2_blue',green:'multi2_green',pink:'multi2_pink',teal:'multi2_teal',bw:'multi2_bw'};if(t&&m[t])document.documentElement.classList.add(m[t]);if(localStorage.getItem('multi2-dark')==='1')document.documentElement.classList.add('multi2_dark');}catch(e){}})();`,
+            __html: `(function(){try{var t=localStorage.getItem('multi2-theme');var m={red:'multi2_red',blue:'multi2_blue',green:'multi2_green',pink:'multi2_pink',teal:'multi2_teal',bw:'multi2_bw'};if(t&&m[t])document.documentElement.classList.add(m[t]);if(localStorage.getItem('multi2-dark')!=='0')document.documentElement.classList.add('multi2_dark');}catch(e){}})();`,
           }}
         />
       </head>
-      <body className={`${visualFont.variable}  antialiased`}>
+      <body
+        className={`${visualFont.variable} ${multiDotsFont.variable} antialiased`}
+      >
         <WorkContextServer>
           <CopyContextServer>
             <UIProvider>
@@ -77,7 +86,6 @@ export default function RootLayout({
                   <CursorProvider>
                     <ThemeProvider>
                       <M2Nav />
-                      <LoaderGrid />
                       <CookieAndSound />
                       <UnderConstruction />
                       <SmoothScroll>{children}</SmoothScroll>

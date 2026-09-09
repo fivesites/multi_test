@@ -51,6 +51,10 @@
   --shadow-blur: 3px;
   --shadow-spread: 0px;
   --shadow-opacity: 0.1;
+  /* Notched ("pixel") corner size, matched to the M2Nav field square: the ■
+     glyph draws at 0.7 of its font-size and the cell is `text-[0.7em]` of a
+     1rem context, so 0.7 × 0.7rem = 0.49rem (~7.84px). */
+  --pixel-corner: 0.49rem;
   --shadow-color: oklch(0.129 0.042 264.695);
   --shadow-2xs: 0 1px 3px 0px hsl(228.82 85.1316% 4.9967% / 0.05);
   --shadow-xs: 0 1px 3px 0px hsl(228.82 85.1316% 4.9967% / 0.05);
@@ -175,6 +179,7 @@
   --font-serif: var(--font-serif);
   /* set on <html> by next/font/local in layout.tsx */
   --font-visual: var(--font-visual);
+  --font-multi-dots: var(--font-multi-dots);
   --font-diatype: var(--font-diatype);
   --font-karl: var(--font-karl);
 
@@ -242,7 +247,7 @@
   }
 
   .pText {
-    @apply text-xl font-thin  lg:text-lg leading-tight tracking-normal   lg:leading-tight  font-visual lg:font-normal;
+    @apply text-xl font-thin  lg:text-xl leading-tight lg:tracking-normal   lg:leading-tight  font-visual lg:font-normal;
   }
 
   .h1Text {
@@ -279,31 +284,30 @@
 
   /* Notched ("pixel") corners via a mask-border SVG. The SVG is opaque
      everywhere except a stair-stepped cut at each corner; `fill` keeps the
-     centre painted so only the corners are clipped. `--pixel-size` (set by
-     usePixelCorners in proportion to the element) is the rendered width of the
-     18-unit corner slice. */
+     centre painted so only the corners are clipped. The rendered corner is a
+     constant `--pixel-corner` (the M2Nav field-square size) so every notch on
+     the page reads at the same scale. */
   .pixelCorners {
-    -webkit-mask-box-image: url("/pixel_xs.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_xs.svg") 18 fill / var(--pixel-size, 8px) stretch;
+    -webkit-mask-box-image: url("/pixel_xxs.svg") 9 fill stretch;
+    -webkit-mask-box-image-width: var(--pixel-corner);
+    mask-border: url("/pixel_xxs.svg") 9 fill / var(--pixel-corner) stretch;
   }
 
   .pixelCornersTop {
     -webkit-mask-box-image: url("/pixel_top.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-size, 8px) stretch;
+    -webkit-mask-box-image-width: var(--pixel-corner);
+    mask-border: url("/pixel_top.svg") 18 fill / var(--pixel-corner) stretch;
   }
 
   .pixelCornersBottom {
     -webkit-mask-box-image: url("/pixel_bottom.svg") 18 fill stretch;
-    -webkit-mask-box-image-width: var(--pixel-size, 8px);
-    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-size, 8px)
-      stretch;
+    -webkit-mask-box-image-width: var(--pixel-corner);
+    mask-border: url("/pixel_bottom.svg") 18 fill / var(--pixel-corner) stretch;
   }
 
   .pixelCornersBorder {
     border: 1px solid transparent;
-    border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-size, 8px) / 0
+    border-image: url("/pixel_border_xs.svg") 6 / var(--pixel-corner) / 0
       stretch;
   }
 }

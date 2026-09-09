@@ -9,7 +9,8 @@ export const copy = defineType({
       name: "key",
       title: "Key",
       type: "slug",
-      description: "Unique identifier used in code (e.g. hero-headline, about-intro)",
+      description:
+        "Unique identifier used in code. Known keys: about-short (home 'our story' block), about-long (the /about page).",
       validation: (r) => r.required(),
     }),
     defineField({
