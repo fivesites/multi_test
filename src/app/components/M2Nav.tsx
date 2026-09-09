@@ -115,7 +115,7 @@ function NavField({ active, rotate }: { active: boolean; rotate: number }) {
           custom={rotate}
           variants={ROW_STAGGER}
           className={cn(
-            "absolute inset-x-0 grid grid-cols-3 px-3 lg:p-3  gap-x-3 lg:gap-x-3",
+            "absolute inset-x-0 grid grid-cols-3 px-6 lg:p-3  gap-x-3 lg:gap-x-3",
             pos,
             projects ? "lg:grid-cols-6" : "lg:grid-cols-4",
           )}
