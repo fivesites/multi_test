@@ -190,7 +190,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               >
                 <TypedHeading
                   text="experience our work"
-                  className=" h2Text flex px-6 mb-6 lg:mb-0 font-thin text-primary"
+                  className="hidden h2Text lg:flex px-6 mb-6 lg:mb-0 font-thin text-primary"
                 />
               </LandningBlock>
             </div>

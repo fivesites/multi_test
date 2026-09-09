@@ -110,13 +110,13 @@ export default function AllProjectsPageClient() {
     >
       <LandningBlock
         label="projects"
-        className="h-[66.6vh]    content-center lg:grid-rows-2 bg-transparent"
+        className="h-[33.3vh]    content-center lg:grid-rows-2 bg-transparent"
         labelClassName="col-span-3 lg:col-start-1 lg:col-span-12 lg:row-start-1 lg:self-end w-full"
       >
         <TypedHeading
           ready={!navLoading}
           text="welcome to the archive"
-          className="text-left  h2Text px-6 font-thin text-primary mb-3"
+          className="text-left hidden lg:flex  h2Text px-6 font-thin text-primary mb-3"
         />
       </LandningBlock>
       <FilterOverlay />

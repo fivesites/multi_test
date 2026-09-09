@@ -122,7 +122,7 @@ export default function CategoryFilters({
         // left-3 always insets the tab from the screen edge; open, right-3
         // pairs with it so the panel spans between the two insets rather than
         // a full 100vw that would overflow past them.
-        "fixed bottom-3 left-3 z-30 pixelCorners",
+        "fixed bottom-3 right-3 z-30 ",
         "transition-[width] duration-300 ease-out",
         showFilters
           ? "right-3 top-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"

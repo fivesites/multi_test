@@ -24,6 +24,10 @@ const NAV_ITEMS = [
 /** Routes that never call notifyContentDone (e.g. /studio) still have to settle. */
 const READY_FALLBACK_MS = 2500;
 
+/** How long the square field takes to stagger itself in on load. The page holds
+ *  its own reveal until this is up, so the field always comes in first. */
+const NAVFIELD_REVEAL_MS = 1500;
+
 /** The nav's checkboxes read as dots — filled ● when active, hollow ○ when not
  *  — rather than the default square. The wordmark button keeps its square. */
 const CIRCLE_MARKS = { active: "●", inactive: "○" } as const;
@@ -217,16 +221,13 @@ function NavBar({
       </motion.div>
 
       {/* Mobile: the sound toggle in the spare third column, pushed right. */}
-      <motion.div
-        variants={BAR_ITEM}
-        className="col-start-2 flex justify-start lg:hidden"
-      ></motion.div>
+
       <motion.div
         variants={BAR_ITEM}
         className="col-start-3 flex justify-start lg:hidden"
       >
         <CheckButton
-          className="font-visual justify-end"
+          className="font-visual justify-start"
           size="lg"
           label="sound"
           marks={CIRCLE_MARKS}
@@ -265,7 +266,7 @@ function NavBar({
       {/* Desktop col 4: a plain menu/close toggle for the drawer. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:block lg:col-start-7 lg:col-span-3"
+        className="hidden lg:block lg:col-start-10 lg:col-span-3"
       >
         <CheckButton
           className="font-visual w-full"
@@ -468,11 +469,12 @@ export default function M2Nav() {
     setFieldTurn((n) => n + 1);
   }, [scrolling]);
 
-  // The field also shows itself once on load, then clears until the reader
-  // scrolls — so `active` is "intro window OR mid-scroll".
-  const [intro, setIntro] = useState(true);
+  // The field stagger-reveals itself once on first load. `fieldShown` is that
+  // reveal window; while it's up the page keeps its own content held back, so
+  // the field always finishes before the page starts coming in top-to-bottom.
+  const [fieldShown, setFieldShown] = useState(true);
   useEffect(() => {
-    const t = setTimeout(() => setIntro(false), 2000);
+    const t = setTimeout(() => setFieldShown(false), NAVFIELD_REVEAL_MS);
     return () => clearTimeout(t);
   }, []);
 
@@ -485,10 +487,11 @@ export default function M2Nav() {
   // reports the menu's.
   const menuLoading = loading && !scrolled;
 
-  // Published so pages can line their own intro typing up behind the bar's.
+  // Published so pages hold their reveal behind the bar AND behind the field's
+  // stagger-in — the field goes first, then the page.
   useEffect(() => {
-    setNavLoading(menuLoading);
-  }, [menuLoading, setNavLoading]);
+    setNavLoading(menuLoading || fieldShown);
+  }, [menuLoading, fieldShown, setNavLoading]);
 
   const menuLabel = menuLoading ? "loading" : open ? "close" : "multisquared";
 
@@ -506,10 +509,13 @@ export default function M2Nav() {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-90 h-screen w-full">
-      {/* The square field sits under the control row — shown on load, then only
-          while scrolling (a quarter turn further along on each start and stop),
-          faded out at rest. */}
-      <NavField active={scrolling || intro} rotate={fieldTurn * 90} />
+      {/* The square field: stagger-reveals on load, holds while the page is
+          still loading, then fades until the reader scrolls (a quarter turn
+          further along on each scroll start and stop). */}
+      <NavField
+        active={scrolling || fieldShown || menuLoading}
+        rotate={fieldTurn * 90}
+      />
 
       <div className="relative">
         <NavBar

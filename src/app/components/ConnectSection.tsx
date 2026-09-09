@@ -50,7 +50,7 @@ export default function ConnectSection({ className }: { className?: string }) {
           "col-span-3 lg:col-start-1 lg:col-span-12 h-auto w-full pb-6",
           className,
         )}
-        contentClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 lowercase grid grid-cols-3 lg:grid-cols-12 items-baseline gap-y-6 lg:pb-12 px-6 lg:px-0"
+        contentClassName="col-start-1 col-span-3 lg:col-start-1 lg:col-span-12 lowercase grid grid-cols-3 lg:grid-cols-12 items-baseline gap-y-6 lg:pb-12 px-0 lg:px-0"
       >
         <CheckButton
           label="connect with us"
@@ -61,11 +61,11 @@ export default function ConnectSection({ className }: { className?: string }) {
         />
         <TypedHeading
           text={HEADING}
-          className="col-span-3 lg:col-start-4 lg:col-span-9 h2Text font-thin text-primary"
+          className="hidden lg:flex col-span-3 lg:col-start-4 lg:col-span-9 h2Text font-thin px-6 text-primary"
         />
 
         {/* Col 1 — the general links, one column. */}
-        <div className="col-span-3 lg:col-start-1 lg:col-span-3 flex flex-col items-start gap-y-1 lg:pl-3">
+        <div className="col-span-3 lg:col-start-1 lg:col-span-3 flex flex-col items-start gap-y-1 pl-6 lg:pl-3">
           {LINKS.map((link) => (
             <Button
               key={link.label}
