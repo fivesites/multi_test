@@ -21,6 +21,14 @@ import Footer from "./components/Footer";
 /** The standing mobile "sound on/off" toggle in the hero corner — off for now. */
 const SHOW_MOBILE_SOUND = false;
 
+/** The hero's own nav — every route except Home. Fills the 4-col row. */
+const HERO_NAV = [
+  { href: "/projects", label: "projects" },
+  { href: "/about", label: "about" },
+  { href: "/connect", label: "connect" },
+  { href: "/studio", label: "log in" },
+] as const;
+
 function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
   const { items } = useWork();
   const { notifyContentDone, navLoading } = useUI();
@@ -56,23 +64,14 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
     return [...picked, ...filler].slice(0, 4);
   }, [items]);
 
-  // The selected-projects strip: on `lg` the section pins and the row tracks
-  // the page scroll (revealing the fifth "see all projects" card); below `lg`
-  // it's a plain swipeable strip. `scrollRange` is the row's horizontal
-  // overflow — the section is made exactly that much taller so the mapping is
-  // 1:1 and nothing is left pinned once the row bottoms out.
+  // The selected-projects strip pins on every width: the section is `scrollRange`
+  // taller than the viewport, its inner wrapper is `sticky`, and the card row
+  // translates left in step with the page scroll — a 1:1 mapping, so nothing is
+  // left pinned once the row bottoms out. `scrollRange` is the row's own
+  // horizontal overflow, measured from the strip.
   const projectsSectionRef = useRef<HTMLElement>(null);
   const projectsStripRef = useRef<HTMLDivElement>(null);
   const [scrollRange, setScrollRange] = useState(0);
-  const [pinStrip, setPinStrip] = useState(false);
-
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)");
-    const sync = () => setPinStrip(mq.matches);
-    sync();
-    mq.addEventListener("change", sync);
-    return () => mq.removeEventListener("change", sync);
-  }, []);
 
   useEffect(() => {
     const el = projectsStripRef.current;
@@ -90,7 +89,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
     offset: ["start start", "end end"],
   });
   const stripX = useTransform(scrollYProgress, [0, 1], [0, -scrollRange]);
-  const trackScroll = pinStrip && scrollRange > 0;
+  const trackScroll = scrollRange > 0;
 
   return (
     <div className="w-full bg-background  px-0 ">
@@ -126,6 +125,22 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               className="max-w-sm lg:max-w-full px-3  pb-0 text-left h1Text min-w-0 lg:whitespace-nowrap tracking-normal lowercase lg:tracking-tight rotate-90 lg:rotate-0 text-primary"
             />
           </LandningBlock>
+          {/* Hero nav — every route but Home, in a 4-col row pinned to the
+              bottom-left of the showreel block. Static (no reveal). */}
+          <nav className="absolute bottom-0 left-0 z-10 grid w-full grid-cols-4 items-baseline px-3 pb-3">
+            {HERO_NAV.map((link) => (
+              <CheckButton
+                key={link.href}
+                href={link.href}
+                label={link.label}
+                size="lg"
+                active
+                marks={{ active: "●", inactive: "○" }}
+                className="font-visual text-primary px-0"
+              />
+            ))}
+          </nav>
+
           {/* Mobile sound toggle — hidden for now; flip SHOW_MOBILE_SOUND to
               bring it back. */}
           {SHOW_MOBILE_SOUND && consentSettled && (
@@ -150,12 +165,12 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
           </LandningBlock>
         </Reveal>
 
-        {/* Selected projects. On `lg` the section is taller than the viewport
-            and its inner wrapper is `sticky`: as the page scrolls through, the
-            card row slides left in step, bringing the fifth "see all projects"
-            card in without the reader touching the strip. Below `lg` it's a
-            plain swipeable row. Not wrapped in <Reveal> — a settling transform
-            on the ancestor would fight the sticky positioning. */}
+        {/* Selected projects. The section is taller than the viewport and its
+            inner wrapper is `sticky`: as the page scrolls through, the card row
+            slides left in step, bringing the fifth "see all projects" card in
+            without the reader touching the strip. Not wrapped in <Reveal> — a
+            settling transform on the ancestor would fight the sticky
+            positioning. */}
         <section
           ref={projectsSectionRef}
           className="relative bg-background"
@@ -165,7 +180,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               : undefined
           }
         >
-          <div className="lg:sticky lg:top-0 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:overflow-hidden">
+          <div className="sticky top-0 flex h-screen flex-col justify-center overflow-hidden">
             <div className="grid grid-cols-3 bg-background lg:grid-cols-12">
               <LandningBlock
                 label="selected projects"
@@ -180,10 +195,9 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
               </LandningBlock>
             </div>
 
-            {/* Four cards fill the row; the fifth waits past the right edge.
-                Native swipe below `lg`; on `lg` the row is transform-driven so
-                its own overflow is visible (the sticky wrapper does the clip). */}
-            <div className="relative mt-12 lg:mt-3 w-full overflow-x-auto overscroll-x-contain lg:overflow-x-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            {/* The row is transform-driven, so its own overflow stays visible —
+                the sticky wrapper above does the clipping. */}
+            <div className="relative mt-12 lg:mt-3 w-full overflow-visible">
               <motion.div
                 ref={projectsStripRef}
                 style={trackScroll ? { x: stripX } : undefined}

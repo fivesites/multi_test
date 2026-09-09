@@ -219,14 +219,7 @@ function NavBar({
       <motion.div
         variants={BAR_ITEM}
         className="col-start-2 flex justify-start lg:hidden"
-      >
-        <CheckButton
-          className="font-visual "
-          size="lg"
-          marks={CIRCLE_MARKS}
-          active
-        />
-      </motion.div>
+      ></motion.div>
       <motion.div
         variants={BAR_ITEM}
         className="col-start-3 flex justify-start lg:hidden"
@@ -333,11 +326,13 @@ function isActive(pathname: string | null, href: string) {
 function NavVertical({
   onNavigate,
   onCycleTheme,
+  themeLabel,
   dark,
   onToggleDark,
 }: {
   onNavigate: (href: string) => void;
   onCycleTheme: () => void;
+  themeLabel: string;
   dark: boolean;
   onToggleDark: () => void;
 }) {
@@ -352,7 +347,7 @@ function NavVertical({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`p-0 space-y-0 w-full lg:w-full bg-primary pb-3 [&_*]:!text-primary-foreground flex flex-col h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] pr-0 lg:pr-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
-      <nav className="hidden lg:grid w-full grid-cols-12 gap-y-0 grid-rows-2 h-full pt-1/2 gap-x-3 p-0  ">
+      <nav className="hidden lg:grid w-full grid-cols-12 gap-y-0 grid-rows-2 flex-1 min-h-0 gap-x-3 p-0  ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className=" col-span-3 row-span-1  text-primary pb-0 font-visual     w-full"
@@ -370,7 +365,7 @@ function NavVertical({
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className="f  lowercase pb-0"
-            size="md"
+            size="lg"
             key={item.href}
             label={item.label}
             href={item.href}
@@ -382,23 +377,20 @@ function NavVertical({
       </nav>
 
       {/* The palette picker — one click cycles to the next palette, the split
-          disc turning a quarter with it. Matches the top bar's swatch button. */}
+          disc turning a quarter with it. Matches the top bar's swatch button;
+          here in the drawer it carries the palette name too. */}
       <ColorButton
         shape="circle"
         active
+        label={themeLabel}
+        labelSide="right"
         onClick={onCycleTheme}
         className="lg:hidden"
       />
-      <CheckToggle
-        offLabel="light"
-        onLabel="dark"
-        active={dark}
-        onClick={onToggleDark}
-        className="w-full px-6 lg:hidden"
-      />
-      {/* The wordmark, same as the footer's, pinned to the bottom of the
-          drawer — bottom-left on mobile, bottom-right on desktop. */}
-      <h1 className="ml-0 lg:ml-0 font-multi-dots h1Text leading-none lowercase mb-0">
+
+      {/* The wordmark, same as the footer's — `mt-auto` drops it to the
+          bottom-left of the drawer whatever's above it. */}
+      <h1 className="mt-auto self-start text-left font-multi-dots text-7xl lg:text-[8rem] leading-none lowercase mb-0 px-6 lg:px-3">
         multi2.co
       </h1>
     </motion.div>
@@ -557,6 +549,7 @@ export default function M2Nav() {
               <NavVertical
                 onNavigate={handleNavigate}
                 onCycleTheme={cycleTheme}
+                themeLabel={currentTheme.label}
                 dark={dark}
                 onToggleDark={toggleDark}
               />
