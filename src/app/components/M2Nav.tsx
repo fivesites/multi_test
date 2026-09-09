@@ -195,6 +195,7 @@ function NavBar({
         <CheckButton
           className="flex font-visual w-full"
           size="lg"
+          href="/"
           label={menuLabel}
           marks={CIRCLE_MARKS}
           active
@@ -264,7 +265,7 @@ function NavBar({
       {/* Desktop col 4: a plain menu/close toggle for the drawer. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:block lg:col-start-4 lg:col-span-3"
+        className="hidden lg:block lg:col-start-7 lg:col-span-3"
       >
         <CheckButton
           className="font-visual w-full"
@@ -279,7 +280,7 @@ function NavBar({
       {/* Desktop col 7: the sound toggle. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:block lg:col-start-7 lg:col-span-3"
+        className="hidden  lg:col-start-7 lg:col-span-3"
       >
         <CheckButton
           className="font-visual w-full"
@@ -294,24 +295,8 @@ function NavBar({
       {/* Desktop col 10: the dark toggle and the palette swatch, far right. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:flex lg:col-start-10 lg:col-span-3 items-baseline justify-start gap-x-3 relative"
-      >
-        <CheckButton
-          className="justify-start"
-          size="lg"
-          label={dark ? "dark" : "light"}
-          active
-          marks={CIRCLE_MARKS}
-          onClick={onToggleDark}
-        />
-        <ColorButton
-          label={themeLabel}
-          active
-          shape="circle"
-          onClick={onCycleTheme}
-          className="w-auto px-0 absolute right-0"
-        />
-      </motion.div>
+        className="hidden  lg:col-start-10 lg:col-span-3 items-baseline justify-start gap-x-3 relative"
+      ></motion.div>
     </motion.div>
   );
 }
@@ -347,7 +332,7 @@ function NavVertical({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`p-0 space-y-0 w-full lg:w-full bg-primary pb-3 [&_*]:!text-primary-foreground flex flex-col h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] pr-0 lg:pr-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
-      <nav className="hidden lg:grid w-full grid-cols-12 gap-y-0 grid-rows-2 flex-1 min-h-0 gap-x-3 p-0  ">
+      <nav className="hidden lg:grid w-full grid-cols-12 items-baseline gap-y-0 grid-rows-2 flex-1 min-h-0 gap-x-3 p-0  ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
             className=" col-span-3 row-span-1  text-primary pb-0 font-visual     w-full"
@@ -360,6 +345,22 @@ function NavVertical({
             onClick={() => onNavigate(item.href)}
           />
         ))}
+        <ColorButton
+          shape="circle"
+          active
+          label={themeLabel}
+          labelSide="right"
+          onClick={onCycleTheme}
+          className="col-span-3  text-primary pb-0 font-visual     w-full"
+        />
+        <CheckButton
+          className="justify-start col-span-3   text-primary pb-0 font-visual     w-full"
+          size="lg"
+          label={dark ? "dark" : "light"}
+          active
+          marks={CIRCLE_MARKS}
+          onClick={onToggleDark}
+        />
       </nav>
       <nav className="flex lg:hidden  w-full flex-col gap-y-0 px-0  ">
         {NAV_ITEMS.map((item) => (
@@ -379,14 +380,6 @@ function NavVertical({
       {/* The palette picker — one click cycles to the next palette, the split
           disc turning a quarter with it. Matches the top bar's swatch button;
           here in the drawer it carries the palette name too. */}
-      <ColorButton
-        shape="circle"
-        active
-        label={themeLabel}
-        labelSide="right"
-        onClick={onCycleTheme}
-        className="lg:hidden"
-      />
 
       {/* The wordmark, same as the footer's — `mt-auto` drops it to the
           bottom-left of the drawer whatever's above it. */}

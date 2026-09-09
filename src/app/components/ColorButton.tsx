@@ -34,7 +34,7 @@ export default function ColorButton({
   const round = turns % 2 === (shape === "circle" ? 0 : 1);
 
   const labelEl = labelSide ? (
-    <span className="shrink-0 cursor-pointer font-visual text-lg font-normal tracking-wide lowercase text-primary">
+    <span className="shrink-0 cursor-pointer font-visual text-base font-normal tracking-wide lowercase text-primary">
       {label}
     </span>
   ) : null;
@@ -50,7 +50,7 @@ export default function ColorButton({
         onClick();
       }}
       className={cn(
-        "flex cursor-pointer items-center bg-transparent gap-x-3 w-full px-6 lg:px-3 h-12 lg:h-12",
+        "flex cursor-pointer items-center bg-transparent gap-x-3 w-full px-6 lg:px-3 h-16 lg:h-12",
         className,
       )}
     >
@@ -60,7 +60,7 @@ export default function ColorButton({
           keeps the two colour halves clipped to the animated radius; 9999 reads
           as px, fully round at this size. */}
       <motion.span
-        className="flex h-2 w-2 lg:h-4 lg:w-4 shrink-0 overflow-hidden border border-current"
+        className="flex h-2 w-2 lg:h-2 lg:w-2 shrink-0 overflow-hidden border border-current"
         initial={false}
         animate={{ rotate: turns * 90, borderRadius: round ? 9999 : 0 }}
         transition={{ duration: 0.25, ease: "easeOut" }}

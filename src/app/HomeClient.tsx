@@ -127,7 +127,7 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
           </LandningBlock>
           {/* Hero nav — every route but Home, in a 4-col row pinned to the
               bottom-left of the showreel block. Static (no reveal). */}
-          <nav className="absolute bottom-0 left-0 z-10 grid w-full grid-cols-4 items-baseline px-3 pb-3">
+          <nav className="absolute bottom-0 left-0 z-10 hidden lg:grid w-full grid-cols-4 items-baseline px-0 pb-0">
             {HERO_NAV.map((link) => (
               <CheckButton
                 key={link.href}
