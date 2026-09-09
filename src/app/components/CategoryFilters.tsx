@@ -244,6 +244,7 @@ export default function CategoryFilters({
           label={showFilters ? "close" : "show filters"}
           size="label"
           active
+          className="whitespace-nowrap"
           onClick={() => setShowFilters((v) => !v)}
         />
       </div>
