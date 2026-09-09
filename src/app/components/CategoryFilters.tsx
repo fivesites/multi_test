@@ -242,7 +242,7 @@ export default function CategoryFilters({
       <div className="px-6 py-4 lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
         <CheckButton
           label={showFilters ? "close" : "show filters"}
-          size="label"
+          size="lg"
           active
           className="whitespace-nowrap"
           onClick={() => setShowFilters((v) => !v)}
