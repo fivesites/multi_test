@@ -87,7 +87,7 @@ export default function RootLayout({
                     <ThemeProvider>
                       <M2Nav />
                       <CookieAndSound />
-                      <UnderConstruction />
+
                       <SmoothScroll>{children}</SmoothScroll>
                     </ThemeProvider>
                   </CursorProvider>
