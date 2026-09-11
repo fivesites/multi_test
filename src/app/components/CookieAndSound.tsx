@@ -143,12 +143,15 @@ export default function CookieAndSound({
             {step === "cookie" ? (
               <>
                 <p className={copy}>
-                  this site uses cookies to improve your experience.
+                  This site use cookies and other technologies to personalize
+                  your experience, show you ads, and perform analytics, we will
+                  not use cookies or other technologies for these purposes
+                  unless you accept them.
                 </p>
                 <div className="grid grid-cols-3    gap-3 justify-start w-full  ">
                   <Button
-                    variant="link"
-                    className=" border-none underline underline-offset-6 px-0 w-full col-span-1 text-primary-foreground font-normal"
+                    variant="outline"
+                    className="  px-0 w-full col-span-1 text-primary-foreground font-normal"
                     asChild
                   >
                     <Link href="/https://gdpr-info.eu/" target="_blank">

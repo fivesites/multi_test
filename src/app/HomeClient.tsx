@@ -100,10 +100,10 @@ function HomeClientInner({ reelUrl }: { reelUrl?: string }) {
             over the whole page. Desktop keeps the nav's own Sound On control. */}
         <div className="relative h-screen">
           <LandningBlock
-            className="h-screen content-center lg:grid-rows-2  "
+            className="h-screen content-center lg:grid-rows-3  "
             // Second row of the two-row hero grid; `self-end` pins the typed
             // heading to that row's bottom edge — the bottom of the viewport.
-            contentClassName="col-span-3 lg:col-start-1 lg:col-span-12 lg:row-start-2 lg:self-start w-full"
+            contentClassName="col-span-3 lg:col-start-1 lg:col-span-12 lg:row-start-2 lg:justify-center w-full"
             // The showreel bleeds to the hero's edges. Same reel on every width
             // — ShowReel/ReelContext keep one player.
             background={

@@ -118,12 +118,16 @@ export default function Footer() {
           <h4 className="col-start-10 col-span-4 hidden lg:flex text-sm font-visual tracking-wide lowercase  ">
             © 2026 Multisquared All rights reserved
           </h4>
-        </div>
 
+          {/* The mark — col-span-4 like everything else in this grid, and
+              w-full aspect-square so it stretches to fill that column width
+              instead of sitting at a fixed size. Filled from the theme so it
+              tracks the palette. */}
+        </div>
         {/* Sits flush against the bottom edge of the footer. leading-none trims
           the wordmark's line box so its glyphs drive the row. */}
         <div className="flex flex-row lg:flex-row justify-between w-full items-baseline px-3 lg:pl-3 lg:pr-12 pb-0">
-          <h1 className="ml-0 lg:ml-0 font-multi-dots text-7xl lg:text-[8rem] leading-none lowercase mb-0">
+          <h1 className="ml-0 lg:ml-0 font-visual text-7xl lg:text-[8rem] leading-none font-thin lowercase mb-0">
             multi2.co
           </h1>
         </div>

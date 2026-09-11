@@ -9,10 +9,6 @@ export default function ConnectPage() {
       <div className="flex-1">
         <ConnectSection />
       </div>
-
-      <div className="w-full mb-12">
-        <BottomNav />
-      </div>
     </div>
   );
 }

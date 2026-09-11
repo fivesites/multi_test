@@ -28,10 +28,6 @@ const READY_FALLBACK_MS = 2500;
  *  its own reveal until this is up, so the field always comes in first. */
 const NAVFIELD_REVEAL_MS = 1500;
 
-/** The nav's checkboxes read as dots — filled ● when active, hollow ○ when not
- *  — rather than the default square. The wordmark button keeps its square. */
-const CIRCLE_MARKS = { active: "●", inactive: "○" } as const;
-
 /** How far down the page counts as "the reader has moved on". */
 const SCROLLED_PX = 40;
 
@@ -201,7 +197,6 @@ function NavBar({
           size="lg"
           href="/"
           label={menuLabel}
-          marks={CIRCLE_MARKS}
           active
           onClick={onToggleOpen}
         >
@@ -230,7 +225,6 @@ function NavBar({
           className="font-visual justify-start"
           size="lg"
           label="sound"
-          marks={CIRCLE_MARKS}
           active
           onClick={onToggleMute}
         />
@@ -272,7 +266,6 @@ function NavBar({
           className="font-visual w-full"
           size="lg"
           label={open ? "close" : "menu"}
-          marks={CIRCLE_MARKS}
           active
           onClick={onToggleOpen}
         />
@@ -281,13 +274,12 @@ function NavBar({
       {/* Desktop col 7: the sound toggle. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden  lg:col-start-7 lg:col-span-3"
+        className="hidden lg:block lg:col-start-7 lg:col-span-3"
       >
         <CheckButton
           className="font-visual w-full"
           size="lg"
           label={muted ? "sound off" : "sound on"}
-          marks={CIRCLE_MARKS}
           active
           onClick={onToggleMute}
         />
@@ -333,15 +325,14 @@ function NavVertical({
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
       className={`p-0 space-y-0 w-full lg:w-full bg-primary pb-3 [&_*]:!text-primary-foreground flex flex-col h-[calc(100dvh-4rem)] lg:h-[calc(100dvh-3rem)] pr-0 lg:pr-6 pixelCornersBottom lg:[mask-border:none] lg:[-webkit-mask-box-image:none]`}
     >
-      <nav className="hidden lg:grid w-full grid-cols-12 items-baseline gap-y-0 grid-rows-2 flex-1 min-h-0 gap-x-3 p-0  ">
+      <nav className="hidden lg:flex w-full flex-col items-start gap-y-0 flex-1 min-h-0 p-0  ">
         {NAV_ITEMS.map((item) => (
           <CheckButton
-            className=" col-span-3 row-span-1  text-primary pb-0 font-visual     w-full"
+            className=" text-primary pb-0 font-visual     w-full"
             size="lg"
             key={item.href}
             label={item.label}
             href={item.href}
-            marks={CIRCLE_MARKS}
             active={isActive(pathname, item.href)}
             onClick={() => onNavigate(item.href)}
           />
@@ -352,14 +343,13 @@ function NavVertical({
           label={themeLabel}
           labelSide="right"
           onClick={onCycleTheme}
-          className="col-span-3  text-primary pb-0 font-visual     w-full"
+          className=" text-primary pb-0 font-visual     w-full"
         />
         <CheckButton
-          className="justify-start col-span-3   text-primary pb-0 font-visual     w-full"
+          className="justify-start   text-primary pb-0 font-visual     w-full"
           size="lg"
           label={dark ? "dark" : "light"}
           active
-          marks={CIRCLE_MARKS}
           onClick={onToggleDark}
         />
       </nav>
@@ -371,7 +361,6 @@ function NavVertical({
             key={item.href}
             label={item.label}
             href={item.href}
-            marks={CIRCLE_MARKS}
             active={isActive(pathname, item.href)}
             onClick={() => onNavigate(item.href)}
           />
@@ -384,7 +373,7 @@ function NavVertical({
 
       {/* The wordmark, same as the footer's — `mt-auto` drops it to the
           bottom-left of the drawer whatever's above it. */}
-      <h1 className="mt-auto self-start text-left font-multi-dots text-7xl lg:text-[8rem] leading-none lowercase mb-0 px-6 lg:px-3">
+      <h1 className="mt-auto self-start text-left font-visual font-thin text-7xl lg:text-[8rem] leading-none lowercase mb-0 px-6 lg:px-3">
         multi2.co
       </h1>
     </motion.div>

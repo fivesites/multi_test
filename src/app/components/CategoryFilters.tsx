@@ -125,7 +125,7 @@ export default function CategoryFilters({
         "fixed bottom-3 right-3 z-30 ",
         "transition-[width] duration-300 ease-out",
         showFilters
-          ? "right-3 top-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"
+          ? "left-3 right-3 top-3 bg-primary max-lg:[&_*]:!text-primary-foreground lg:grid lg:grid-cols-12 pb-3"
           : "w-1/3 bg-transparent max-lg:[&_*]:!text-primary",
         "lg:static lg:inset-auto lg:z-auto lg:w-auto lg:bg-transparent lg:pb-0 lg:[mask-border:none] lg:[-webkit-mask-box-image:none] lg:col-start-1 lg:col-span-12",
         className,
@@ -241,7 +241,7 @@ export default function CategoryFilters({
           matching lg:p-3 so its baseline lands on the last sub-menu row. */}
       <div className="px-6 py-4 lg:px-3 lg:py-0 lg:col-start-1 lg:col-span-2 lg:row-start-1 lg:self-end lg:z-10">
         <CheckButton
-          label={showFilters ? "close" : "show filters"}
+          label={showFilters ? "close" : "filters"}
           size="lg"
           active
           className="whitespace-nowrap"
