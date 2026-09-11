@@ -258,9 +258,10 @@ function NavBar({
       </motion.div>
 
       {/* Desktop col 4: a plain menu/close toggle for the drawer. */}
+
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:block lg:col-start-10 lg:col-span-3"
+        className="hidden lg:block lg:col-start-7 lg:col-span-2"
       >
         <CheckButton
           className="font-visual w-full"
@@ -270,11 +271,9 @@ function NavBar({
           onClick={onToggleOpen}
         />
       </motion.div>
-
-      {/* Desktop col 7: the sound toggle. */}
       <motion.div
         variants={BAR_ITEM}
-        className="hidden lg:block lg:col-start-7 lg:col-span-3"
+        className="hidden lg:block lg:col-start-10 lg:col-span-2"
       >
         <CheckButton
           className="font-visual w-full"
@@ -284,6 +283,8 @@ function NavBar({
           onClick={onToggleMute}
         />
       </motion.div>
+
+      {/* Desktop col 7: the sound toggle. */}
 
       {/* Desktop col 10: the dark toggle and the palette swatch, far right. */}
       <motion.div
